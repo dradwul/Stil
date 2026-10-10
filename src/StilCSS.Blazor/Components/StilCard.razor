@@ -1,0 +1,19 @@
+<div class="card" @attributes="AdditionalAttributes">
+    @if (!string.IsNullOrWhiteSpace(HeaderText))
+    {
+        <h2>@HeaderText</h2>
+    }
+
+    @ChildContent
+</div>
+
+@code {
+    [Parameter]
+    public string? HeaderText { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+}

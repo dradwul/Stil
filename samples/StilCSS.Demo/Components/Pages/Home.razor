@@ -1,0 +1,26 @@
+﻿@page "/"
+
+<PageTitle>StilCSS - komponentdemo</PageTitle>
+
+<StilContainer>
+    <h1>StilCSS</h1>
+    <p>CSS-klasser och Blazor-komponenter med samma visuella grund.</p>
+
+    <StilCard HeaderText="Kommande möten">
+        <p>Exempel på innehåll som kan visas i en dashboard.</p>
+        <button class="bttn bttn-primary">Visa möten</button>
+    </StilCard>
+
+    <StilAlert Type="StilAlertType.Error">
+        Ett exempel på ett felmeddelande.
+    </StilAlert>
+
+    <StilAlert Type="StilAlertType.Success">
+        Ändringarna har sparats.
+    </StilAlert>
+
+    <StilCard HeaderText="Använd CSS-klasser direkt">
+        <p>Blazor-komponenterna är valfria. Klasserna fungerar även på vanlig HTML.</p>
+        <button class="bttn bttn-secondary">Vanlig HTML-knapp</button>
+    </StilCard>
+</StilContainer>

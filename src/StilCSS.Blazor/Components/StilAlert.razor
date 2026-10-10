@@ -1,0 +1,23 @@
+<div class="@CssClass" role="alert" @attributes="AdditionalAttributes">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter]
+    public StilAlertType Type { get; set; } = StilAlertType.Info;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string CssClass => Type switch
+    {
+        StilAlertType.Success => "alert alert-success",
+        StilAlertType.Error => "alert alert-error",
+        StilAlertType.Warning => "alert alert-alert",
+        StilAlertType.Info => "alert alert-info",
+        _ => throw new ArgumentOutOfRangeException(nameof(Type), Type, "Unknown alert type.")
+    };
+}
