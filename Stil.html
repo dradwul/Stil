@@ -7,21 +7,20 @@
     <title>Stil</title>
     <link rel="stylesheet" href="Stil.css">
     
-    <!-- Link to Google Fonts (Didact gothic) and material icons -->
+    <!-- Optional showcase font -->
     <link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body>
-    <div class="site-container">
+    <div class="stil-scope site-container">
         <div class="site-header">
             <img src="stil-logo.svg" alt="Stil logo" class="logo" style="max-width:200px;margin-bottom:1rem;">
-            <nav>
-                <a href="#">Buttons</a>
-                <a href="#">Inputs</a>
-                <a href="#">Cards</a>
-                <a href="#">Alerts</a>
-                <a href="#">Typography</a>
-                <a href="#">Tables</a>
+            <nav aria-label="Component sections">
+                <a href="#buttons">Buttons</a>
+                <a href="#inputs">Inputs</a>
+                <a href="#cards">Cards</a>
+                <a href="#alerts">Alerts</a>
+                <a href="#typography">Typography</a>
+                <a href="#tables">Tables</a>
             </nav>
         </div>
 
@@ -89,7 +88,7 @@
         </div>
 
         <div class="component-group">
-            <h1>Buttons</h1>
+            <h1 id="buttons">Buttons</h1>
             <div class="component-group-code-example">
                 <code>&lt;button class="bttn bttn-primary"&gt;Primary Button&lt;/button&gt;</code>
                 <code>&lt;button class="bttn bttn-sm bttn-primary"&gt;Small Button&lt;/button&gt;</code>
@@ -125,7 +124,7 @@
         </div>
         
         <div class="component-group">
-            <h1>Inputs</h1>
+            <h1 id="inputs">Inputs</h1>
             <div class="component-group-code-example">
                 <code>&lt;div class="input-group"&gt;</code>
                 <div class="component-group-code-example-content">
@@ -144,7 +143,7 @@
         </div>
 
         <div class="component-group">
-            <h1>Cards</h1>
+            <h1 id="cards">Cards</h1>
             <div class="component-group-code-example">
                 <code>&lt;div class="card"&gt;</code>
                 <div class="component-group-code-example-content">
@@ -169,7 +168,7 @@
         </div>
 
         <div class="component-group">
-            <h1>Alerts</h1>
+            <h1 id="alerts">Alerts</h1>
             <div class="component-group-code-example">
                 <code>&lt;div class="alert alert-success"&gt;This is a success alert.&lt;/div&gt;</code>
                 <code>&lt;div class="alert alert-error"&gt;This is an error alert.&lt;/div&gt;</code>
@@ -184,7 +183,7 @@
         </div>
 
         <div class="component-group">
-            <h1>Typography</h1>
+            <h1 id="typography">Typography</h1>
             <div class="component-group-code-example">
                 <code>&lt;p&gt;This is a paragraph of text.&lt;/p&gt;</code>
                 <code>&lt;h2&gt;Heading 2&lt;/h2&gt;</code>
@@ -203,7 +202,7 @@
         </div>
 
         <div class="component-group">
-            <h1>Tables</h1>
+            <h1 id="tables">Tables</h1>
             <div class="component-group-code-example">
                 <code>&lt;table&gt;</code>
                 <div class="component-group-code-example-content">

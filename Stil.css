@@ -1,1 +1,91 @@
 @import url("src/StilCSS.Blazor/wwwroot/stil.css");
+
+body {
+    margin: 0;
+    font-family: 'Didact Gothic', sans-serif;
+    background-color: #34dbbf;
+}
+
+.site-container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.site-header nav {
+    display: flex;
+    align-items: center;
+    padding: 1rem 0.5rem;
+    margin-bottom: 1rem;
+    color: white;
+    gap: 0.5rem;
+}
+
+.site-header a {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.3s ease;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+}
+
+.site-header a:hover { background-color: rgba(255, 255, 255, 0.1); }
+
+.component-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+    background: #eee;
+    padding: 0.75rem;
+    gap: 0.25rem;
+}
+
+.component-group code {
+    display: block;
+    background: #ddd;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.component-group-code-example {
+    background: #fff;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid #ccc;
+}
+
+.component-group-code-example-content {
+    background: #f9f9f9;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.component-group-code-example-outcome {
+    background: #f9f9f9;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    border-radius: 0.25rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.component-group-code-example-outcome > span { margin-bottom: 0.5rem; }
+
+.component-group-code-example-outcome nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.color-swatch {
+    display: inline-block;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+}
