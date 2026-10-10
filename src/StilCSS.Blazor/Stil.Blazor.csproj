@@ -4,10 +4,12 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <PackageId>StilCSS.Blazor</PackageId>
+    <PackageId>Stil</PackageId>
+    <AssemblyName>Stil.Blazor</AssemblyName>
+    <RootNamespace>Stil.Blazor</RootNamespace>
     <Version>0.1.0</Version>
-    <Description>Blazor components built on the StilCSS class library.</Description>
-    <PackageTags>Blazor;CSS;components;StilCSS</PackageTags>
+    <Description>Reusable Blazor components and CSS styles.</Description>
+    <PackageTags>Blazor;CSS;components;Stil</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 

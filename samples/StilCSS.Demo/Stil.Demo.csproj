@@ -5,10 +5,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+    <AssemblyName>Stil.Demo</AssemblyName>
+    <RootNamespace>Stil.Demo</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\StilCSS.Blazor\StilCSS.Blazor.csproj" />
+    <ProjectReference Include="..\..\src\StilCSS.Blazor\Stil.Blazor.csproj" />
   </ItemGroup>
 
 </Project>

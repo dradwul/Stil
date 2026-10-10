@@ -1,4 +1,4 @@
-namespace StilCSS.Blazor.Components;
+namespace Stil.Blazor.Components;
 
 public enum StilAlertType
 {

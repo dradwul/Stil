@@ -1,4 +1,4 @@
-using StilCSS.Demo.Components;
+using Stil.Demo.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 

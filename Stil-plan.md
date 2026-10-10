@@ -1,26 +1,26 @@
-# StilCSS-plan
+# Stil — project plan
 
 ## Vision
 
-StilCSS starts as a small, framework-independent CSS class library and adds an
+Stil starts as a small, framework-independent CSS class library and adds an
 optional Blazor component layer. The Blazor components should render ordinary
 HTML using the same CSS classes, not make the CSS depend on Blazor.
 
 The funeral-agency dashboard is a separate consumer of the library. It can
 guide which general-purpose components are useful, but agency-specific
-workflows and business rules belong in the dashboard rather than StilCSS.
+workflows and business rules belong in the dashboard rather than Stil.
 
 ## Current foundation
 
-- `StilCSS.css` remains the single source of truth for the styles.
-- `src/StilCSS.Blazor` is a Razor Class Library targeting .NET 10. It references
-  the stylesheet as a NuGet static web asset and is configured as package
-  `StilCSS.Blazor`, initially at version `0.1.0`.
-- `StilCSS.Blazor` currently contains `StilContainer`, `StilCard`, and
+- `src/StilCSS.Blazor/wwwroot/stil.css` is the single source of truth for the
+  styles. `Stil.css` imports it for the standalone HTML showcase.
+- `src/StilCSS.Blazor` is a Razor Class Library targeting .NET 10 and is
+  configured as the `Stil` NuGet package, initially at version `0.1.0`.
+- `Stil.Blazor` currently contains `StilContainer`, `StilCard`, and
   `StilAlert`, with `StilAlertType` values for success, error, warning, and info.
 - `samples/StilCSS.Demo` is a small Blazor app that references the library and
   demonstrates components alongside direct CSS-class usage.
-- `StilCSS.html` remains the standalone HTML/CSS showcase.
+- `Stil.html` remains the standalone HTML/CSS showcase.
 
 ## Suggested next steps
 
@@ -39,7 +39,7 @@ workflows and business rules belong in the dashboard rather than StilCSS.
 3. **Add quality checks**
    - Add focused component tests for rendering, parameters, and alert variants.
    - Build and pack the RCL in CI; inspect the `.nupkg` to confirm the stylesheet
-     is present at `_content/StilCSS.Blazor/stilcss.css`.
+     is present at `_content/Stil/stil.css`.
    - Add accessibility and responsive checks for the demo.
 4. **Improve examples and docs**
    - Show a rendered preview and matching HTML or Razor snippet for each
@@ -47,8 +47,8 @@ workflows and business rules belong in the dashboard rather than StilCSS.
    - Document package installation and the stylesheet inclusion requirement.
    - Document direct CSS usage separately from the Blazor component API.
 5. **Try it in the dashboard**
-   - Consume StilCSS from the separate dashboard project.
-   - Promote only reusable patterns to StilCSS; keep funeral-agency domain
+   - Consume Stil from the separate dashboard project.
+   - Promote only reusable patterns to Stil; keep funeral-agency domain
      concepts and data handling in the dashboard.
 6. **Publish when the API is ready**
    - Choose and document supported .NET versions before promising compatibility.
@@ -70,8 +70,8 @@ workflows and business rules belong in the dashboard rather than StilCSS.
 </StilContainer>
 ```
 
-The demo app includes the versioned static asset from `Components/App.razor`:
+The demo app includes the static asset from `Components/App.razor`:
 
 ```razor
-<link rel="stylesheet" href="@Assets["_content/StilCSS.Blazor/stilcss.css"]" />
+<link rel="stylesheet" href="@Assets["_content/Stil/stil.css"]" />
 ```
