@@ -4,10 +4,109 @@ h1:focus {
 
 .demo-canvas {
     min-height: 100vh;
-    padding: 20px;
+    padding: 0;
     box-sizing: border-box;
     background-color: #34dbbf;
     font-family: 'Didact Gothic', sans-serif;
+}
+
+.site-container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.site-header .logo {
+    display: block;
+    width: 200px;
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 1rem;
+}
+
+.site-header nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 1rem 0.5rem;
+    margin-bottom: 1rem;
+    color: white;
+}
+
+.site-header a {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.3s ease;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+}
+
+.site-header a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.component-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: #eee;
+}
+
+.component-group code {
+    display: block;
+    overflow-wrap: anywhere;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    background: #ddd;
+    font-size: 0.875rem;
+}
+
+.component-group-code-example {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    background: #fff;
+}
+
+.component-group-code-example-content {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    background: #f9f9f9;
+}
+
+.component-group-code-example-outcome {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    background: #f9f9f9;
+}
+
+.component-group-code-example-outcome > span {
+    margin-bottom: 0.5rem;
+}
+
+.component-group-code-example-outcome nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.color-swatch {
+    display: inline-block;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
 }
 
 .demo-host-content {
@@ -16,6 +115,16 @@ h1:focus {
     border: 1px solid #52606d;
     border-radius: 0.25rem;
     color: #263238;
+}
+
+@media (max-width: 600px) {
+    .demo-canvas .site-container {
+        padding: 12px;
+    }
+
+    .component-group {
+        padding: 0.5rem;
+    }
 }
 
 .valid.modified:not([type=checkbox]) {

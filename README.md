@@ -46,8 +46,10 @@ and the matching stylesheet as a static web asset. The current package targets
   layout, the showcase-colored demo canvas, and an app-styled footer outside
   Stil's scope.
 - `samples/StilCSS.Demo/Components/Pages/Home.razor` demonstrates Stil
-  components and direct CSS usage. `Error.razor` and `NotFound.razor` handle
-  sample-app error and missing-page routes.
+  components and direct CSS usage through the same Layout, Navigation, Colors,
+  Buttons, Inputs, Cards, Alerts, Typography, Tables, Links, and Forms sections
+  as `Stil.html`. `Error.razor` and `NotFound.razor` handle sample-app error and
+  missing-page routes.
 - `samples/StilCSS.Demo/wwwroot/app.css` styles the host app, including the
   footer outside Stil's scope.
 - `tests/Stil.Blazor.Tests/Stil.Blazor.Tests.csproj` defines the test
@@ -90,9 +92,11 @@ dotnet pack src/StilCSS.Blazor/Stil.Blazor.csproj
    dotnet run --project samples/StilCSS.Demo/Stil.Demo.csproj --launch-profile http
    ```
 
-   Open `http://localhost:5100`. Check the cards, alert variants, and regular
-   HTML buttons. The demo loads Didact Gothic and uses the showcase teal as
-   demo-only presentation; neither is applied globally by the library. The
+   Open `http://localhost:5100`. Use the section navigation to inspect the
+   showcase examples and rendered results. Cards and alerts use the Blazor
+   components; the other examples show the CSS classes directly. The demo
+   loads Didact Gothic and uses the showcase teal as demo-only presentation;
+   neither is applied globally by the library. The
    demo-app footer is outside `.stil-scope` and retains its styling from
    `wwwroot/app.css`; use browser developer tools to add a temporary style to
    the footer and confirm Stil does not override it.

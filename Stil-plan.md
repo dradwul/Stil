@@ -19,9 +19,10 @@ classes; the stylesheet does not depend on Blazor.
   warning, and info.
 - `StilCssClasses` merges a consumer-provided `class` attribute with each
   component's required classes, preserving the `.stil-scope` styling.
-- `samples/StilCSS.Demo` demonstrates the Blazor components and direct CSS
-  classes on a showcase-colored canvas. The canvas and its Didact Gothic font
-  are demo-only styles, not global package styles.
+- `samples/StilCSS.Demo` mirrors the standalone showcase sections and
+  demonstrates the Blazor components and direct CSS classes on a
+  showcase-colored canvas. The canvas and its Didact Gothic font are demo-only
+  styles, not global package styles.
 - `tests/Stil.Blazor.Tests` uses xUnit and bUnit to verify rendered component
   content, attributes, scoped CSS classes, card headers, and all alert
   variants.
