@@ -43,7 +43,8 @@ and the matching stylesheet as a static web asset. The current package targets
   loads Stil and app styles. `Routes.razor` connects routes to the main layout.
   `_Imports.razor` holds shared Razor namespaces.
 - `samples/StilCSS.Demo/Components/Layout/MainLayout.razor` supplies the
-  layout and an app-styled footer outside Stil's scope.
+  layout, the showcase-colored demo canvas, and an app-styled footer outside
+  Stil's scope.
 - `samples/StilCSS.Demo/Components/Pages/Home.razor` demonstrates Stil
   components and direct CSS usage. `Error.razor` and `NotFound.razor` handle
   sample-app error and missing-page routes.
@@ -55,6 +56,8 @@ and the matching stylesheet as a static web asset. The current package targets
 
 `Stil.html` is not replaced by the Blazor demo. Use the Blazor app to exercise
 the component API and `Stil.html` to preview the plain CSS API in a browser.
+Both examples use Didact Gothic from Google Fonts. The Blazor library falls
+back to sans-serif if an app does not load that optional web font.
 `Stil.html` and `Stil.css` must stay beside the `src` directory because the
 showcase stylesheet imports the library CSS by relative path.
 
@@ -88,9 +91,11 @@ dotnet pack src/StilCSS.Blazor/Stil.Blazor.csproj
    ```
 
    Open `http://localhost:5100`. Check the cards, alert variants, and regular
-   HTML buttons. The demo-app footer is outside `.stil-scope` and retains its
-   styling from `wwwroot/app.css`; use browser developer tools to add a
-   temporary style to the footer and confirm Stil does not override it.
+   HTML buttons. The demo loads Didact Gothic and uses the showcase teal as
+   demo-only presentation; neither is applied globally by the library. The
+   demo-app footer is outside `.stil-scope` and retains its styling from
+   `wwwroot/app.css`; use browser developer tools to add a temporary style to
+   the footer and confirm Stil does not override it.
 2. On Windows, open the standalone CSS showcase from the repository root:
 
    ```powershell

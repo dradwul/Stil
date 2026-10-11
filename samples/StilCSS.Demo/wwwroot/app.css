@@ -2,6 +2,14 @@ h1:focus {
     outline: none;
 }
 
+.demo-canvas {
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #34dbbf;
+    font-family: 'Didact Gothic', sans-serif;
+}
+
 .demo-host-content {
     margin: 1rem;
     padding: 1rem;

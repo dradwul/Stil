@@ -20,7 +20,8 @@ classes; the stylesheet does not depend on Blazor.
 - `StilCssClasses` merges a consumer-provided `class` attribute with each
   component's required classes, preserving the `.stil-scope` styling.
 - `samples/StilCSS.Demo` demonstrates the Blazor components and direct CSS
-  classes.
+  classes on a showcase-colored canvas. The canvas and its Didact Gothic font
+  are demo-only styles, not global package styles.
 - `tests/Stil.Blazor.Tests` uses xUnit and bUnit to verify rendered component
   content, attributes, scoped CSS classes, card headers, and all alert
   variants.
@@ -31,6 +32,8 @@ classes; the stylesheet does not depend on Blazor.
 - Theme and typography styles are opt-in and scoped by `.stil-scope`. The
   Blazor components add the scope to their rendered roots; plain HTML users
   should add it to a wrapper.
+- Stil uses Didact Gothic when the consuming page loads it; the stylesheet
+  falls back to sans-serif and does not fetch external fonts itself.
 - `Stil.html` and `Stil.css` remain a useful standalone browser showcase of the
   framework-independent CSS API; they are separate from the runnable Blazor
   demo.
