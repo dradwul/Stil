@@ -2,6 +2,14 @@ h1:focus {
     outline: none;
 }
 
+.demo-host-content {
+    margin: 1rem;
+    padding: 1rem;
+    border: 1px solid #52606d;
+    border-radius: 0.25rem;
+    color: #263238;
+}
+
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }

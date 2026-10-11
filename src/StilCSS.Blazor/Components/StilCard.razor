@@ -1,4 +1,4 @@
-<div class="stil-scope card" @attributes="AdditionalAttributes">
+<div @attributes="AdditionalAttributes" class="@CssClass">
     @if (!string.IsNullOrWhiteSpace(HeaderText))
     {
         <h2>@HeaderText</h2>
@@ -16,4 +16,6 @@
 
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string CssClass => StilCssClasses.Merge("stil-scope card", AdditionalAttributes);
 }

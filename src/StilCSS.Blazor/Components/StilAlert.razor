@@ -1,4 +1,4 @@
-<div class="@CssClass" role="alert" @attributes="AdditionalAttributes">
+<div role="alert" @attributes="AdditionalAttributes" class="@CssClass">
     @ChildContent
 </div>
 
@@ -12,12 +12,12 @@
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
-    private string CssClass => Type switch
+    private string CssClass => StilCssClasses.Merge(Type switch
     {
         StilAlertType.Success => "stil-scope alert alert-success",
         StilAlertType.Error => "stil-scope alert alert-error",
         StilAlertType.Warning => "stil-scope alert alert-warning",
         StilAlertType.Info => "stil-scope alert alert-info",
         _ => throw new ArgumentOutOfRangeException(nameof(Type), Type, "Unknown alert type.")
-    };
+    }, AdditionalAttributes);
 }

@@ -1,4 +1,4 @@
-<div class="stil-scope container" @attributes="AdditionalAttributes">
+<div @attributes="AdditionalAttributes" class="@CssClass">
     @ChildContent
 </div>
 
@@ -8,4 +8,6 @@
 
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string CssClass => StilCssClasses.Merge("stil-scope container", AdditionalAttributes);
 }
