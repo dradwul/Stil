@@ -1,0 +1,62 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PackageId>Stil</PackageId>
+    <AssemblyName>Stil.Blazor</AssemblyName>
+    <RootNamespace>Stil.Blazor</RootNamespace>
+    <Version>0.1.0</Version>
+    <Description>Themeable Blazor components built on the Stil CSS class library.</Description>
+    <PackageTags>Blazor;CSS;components;Stil</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <!--
+    src/Stil.Css is the single source of the stylesheet. Register it as a static web asset
+    with that folder as content root, so it is served as _content/Stil/stil.css, packed into
+    the NuGet package, and picked up live (no copy) when running the demo.
+  -->
+  <PropertyGroup>
+    <StilCssDirectory>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\Stil.Css\'))</StilCssDirectory>
+  </PropertyGroup>
+
+  <Target Name="DefineStilCssStaticWebAssets" AfterTargets="ResolveProjectStaticWebAssets" Condition="'$(NoBuild)' != 'true'">
+    <ItemGroup>
+      <_StilCssCandidate Include="$(StilCssDirectory)stil.css" RelativePath="stil.css" />
+    </ItemGroup>
+
+    <DefineStaticWebAssets
+      CandidateAssets="@(_StilCssCandidate)"
+      FingerprintCandidates="$(StaticWebAssetsFingerprintContent)"
+      FingerprintPatterns="@(StaticWebAssetFingerprintPattern)"
+      SourceType="Discovered"
+      SourceId="$(PackageId)"
+      ContentRoot="$(StilCssDirectory)"
+      BasePath="$(StaticWebAssetBasePath)">
+      <Output TaskParameter="Assets" ItemName="StaticWebAsset" />
+      <Output TaskParameter="Assets" ItemName="_StilCssStaticWebAsset" />
+    </DefineStaticWebAssets>
+
+    <DefineStaticWebAssetEndpoints
+      CandidateAssets="@(_StilCssStaticWebAsset)"
+      ContentTypeMappings="@(StaticWebAssetContentTypeMapping)">
+      <Output TaskParameter="Endpoints" ItemName="StaticWebAssetEndpoint" />
+    </DefineStaticWebAssetEndpoints>
+  </Target>
+
+</Project>
