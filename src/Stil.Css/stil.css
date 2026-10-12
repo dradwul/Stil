@@ -1,16 +1,31 @@
+/*
+ * Stil CSS
+ * Naming: every class starts with "stil-" and every custom property with "--stil-".
+ * Variants: primary, secondary, success, danger, warning, info. Sizes: sm, lg.
+ * See CONTRIBUTING.md for the full conventions.
+ */
+
+/* Tokens: override them on :root, or on any element to theme just that part of the page. */
+
+:root {
+    --stil-font-family: 'Didact Gothic', sans-serif;
+    --stil-color-primary: #34dbbf;
+    --stil-color-secondary: #a6dbd2;
+    --stil-color-success: #34db58;
+    --stil-color-danger: #db3434;
+    --stil-color-warning: #ebc444;
+    --stil-color-info: #34c2db;
+    --stil-heading-margin: 0.5rem 0;
+}
+
+/* Base: element styles, opt-in with .stil-scope (put it on <body> to style a whole app). */
+
 .stil-scope {
-    font-family: 'Didact Gothic', sans-serif;
-    --primary-color: #34dbbf;
-    --secondary-color: #a6dbd2;
-    --success-color: #34db58;
-    --error-color: #db3434;
-    --alert-color: #ebc444;
-    --info-color: #34c2db;
-    --heading-margin: 0.5rem 0;
+    font-family: var(--stil-font-family);
 }
 
 .stil-scope :is(h1, h2, h3, h4, h5, h6) {
-    margin: var(--heading-margin);
+    margin: var(--stil-heading-margin);
     letter-spacing: 0.05rem;
 }
 
@@ -20,106 +35,8 @@
 .stil-scope h4 { font-size: 0.875rem; }
 .stil-scope h5 { font-size: 0.75rem; }
 
-.stil-scope.container,
-.stil-scope .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 0.25rem;
-}
-
-.stil-scope .bttn-group {
-    display: flex;
-    gap: 0.25rem;
-    flex-wrap: wrap;
-}
-
-.stil-scope .bttn {
-    padding: 0.5rem 1rem;
-    color: white;
-    border: none;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.stil-scope .bttn.bttn-sm { padding: 0.25rem 0.5rem; font-size: 0.875rem; }
-.stil-scope .bttn.bttn-lg { padding: 0.75rem 1.5rem; font-size: 1.25rem; }
-.stil-scope .bttn:hover { filter: brightness(105%); }
-.stil-scope .bttn:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
-.stil-scope .bttn-primary { background-color: var(--primary-color); }
-.stil-scope .bttn-secondary { background-color: var(--secondary-color); }
-.stil-scope .bttn-success { background-color: var(--success-color); }
-.stil-scope .bttn-error { background-color: var(--error-color); }
-.stil-scope .bttn-alert { background-color: var(--alert-color); }
-.stil-scope .bttn-info { background-color: var(--info-color); }
-
-.stil-scope .input-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1rem;
-}
-
-.stil-scope .input-field {
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 0.25rem;
-    font-size: 1rem;
-}
-
-.stil-scope .input-group label { padding: 0.25rem; }
-
-.stil-scope .input-field:focus-visible {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
-    border-color: var(--primary-color);
-}
-
-.stil-scope.card,
-.stil-scope .card {
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 0.25rem;
-    padding: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.stil-scope .card-footer { margin-top: 1rem; text-align: right; }
-
-.stil-scope.alert,
-.stil-scope .alert {
-    padding: 1rem;
-    margin: 0.25rem 0;
-    border-radius: 0.25rem;
-    color: white;
-}
-
-.stil-scope.alert-success,
-.stil-scope .alert-success { background-color: var(--success-color); }
-.stil-scope.alert-error,
-.stil-scope .alert-error { background-color: var(--error-color); }
-.stil-scope.alert-warning,
-.stil-scope .alert-warning { background-color: var(--alert-color); }
-.stil-scope.alert-info,
-.stil-scope .alert-info { background-color: var(--info-color); }
-
-.stil-scope table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 1rem;
-}
-
-.stil-scope th,
-.stil-scope td {
-    padding: 0.5rem;
-    text-align: left;
-    border-bottom: 1px solid #e3e3e3;
-}
-
 .stil-scope a {
-    color: var(--primary-color);
+    color: var(--stil-color-primary);
     text-decoration: none;
     letter-spacing: 0.05rem;
     padding: 0.5rem;
@@ -129,7 +46,109 @@
 
 .stil-scope a:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 
-.stil-scope form {
+/* Components: work anywhere, with or without .stil-scope. */
+
+.stil-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+}
+
+.stil-btn-group {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.stil-btn {
+    padding: 0.5rem 1rem;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background-color 0.3s ease;
+}
+
+.stil-btn-sm { padding: 0.25rem 0.5rem; font-size: 0.875rem; }
+.stil-btn-lg { padding: 0.75rem 1.5rem; font-size: 1.25rem; }
+.stil-btn:hover { filter: brightness(105%); }
+.stil-btn:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.stil-btn-primary { background-color: var(--stil-color-primary); }
+.stil-btn-secondary { background-color: var(--stil-color-secondary); }
+.stil-btn-success { background-color: var(--stil-color-success); }
+.stil-btn-danger { background-color: var(--stil-color-danger); }
+.stil-btn-warning { background-color: var(--stil-color-warning); }
+.stil-btn-info { background-color: var(--stil-color-info); }
+
+.stil-form {
     display: flex;
     flex-direction: column;
+}
+
+.stil-input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.stil-input-group > label { padding: 0.25rem; }
+
+.stil-input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.stil-input:focus-visible {
+    outline: 2px solid var(--stil-color-primary);
+    outline-offset: 2px;
+    border-color: var(--stil-color-primary);
+}
+
+.stil-card {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stil-card-title {
+    margin: 0 0 0.5rem;
+    font-size: 1.25rem;
+    letter-spacing: 0.05rem;
+}
+
+.stil-card-footer { margin-top: 1rem; text-align: right; }
+
+.stil-alert {
+    padding: 1rem;
+    margin: 0.25rem 0;
+    border-radius: 0.25rem;
+    color: white;
+}
+
+.stil-alert-primary { background-color: var(--stil-color-primary); }
+.stil-alert-secondary { background-color: var(--stil-color-secondary); }
+.stil-alert-success { background-color: var(--stil-color-success); }
+.stil-alert-danger { background-color: var(--stil-color-danger); }
+.stil-alert-warning { background-color: var(--stil-color-warning); }
+.stil-alert-info { background-color: var(--stil-color-info); }
+
+.stil-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+.stil-table :is(th, td) {
+    padding: 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid #e3e3e3;
 }

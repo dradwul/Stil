@@ -6,7 +6,7 @@ namespace Stil.Blazor.Tests;
 public class StilCardTests
 {
     [Fact]
-    public void RendersHeaderAndChildContentInsideScopedCard()
+    public void RendersTitleAndChildContentInsideCard()
     {
         using var context = new BunitContext();
 
@@ -16,11 +16,10 @@ public class StilCardTests
             .AddUnmatched("data-testid", "card")
             .AddUnmatched("class", "custom-card"));
 
-        var card = cut.Find("div.card");
-        Assert.Contains("stil-scope", card.ClassList);
-        Assert.Contains("custom-card", card.ClassList);
+        var card = cut.Find("div.stil-card");
+        Assert.Equal(["stil-card", "custom-card"], card.ClassList);
         Assert.Equal("card", card.GetAttribute("data-testid"));
-        Assert.Equal("Card heading", card.QuerySelector("h2")?.TextContent);
+        Assert.Equal("Card heading", card.QuerySelector("h2.stil-card-title")?.TextContent);
         Assert.Equal("Card content", card.QuerySelector("p")?.TextContent);
     }
 

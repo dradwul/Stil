@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore Stil.sln
+
+      - name: Build
+        run: dotnet build Stil.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test Stil.sln --configuration Release --no-build
+
+      - name: Pack
+        run: dotnet pack src/Stil.Blazor --configuration Release --no-build --output artifacts
+
+      - name: Verify the package ships the stylesheet and README
+        run: |
+          unzip -l artifacts/Stil.*.nupkg | tee package-contents.txt
+          grep -q 'staticwebassets/stil.css' package-contents.txt
+          grep -q 'README.md' package-contents.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nuget-package
+          path: artifacts/*.nupkg

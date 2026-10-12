@@ -16,6 +16,7 @@ body {
 .site-header nav {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     padding: 1rem 0.5rem;
     margin-bottom: 1rem;
     color: white;
@@ -45,6 +46,7 @@ body {
 
 .component-group code {
     display: block;
+    overflow-wrap: anywhere;
     background: #ddd;
     padding: 0.25rem;
     border-radius: 0.25rem;

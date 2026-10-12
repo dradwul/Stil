@@ -6,27 +6,26 @@ namespace Stil.Blazor.Tests;
 public class StilAlertTests
 {
     [Theory]
-    [InlineData(StilAlertType.Success, "alert-success")]
-    [InlineData(StilAlertType.Error, "alert-error")]
-    [InlineData(StilAlertType.Warning, "alert-warning")]
-    [InlineData(StilAlertType.Info, "alert-info")]
-    public void RendersCorrectVariantAndScopedAlert(
-        StilAlertType type,
+    [InlineData(StilVariant.Primary, "stil-alert-primary")]
+    [InlineData(StilVariant.Secondary, "stil-alert-secondary")]
+    [InlineData(StilVariant.Success, "stil-alert-success")]
+    [InlineData(StilVariant.Danger, "stil-alert-danger")]
+    [InlineData(StilVariant.Warning, "stil-alert-warning")]
+    [InlineData(StilVariant.Info, "stil-alert-info")]
+    public void RendersVariantClassAndPassesAttributesThrough(
+        StilVariant variant,
         string variantClass)
     {
         using var context = new BunitContext();
 
         var cut = context.Render<StilAlert>(parameters => parameters
-            .Add(component => component.Type, type)
+            .Add(component => component.Variant, variant)
             .AddChildContent("Alert content")
             .AddUnmatched("aria-live", "polite")
             .AddUnmatched("class", "custom-alert"));
 
         var alert = cut.Find("[role=alert]");
-        Assert.Contains("stil-scope", alert.ClassList);
-        Assert.Contains("alert", alert.ClassList);
-        Assert.Contains(variantClass, alert.ClassList);
-        Assert.Contains("custom-alert", alert.ClassList);
+        Assert.Equal(["stil-alert", variantClass, "custom-alert"], alert.ClassList);
         Assert.Equal("polite", alert.GetAttribute("aria-live"));
         Assert.Equal("Alert content", alert.TextContent);
     }
@@ -38,6 +37,6 @@ public class StilAlertTests
 
         var cut = context.Render<StilAlert>();
 
-        Assert.Contains("alert-info", cut.Find("[role=alert]").ClassList);
+        Assert.Contains("stil-alert-info", cut.Find("[role=alert]").ClassList);
     }
 }

@@ -6,7 +6,7 @@ namespace Stil.Blazor.Tests;
 public class StilContainerTests
 {
     [Fact]
-    public void RendersChildContentInsideScopedContainer()
+    public void RendersChildContentInsideContainer()
     {
         using var context = new BunitContext();
 
@@ -15,9 +15,8 @@ public class StilContainerTests
             .AddUnmatched("data-testid", "container")
             .AddUnmatched("class", "custom-container"));
 
-        var container = cut.Find("div.container");
-        Assert.Contains("stil-scope", container.ClassList);
-        Assert.Contains("custom-container", container.ClassList);
+        var container = cut.Find("div.stil-container");
+        Assert.Equal(["stil-container", "custom-container"], container.ClassList);
         Assert.Equal("container", container.GetAttribute("data-testid"));
         Assert.Equal("Container content", container.QuerySelector("p")?.TextContent);
     }

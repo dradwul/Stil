@@ -32,7 +32,7 @@
     the NuGet package, and picked up live (no copy) when running the demo.
   -->
   <PropertyGroup>
-    <StilCssDirectory>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\Stil.Css\'))</StilCssDirectory>
+    <StilCssDirectory>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '..', 'Stil.Css'))</StilCssDirectory>
   </PropertyGroup>
 
   <Target Name="DefineStilCssStaticWebAssets" AfterTargets="ResolveProjectStaticWebAssets" Condition="'$(NoBuild)' != 'true'">

@@ -2,11 +2,12 @@
 
 Stil for Blazor is a set of themeable Blazor components built on
 [Stil CSS](https://github.com/dradwul/StilCSS/tree/main/src/Stil.Css). Each
-component renders plain HTML with Stil CSS classes, so you can mix components
-with hand-written Stil markup and restyle both with the same CSS tokens.
+component renders plain HTML with `stil-*` CSS classes. You can mix
+components with hand-written Stil markup and restyle both with the same
+`--stil-*` tokens.
 
 > **Status:** early preview (`0.1.0`, not yet on NuGet). Requires .NET 10.
-> APIs will change before `1.0`. See the
+> APIs may still change before `1.0`. See the
 > [roadmap](https://github.com/dradwul/StilCSS/blob/main/ROADMAP.md).
 
 ## Install
@@ -27,14 +28,31 @@ Add the namespace to `_Imports.razor`:
 @using Stil.Blazor.Components
 ```
 
+Optional: put `class="stil-scope"` on `<body>` so that Stil also styles the
+font, headings and links on your pages.
+
 The components work in every render mode: static SSR, Interactive Server and
 WebAssembly. No service registration or JavaScript is needed.
+
+## Naming
+
+Each component is named `Stil` + the component name and renders the
+matching CSS class:
+
+| Component | CSS class |
+| --- | --- |
+| `StilContainer` | `stil-container` |
+| `StilCard` | `stil-card` |
+| `StilAlert` | `stil-alert` |
+
+Color variants use the shared `StilVariant` enum: `Primary`, `Secondary`,
+`Success`, `Danger`, `Warning`, `Info`.
 
 ## Components
 
 ### `StilContainer`
 
-A centered layout box. It renders `<div class="stil-scope container">`.
+A centered layout box.
 
 ```razor
 <StilContainer>
@@ -44,19 +62,18 @@ A centered layout box. It renders `<div class="stil-scope container">`.
 
 ### `StilCard`
 
-A card with an optional heading. It renders
-`<div class="stil-scope card">`.
+A card with an optional title.
 
 | Parameter | Type | Description |
 | --- | --- | --- |
-| `HeaderText` | `string?` | Shown as an `<h2>` heading. Left out when empty. |
+| `HeaderText` | `string?` | Shown as `<h2 class="stil-card-title">`. Left out when empty. |
 | `ChildContent` | `RenderFragment?` | Card body. |
 
 ```razor
 <StilCard HeaderText="Profile">
     <p>Card body</p>
-    <div class="card-footer">
-        <button class="bttn bttn-primary">Save</button>
+    <div class="stil-card-footer">
+        <button class="stil-btn stil-btn-primary">Save</button>
     </div>
 </StilCard>
 ```
@@ -67,11 +84,11 @@ A colored message box with `role="alert"`.
 
 | Parameter | Type | Description |
 | --- | --- | --- |
-| `Type` | `StilAlertType` | `Success`, `Error`, `Warning` or `Info`. The default is `Info`. |
+| `Variant` | `StilVariant` | The color. The default is `Info`. |
 | `ChildContent` | `RenderFragment?` | Message content. |
 
 ```razor
-<StilAlert Type="StilAlertType.Error">Something went wrong.</StilAlert>
+<StilAlert Variant="StilVariant.Danger">Something went wrong.</StilAlert>
 ```
 
 ### Extra HTML attributes
@@ -82,19 +99,17 @@ component's own classes, not used in place of them:
 
 ```razor
 <StilCard class="profile-card" id="profile" aria-label="Profile card" />
-@* renders class="stil-scope card profile-card" *@
+@* renders class="stil-card profile-card" *@
 ```
 
 ### Plain CSS classes
 
-Buttons, inputs, tables and forms do not have components yet. Use the Stil
-CSS classes inside any Stil component, or inside an element with
-`class="stil-scope"`:
+Buttons, inputs, tables and forms do not have components yet (they are
+planned as `StilButton`, `StilTextBox`, …). Until then, use the Stil CSS
+classes directly. They work anywhere:
 
 ```razor
-<div class="stil-scope">
-    <button class="bttn bttn-primary" @onclick="Save">Save</button>
-</div>
+<button class="stil-btn stil-btn-primary" @onclick="Save">Save</button>
 ```
 
 See the [Stil CSS class reference](https://github.com/dradwul/StilCSS/tree/main/src/Stil.Css#classes).
@@ -104,18 +119,20 @@ See the [Stil CSS class reference](https://github.com/dradwul/StilCSS/tree/main/
 Override the tokens after the Stil stylesheet, for example in `wwwroot/app.css`:
 
 ```css
-.stil-scope {
-    --primary-color: #6741d9;
-    --error-color: #c92a2a;
-    font-family: system-ui, sans-serif;
+:root {
+    --stil-color-primary: #6741d9;
+    --stil-color-danger: #c92a2a;
+    --stil-font-family: system-ui, sans-serif;
 }
 ```
 
+Tokens set on a wrapper element apply only to the components inside it.
 See the [full token list](https://github.com/dradwul/StilCSS/tree/main/src/Stil.Css#theming).
 
 ## Development
 
 The component source is in this folder. The tests are in
 `tests/Stil.Blazor.Tests`, and a runnable demo is in `samples/Stil.Demo`.
-The stylesheet is linked from `src/Stil.Css/stil.css` at build time. Make
-style changes there, not here.
+The stylesheet is served directly from `src/Stil.Css/stil.css`. Make style
+changes there. Naming rules are in
+[CONTRIBUTING.md](https://github.com/dradwul/StilCSS/blob/main/CONTRIBUTING.md).

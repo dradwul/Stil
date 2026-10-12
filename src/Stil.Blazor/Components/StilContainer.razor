@@ -9,5 +9,5 @@
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
-    private string CssClass => StilCssClasses.Merge("stil-scope container", AdditionalAttributes);
+    private string CssClass => StilCssClasses.Merge("stil-container", AdditionalAttributes);
 }
