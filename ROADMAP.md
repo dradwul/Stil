@@ -5,20 +5,25 @@ plus a Blazor component library built on it that can replace Radzen or
 Blazorise. Each phase ends with something usable. Phases 2 and 3 can overlap
 once Phase 1 is done.
 
-## Where we are (0.1.0, Phase 0 done)
+## Where we are (0.1.0, Phases 0 and 1 done)
 
-- **CSS:** a single stylesheet with `--stil-*` tokens on `:root` for six
-  colors, the font and heading spacing. It has `stil-*` classes for
-  container, button, form, input, card, alert and table. Base element styles
-  (font, headings, links) apply only inside `.stil-scope`.
+- **CSS:** a single stylesheet in cascade layers. It has a full `--stil-*`
+  token set on `:root` (colors, neutrals, typography, spacing, shape, focus,
+  z-index, motion), light and dark mode through `data-stil-theme`, and
+  derived colors that stay WCAG AA readable for any brand color. It has
+  `stil-*` classes for container, button, form, input, card, alert and
+  table, plus `stil-bg-*`. Base element styles (font, text color, headings,
+  links) apply only inside `.stil-scope`.
 - **Blazor:** `StilContainer`, `StilCard` and `StilAlert`, plus the shared
   `StilVariant` enum. Extra HTML attributes are passed through and `class`
   values are merged. The library has 12 bUnit tests.
 - **Samples:** a plain-HTML showcase and a Blazor demo that shows the same
   sections.
 - **Groundwork:** naming rules, scope model and browser support are recorded
-  in [CONTRIBUTING.md](CONTRIBUTING.md). CI builds, tests and packs on every
-  push and pull request.
+  in [CONTRIBUTING.md](CONTRIBUTING.md). CI checks contrast, then builds,
+  tests and packs on every push and pull request.
+- **Samples:** both showcases have a theme picker (light, dark or auto, and
+  four palettes).
 
 ### Known issues found in review
 
@@ -26,11 +31,11 @@ once Phase 1 is done.
 | --- | --- | --- |
 | 1 | Every component set its own `.stil-scope`, which declared the tokens again, so a theme on a wrapper element never reached the components. | ✅ Fixed in Phase 0: tokens are on `:root` and components no longer add `.stil-scope`. |
 | 2 | Token names had no prefix (`--primary-color`). | ✅ Fixed in Phase 0: all tokens are `--stil-*`. |
-| 3 | White text has 1.5–2.1:1 contrast on every default color except danger (4.6:1). WCAG AA requires at least 4.5:1. | Phase 1 |
+| 3 | White text had 1.5–2.1:1 contrast on every default color except danger. | ✅ Fixed in Phase 1: text on colors is picked automatically (at least 4.58:1), and CI checks every token pair. |
 | 4 | The variant names were mixed (`error`/`alert`/`warning`/"Danger"). | ✅ Fixed in Phase 0: `primary`, `secondary`, `success`, `danger`, `warning` and `info` everywhere. |
-| 5 | Neutral colors are hard-coded (`#ccc`, `#fff`, `#e3e3e3`, `white`), so dark mode is impossible. | Phase 1 |
+| 5 | Neutral colors were hard-coded (`#ccc`, `#fff`, `#e3e3e3`, `white`), so dark mode was impossible. | ✅ Fixed in Phase 1: all colors are tokens, and neutrals use `light-dark()`. |
 | 6 | `a` inside `.stil-scope` gets padding, so inline links in text shift. | Phase 2 (`form` became the `stil-form` class in Phase 0) |
-| 7 | No cascade layers, so app CSS has to win on specificity. Component selectors dropped from (0,2,0) to (0,1,0) in Phase 0. | Phase 1 |
+| 7 | There were no cascade layers, so app CSS had to win on specificity. | ✅ Fixed in Phase 1: every rule is in a `stil.*` layer, so unlayered app CSS always wins. |
 | 8 | `StilCard` always renders an `<h2>`. `StilAlert` always has `role="alert"`, which screen readers interrupt for even when the message is static. | Phase 3 |
 | 9 | `samples/Stil.Demo/Components/Pages/Home.razor` copies the HTML showcase by hand, so the two will drift apart. | Phase 5 |
 | 10 | There was no CI, and nobody had checked the package names. | ✅ Fixed in Phase 0: CI added. `Stil` is free on NuGet and `stil-css` is free on npm. |
@@ -49,36 +54,47 @@ once Phase 1 is done.
 - [ ] Rename the GitHub repository from `StilCSS` to `Stil` (needs the repo
   owner), then update the links in `src/Stil.Blazor/README.md`.
 
-## Phase 1: Tokens and theming engine
+## Phase 1: Tokens and theming engine ✅
 
-Make theming the library's strongest feature.
+- [x] Full token set on `:root`:
+  - Semantic colors, plus optional `--stil-color-{variant}-contrast` and
+    `--stil-color-accent` overrides.
+  - Neutrals (body background, surface, muted surface, text, muted text,
+    border, strong border).
+  - Font sizes, spacing scale, radius, shadow, focus ring, z-index and
+    motion. Motion is turned off under `prefers-reduced-motion`.
+- [x] Derived colors are computed where they are used, so a theme on any
+  wrapper reaches them: automatic text color on colored backgrounds, an
+  accent for links and focus rings, and hover shades. This replaces the
+  planned fixed color scale per brand color. A full 50–900 scale can be
+  added in Phase 2 if the utilities need it.
+- [x] Every rule is in `@layer stil.tokens, stil.reset, stil.base,
+  stil.components, stil.utilities`.
+- [x] Light and dark mode through `data-stil-theme="light|dark|auto"` and
+  `light-dark()`. Stil defaults to light, so it never switches a host page
+  to dark on its own.
+- [x] `tools/check-contrast.mjs` checks all token pairs and the derived
+  colors for WCAG AA in CI.
+- [x] No hard-coded colors left in components or in the showcase styles.
+- [x] The `stil-bg-{variant}` utilities were brought forward from Phase 2.
 
-- [ ] Expand the token set on `:root`:
-  - Color scale per brand color.
-  - Semantic colors, each with a matching `--stil-color-{variant}-contrast`
-    text color.
-  - Neutrals (surface, border, text, muted).
-  - Spacing scale, radius, shadow, font sizes, z-index, motion.
-- [ ] Wrap all CSS in `@layer stil.reset, stil.base, stil.components, stil.utilities`
-  so that any unlayered app CSS wins over Stil.
-- [ ] Dark mode via `prefers-color-scheme`, plus `data-stil-theme="light|dark"`
-  to force a mode.
-- [ ] Default palette meets WCAG AA. Add a contrast check to CI.
-- [ ] Replace every hard-coded color with a token (fixes known issues 3, 5 and 7).
-
-**Done when:** changing three or four tokens re-themes the showcase and the
-demo completely, in both light and dark mode.
+**Verified:** switching a palette (two tokens) and the mode re-themes both
+showcases. Tested in the browser with teal, purple and sunset palettes in
+light and dark mode. In the Blazor demo, the host footer outside the themed
+`<main>` stays unchanged.
 
 ## Phase 2: Stil CSS 1.0 (Bootstrap replacement)
 
-- [ ] Split the source into partials (reset, base, layout, components,
+- [ ] Split the source into partials (tokens, reset, base, layout, components,
   utilities). Build `dist/stil.css` and `dist/stil.min.css` with Lightning CSS
   or PostCSS.
+- [ ] Fill the empty `stil.reset` layer: box-sizing, margins, and font
+  inheritance for form elements.
 - [ ] Layout: 12-column grid, `stack`/`cluster` helpers, and
   responsive breakpoints (`sm`, `md`, `lg`, `xl`).
 - [ ] Utility classes (`stil-mt-2`, `stil-d-flex`, …): spacing, display,
   flex and grid, gap, text, color, sizing, borders and visibility, with
-  responsive variants.
+  responsive variants. `stil-bg-*` already exists.
 - [ ] Components:
   - Buttons: solid, outline and ghost styles; sizes; disabled and loading
     states.

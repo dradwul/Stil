@@ -35,11 +35,48 @@ The sizes are `sm` and `lg`. Medium is the default and has no class.
 
 ### CSS custom properties (tokens)
 
-Every custom property starts with `--stil-` and follows
+Every public custom property starts with `--stil-` and follows
 `--stil-{category}-{name}[-{variant}]`, for example `--stil-color-primary`,
-`--stil-font-family` or `--stil-heading-margin`. Tokens are declared on
-`:root`. Components read them and never declare them, so a theme set on any
-ancestor element reaches everything inside it.
+`--stil-space-4` or `--stil-radius-md`. Tokens are declared on `:root`.
+Components read them and never declare them, so a theme set on any ancestor
+element reaches everything inside it.
+
+- Neutral colors are written as `light-dark(light, dark)`. Brand and
+  semantic colors are the same in both modes.
+- Never use a hard-coded color in a component. If no token fits, add one.
+- **Derived colors are computed where they are used, never on `:root`.** A
+  custom property that refers to another one is resolved on the element that
+  declares it, so a value derived on `:root` would ignore a theme set on a
+  wrapper. Examples are text on a colored background, the accent and hover
+  shades. Put the formula in the `stil.tokens` layer, on a selector that
+  lists every element that uses it (see `--_fg` and `--_accent`).
+- Every derived color gets a public override token as the first choice:
+  `var(--stil-color-accent, <formula>)`.
+
+### Private custom properties
+
+Custom properties starting with `--_` (`--_bg`, `--_fg`, `--_contrast`,
+`--_accent`) are internal to Stil and can change at any time.
+
+- A component sets defaults for every private property it reads, so it
+  never inherits one from a colored ancestor. For example, a plain
+  `stil-btn` inside a `stil-alert-danger` must not turn red.
+- Variant rules come after the component's base rule, so they override
+  those defaults.
+
+### Cascade layers
+
+All rules live in `@layer stil.tokens, stil.reset, stil.base,
+stil.components, stil.utilities`. Any unlayered CSS in the host app wins
+over Stil, so users can override without fighting specificity. Never use
+`!important` in Stil.
+
+### Color modes
+
+Stil renders light unless `data-stil-theme` is set to `light`, `dark` or
+`auto` on an element. This keeps Stil from switching a host page to dark by
+accident. Components must look right in both modes, so check both in the
+showcases (each has a theme picker).
 
 ### Blazor components
 
@@ -81,8 +118,8 @@ Stil targets the latest two versions of Chrome, Edge, Firefox and Safari,
 including iOS Safari. There is no Internet Explorer and no legacy Edge.
 
 Features available in all of these can be used freely, including `@layer`,
-`:is()`/`:where()`, `color-mix()`, custom properties, native `<dialog>` and
-the Popover API. Check anything newer on [Baseline](https://web.dev/baseline)
+`:is()`/`:where()`, `color-mix()`, `light-dark()`, relative color syntax
+(`color(from …)`), custom properties, native `<dialog>` and the Popover API. Check anything newer on [Baseline](https://web.dev/baseline)
 first.
 
 ## Package names
@@ -100,10 +137,13 @@ first.
    `samples/Stil.Demo`.
 3. Every Blazor component gets bUnit tests in `tests/Stil.Blazor.Tests`
    and an example in the demo.
-4. Run `dotnet build Stil.sln` and `dotnet test Stil.sln` before pushing. CI
-   (`.github/workflows/ci.yml`) runs build, test and pack on every push to
-   `main` and on every pull request, and fails if the package is missing the
-   stylesheet.
-5. Commit messages follow
+4. Run `dotnet build Stil.sln`, `dotnet test Stil.sln` and
+   `node tools/check-contrast.mjs` before pushing. CI
+   (`.github/workflows/ci.yml`) runs the same checks plus pack on every push
+   to `main` and on every pull request. It fails if a token pair drops below
+   WCAG AA or if the package is missing the stylesheet.
+5. When you change a color formula in `stil.css`, update the mirror of it
+   in `tools/check-contrast.mjs`. The script fails if the two drift apart.
+6. Commit messages follow
    [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`,
    `fix:`, `docs:`, `test:`, `chore:`).

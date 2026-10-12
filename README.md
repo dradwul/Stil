@@ -43,7 +43,11 @@ Blazor:
 </StilCard>
 ```
 
-Your own theme:
+Your own theme, with dark mode that follows the OS:
+
+```html
+<html data-stil-theme="auto">
+```
 
 ```css
 :root {
@@ -51,6 +55,9 @@ Your own theme:
     --stil-color-secondary: #d0bfff;
 }
 ```
+
+Text on colored surfaces, links and focus rings adapt automatically and stay
+WCAG AA readable. Both showcases include a theme picker, so you can try it.
 
 ## Repository layout
 
@@ -62,6 +69,7 @@ src/Stil.Blazor/     Stil for Blazor: Razor class library, packed as NuGet "Stil
 samples/Stil.Html/   Plain-HTML showcase of every CSS class (no build needed)
 samples/Stil.Demo/   Blazor web app showing the components
 tests/               bUnit/xUnit tests for the Blazor components
+tools/               check-contrast.mjs: WCAG contrast check run by CI
 CONTRIBUTING.md      Naming rules, scope model, browser support, workflow
 ROADMAP.md           Phase plan
 Stil.sln             Solution with library, demo and tests
@@ -72,11 +80,13 @@ The Blazor project does not keep its own copy of the stylesheet. It serves
 
 ## Develop
 
-Requires the [.NET 10 SDK](https://dotnet.microsoft.com/download).
+Requires the [.NET 10 SDK](https://dotnet.microsoft.com/download) and Node.js (for the
+contrast check).
 
 ```shell
 dotnet build Stil.sln
 dotnet test Stil.sln
+node tools/check-contrast.mjs
 ```
 
 Run the Blazor demo and open <http://localhost:5100>:

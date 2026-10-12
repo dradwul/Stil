@@ -6,8 +6,8 @@ h1:focus {
     min-height: 100vh;
     padding: 0;
     box-sizing: border-box;
-    background-color: #34dbbf;
-    font-family: 'Didact Gothic', sans-serif;
+    background-color: var(--stil-color-primary);
+    font-family: var(--stil-font-family);
 }
 
 .site-container {
@@ -32,11 +32,10 @@ h1:focus {
     gap: 0.5rem;
     padding: 1rem 0.5rem;
     margin-bottom: 1rem;
-    color: white;
 }
 
 .site-header a {
-    color: white;
+    color: inherit;
     text-decoration: none;
     padding: 0.5rem;
     border-radius: 0.25rem;
@@ -46,7 +45,18 @@ h1:focus {
 }
 
 .site-header a:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.theme-picker {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
+.theme-picker .stil-input {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
 }
 
 .component-group {
@@ -55,7 +65,8 @@ h1:focus {
     gap: 0.25rem;
     margin-bottom: 1rem;
     padding: 0.75rem;
-    background: #eee;
+    background: var(--stil-color-surface-muted);
+    color: var(--stil-color-text);
 }
 
 .component-group code {
@@ -63,15 +74,15 @@ h1:focus {
     overflow-wrap: anywhere;
     padding: 0.25rem;
     border-radius: 0.25rem;
-    background: #ddd;
+    background: var(--stil-color-surface-muted);
     font-size: 0.875rem;
 }
 
 .component-group-code-example {
     padding: 0.5rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--stil-color-border);
     border-radius: 0.25rem;
-    background: #fff;
+    background: var(--stil-color-surface);
 }
 
 .component-group-code-example-content {
@@ -79,7 +90,7 @@ h1:focus {
     flex-direction: column;
     padding: 0.5rem;
     border-radius: 0.25rem;
-    background: #f9f9f9;
+    background: var(--stil-color-body-bg);
 }
 
 .component-group-code-example-outcome {
@@ -89,7 +100,7 @@ h1:focus {
     margin-top: 0.5rem;
     padding: 0.5rem;
     border-radius: 0.25rem;
-    background: #f9f9f9;
+    background: var(--stil-color-body-bg);
 }
 
 .component-group-code-example-outcome > span {

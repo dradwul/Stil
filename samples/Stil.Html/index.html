@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme-target data-stil-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,7 +12,7 @@
 </head>
 <body>
     <div class="stil-scope site-container">
-        <div class="site-header">
+        <div class="site-header stil-bg-primary">
             <img src="../../assets/stil-logo.svg" alt="Stil logo" class="logo" style="max-width:200px;margin-bottom:1rem;">
             <nav aria-label="Component sections">
                 <a href="#buttons">Buttons</a>
@@ -21,6 +21,19 @@
                 <a href="#alerts">Alerts</a>
                 <a href="#typography">Typography</a>
                 <a href="#tables">Tables</a>
+                <div class="theme-picker">
+                    <select class="stil-input" data-theme-mode aria-label="Color mode">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                        <option value="auto">Auto (OS)</option>
+                    </select>
+                    <select class="stil-input" data-theme-palette aria-label="Palette">
+                        <option value="teal">Teal (default)</option>
+                        <option value="purple">Purple</option>
+                        <option value="forest">Forest</option>
+                        <option value="sunset">Sunset</option>
+                    </select>
+                </div>
             </nav>
         </div>
 
@@ -69,21 +82,21 @@
         <div class="component-group">
             <h1>Colors</h1>
             <div class="component-group-code-example">
-                <code>&lt;div class="color-swatch" style="background-color: var(--stil-color-primary);"&gt;Primary&lt;/div&gt;</code>
-                <code>&lt;div class="color-swatch" style="background-color: var(--stil-color-secondary);"&gt;Secondary&lt;/div&gt;</code>
-                <code>&lt;div class="color-swatch" style="background-color: var(--stil-color-success);"&gt;Success&lt;/div&gt;</code>
-                <code>&lt;div class="color-swatch" style="background-color: var(--stil-color-danger);"&gt;Danger&lt;/div&gt;</code>
-                <code>&lt;div class="color-swatch" style="background-color: var(--stil-color-warning);"&gt;Warning&lt;/div&gt;</code>
-                <code>&lt;div class="color-swatch" style="background-color: var(--stil-color-info);"&gt;Info&lt;/div&gt;</code>
+                <code>&lt;div class="color-swatch stil-bg-primary"&gt;Primary&lt;/div&gt;</code>
+                <code>&lt;div class="color-swatch stil-bg-secondary"&gt;Secondary&lt;/div&gt;</code>
+                <code>&lt;div class="color-swatch stil-bg-success"&gt;Success&lt;/div&gt;</code>
+                <code>&lt;div class="color-swatch stil-bg-danger"&gt;Danger&lt;/div&gt;</code>
+                <code>&lt;div class="color-swatch stil-bg-warning"&gt;Warning&lt;/div&gt;</code>
+                <code>&lt;div class="color-swatch stil-bg-info"&gt;Info&lt;/div&gt;</code>
             </div>
             <div class="component-group-code-example-outcome">
                 <span>Outcome:</span>
-                <div class="color-swatch" style="background-color: var(--stil-color-primary);">Primary</div>
-                <div class="color-swatch" style="background-color: var(--stil-color-secondary);">Secondary</div>
-                <div class="color-swatch" style="background-color: var(--stil-color-success);">Success</div>
-                <div class="color-swatch" style="background-color: var(--stil-color-danger);">Danger</div>
-                <div class="color-swatch" style="background-color: var(--stil-color-warning);">Warning</div>
-                <div class="color-swatch" style="background-color: var(--stil-color-info);">Info</div>
+                <div class="color-swatch stil-bg-primary">Primary</div>
+                <div class="color-swatch stil-bg-secondary">Secondary</div>
+                <div class="color-swatch stil-bg-success">Success</div>
+                <div class="color-swatch stil-bg-danger">Danger</div>
+                <div class="color-swatch stil-bg-warning">Warning</div>
+                <div class="color-swatch stil-bg-info">Info</div>
             </div>
         </div>
 
@@ -284,5 +297,6 @@
         </div>
 
     </div>
+    <script src="theme-picker.js"></script>
 </body>
 </html>

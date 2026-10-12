@@ -116,7 +116,8 @@ See the [Stil CSS class reference](https://github.com/dradwul/StilCSS/tree/main/
 
 ## Theming
 
-Override the tokens after the Stil stylesheet, for example in `wwwroot/app.css`:
+Override the tokens in your own CSS, for example in `wwwroot/app.css`.
+Stil's rules live in cascade layers, so your CSS always wins:
 
 ```css
 :root {
@@ -126,8 +127,18 @@ Override the tokens after the Stil stylesheet, for example in `wwwroot/app.css`:
 }
 ```
 
-Tokens set on a wrapper element apply only to the components inside it.
-See the [full token list](https://github.com/dradwul/StilCSS/tree/main/src/Stil.Css#theming).
+Text on colored components, link colors and focus rings are derived from
+these tokens and stay WCAG AA readable. Tokens set on a wrapper element apply
+only to the components inside it.
+
+For dark mode, set `data-stil-theme` to `light`, `dark` or `auto`, either on
+`<html>` in `App.razor` or on any element:
+
+```razor
+<html lang="en" data-stil-theme="auto">
+```
+
+See the [theming guide and full token list](https://github.com/dradwul/StilCSS/tree/main/src/Stil.Css#theming).
 
 ## Development
 
