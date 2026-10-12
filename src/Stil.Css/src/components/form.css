@@ -1,0 +1,274 @@
+/* Forms: fields, text inputs, selects, checkboxes, radios, switches and input groups. */
+
+.stil-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stil-space-4);
+}
+
+/* A label, a control and optional hint or error text. */
+.stil-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stil-space-1);
+}
+
+.stil-label { color: var(--stil-color-text); }
+
+.stil-field-hint {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+}
+
+.stil-field-error {
+    --_bg: var(--stil-color-danger);
+    color: var(--_ink);
+    font-size: var(--stil-font-size-sm);
+}
+
+/* Text inputs, textareas and selects. */
+.stil-input,
+.stil-select {
+    display: block;
+    width: 100%;
+    padding: var(--stil-space-2) var(--stil-space-3);
+    border: 1px solid var(--stil-color-border-strong);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+    font-family: inherit;
+    font-size: var(--stil-font-size-md);
+    line-height: var(--stil-line-height);
+    transition: border-color var(--stil-duration-fast) var(--stil-easing);
+}
+
+textarea.stil-input {
+    min-height: 5rem;
+    resize: vertical;
+}
+
+.stil-input::placeholder {
+    color: var(--stil-color-text-muted);
+    opacity: 1;
+}
+
+/* The select arrow is drawn with gradients in the current text color, so it follows the theme. */
+.stil-select {
+    padding-inline-end: 2.25rem;
+    background-image:
+        linear-gradient(45deg, transparent 50%, currentColor 50%),
+        linear-gradient(135deg, currentColor 50%, transparent 50%);
+    background-position:
+        calc(100% - 1.1rem) 55%,
+        calc(100% - 0.75rem) 55%;
+    background-size: 0.35rem 0.35rem;
+    background-repeat: no-repeat;
+    appearance: none;
+}
+
+.stil-select:is([multiple], [size]:not([size="1"])) {
+    padding-inline-end: var(--stil-space-3);
+    background-image: none;
+}
+
+.stil-input-sm,
+.stil-select-sm {
+    padding-block: var(--stil-space-1);
+    font-size: var(--stil-font-size-sm);
+}
+
+.stil-input-lg,
+.stil-select-lg {
+    padding-block: var(--stil-space-3);
+    font-size: var(--stil-font-size-lg);
+}
+
+.stil-input:focus-visible,
+.stil-select:focus-visible {
+    border-color: var(--_accent);
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: 0;
+}
+
+.stil-input:disabled,
+.stil-select:disabled {
+    background-color: var(--stil-color-surface-muted);
+    color: var(--stil-color-text-muted);
+    cursor: not-allowed;
+}
+
+/* Validation: aria-invalid="true" (Blazor's input components set it automatically). */
+.stil-input[aria-invalid="true"],
+.stil-select[aria-invalid="true"] {
+    --_bg: var(--stil-color-danger);
+    border-color: var(--_ink);
+}
+
+.stil-input[aria-invalid="true"]:focus-visible,
+.stil-select[aria-invalid="true"]:focus-visible {
+    outline-color: var(--_ink);
+}
+
+/* Checkboxes and radios: <label class="stil-check"><input class="stil-check-input" …> Text</label> */
+.stil-check {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--stil-space-2);
+    cursor: pointer;
+}
+
+.stil-check-input {
+    --_bg: var(--_accent);
+    --_contrast: initial;
+    display: inline-grid;
+    flex: none;
+    place-content: center;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin: 0.1875rem 0 0;
+    border: 1px solid var(--stil-color-border-strong);
+    border-radius: var(--stil-radius-sm);
+    background-color: var(--stil-color-surface);
+    cursor: pointer;
+    appearance: none;
+    transition: background-color var(--stil-duration-fast) var(--stil-easing);
+}
+
+.stil-check-input[type="radio"] { border-radius: 50%; }
+
+.stil-check-input::before {
+    content: "";
+    width: 0.75rem;
+    height: 0.75rem;
+    background-color: var(--_fg);
+    transform: scale(0);
+    transition: transform var(--stil-duration-fast) var(--stil-easing);
+    mask: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M3.5 8.5l3 3 6-7'/%3e%3c/svg%3e") center / contain no-repeat;
+}
+
+.stil-check-input[type="checkbox"]:indeterminate::before {
+    mask-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath stroke='black' stroke-linecap='round' stroke-width='2.5' d='M4 8h8'/%3e%3c/svg%3e");
+}
+
+.stil-check-input[type="radio"]::before {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    mask: none;
+}
+
+.stil-check-input:is(:checked, [type="checkbox"]:indeterminate) {
+    border-color: var(--_bg);
+    background-color: var(--_bg);
+}
+
+.stil-check-input:is(:checked, [type="checkbox"]:indeterminate)::before { transform: scale(1); }
+
+/* Switch: <input type="checkbox" role="switch" class="stil-switch"> */
+.stil-switch {
+    --_bg: var(--_accent);
+    --_contrast: initial;
+    position: relative;
+    flex: none;
+    width: 2.25rem;
+    height: 1.25rem;
+    margin: 0.125rem 0 0;
+    border: 1px solid var(--stil-color-border-strong);
+    border-radius: var(--stil-radius-pill);
+    background-color: var(--stil-color-surface-muted);
+    cursor: pointer;
+    appearance: none;
+    transition: background-color var(--stil-duration-fast) var(--stil-easing);
+}
+
+.stil-switch::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0.125rem;
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 50%;
+    background-color: var(--stil-color-border-strong);
+    translate: 0 -50%;
+    transition: translate var(--stil-duration-fast) var(--stil-easing);
+}
+
+.stil-switch:checked {
+    border-color: var(--_bg);
+    background-color: var(--_bg);
+}
+
+.stil-switch:checked::before {
+    background-color: var(--_fg);
+    translate: 1rem -50%;
+}
+
+.stil-check-input:focus-visible,
+.stil-switch:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+}
+
+.stil-check-input[aria-invalid="true"],
+.stil-switch[aria-invalid="true"] {
+    --_bg: var(--stil-color-danger);
+    border-color: var(--_ink);
+}
+
+.stil-check:has(:disabled),
+.stil-check-input:disabled,
+.stil-switch:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* Input group: inputs, selects, buttons and text add-ons joined into one control. */
+.stil-input-group {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+}
+
+.stil-input-group > :is(.stil-input, .stil-select) {
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+}
+
+.stil-input-group-text {
+    display: flex;
+    align-items: center;
+    padding: var(--stil-space-2) var(--stil-space-3);
+    border: 1px solid var(--stil-color-border-strong);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface-muted);
+    color: var(--stil-color-text-muted);
+    white-space: nowrap;
+}
+
+.stil-input-group > :not(:first-child) {
+    margin-inline-start: -1px;
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+}
+
+.stil-input-group > :not(:last-child) {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+}
+
+.stil-input-group > :focus-visible {
+    position: relative;
+    z-index: 1;
+}
+
+.stil-input-group-sm > :is(.stil-input, .stil-select, .stil-input-group-text, .stil-btn) {
+    padding-block: var(--stil-space-1);
+    font-size: var(--stil-font-size-sm);
+}
+
+/* In a row (cluster, navbar, card header) controls size to their content instead of 100%. */
+:is(.stil-cluster, .stil-navbar, .stil-navbar-end, .stil-card-header) > :is(.stil-input, .stil-select, .stil-input-group) {
+    width: auto;
+}

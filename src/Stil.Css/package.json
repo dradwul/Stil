@@ -1,0 +1,38 @@
+{
+  "name": "stil-css",
+  "version": "0.1.0",
+  "description": "A themeable, framework-independent CSS class library with dark mode and WCAG AA colors.",
+  "keywords": ["css", "framework", "design-system", "theme", "dark-mode", "components", "utilities"],
+  "homepage": "https://github.com/dradwul/StilCSS/tree/main/src/Stil.Css#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dradwul/StilCSS.git",
+    "directory": "src/Stil.Css"
+  },
+  "license": "MIT",
+  "author": "Ludvig Andersson",
+  "style": "dist/stil.css",
+  "main": "dist/stil.css",
+  "exports": {
+    ".": "./dist/stil.css",
+    "./min": "./dist/stil.min.css",
+    "./dist/*": "./dist/*"
+  },
+  "files": ["dist", "src", "README.md"],
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Edge versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions",
+    "last 2 iOS versions"
+  ],
+  "scripts": {
+    "build": "node build/build.mjs",
+    "watch": "node build/build.mjs --watch",
+    "check": "node build/build.mjs --check && node ../../tools/check-contrast.mjs"
+  },
+  "devDependencies": {
+    "browserslist": "4.29.3",
+    "lightningcss": "1.33.0"
+  }
+}

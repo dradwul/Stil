@@ -16,8 +16,19 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Check color contrast (WCAG AA)
-        run: node tools/check-contrast.mjs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: src/Stil.Css/package-lock.json
+
+      - name: Install CSS build tools
+        working-directory: src/Stil.Css
+        run: npm ci
+
+      - name: Check that dist/ matches the sources
+        working-directory: src/Stil.Css
+        run: npm run check
 
       - name: Restore
         run: dotnet restore Stil.sln

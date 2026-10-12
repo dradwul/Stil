@@ -6,28 +6,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stil</title>
     <link rel="stylesheet" href="showcase.css">
-    
+
     <!-- Optional showcase font -->
     <link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="stil-scope site-container">
         <div class="site-header stil-bg-primary">
-            <img src="../../assets/stil-logo.svg" alt="Stil logo" class="logo" style="max-width:200px;margin-bottom:1rem;">
+            <img src="../../assets/stil-logo.svg" alt="Stil" width="200" height="98" class="stil-mb-4">
             <nav aria-label="Component sections">
+                <a href="#layout">Layout</a>
+                <a href="#typography">Typography</a>
+                <a href="#colors">Colors</a>
                 <a href="#buttons">Buttons</a>
-                <a href="#inputs">Inputs</a>
+                <a href="#forms">Forms</a>
                 <a href="#cards">Cards</a>
                 <a href="#alerts">Alerts</a>
-                <a href="#typography">Typography</a>
+                <a href="#badges">Badges</a>
                 <a href="#tables">Tables</a>
+                <a href="#navigation">Navigation</a>
+                <a href="#navbar">Navbar</a>
+                <a href="#breadcrumb">Breadcrumb</a>
+                <a href="#pagination">Pagination</a>
+                <a href="#tabs">Tabs</a>
+                <a href="#dialog">Dialog</a>
+                <a href="#dropdown">Dropdown</a>
+                <a href="#tooltip">Tooltip</a>
+                <a href="#progress">Progress</a>
+                <a href="#spinner">Spinner</a>
+                <a href="#toasts">Toasts</a>
+                <a href="#utilities">Utilities</a>
                 <div class="theme-picker">
-                    <select class="stil-input" data-theme-mode aria-label="Color mode">
+                    <select class="stil-select stil-select-sm" data-theme-mode aria-label="Color mode">
                         <option value="light">Light</option>
                         <option value="dark">Dark</option>
                         <option value="auto">Auto (OS)</option>
                     </select>
-                    <select class="stil-input" data-theme-palette aria-label="Palette">
+                    <select class="stil-select stil-select-sm" data-theme-palette aria-label="Palette">
                         <option value="teal">Teal (default)</option>
                         <option value="purple">Purple</option>
                         <option value="forest">Forest</option>
@@ -37,266 +52,1037 @@
             </nav>
         </div>
 
-        <div class="component-group">
+        <section class="component-group" id="layout">
             <h1>Layout</h1>
-            <div class="component-group-code-example">
-                <code>&lt;div class="stil-container"&gt;</code>
-                <div class="component-group-code-example-content">
-                    <span>This is a simple container.</span>
-                </div>
-                <code>&lt;/div&gt;</code>
-            </div>
-            <div class="component-group-code-example-outcome">
-                <span>Outcome:</span>
-                <div class="stil-container">
-                    <p>This is a simple container.</p>
-                </div>
-            </div>
-        </div>
+            <p>Layout classes place content on the page: a centered container, a 12-column grid, stacks, clusters and a sidebar shell. All of them are mobile first.</p>
 
-        <div class="component-group">
-            <h1>Navigation</h1>
-            <div class="component-group-code-example">
-                <code>&lt;nav&gt;</code>
-                <div class="component-group-code-example-content">
-                    <span>&lt;a href="#"&gt;Home&lt;/a&gt;</span>
-                    <span>&lt;a href="#"&gt;About&lt;/a&gt;</span>
-                    <span>&lt;a href="#"&gt;Services&lt;/a&gt;</span>
-                    <span>&lt;a href="#"&gt;Contact&lt;/a&gt;</span>
+            <h2>Container</h2>
+            <p>A centered block with a maximum width (<code>--stil-container-max</code>) and side padding.</p>
+            <div class="example">
+                <div class="stil-container stil-bg-muted stil-py-3 stil-rounded">
+                    Content in a container.
                 </div>
-                <code>&lt;/nav&gt;</code>
             </div>
 
-            <!-- Example outcome of navigation -->
-            <div class="component-group-code-example-outcome">
-                <span>Outcome:</span>
-                <nav>
-                    <a href="#">Home</a>
-                    <a href="#">About</a>
-                    <a href="#">Services</a>
-                    <a href="#">Contact</a>
-                </nav>
+            <h2>Grid</h2>
+            <p>Children of <code>stil-grid</code> span all 12 columns until a <code>stil-col-*</code> class says otherwise. Add <code>stil-col-{sm|md|lg|xl}-*</code> to change the span from a breakpoint up.</p>
+            <div class="example">
+                <div class="stil-grid">
+                    <div class="stil-col-4 stil-bg-muted stil-p-2 stil-rounded">stil-col-4</div>
+                    <div class="stil-col-4 stil-bg-muted stil-p-2 stil-rounded">stil-col-4</div>
+                    <div class="stil-col-4 stil-bg-muted stil-p-2 stil-rounded">stil-col-4</div>
+                    <div class="stil-col-8 stil-bg-muted stil-p-2 stil-rounded">stil-col-8</div>
+                    <div class="stil-col-4 stil-bg-muted stil-p-2 stil-rounded">stil-col-4</div>
+                </div>
             </div>
-        </div>
+            <div class="example">
+                <div class="stil-grid">
+                    <div class="stil-col-12 stil-col-md-6 stil-col-lg-3 stil-bg-muted stil-p-2 stil-rounded">Full, half from md, quarter from lg</div>
+                    <div class="stil-col-12 stil-col-md-6 stil-col-lg-3 stil-bg-muted stil-p-2 stil-rounded">Full, half from md, quarter from lg</div>
+                    <div class="stil-col-12 stil-col-md-6 stil-col-lg-3 stil-bg-muted stil-p-2 stil-rounded">Full, half from md, quarter from lg</div>
+                    <div class="stil-col-12 stil-col-md-6 stil-col-lg-3 stil-bg-muted stil-p-2 stil-rounded">Full, half from md, quarter from lg</div>
+                </div>
+            </div>
 
-        <div class="component-group">
-            <h1>Colors</h1>
-            <div class="component-group-code-example">
-                <code>&lt;div class="color-swatch stil-bg-primary"&gt;Primary&lt;/div&gt;</code>
-                <code>&lt;div class="color-swatch stil-bg-secondary"&gt;Secondary&lt;/div&gt;</code>
-                <code>&lt;div class="color-swatch stil-bg-success"&gt;Success&lt;/div&gt;</code>
-                <code>&lt;div class="color-swatch stil-bg-danger"&gt;Danger&lt;/div&gt;</code>
-                <code>&lt;div class="color-swatch stil-bg-warning"&gt;Warning&lt;/div&gt;</code>
-                <code>&lt;div class="color-swatch stil-bg-info"&gt;Info&lt;/div&gt;</code>
+            <h2>Stack and cluster</h2>
+            <p><code>stil-stack</code> stacks children vertically with even gaps. <code>stil-cluster</code> puts them in a wrapping row, vertically centered.</p>
+            <div class="example">
+                <div class="stil-stack">
+                    <div class="stil-bg-muted stil-p-2 stil-rounded">First</div>
+                    <div class="stil-bg-muted stil-p-2 stil-rounded">Second</div>
+                    <div class="stil-bg-muted stil-p-2 stil-rounded">Third</div>
+                </div>
             </div>
-            <div class="component-group-code-example-outcome">
-                <span>Outcome:</span>
-                <div class="color-swatch stil-bg-primary">Primary</div>
-                <div class="color-swatch stil-bg-secondary">Secondary</div>
-                <div class="color-swatch stil-bg-success">Success</div>
-                <div class="color-swatch stil-bg-danger">Danger</div>
-                <div class="color-swatch stil-bg-warning">Warning</div>
-                <div class="color-swatch stil-bg-info">Info</div>
+            <div class="example">
+                <div class="stil-cluster">
+                    <span class="stil-badge">Design</span>
+                    <span class="stil-badge">Frontend</span>
+                    <span class="stil-badge">Accessibility</span>
+                    <button type="button" class="stil-btn stil-btn-sm">Add tag</button>
+                </div>
             </div>
-        </div>
 
-        <div class="component-group">
-            <h1 id="buttons">Buttons</h1>
-            <div class="component-group-code-example">
-                <code>&lt;button class="stil-btn stil-btn-primary"&gt;Primary Button&lt;/button&gt;</code>
-                <code>&lt;button class="stil-btn stil-btn-sm stil-btn-primary"&gt;Small Button&lt;/button&gt;</code>
-                <code>&lt;button class="stil-btn stil-btn-lg stil-btn-primary"&gt;Large Button&lt;/button&gt;</code>
-            </div>
-            <div class="component-group-code-example-outcome">
-                <span>Outcome:</span>
-                <div class="stil-btn-group">
-                    <button class="stil-btn stil-btn-primary">Primary Button</button>
-                    <button class="stil-btn stil-btn-secondary">Secondary Button</button>
-                    <button class="stil-btn stil-btn-success">Success Button</button>
-                    <button class="stil-btn stil-btn-danger">Danger Button</button>
-                    <button class="stil-btn stil-btn-warning">Warning Button</button>
-                    <button class="stil-btn stil-btn-info">Info Button</button>
-                </div>
-                <div class="stil-btn-group">
-                    <button class="stil-btn stil-btn-sm stil-btn-primary">Primary Button</button>
-                    <button class="stil-btn stil-btn-sm stil-btn-secondary">Secondary Button</button>
-                    <button class="stil-btn stil-btn-sm stil-btn-success">Success Button</button>
-                    <button class="stil-btn stil-btn-sm stil-btn-danger">Danger Button</button>
-                    <button class="stil-btn stil-btn-sm stil-btn-warning">Warning Button</button>
-                    <button class="stil-btn stil-btn-sm stil-btn-info">Info Button</button>
-                </div>
-                <div class="stil-btn-group">
-                    <button class="stil-btn stil-btn-lg stil-btn-primary">Primary Button</button>
-                    <button class="stil-btn stil-btn-lg stil-btn-secondary">Secondary Button</button>
-                    <button class="stil-btn stil-btn-lg stil-btn-success">Success Button</button>
-                    <button class="stil-btn stil-btn-lg stil-btn-danger">Danger Button</button>
-                    <button class="stil-btn stil-btn-lg stil-btn-warning">Warning Button</button>
-                    <button class="stil-btn stil-btn-lg stil-btn-info">Info Button</button>
+            <h2>Sidebar</h2>
+            <p><code>stil-with-sidebar</code> places the first child as a sidebar (<code>--stil-sidebar-width</code>) next to the content from the lg breakpoint, and stacks them below it.</p>
+            <div class="example">
+                <div class="stil-with-sidebar">
+                    <div class="stil-bg-muted stil-p-3 stil-rounded">Sidebar</div>
+                    <div class="stil-bg-muted stil-p-3 stil-rounded">Main content</div>
                 </div>
             </div>
-        </div>
-        
-        <div class="component-group">
-            <h1 id="inputs">Inputs</h1>
-            <div class="component-group-code-example">
-                <code>&lt;div class="stil-input-group"&gt;</code>
-                <div class="component-group-code-example-content">
-                    <span>&lt;label for="text-input"&gt;Text input&lt;/label&gt;</span>
-                    <span>&lt;input type="text" id="text-input" class="stil-input"&gt;</span>
-                </div>
-                <code>&lt;/div&gt;</code>
-            </div>
-            <div class="component-group-code-example-outcome">
-                <span>Outcome:</span>
-                <div class="stil-input-group">
-                    <label for="text-input">Text input</label>
-                    <input type="text" id="text-input" class="stil-input">
-                </div>
-            </div>
-        </div>
+        </section>
 
-        <div class="component-group">
-            <h1 id="cards">Cards</h1>
-            <div class="component-group-code-example">
-                <code>&lt;div class="stil-card"&gt;</code>
-                <div class="component-group-code-example-content">
-                    <span>&lt;h2 class="stil-card-title"&gt;Card Title&lt;/h2&gt;</span>
-                    <span>&lt;p&gt;This is a simple card component.&lt;/p&gt;</span>
-                    <span>&lt;div class="stil-card-footer"&gt;</span>
-                    <span>&nbsp;&nbsp;&lt;button class="stil-btn stil-btn-primary"&gt;Action&lt;/button&gt;</span>
-                    <span>&lt;/div&gt;</span>
-                </div>
-                <code>&lt;/div&gt;</code>
-            </div>
-            <div class="component-group-code-example-outcome">
-                <span>Outcome:</span>
-                <div class="stil-card">
-                    <h2 class="stil-card-title">Card Title</h2>
-                    <p>This is a simple card component.</p>
-                    <div class="stil-card-footer">
-                        <button class="stil-btn stil-btn-primary">Action</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <section class="component-group" id="typography">
+            <h1>Typography</h1>
+            <p>Element styles for text. They only apply inside <code>stil-scope</code>; put it on <code>&lt;body&gt;</code> to style a whole app.</p>
 
-        <div class="component-group">
-            <h1 id="alerts">Alerts</h1>
-            <div class="component-group-code-example">
-                <code>&lt;div class="stil-alert stil-alert-success"&gt;This is a success alert.&lt;/div&gt;</code>
-                <code>&lt;div class="stil-alert stil-alert-danger"&gt;This is a danger alert.&lt;/div&gt;</code>
-                <code>&lt;div class="stil-alert stil-alert-warning"&gt;This is a warning message.&lt;/div&gt;</code>
-            </div>
-            <div class="component-group-code-example-outcome">
-                <span>Outcome:</span>
-                <div class="stil-alert stil-alert-success">This is a success alert.</div>
-                <div class="stil-alert stil-alert-danger">This is a danger alert.</div>
-                <div class="stil-alert stil-alert-warning">This is a warning message.</div>
-            </div>
-        </div>
-
-        <div class="component-group">
-            <h1 id="typography">Typography</h1>
-            <div class="component-group-code-example">
-                <code>&lt;p&gt;This is a paragraph of text.&lt;/p&gt;</code>
-                <code>&lt;h2&gt;Heading 2&lt;/h2&gt;</code>
-                <code>&lt;h3&gt;Heading 3&lt;/h3&gt;</code>
-                <code>&lt;h4&gt;Heading 4&lt;/h4&gt;</code>
-                <code>&lt;h5&gt;Heading 5&lt;/h5&gt;</code>
-            </div>
-            <div class="component-group-code-example-outcome">
-                <span>Outcome:</span>
-                <p>This is a paragraph of text. It uses the Didact Gothic font.</p>
+            <h2>Headings</h2>
+            <div class="example">
+                <h1>Heading 1</h1>
                 <h2>Heading 2</h2>
                 <h3>Heading 3</h3>
                 <h4>Heading 4</h4>
                 <h5>Heading 5</h5>
             </div>
-        </div>
 
-        <div class="component-group">
-            <h1 id="tables">Tables</h1>
-            <div class="component-group-code-example">
-                <code>&lt;table class="stil-table"&gt;</code>
-                <div class="component-group-code-example-content">
-                    <span>&lt;tr&gt;&lt;th&gt;Header 1&lt;/th&gt;&lt;th&gt;Header 2&lt;/th&gt;&lt;/tr&gt;</span>
-                    <span>&lt;tr&gt;&lt;td&gt;Data 1&lt;/td&gt;&lt;td&gt;Data 2&lt;/td&gt;&lt;/tr&gt;</span>
-                </div>
-                <code>&lt;/table&gt;</code>
+            <h2>Text</h2>
+            <div class="example">
+                <p>A paragraph with an <a href="#typography">inline link</a>, some <code>inline code</code>, a key such as <kbd>Ctrl</kbd> + <kbd>S</kbd>, <mark>highlighted text</mark> and <small>small print</small>.</p>
+                <blockquote>Simplicity is the ultimate sophistication.</blockquote>
+                <hr>
+                <pre>npm install stil-css</pre>
             </div>
-            <div class="component-group-code-example-outcome">
-                <span>Outcome:</span>
+        </section>
+
+        <section class="component-group" id="colors">
+            <h1>Colors</h1>
+            <p>Six color variants: primary, secondary, success, danger, warning and info. Each is a token (<code>--stil-color-{variant}</code>) you can override.</p>
+
+            <h2>Backgrounds</h2>
+            <p><code>stil-bg-{variant}</code> sets the background. The text color is picked automatically, black or white, whichever contrasts more.</p>
+            <div class="example">
+                <div class="stil-grid">
+                    <div class="stil-col-6 stil-col-md-4 stil-col-lg-2 stil-bg-primary stil-p-3 stil-rounded">Primary</div>
+                    <div class="stil-col-6 stil-col-md-4 stil-col-lg-2 stil-bg-secondary stil-p-3 stil-rounded">Secondary</div>
+                    <div class="stil-col-6 stil-col-md-4 stil-col-lg-2 stil-bg-success stil-p-3 stil-rounded">Success</div>
+                    <div class="stil-col-6 stil-col-md-4 stil-col-lg-2 stil-bg-danger stil-p-3 stil-rounded">Danger</div>
+                    <div class="stil-col-6 stil-col-md-4 stil-col-lg-2 stil-bg-warning stil-p-3 stil-rounded">Warning</div>
+                    <div class="stil-col-6 stil-col-md-4 stil-col-lg-2 stil-bg-info stil-p-3 stil-rounded">Info</div>
+                </div>
+            </div>
+
+            <h2>Text</h2>
+            <p><code>stil-text-{variant}</code> uses the variant color, adjusted to be readable on the page in light and dark mode. <code>stil-text-muted</code> is for secondary text.</p>
+            <div class="example">
+                <p class="stil-text-primary">Primary text</p>
+                <p class="stil-text-secondary">Secondary text</p>
+                <p class="stil-text-success">Success text</p>
+                <p class="stil-text-danger">Danger text</p>
+                <p class="stil-text-warning">Warning text</p>
+                <p class="stil-text-info">Info text</p>
+                <p class="stil-text-muted">Muted text</p>
+            </div>
+
+            <h2>Borders</h2>
+            <p>Combine <code>stil-border</code> with <code>stil-border-{variant}</code> to color the border.</p>
+            <div class="example">
+                <div class="stil-cluster">
+                    <div class="stil-border stil-border-primary stil-rounded stil-p-2">Primary</div>
+                    <div class="stil-border stil-border-secondary stil-rounded stil-p-2">Secondary</div>
+                    <div class="stil-border stil-border-success stil-rounded stil-p-2">Success</div>
+                    <div class="stil-border stil-border-danger stil-rounded stil-p-2">Danger</div>
+                    <div class="stil-border stil-border-warning stil-rounded stil-p-2">Warning</div>
+                    <div class="stil-border stil-border-info stil-rounded stil-p-2">Info</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="component-group" id="buttons">
+            <h1>Buttons</h1>
+            <p>Use <code>stil-btn</code> on a <code>&lt;button&gt;</code> for actions, or on an <code>&lt;a&gt;</code> for navigation that looks like a button. Without a variant class a button is primary.</p>
+
+            <h2>Variants</h2>
+            <div class="example">
+                <div class="stil-cluster">
+                    <button type="button" class="stil-btn stil-btn-primary">Primary</button>
+                    <button type="button" class="stil-btn stil-btn-secondary">Secondary</button>
+                    <button type="button" class="stil-btn stil-btn-success">Success</button>
+                    <button type="button" class="stil-btn stil-btn-danger">Danger</button>
+                    <button type="button" class="stil-btn stil-btn-warning">Warning</button>
+                    <button type="button" class="stil-btn stil-btn-info">Info</button>
+                </div>
+            </div>
+
+            <h2>Outline and ghost</h2>
+            <p>For less prominent actions. The variant color is used for the text and is readable in both color modes.</p>
+            <div class="example">
+                <div class="stil-cluster">
+                    <button type="button" class="stil-btn stil-btn-outline stil-btn-primary">Primary</button>
+                    <button type="button" class="stil-btn stil-btn-outline stil-btn-secondary">Secondary</button>
+                    <button type="button" class="stil-btn stil-btn-outline stil-btn-success">Success</button>
+                    <button type="button" class="stil-btn stil-btn-outline stil-btn-danger">Danger</button>
+                    <button type="button" class="stil-btn stil-btn-outline stil-btn-warning">Warning</button>
+                    <button type="button" class="stil-btn stil-btn-outline stil-btn-info">Info</button>
+                </div>
+            </div>
+            <div class="example">
+                <div class="stil-cluster">
+                    <button type="button" class="stil-btn stil-btn-ghost stil-btn-primary">Primary</button>
+                    <button type="button" class="stil-btn stil-btn-ghost stil-btn-secondary">Secondary</button>
+                    <button type="button" class="stil-btn stil-btn-ghost stil-btn-success">Success</button>
+                    <button type="button" class="stil-btn stil-btn-ghost stil-btn-danger">Danger</button>
+                    <button type="button" class="stil-btn stil-btn-ghost stil-btn-warning">Warning</button>
+                    <button type="button" class="stil-btn stil-btn-ghost stil-btn-info">Info</button>
+                </div>
+            </div>
+
+            <h2>Sizes and icon buttons</h2>
+            <p><code>stil-btn-icon</code> makes a square button for a single glyph. Give it an <code>aria-label</code>.</p>
+            <div class="example">
+                <div class="stil-cluster">
+                    <button type="button" class="stil-btn stil-btn-sm">Small</button>
+                    <button type="button" class="stil-btn">Default</button>
+                    <button type="button" class="stil-btn stil-btn-lg">Large</button>
+                    <button type="button" class="stil-btn stil-btn-icon" aria-label="Add">+</button>
+                    <button type="button" class="stil-btn stil-btn-icon stil-btn-outline stil-btn-danger" aria-label="Remove">✕</button>
+                </div>
+            </div>
+
+            <h2>Disabled and loading</h2>
+            <p>Disable a button with <code>disabled</code>, or a link with <code>aria-disabled="true"</code> (and no <code>href</code>). Set <code>aria-busy="true"</code> while an action runs: the label is replaced by a spinner but stays available to screen readers.</p>
+            <div class="example">
+                <div class="stil-cluster">
+                    <button type="button" class="stil-btn" disabled>Disabled</button>
+                    <a class="stil-btn stil-btn-secondary" role="link" aria-disabled="true">Disabled link</a>
+                    <button type="button" class="stil-btn" aria-busy="true">Saving</button>
+                    <button type="button" class="stil-btn stil-btn-outline" aria-busy="true">Loading</button>
+                </div>
+            </div>
+
+            <h2>Button group and link button</h2>
+            <div class="example">
+                <div class="stil-cluster">
+                    <div class="stil-btn-group" role="group" aria-label="Date navigation">
+                        <button type="button" class="stil-btn stil-btn-outline">Previous</button>
+                        <button type="button" class="stil-btn stil-btn-outline">Today</button>
+                        <button type="button" class="stil-btn stil-btn-outline">Next</button>
+                    </div>
+                    <a class="stil-btn stil-btn-secondary" href="#buttons">Link styled as a button</a>
+                </div>
+            </div>
+
+            <h2>Close button</h2>
+            <p><code>stil-close</code> draws an X in the current text color. It is used in alerts, dialogs and toasts.</p>
+            <div class="example">
+                <button type="button" class="stil-close" aria-label="Close"></button>
+            </div>
+        </section>
+
+        <section class="component-group" id="forms">
+            <h1>Forms</h1>
+            <p>A <code>stil-field</code> holds a label, a control and optional hint or error text. <code>stil-form</code> stacks fields with even gaps.</p>
+
+            <h2>Form and fields</h2>
+            <div class="example">
+                <form class="stil-form" onsubmit="event.preventDefault()">
+                    <div class="stil-field">
+                        <label class="stil-label" for="contact-name">Name</label>
+                        <input class="stil-input" type="text" id="contact-name" autocomplete="name">
+                    </div>
+                    <div class="stil-field">
+                        <label class="stil-label" for="contact-email">Email</label>
+                        <input class="stil-input" type="email" id="contact-email" placeholder="you@example.com" autocomplete="email" aria-describedby="contact-email-hint">
+                        <span class="stil-field-hint" id="contact-email-hint">We only use it to reply to you.</span>
+                    </div>
+                    <div class="stil-field">
+                        <label class="stil-label" for="contact-topic">Topic</label>
+                        <select class="stil-select" id="contact-topic">
+                            <option>General question</option>
+                            <option>Billing</option>
+                            <option>Technical support</option>
+                        </select>
+                    </div>
+                    <div class="stil-field">
+                        <label class="stil-label" for="contact-message">Message</label>
+                        <textarea class="stil-input" id="contact-message" placeholder="How can we help?"></textarea>
+                    </div>
+                    <div>
+                        <button type="submit" class="stil-btn">Send message</button>
+                    </div>
+                </form>
+            </div>
+
+            <h2>Validation</h2>
+            <p>Set <code>aria-invalid="true"</code> on the control and point <code>aria-describedby</code> at the error text.</p>
+            <div class="example">
+                <div class="stil-field">
+                    <label class="stil-label" for="signup-username">Username</label>
+                    <input class="stil-input" type="text" id="signup-username" value="ab" aria-invalid="true" aria-describedby="signup-username-error">
+                    <span class="stil-field-error" id="signup-username-error">Use at least 3 characters.</span>
+                </div>
+            </div>
+
+            <h2>Sizes and disabled</h2>
+            <div class="example">
+                <div class="stil-stack">
+                    <div class="stil-field">
+                        <label class="stil-label" for="size-input-sm">Small input</label>
+                        <input class="stil-input stil-input-sm" type="text" id="size-input-sm">
+                    </div>
+                    <div class="stil-field">
+                        <label class="stil-label" for="size-input-lg">Large input</label>
+                        <input class="stil-input stil-input-lg" type="text" id="size-input-lg">
+                    </div>
+                    <div class="stil-field">
+                        <label class="stil-label" for="size-select-sm">Small select</label>
+                        <select class="stil-select stil-select-sm" id="size-select-sm">
+                            <option>10 per page</option>
+                            <option>25 per page</option>
+                            <option>50 per page</option>
+                        </select>
+                    </div>
+                    <div class="stil-field">
+                        <label class="stil-label" for="size-select-lg">Large select</label>
+                        <select class="stil-select stil-select-lg" id="size-select-lg">
+                            <option>Sweden</option>
+                            <option>Norway</option>
+                            <option>Denmark</option>
+                        </select>
+                    </div>
+                    <div class="stil-field">
+                        <label class="stil-label" for="disabled-input">Disabled input</label>
+                        <input class="stil-input" type="text" id="disabled-input" value="Read only value" disabled>
+                    </div>
+                </div>
+            </div>
+
+            <h2>Checkboxes, radios and switches</h2>
+            <p>Wrap the control and its text in a <code>stil-check</code> label. A switch is a checkbox with <code>role="switch"</code>.</p>
+            <div class="example">
+                <div class="stil-stack">
+                    <label class="stil-check">
+                        <input class="stil-check-input" type="checkbox" id="check-updates" checked>
+                        Send me product updates
+                    </label>
+                    <label class="stil-check">
+                        <input class="stil-check-input" type="checkbox" id="check-terms">
+                        I accept the terms
+                    </label>
+                    <label class="stil-check">
+                        <input class="stil-check-input" type="checkbox" id="check-disabled" disabled>
+                        Disabled option
+                    </label>
+                    <div class="stil-field" role="radiogroup" aria-labelledby="plan-label">
+                        <span class="stil-label" id="plan-label">Plan</span>
+                        <label class="stil-check">
+                            <input class="stil-check-input" type="radio" name="plan" id="plan-free" value="free" checked>
+                            Free
+                        </label>
+                        <label class="stil-check">
+                            <input class="stil-check-input" type="radio" name="plan" id="plan-pro" value="pro">
+                            Pro
+                        </label>
+                        <label class="stil-check">
+                            <input class="stil-check-input" type="radio" name="plan" id="plan-team" value="team" disabled>
+                            Team (coming soon)
+                        </label>
+                    </div>
+                    <label class="stil-check">
+                        <input class="stil-switch" type="checkbox" role="switch" id="switch-notifications" checked>
+                        Email notifications
+                    </label>
+                    <label class="stil-check">
+                        <input class="stil-switch" type="checkbox" role="switch" id="switch-compact">
+                        Compact view
+                    </label>
+                </div>
+            </div>
+
+            <h2>Input group</h2>
+            <p>Joins inputs, selects, buttons and <code>stil-input-group-text</code> add-ons into one control.</p>
+            <div class="example">
+                <div class="stil-stack">
+                    <div class="stil-field">
+                        <label class="stil-label" for="group-website">Website</label>
+                        <div class="stil-input-group">
+                            <span class="stil-input-group-text">https://</span>
+                            <input class="stil-input" type="text" id="group-website" placeholder="example.com">
+                        </div>
+                    </div>
+                    <div class="stil-field">
+                        <label class="stil-label" for="group-price">Price</label>
+                        <div class="stil-input-group">
+                            <input class="stil-input" type="number" id="group-price" min="0">
+                            <span class="stil-input-group-text">SEK</span>
+                        </div>
+                    </div>
+                    <div class="stil-field">
+                        <label class="stil-label" for="group-search">Search</label>
+                        <div class="stil-input-group">
+                            <input class="stil-input" type="search" id="group-search" placeholder="Search orders">
+                            <button type="button" class="stil-btn">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="component-group" id="cards">
+            <h1>Cards</h1>
+            <p>A bordered surface that groups related content and actions. A card can have a header, a title and subtitle, body content and a footer.</p>
+
+            <h2>Basic card</h2>
+            <div class="example">
+                <div class="stil-card">
+                    <h3 class="stil-card-title">Quarterly report</h3>
+                    <p class="stil-card-subtitle">Updated 3 days ago</p>
+                    <p>Revenue grew 12% compared to the previous quarter, driven by new subscriptions.</p>
+                    <div class="stil-card-footer">
+                        <button type="button" class="stil-btn stil-btn-ghost">Share</button>
+                        <button type="button" class="stil-btn">Open report</button>
+                    </div>
+                </div>
+            </div>
+
+            <h2>Card with header</h2>
+            <div class="example">
+                <div class="stil-card">
+                    <div class="stil-card-header">
+                        <h3 class="stil-card-title">Team plan</h3>
+                        <span class="stil-badge stil-badge-success">Active</span>
+                    </div>
+                    <p>8 of 10 seats in use. Renews on 1 November.</p>
+                </div>
+            </div>
+
+            <h2>Cards in a grid</h2>
+            <div class="example">
+                <div class="stil-grid">
+                    <div class="stil-col-12 stil-col-md-4 stil-card">
+                        <h3 class="stil-card-title">Starter</h3>
+                        <p class="stil-card-subtitle">For personal projects</p>
+                        <p>One project, community support.</p>
+                        <div class="stil-card-footer">
+                            <button type="button" class="stil-btn stil-btn-outline">Choose</button>
+                        </div>
+                    </div>
+                    <div class="stil-col-12 stil-col-md-4 stil-card">
+                        <h3 class="stil-card-title">Pro</h3>
+                        <p class="stil-card-subtitle">For professionals</p>
+                        <p>Unlimited projects, email support.</p>
+                        <div class="stil-card-footer">
+                            <button type="button" class="stil-btn">Choose</button>
+                        </div>
+                    </div>
+                    <div class="stil-col-12 stil-col-md-4 stil-card">
+                        <h3 class="stil-card-title">Enterprise</h3>
+                        <p class="stil-card-subtitle">For organizations</p>
+                        <p>Single sign-on, audit logs and a dedicated contact.</p>
+                        <div class="stil-card-footer">
+                            <button type="button" class="stil-btn stil-btn-outline">Contact sales</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="component-group" id="alerts">
+            <h1>Alerts</h1>
+            <p>Messages about the state of the page or a recent action. Use <code>role="alert"</code> or <code>role="status"</code> when an alert is added while the page is in use.</p>
+
+            <h2>Solid</h2>
+            <div class="example">
+                <div class="stil-alert stil-alert-primary">A primary alert.</div>
+                <div class="stil-alert stil-alert-secondary">A secondary alert.</div>
+                <div class="stil-alert stil-alert-success">Your profile was saved.</div>
+                <div class="stil-alert stil-alert-danger">The payment could not be processed.</div>
+                <div class="stil-alert stil-alert-warning">Your trial ends in 3 days.</div>
+                <div class="stil-alert stil-alert-info">A new version is available.</div>
+            </div>
+
+            <h2>Subtle</h2>
+            <p><code>stil-alert-subtle</code> uses a light tint of the variant color with normal text.</p>
+            <div class="example">
+                <div class="stil-alert stil-alert-subtle stil-alert-primary">A primary alert.</div>
+                <div class="stil-alert stil-alert-subtle stil-alert-secondary">A secondary alert.</div>
+                <div class="stil-alert stil-alert-subtle stil-alert-success">Your profile was saved.</div>
+                <div class="stil-alert stil-alert-subtle stil-alert-danger">The payment could not be processed.</div>
+                <div class="stil-alert stil-alert-subtle stil-alert-warning">Your trial ends in 3 days.</div>
+                <div class="stil-alert stil-alert-subtle stil-alert-info">A new version is available.</div>
+            </div>
+
+            <h2>Title and dismiss button</h2>
+            <div class="example">
+                <div class="stil-alert stil-alert-warning">
+                    <h3 class="stil-alert-title">Storage almost full</h3>
+                    You have used 92% of your storage. Delete old files or upgrade your plan.
+                </div>
+                <div class="stil-alert stil-alert-subtle stil-alert-info">
+                    <h3 class="stil-alert-title">Scheduled maintenance</h3>
+                    The service will be unavailable on Sunday between 02:00 and 04:00.
+                    <button type="button" class="stil-close" aria-label="Close" onclick="this.parentElement.remove()"></button>
+                </div>
+                <div class="stil-alert stil-alert-success">
+                    Invitation sent.
+                    <button type="button" class="stil-close" aria-label="Close" onclick="this.parentElement.remove()"></button>
+                </div>
+            </div>
+        </section>
+
+        <section class="component-group" id="badges">
+            <h1>Badges</h1>
+            <p>Small labels for counts, statuses and tags.</p>
+
+            <h2>Variants</h2>
+            <div class="example">
+                <div class="stil-cluster">
+                    <span class="stil-badge stil-badge-primary">Primary</span>
+                    <span class="stil-badge stil-badge-secondary">Secondary</span>
+                    <span class="stil-badge stil-badge-success">Success</span>
+                    <span class="stil-badge stil-badge-danger">Danger</span>
+                    <span class="stil-badge stil-badge-warning">Warning</span>
+                    <span class="stil-badge stil-badge-info">Info</span>
+                </div>
+            </div>
+
+            <h2>Subtle</h2>
+            <div class="example">
+                <div class="stil-cluster">
+                    <span class="stil-badge stil-badge-subtle stil-badge-primary">Primary</span>
+                    <span class="stil-badge stil-badge-subtle stil-badge-secondary">Secondary</span>
+                    <span class="stil-badge stil-badge-subtle stil-badge-success">Success</span>
+                    <span class="stil-badge stil-badge-subtle stil-badge-danger">Danger</span>
+                    <span class="stil-badge stil-badge-subtle stil-badge-warning">Warning</span>
+                    <span class="stil-badge stil-badge-subtle stil-badge-info">Info</span>
+                </div>
+            </div>
+
+            <h2>In headings and buttons</h2>
+            <div class="example">
+                <h3>Inbox <span class="stil-badge stil-badge-info">4 new</span></h3>
+                <button type="button" class="stil-btn stil-btn-outline">
+                    Notifications <span class="stil-badge stil-badge-danger">3</span>
+                </button>
+            </div>
+        </section>
+
+        <section class="component-group" id="tables">
+            <h1>Tables</h1>
+            <p>Add <code>stil-table</code> to a <code>&lt;table&gt;</code>. Modifiers add stripes, a hover highlight, compact cells and borders. Wrap a wide table in <code>stil-table-responsive</code> to let it scroll sideways on small screens.</p>
+
+            <h2>Basic table</h2>
+            <div class="example">
                 <table class="stil-table">
+                    <caption>Recent orders</caption>
                     <thead>
                         <tr>
-                            <th>Header 1</th>
-                            <th>Header 2</th>
-                            <th>Header 3</th>
+                            <th scope="col">Order</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Data 1</td>
-                            <td>Data 2</td>
-                            <td>Data 3</td>
+                            <td>#1042</td>
+                            <td>Anna Lindqvist</td>
+                            <td>2026-10-08</td>
+                            <td>1 250 kr</td>
+                            <td><span class="stil-badge stil-badge-success">Delivered</span></td>
                         </tr>
                         <tr>
-                            <td>Data 4</td>
-                            <td>Data 5</td>
-                            <td>Data 6</td>
+                            <td>#1043</td>
+                            <td>Erik Nilsson</td>
+                            <td>2026-10-09</td>
+                            <td>480 kr</td>
+                            <td><span class="stil-badge stil-badge-info">Shipped</span></td>
+                        </tr>
+                        <tr>
+                            <td>#1044</td>
+                            <td>Sara Berg</td>
+                            <td>2026-10-10</td>
+                            <td>2 990 kr</td>
+                            <td><span class="stil-badge stil-badge-warning">Processing</span></td>
+                        </tr>
+                        <tr>
+                            <td>#1045</td>
+                            <td>Johan Ek</td>
+                            <td>2026-10-11</td>
+                            <td>320 kr</td>
+                            <td><span class="stil-badge stil-badge-danger">Cancelled</span></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-        </div>
 
-        <div class="component-group">
-            <h1>Links</h1>
-            <div class="component-group-code-example">
-                <code>&lt;a href="#"&gt;This is a link&lt;/a&gt;</code>
-            </div>
-            <div class="component-group-code-example-outcome">
-                <span>Outcome:</span>
-                <a href="#">This is a link</a>
-            </div>
-        </div>
-
-        <div class="component-group">
-            <h1>Forms</h1>
-            <div class="component-group-code-example">
-                <code>&lt;form class="stil-form"&gt;</code>
-                <div class="component-group-code-example-content">
-                    <span>&lt;label for="name"&gt;Name&lt;/label&gt;</span>
-                    <span>&lt;input type="text" id="name" class="stil-input"&gt;</span>
-                    <span>&lt;label for="email"&gt;Email&lt;/label&gt;</span>
-                    <span>&lt;input type="email" id="email" class="stil-input"&gt;</span>
-                    <span>&lt;label for="message"&gt;Message&lt;/label&gt;</span>
-                    <span>&lt;textarea id="message" class="stil-input"&gt;&lt;/textarea&gt;</span>
-                    <span>&lt;button type="submit" class="stil-btn stil-btn-lg stil-btn-primary"&gt;Submit&lt;/button&gt;</span>
+            <h2>Striped, hover and responsive</h2>
+            <div class="example">
+                <div class="stil-table-responsive">
+                    <table class="stil-table stil-table-striped stil-table-hover">
+                        <caption>Team members</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Role</th>
+                                <th scope="col">Last active</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Maria Holm</td>
+                                <td>maria.holm@example.com</td>
+                                <td>Owner</td>
+                                <td>Today</td>
+                                <td><span class="stil-badge stil-badge-subtle stil-badge-success">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>Oskar Lund</td>
+                                <td>oskar.lund@example.com</td>
+                                <td>Admin</td>
+                                <td>Yesterday</td>
+                                <td><span class="stil-badge stil-badge-subtle stil-badge-success">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>Elin Strand</td>
+                                <td>elin.strand@example.com</td>
+                                <td>Editor</td>
+                                <td>3 weeks ago</td>
+                                <td><span class="stil-badge stil-badge-subtle stil-badge-warning">Invited</span></td>
+                            </tr>
+                            <tr>
+                                <td>Karl Dahl</td>
+                                <td>karl.dahl@example.com</td>
+                                <td>Viewer</td>
+                                <td>4 months ago</td>
+                                <td><span class="stil-badge stil-badge-subtle stil-badge-danger">Suspended</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <code>&lt;/form&gt;</code>
             </div>
-            <div class="component-group-code-example-outcome">
-                <span>Outcome:</span>
-                <form class="stil-form">
-                    <div class="stil-input-group">
-                        <label for="name">Name</label>
-                        <input type="text" id="name" class="stil-input">
-                    </div>
-                    <div class="stil-input-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" class="stil-input">
-                    </div>
-                    <div class="stil-input-group">
-                        <label for="message">Message</label>
-                        <textarea id="message" class="stil-input"></textarea>
-                    </div>
-                    <button type="submit" class="stil-btn stil-btn-lg stil-btn-primary">Submit</button>
-                </form>
-            </div>
-        </div>
 
+            <h2>Compact and bordered</h2>
+            <div class="example">
+                <table class="stil-table stil-table-compact stil-table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Product</th>
+                            <th scope="col">SKU</th>
+                            <th scope="col">Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Desk lamp</td>
+                            <td>LMP-200</td>
+                            <td>48</td>
+                        </tr>
+                        <tr>
+                            <td>Office chair</td>
+                            <td>CHR-110</td>
+                            <td>12</td>
+                        </tr>
+                        <tr>
+                            <td>Monitor stand</td>
+                            <td>STD-050</td>
+                            <td>0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="component-group" id="navigation">
+            <h1>Navigation</h1>
+            <p>A list of navigation links. Mark the current page with <code>aria-current="page"</code>; there are no "active" classes. Links use the current text color, so the nav also works on colored backgrounds.</p>
+
+            <h2>Horizontal</h2>
+            <div class="example">
+                <nav aria-label="Account">
+                    <ul class="stil-nav">
+                        <li><a class="stil-nav-link" href="#navigation" aria-current="page">Overview</a></li>
+                        <li><a class="stil-nav-link" href="#navigation">Billing</a></li>
+                        <li><a class="stil-nav-link" href="#navigation">Security</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <h2>Vertical</h2>
+            <div class="example">
+                <nav aria-label="Settings">
+                    <ul class="stil-nav stil-nav-vertical">
+                        <li><a class="stil-nav-link" href="#navigation">Profile</a></li>
+                        <li><a class="stil-nav-link" href="#navigation" aria-current="page">Notifications</a></li>
+                        <li><a class="stil-nav-link" href="#navigation">Integrations</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <h2>Pills</h2>
+            <p><code>stil-nav-pills</code> fills the current link with the accent color.</p>
+            <div class="example">
+                <nav aria-label="Reports">
+                    <ul class="stil-nav stil-nav-pills">
+                        <li><a class="stil-nav-link" href="#navigation" aria-current="page">Daily</a></li>
+                        <li><a class="stil-nav-link" href="#navigation">Weekly</a></li>
+                        <li><a class="stil-nav-link" href="#navigation">Monthly</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </section>
+
+        <section class="component-group" id="navbar">
+            <h1>Navbar</h1>
+            <p>A bar with a brand, navigation and actions at the end. It wraps on small screens.</p>
+
+            <div class="example">
+                <nav class="stil-navbar" aria-label="Example site">
+                    <a class="stil-navbar-brand" href="#navbar">Acme</a>
+                    <ul class="stil-nav">
+                        <li><a class="stil-nav-link" href="#navbar" aria-current="page">Home</a></li>
+                        <li><a class="stil-nav-link" href="#navbar">Products</a></li>
+                        <li><a class="stil-nav-link" href="#navbar">Pricing</a></li>
+                    </ul>
+                    <div class="stil-navbar-end">
+                        <button type="button" class="stil-btn stil-btn-sm">Sign in</button>
+                    </div>
+                </nav>
+            </div>
+
+            <h2>On a color</h2>
+            <div class="example">
+                <nav class="stil-navbar stil-bg-primary" aria-label="Example app">
+                    <a class="stil-navbar-brand" href="#navbar">Dashboard</a>
+                    <ul class="stil-nav">
+                        <li><a class="stil-nav-link" href="#navbar">Projects</a></li>
+                        <li><a class="stil-nav-link" href="#navbar" aria-current="page">Reports</a></li>
+                        <li><a class="stil-nav-link" href="#navbar">Team</a></li>
+                    </ul>
+                    <div class="stil-navbar-end">
+                        <button type="button" class="stil-btn stil-btn-sm stil-btn-secondary">New project</button>
+                    </div>
+                </nav>
+            </div>
+        </section>
+
+        <section class="component-group" id="breadcrumb">
+            <h1>Breadcrumb</h1>
+            <p>Shows where the current page sits in a hierarchy. Mark the last item with <code>aria-current="page"</code>.</p>
+
+            <div class="example">
+                <nav aria-label="Breadcrumb">
+                    <ol class="stil-breadcrumb">
+                        <li><a href="#breadcrumb">Home</a></li>
+                        <li><a href="#breadcrumb">Orders</a></li>
+                        <li aria-current="page">#1042</li>
+                    </ol>
+                </nav>
+            </div>
+        </section>
+
+        <section class="component-group" id="pagination">
+            <h1>Pagination</h1>
+            <p>Links between the pages of a long list. Mark the current page with <code>aria-current="page"</code> and an unavailable link with <code>aria-disabled="true"</code>.</p>
+
+            <div class="example">
+                <nav aria-label="Pagination">
+                    <ul class="stil-pagination">
+                        <li><a class="stil-page-link" role="link" aria-disabled="true">Previous</a></li>
+                        <li><a class="stil-page-link" href="#pagination" aria-current="page">1</a></li>
+                        <li><a class="stil-page-link" href="#pagination">2</a></li>
+                        <li><a class="stil-page-link" href="#pagination">3</a></li>
+                        <li><a class="stil-page-link" href="#pagination">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </section>
+
+        <section class="component-group" id="tabs">
+            <h1>Tabs</h1>
+            <p>Switch between panels of related content in the same place. The selected tab has <code>aria-selected="true"</code>; switching panels needs a few lines of script.</p>
+
+            <div class="example">
+                <div class="stil-tabs" role="tablist" aria-label="Project">
+                    <button type="button" class="stil-tab" role="tab" id="tab-overview" aria-selected="true" aria-controls="panel-overview">Overview</button>
+                    <button type="button" class="stil-tab" role="tab" id="tab-activity" aria-selected="false" aria-controls="panel-activity" tabindex="-1">Activity</button>
+                    <button type="button" class="stil-tab" role="tab" id="tab-settings" aria-selected="false" aria-controls="panel-settings" tabindex="-1">Settings</button>
+                </div>
+                <div role="tabpanel" id="panel-overview" aria-labelledby="tab-overview" tabindex="0">
+                    <p>The project has 12 open tasks and 3 members.</p>
+                </div>
+                <div role="tabpanel" id="panel-activity" aria-labelledby="tab-activity" tabindex="0" hidden>
+                    <p>Maria closed 4 tasks today.</p>
+                </div>
+                <div role="tabpanel" id="panel-settings" aria-labelledby="tab-settings" tabindex="0" hidden>
+                    <p>Only owners can change the project settings.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="component-group" id="dialog">
+            <h1>Dialog</h1>
+            <p>A modal window built on the native <code>&lt;dialog&gt;</code> element. Open it with <code>showModal()</code>; it closes with Escape, a <code>&lt;form method="dialog"&gt;</code> button or <code>close()</code>.</p>
+
+            <h2>Default</h2>
+            <div class="example">
+                <button type="button" class="stil-btn" onclick="document.getElementById('dialog-invite').showModal()">Invite member</button>
+                <dialog class="stil-dialog" id="dialog-invite" aria-labelledby="dialog-invite-title">
+                    <div class="stil-dialog-header">
+                        <h2 class="stil-dialog-title" id="dialog-invite-title">Invite member</h2>
+                        <button type="button" class="stil-close" aria-label="Close" onclick="this.closest('dialog').close()"></button>
+                    </div>
+                    <div class="stil-dialog-body">
+                        <div class="stil-field">
+                            <label class="stil-label" for="invite-email">Email</label>
+                            <input class="stil-input" type="email" id="invite-email" placeholder="name@example.com">
+                        </div>
+                    </div>
+                    <form method="dialog" class="stil-dialog-footer">
+                        <button class="stil-btn stil-btn-ghost" value="cancel">Cancel</button>
+                        <button class="stil-btn" value="invite">Send invite</button>
+                    </form>
+                </dialog>
+            </div>
+
+            <h2>Small</h2>
+            <p><code>stil-dialog-sm</code> and <code>stil-dialog-lg</code> change the width.</p>
+            <div class="example">
+                <button type="button" class="stil-btn stil-btn-danger" onclick="document.getElementById('dialog-delete').showModal()">Delete project</button>
+                <dialog class="stil-dialog stil-dialog-sm" id="dialog-delete" aria-labelledby="dialog-delete-title">
+                    <div class="stil-dialog-header">
+                        <h2 class="stil-dialog-title" id="dialog-delete-title">Delete project?</h2>
+                        <button type="button" class="stil-close" aria-label="Close" onclick="this.closest('dialog').close()"></button>
+                    </div>
+                    <div class="stil-dialog-body">
+                        This removes the project and all its tasks. It cannot be undone.
+                    </div>
+                    <form method="dialog" class="stil-dialog-footer">
+                        <button class="stil-btn stil-btn-ghost" value="cancel">Cancel</button>
+                        <button class="stil-btn stil-btn-danger" value="delete">Delete</button>
+                    </form>
+                </dialog>
+            </div>
+        </section>
+
+        <section class="component-group" id="dropdown">
+            <h1>Dropdown</h1>
+            <p>A menu of actions or links that opens from a button. It is built on <code>&lt;details&gt;</code>, so it works without JavaScript.</p>
+
+            <div class="example">
+                <details class="stil-dropdown">
+                    <summary class="stil-btn stil-btn-outline">Actions</summary>
+                    <div class="stil-dropdown-menu">
+                        <a class="stil-dropdown-item" href="#dropdown">Edit</a>
+                        <button type="button" class="stil-dropdown-item">Duplicate</button>
+                        <button type="button" class="stil-dropdown-item" aria-disabled="true">Move (no folders yet)</button>
+                        <hr class="stil-dropdown-divider">
+                        <button type="button" class="stil-dropdown-item">Delete</button>
+                    </div>
+                </details>
+            </div>
+
+            <h2>Aligned to the end</h2>
+            <p><code>stil-dropdown-menu-end</code> aligns the menu with the end of the button, for menus near the right edge.</p>
+            <div class="example">
+                <div class="stil-d-flex stil-justify-content-end">
+                    <details class="stil-dropdown">
+                        <summary class="stil-btn stil-btn-ghost">Account</summary>
+                        <div class="stil-dropdown-menu stil-dropdown-menu-end">
+                            <a class="stil-dropdown-item" href="#dropdown">Profile</a>
+                            <a class="stil-dropdown-item" href="#dropdown">Settings</a>
+                            <hr class="stil-dropdown-divider">
+                            <a class="stil-dropdown-item" href="#dropdown">Sign out</a>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <section class="component-group" id="tooltip">
+            <h1>Tooltip</h1>
+            <p>Short help text shown on hover and keyboard focus, set with <code>data-stil-tooltip</code>. Screen readers do not read the tooltip, so the element also needs an accessible name, for example its text or an <code>aria-label</code>.</p>
+
+            <div class="example">
+                <div class="stil-cluster">
+                    <button type="button" class="stil-btn stil-btn-outline" data-stil-tooltip="Saves a copy to your drafts">Save draft</button>
+                    <button type="button" class="stil-btn stil-btn-icon" data-stil-tooltip="Add item" aria-label="Add item">+</button>
+                    <button type="button" class="stil-btn stil-btn-outline stil-tooltip-bottom" data-stil-tooltip="Shown below the button">Tooltip below</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="component-group" id="progress">
+            <h1>Progress</h1>
+            <p>Shows how far a task has come. Set the bar width and keep <code>aria-valuenow</code> in sync with it.</p>
+
+            <div class="example">
+                <div class="stil-stack">
+                    <div class="stil-progress" role="progressbar" aria-label="Upload" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
+                        <div class="stil-progress-bar" style="width: 40%"></div>
+                    </div>
+                    <div class="stil-progress stil-progress-lg" role="progressbar" aria-label="Profile completion" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">
+                        <div class="stil-progress-bar" style="width: 65%">65%</div>
+                    </div>
+                    <div class="stil-progress" role="progressbar" aria-label="Tasks done" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">
+                        <div class="stil-progress-bar stil-bg-success" style="width: 90%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="component-group" id="spinner">
+            <h1>Spinner</h1>
+            <p>Shows that something is loading when the time it takes is unknown. It uses the current text color.</p>
+
+            <div class="example">
+                <div class="stil-cluster">
+                    <span class="stil-spinner" role="status"><span class="stil-visually-hidden">Loading…</span></span>
+                    <span class="stil-spinner stil-spinner-sm" role="status"><span class="stil-visually-hidden">Loading…</span></span>
+                    <span class="stil-spinner stil-text-primary" role="status"><span class="stil-visually-hidden">Loading…</span></span>
+                    <button type="button" class="stil-btn" disabled>
+                        <span class="stil-spinner stil-spinner-sm" aria-hidden="true"></span>
+                        Saving…
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="component-group" id="toasts">
+            <h1>Toasts</h1>
+            <p>Brief notifications. Put them in a <code>stil-toast-container</code>, which is fixed to the bottom corner of the screen (shown in place here). A variant class colors the edge.</p>
+
+            <div class="example">
+                <div class="stil-toast-container">
+                    <div class="stil-toast stil-toast-success" role="status">
+                        <div class="stil-toast-body">
+                            <p class="stil-toast-title">Saved</p>
+                            Your changes are live.
+                        </div>
+                        <button type="button" class="stil-close" aria-label="Close" onclick="this.parentElement.remove()"></button>
+                    </div>
+                    <div class="stil-toast stil-toast-info" role="status">
+                        <div class="stil-toast-body">
+                            <p class="stil-toast-title">New comment</p>
+                            Erik replied to your post.
+                        </div>
+                        <button type="button" class="stil-close" aria-label="Close" onclick="this.parentElement.remove()"></button>
+                    </div>
+                    <div class="stil-toast stil-toast-danger" role="alert">
+                        <div class="stil-toast-body">
+                            <p class="stil-toast-title">Upload failed</p>
+                            The file is larger than 10 MB.
+                        </div>
+                        <button type="button" class="stil-close" aria-label="Close" onclick="this.parentElement.remove()"></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="component-group" id="utilities">
+            <h1>Utilities</h1>
+            <p>Single-purpose classes for spacing, display, flexbox, text, borders, shadows and sizing. Responsive versions are named <code>stil-{utility}-{sm|md|lg|xl}-{value}</code> and apply from that breakpoint up, for example <code>stil-d-md-none</code> or <code>stil-gap-lg-5</code>.</p>
+
+            <h2>Spacing</h2>
+            <p><code>stil-m-*</code> (margin) and <code>stil-p-*</code> (padding) take a value from 0 to 7, and margins also take <code>auto</code>. Add a side: <code>t</code>, <code>b</code>, <code>s</code> (start), <code>e</code> (end), <code>x</code> (both sides) or <code>y</code> (top and bottom).</p>
+            <div class="example">
+                <div class="stil-bg-muted stil-rounded stil-p-1">
+                    <div class="stil-m-3 stil-p-3 stil-bg-surface stil-border stil-rounded">stil-m-3 stil-p-3</div>
+                </div>
+                <div class="stil-mt-4 stil-px-5 stil-py-2 stil-bg-muted stil-rounded">stil-mt-4 stil-px-5 stil-py-2</div>
+                <div class="stil-w-50 stil-mx-auto stil-mt-4 stil-p-2 stil-bg-muted stil-rounded stil-text-center">stil-w-50 stil-mx-auto</div>
+            </div>
+
+            <h2>Display</h2>
+            <div class="example">
+                <div class="stil-d-none stil-d-md-block stil-p-2 stil-bg-muted stil-rounded">Visible from the md breakpoint up</div>
+                <div class="stil-d-md-none stil-p-2 stil-bg-muted stil-rounded">Visible below the md breakpoint</div>
+                <span class="stil-d-inline-block stil-mt-2 stil-p-2 stil-border stil-rounded">Inline block</span>
+            </div>
+
+            <h2>Flexbox</h2>
+            <div class="example">
+                <div class="stil-d-flex stil-justify-content-between stil-align-items-center stil-gap-3 stil-p-3 stil-border stil-rounded">
+                    <strong>Order #1042</strong>
+                    <span class="stil-badge stil-badge-success">Delivered</span>
+                </div>
+            </div>
+            <div class="example">
+                <div class="stil-d-flex stil-flex-column stil-flex-md-row stil-gap-3">
+                    <div class="stil-flex-fill stil-p-2 stil-bg-muted stil-rounded">Stacked on small screens</div>
+                    <div class="stil-flex-fill stil-p-2 stil-bg-muted stil-rounded">In a row from md up</div>
+                </div>
+            </div>
+
+            <h2>Text</h2>
+            <div class="example">
+                <p class="stil-text-center">Centered text</p>
+                <p class="stil-fs-xs">stil-fs-xs</p>
+                <p class="stil-fs-sm">stil-fs-sm</p>
+                <p class="stil-fs-md">stil-fs-md</p>
+                <p class="stil-fs-lg">stil-fs-lg</p>
+                <p class="stil-fs-xl">stil-fs-xl</p>
+                <p class="stil-fw-bold">Bold text</p>
+                <p class="stil-text-uppercase">Uppercase text</p>
+                <p class="stil-font-mono">Monospace text</p>
+                <div class="stil-text-truncate stil-border stil-rounded stil-p-2" style="width: 14rem">This long sentence is cut off with an ellipsis when it does not fit.</div>
+            </div>
+
+            <h2>Borders, radius and shadows</h2>
+            <div class="example">
+                <div class="stil-cluster stil-gap-4">
+                    <div class="stil-border stil-p-3">stil-border</div>
+                    <div class="stil-border-bottom stil-p-3">stil-border-bottom</div>
+                    <div class="stil-border-start stil-p-3">stil-border-start</div>
+                    <div class="stil-bg-muted stil-rounded-0 stil-p-3">stil-rounded-0</div>
+                    <div class="stil-bg-muted stil-rounded-sm stil-p-3">stil-rounded-sm</div>
+                    <div class="stil-bg-muted stil-rounded stil-p-3">stil-rounded</div>
+                    <div class="stil-bg-muted stil-rounded-lg stil-p-3">stil-rounded-lg</div>
+                    <div class="stil-bg-muted stil-rounded-pill stil-px-4 stil-py-2">stil-rounded-pill</div>
+                    <button type="button" class="stil-btn stil-btn-icon stil-rounded-circle" aria-label="Add">+</button>
+                </div>
+            </div>
+            <div class="example">
+                <div class="stil-cluster stil-gap-5">
+                    <div class="stil-bg-surface stil-shadow-sm stil-rounded stil-p-3">stil-shadow-sm</div>
+                    <div class="stil-bg-surface stil-shadow stil-rounded stil-p-3">stil-shadow</div>
+                    <div class="stil-bg-surface stil-shadow-lg stil-rounded stil-p-3">stil-shadow-lg</div>
+                </div>
+            </div>
+
+            <h2>Width</h2>
+            <div class="example">
+                <div class="stil-stack stil-gap-2">
+                    <div class="stil-w-25 stil-p-2 stil-bg-muted stil-rounded">stil-w-25</div>
+                    <div class="stil-w-50 stil-p-2 stil-bg-muted stil-rounded">stil-w-50</div>
+                    <div class="stil-w-75 stil-p-2 stil-bg-muted stil-rounded">stil-w-75</div>
+                    <div class="stil-w-100 stil-p-2 stil-bg-muted stil-rounded">stil-w-100</div>
+                </div>
+            </div>
+
+            <h2>Visually hidden</h2>
+            <p><code>stil-visually-hidden</code> hides content visually but keeps it for screen readers. <code>stil-visually-hidden-focusable</code> shows it again when it gets focus, which suits skip links (press <kbd>Tab</kbd> in the example).</p>
+            <div class="example">
+                <button type="button" class="stil-btn stil-btn-icon">
+                    <span aria-hidden="true">+</span>
+                    <span class="stil-visually-hidden">Add item</span>
+                </button>
+                <a class="stil-visually-hidden-focusable" href="#utilities">Skip to utilities</a>
+            </div>
+        </section>
     </div>
+
     <script src="theme-picker.js"></script>
+    <script src="examples.js"></script>
+    <script>
+        // Showcase-only: switches the panels of the tabs example (click, or the arrow keys).
+        document.querySelectorAll('[role="tablist"]').forEach(tablist => {
+            const tabs = [...tablist.querySelectorAll('[role="tab"]')];
+
+            function select(tab) {
+                tabs.forEach(other => {
+                    const selected = other === tab;
+                    other.setAttribute('aria-selected', selected);
+                    other.tabIndex = selected ? 0 : -1;
+                    document.getElementById(other.getAttribute('aria-controls')).hidden = !selected;
+                });
+            }
+
+            tablist.addEventListener('click', event => {
+                const tab = event.target.closest('[role="tab"]');
+                if (tab) select(tab);
+            });
+
+            tablist.addEventListener('keydown', event => {
+                const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
+                if (!step) return;
+                const next = tabs[(tabs.indexOf(document.activeElement) + step + tabs.length) % tabs.length];
+                select(next);
+                next.focus();
+            });
+        });
+    </script>
 </body>
 </html>

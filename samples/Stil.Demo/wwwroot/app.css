@@ -54,11 +54,6 @@ h1:focus {
     margin-left: auto;
 }
 
-.theme-picker .stil-input {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-}
-
 .component-group {
     display: flex;
     flex-direction: column;

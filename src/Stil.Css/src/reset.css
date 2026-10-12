@@ -1,0 +1,49 @@
+/*
+ * Reset (layer stil.reset). Zero specificity, and only for Stil elements and content inside
+ * .stil-scope, so a host page that has not opted in is never touched.
+ */
+
+:where(:is([class^="stil-"], [class*=" stil-"]), :is([class^="stil-"], [class*=" stil-"])::before, :is([class^="stil-"], [class*=" stil-"])::after),
+:where(.stil-scope, .stil-scope *, .stil-scope *::before, .stil-scope *::after) {
+    box-sizing: border-box;
+}
+
+:where(.stil-scope) :where(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, figure, blockquote, pre, table) {
+    margin-block: 0 var(--stil-space-4);
+}
+
+:where(.stil-scope) :where(ul, ol) {
+    padding-inline-start: var(--stil-space-5);
+}
+
+:where(.stil-scope) :where(img, video) { max-width: 100%; }
+
+/* Keep the aspect ratio when max-width shrinks an image that has a width attribute, but respect
+   a height-only attribute. */
+:where(.stil-scope) :where(img[width], video[width]) { height: auto; }
+
+:where(.stil-scope) :where(img, svg, video, canvas) {
+    vertical-align: middle;
+}
+
+:where(.stil-scope, :is([class^="stil-"], [class*=" stil-"])) :where(button, input, select, textarea),
+:where(button, input, select, textarea):where(:is([class^="stil-"], [class*=" stil-"])) {
+    font: inherit;
+    letter-spacing: inherit;
+}
+
+:where(.stil-scope) :where(table) {
+    border-collapse: collapse;
+}
+
+:where(.stil-scope) :where(fieldset) {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+:where(.stil-scope) :where(legend) {
+    margin-block-end: var(--stil-space-2);
+    padding: 0;
+}

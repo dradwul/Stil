@@ -1,79 +1,157 @@
 # Stil CSS
 
-Stil CSS is a small, framework-independent CSS class library. It is a single
-stylesheet with no JavaScript and no build step. It works in plain HTML,
-Razor, React, Vue, or any other front end.
+Stil CSS is a themeable, framework-independent CSS class library. It is a
+Bootstrap replacement with dark mode and WCAG AA colors built in. It is a
+single stylesheet, about 10 kB minified and gzipped, with no JavaScript. It
+works with plain HTML, Razor, React, Vue, or any other front end.
 
 Every class starts with `stil-` and every token with `--stil-`, so Stil can
-run next to Bootstrap, Tailwind or your own CSS without clashing.
+run next to Bootstrap, Tailwind or your own CSS without clashing. If you are
+coming from Bootstrap, see the [migration guide](MIGRATING-FROM-BOOTSTRAP.md).
 
-> **Status:** early preview. Class and token names may still change before
-> `1.0`. See the [roadmap](../../ROADMAP.md).
+> **Status:** early preview (`0.1.0`). Class and token names may still
+> change before `1.0`. See the [roadmap](../../ROADMAP.md).
 
 ## Install
 
-Stil CSS is not yet published to npm (planned name: `stil-css`) or a CDN.
-For now, use one of these options:
+Use one of these options:
 
-- **Copy the file:** copy [`stil.css`](stil.css) into your project and link it:
+- **npm:** run `npm install stil-css`, then import `stil-css`
+  (`dist/stil.css`) or `stil-css/min`. The package is prepared under that
+  name but not yet published.
+- **CDN:** once the npm package is published, jsDelivr serves it:
 
   ```html
-  <link rel="stylesheet" href="/css/stil.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/stil-css@0.1.0/dist/stil.min.css" />
   ```
 
-- **Blazor/.NET:** install the `Stil` NuGet package. It serves this file as
-  `_content/Stil/stil.css`. See [Stil for Blazor](../Stil.Blazor/README.md).
+- **Copy the file:** [`dist/stil.css`](dist/stil.css) or
+  [`dist/stil.min.css`](dist/stil.min.css).
+- **Blazor/.NET:** the `Stil` NuGet package serves both files as
+  `_content/Stil/stil.css` and `_content/Stil/stil.min.css`. See
+  [Stil for Blazor](../Stil.Blazor/README.md).
+
+## Quick start
+
+```html
+<!doctype html>
+<html lang="en" data-stil-theme="auto">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="stil.min.css" />
+</head>
+<body class="stil-scope">
+    <main class="stil-container stil-py-5">
+        <h1>Hello, Stil</h1>
+        <div class="stil-alert stil-alert-subtle stil-alert-success">It works.</div>
+        <button class="stil-btn stil-btn-primary">Get started</button>
+    </main>
+</body>
+</html>
+```
 
 ## Components and base styles
 
-| Layer | What | Where it applies |
+| Part | What | Where it applies |
 | --- | --- | --- |
-| **Components** | All `stil-*` classes | Anywhere. No wrapper needed. |
-| **Base** | Font, text color, headings `h1`–`h6`, links | Only inside `class="stil-scope"`. |
+| **Components and utilities** | All `stil-*` classes | Anywhere. No wrapper needed. |
+| **Base** | Font, text color, headings, links, `code`, `hr`, `blockquote` and a light reset | Only inside `class="stil-scope"`. |
+
+Put `class="stil-scope"` on `<body>` for a whole Stil app. To adopt Stil in
+one part of an existing page, put it on a `<section>` instead. Elements
+outside the scope keep the host page's styles.
+
+All rules live in the cascade layers `stil.tokens`, `stil.reset`,
+`stil.base`, `stil.components` and `stil.utilities`. Any CSS you write
+outside a layer wins over Stil, whatever its specificity. That includes
+generic rules such as `button { … }` from another reset, so keep those out
+of pages that use Stil components.
+
+## Layout
+
+| Class | What it does |
+| --- | --- |
+| `stil-container` | Centered column, `--stil-container-max` wide (1200px). Add `stil-container-fluid` for full width. |
+| `stil-grid` | 12-column CSS grid with a gap. Children span the full row by default. |
+| `stil-col-{1-12}`, `stil-col-{bp}-{1-12}` | Column span. The `{bp}` form applies from that breakpoint up. |
+| `stil-stack` | Children in a column with even gaps. |
+| `stil-cluster` | Children in a wrapping row, vertically centered. |
+| `stil-with-sidebar` | Sidebar (`--stil-sidebar-width`) beside the content from `lg`, stacked below it. |
+
+The breakpoints `{bp}` are `sm` (576px), `md` (768px), `lg` (992px) and
+`xl` (1200px). They are mobile first: each applies from that width up.
 
 ```html
-<body class="stil-scope">          <!-- whole app: Stil also styles bare elements -->
-    ...
-</body>
-
-<section class="stil-scope">       <!-- or just one part of an existing page -->
-    ...
-</section>
+<div class="stil-grid">
+    <div class="stil-col-md-8">Main</div>
+    <div class="stil-col-md-4">Aside</div>
+</div>
 ```
 
-Elements outside a `.stil-scope` keep the host page's styles. Stil classes
-still work there.
+## Components
 
-## Classes
+In the class names below, `{variant}` is one of `primary`, `secondary`,
+`success`, `danger`, `warning` or `info`. States use attributes, not
+classes: `aria-current="page"`, `aria-selected="true"`,
+`aria-invalid="true"`, `aria-busy="true"` and `disabled`.
 
-| Component | Classes | Notes |
+| Component | Classes |
+| --- | --- |
+| Button | `stil-btn` + `stil-btn-{variant}`. Styles: `stil-btn-outline`, `stil-btn-ghost`. Sizes: `stil-btn-sm`, `stil-btn-lg`, `stil-btn-icon`. `aria-busy="true"` shows a spinner, and `aria-pressed="true"` shows a toggle as on. Group buttons with `stil-btn-group`. Close button: `stil-close`. |
+| Form | `stil-form` > `stil-field` > `stil-label` + control + `stil-field-hint` / `stil-field-error` |
+| Text input, select | `stil-input` (input, textarea), `stil-select`. Sizes: `stil-input-sm`, `stil-input-lg`, `stil-select-sm`, `stil-select-lg`. |
+| Checkbox, radio, switch | `<label class="stil-check"><input class="stil-check-input">`. For a switch, use `stil-switch` on a checkbox with `role="switch"`. |
+| Input group | `stil-input-group` (`stil-input-group-sm`) with `stil-input-group-text`, inputs and buttons |
+| Card | `stil-card` with `stil-card-header`, `stil-card-title`, `stil-card-subtitle`, `stil-card-footer`. A `stil-card-flush` child (for example a table) runs edge to edge. |
+| Alert | `stil-alert` + `stil-alert-{variant}`, `stil-alert-subtle`, `stil-alert-title`. A `stil-close` inside makes it dismissible. |
+| Badge | `stil-badge` + `stil-badge-{variant}`, `stil-badge-subtle` |
+| Avatar | `stil-avatar` (`-sm`, `-lg`) holding initials or an `<img>` |
+| Table | `stil-table` with `stil-table-striped`, `stil-table-hover`, `stil-table-compact`, `stil-table-bordered`. Wrap it in `stil-table-responsive` to scroll sideways. |
+| Nav | `stil-nav` > `stil-nav-link`, with `stil-nav-vertical` and `stil-nav-pills` |
+| Navbar | `stil-navbar` with `stil-navbar-brand`, a `stil-nav` and `stil-navbar-end` |
+| Breadcrumb | `<ol class="stil-breadcrumb">` |
+| Pagination | `stil-pagination` (`stil-pagination-sm`) > `li` > `stil-page-link`. Use `<span class="stil-page-link">` for an ellipsis. |
+| Tabs | `stil-tabs` (`role="tablist"`) > `stil-tab` (`role="tab"`, `aria-selected`). Switching panels needs a script. |
+| Dialog | `<dialog class="stil-dialog">` with `stil-dialog-header`, `stil-dialog-title`, `stil-dialog-body`, `stil-dialog-footer`. Sizes: `stil-dialog-sm`, `stil-dialog-lg`. |
+| Dropdown | `<details class="stil-dropdown">` > `<summary class="stil-btn">` + `stil-dropdown-menu` (`-end`) > `stil-dropdown-item`, `stil-dropdown-header`, `stil-dropdown-divider`. There is no arrow on a `stil-btn-icon` summary. |
+| Tooltip | `data-stil-tooltip="Text"` on any element. Add `stil-tooltip-bottom` to show it below. |
+| Progress | `stil-progress` (`stil-progress-lg`) > `stil-progress-bar` with a width |
+| Spinner | `stil-spinner`, `stil-spinner-sm`. It uses the current text color. |
+| Toast | `stil-toast-container` > `stil-toast` + `stil-toast-{variant}` > `stil-toast-body` (`stil-toast-title`) + `stil-close` |
+
+To see every class with its markup, open
+[`samples/Stil.Html/index.html`](../../samples/Stil.Html/index.html). For a
+full page built only with Stil, open
+[`samples/Stil.Html/admin.html`](../../samples/Stil.Html/admin.html).
+
+## Utilities
+
+Utilities use Bootstrap's names with the `stil-` prefix. Responsive versions
+put the breakpoint after the property name, as `stil-{name}-{bp}-{value}`.
+For example, `stil-d-none stil-d-md-block` hides an element below `md`.
+
+| Group | Classes | Responsive |
 | --- | --- | --- |
-| Container | `stil-container` | Centered box, max 1200px, with border and padding. |
-| Button | `stil-btn` + `stil-btn-{variant}` | Sizes: `stil-btn-sm`, `stil-btn-lg`. Group with `stil-btn-group`. |
-| Form | `stil-form` | Stacks its fields vertically. |
-| Input | `stil-input-group` wrapping a `<label>` and `stil-input` | `stil-input` works on `<input>`, `<textarea>` and `<select>`. |
-| Card | `stil-card`, `stil-card-title`, `stil-card-footer` | |
-| Alert | `stil-alert` + `stil-alert-{variant}` | |
-| Table | `stil-table` on `<table>` | Full width with row dividers. |
-| Background | `stil-bg-{variant}` | A variant color as background, with readable text on top. |
+| Display | `stil-d-{none,block,inline,inline-block,flex,inline-flex,grid}` | yes |
+| Flex | `stil-flex-{row,column,row-reverse,column-reverse,wrap,nowrap}`, `stil-flex-{fill,1,none}`, `stil-flex-grow-*`, `stil-flex-shrink-*` | direction, wrap |
+| Alignment | `stil-justify-content-{start,end,center,between,around,evenly}`, `stil-align-items-*`, `stil-align-self-*` | justify, align-items |
+| Gap | `stil-gap-{0-7}` | yes |
+| Spacing | `stil-{m,p}{,t,b,s,e,x,y}-{0-7}` and `stil-m*-auto`. `s` and `e` are the logical start and end. | yes |
+| Sizing | `stil-w-{25,50,75,100,auto}`, `stil-h-*`, `stil-mw-100`, `stil-min-vh-100` | |
+| Text | `stil-text-{start,center,end}`, `stil-text-{nowrap,wrap,truncate}`, `stil-text-{uppercase,lowercase,capitalize}`, `stil-text-{body,muted,inherit}`, `stil-fs-{xs,sm,md,lg,xl,2xl}`, `stil-fw-{normal,bold}`, `stil-font-mono`, `stil-align-{baseline,top,middle,bottom,text-top,text-bottom}` | text-align |
+| Color | `stil-bg-{variant}` (with readable text), `stil-text-{variant}`, `stil-border-{variant}`, `stil-bg-{body,surface,muted,transparent}` | |
+| Borders | `stil-border`, `stil-border-{top,bottom,start,end,0}`, `stil-rounded`, `stil-rounded-{0,sm,lg,pill,circle}`, `stil-shadow`, `stil-shadow-{sm,lg,none}` | |
+| Position | `stil-position-*`, `stil-{top,bottom,start,end}-{0,50,100}`, `stil-translate-middle`, `stil-sticky-top`, `stil-overflow-*` | |
+| Lists | `stil-list-unstyled` | |
+| Visibility | `stil-visually-hidden`, `stil-visually-hidden-focusable`, `stil-visible`, `stil-invisible` | |
 
-`{variant}` is one of `primary`, `secondary`, `success`, `danger`, `warning`
-or `info`.
+Children of `stil-stack`, `stil-cluster`, `stil-grid` and `stil-with-sidebar`
+get their spacing from the gap, so their own block margins are removed.
+A spacing utility on a child still wins.
 
-```html
-<form class="stil-form">
-    <div class="stil-input-group">
-        <label for="email">Email</label>
-        <input id="email" type="email" class="stil-input" />
-    </div>
-    <button type="submit" class="stil-btn stil-btn-primary">Save</button>
-</form>
-
-<div class="stil-alert stil-alert-danger">Something went wrong.</div>
-```
-
-Open [`samples/Stil.Html/index.html`](../../samples/Stil.Html/index.html) in a
-browser to see every class rendered with its markup.
+The spacing scale runs from 0 to 7: 0, 0.25rem, 0.5rem, 0.75rem, 1rem,
+1.5rem, 2rem and 3rem. These are the `--stil-space-*` tokens.
 
 ## Theming
 
@@ -95,13 +173,16 @@ Most themes only need the brand colors:
 
 Everything derived from a color follows it automatically:
 
-- **Text on colored backgrounds** (buttons, alerts, `stil-bg-*`) is black or
+- **Text on colored backgrounds** (buttons, alerts, badges, `stil-bg-*`) is black or
   white, whichever contrasts more with the background. That always meets
   WCAG AA (at least 4.58:1). To force a color, set
   `--stil-color-{variant}-contrast`.
-- **Links and focus rings** use `--stil-color-primary`, darkened in light
+- **Links, focus rings and selected states** (checkboxes, pills, current
+  page) use `--stil-color-primary`, darkened in light
   mode and lightened in dark mode until they are readable on the neutral
   surfaces. To use a different color, set `--stil-color-accent`.
+- **Outline and ghost buttons, `stil-text-*` and error text** use the variant
+  color, adjusted the same way.
 - **Hover states** move the background toward its text color.
 
 Tokens set on any element apply to everything inside it, so you can theme
@@ -146,14 +227,15 @@ same form when you override them, or the override applies to both modes:
 | Brand and semantic colors | `--stil-color-primary`, `-secondary`, `-success`, `-danger`, `-warning`, `-info` |
 | Optional overrides | `--stil-color-{variant}-contrast` (text on the color), `--stil-color-accent` (links, focus) |
 | Neutrals | `--stil-color-body-bg`, `-surface`, `-surface-muted`, `-text`, `-text-muted`, `-border`, `-border-strong` |
-| Typography | `--stil-font-family`, `--stil-font-family-mono`, `--stil-font-size-xs` … `-xl`, `--stil-letter-spacing`, `--stil-heading-margin` |
+| Typography | `--stil-font-family`, `--stil-font-family-mono`, `--stil-font-size-xs` … `-xl`, `--stil-font-weight-normal`, `-bold`, `--stil-line-height`, `--stil-letter-spacing`, `--stil-heading-margin` |
 | Spacing | `--stil-space-1` (0.25rem) … `--stil-space-7` (3rem) |
-| Shape | `--stil-radius-sm`, `-md`, `-lg`, `-pill`, `--stil-shadow-sm`, `-md`, `-lg` |
+| Layout | `--stil-container-max`, `--stil-sidebar-width` |
+| Shape | `--stil-radius-sm`, `-md`, `-lg`, `-pill`, `--stil-shadow-sm`, `-md`, `-lg`, `--stil-backdrop` |
 | Focus | `--stil-focus-ring-width`, `--stil-focus-ring-offset` |
 | Layering | `--stil-z-dropdown`, `-sticky`, `-overlay`, `-modal`, `-popover`, `-toast` |
 | Motion | `--stil-duration-fast`, `--stil-duration-md`, `--stil-easing`. The durations are 0 when the user prefers reduced motion. |
 
-The defaults are in the `:root` block at the top of [`stil.css`](stil.css).
+The defaults are in [`src/tokens.css`](src/tokens.css).
 
 Stil uses **Didact Gothic** if your page loads it, for example from Google
 Fonts. Otherwise it falls back to `sans-serif`. The stylesheet never
@@ -161,13 +243,31 @@ fetches fonts on its own.
 
 ### Accessibility check
 
-`node tools/check-contrast.mjs` checks every default token pair in light
-and dark mode. It also checks the derived text and accent colors against a
-range of brand colors. CI runs it on every pull request.
+`npm run check` runs `tools/check-contrast.mjs`. It checks every default
+token pair in light and dark mode, and the derived text, ink and accent colors
+against a range of brand colors. CI runs it on every pull request.
 
-### Current limitations
+## Develop
 
-These are planned for Phase 2 of the [roadmap](../../ROADMAP.md):
+[Lightning CSS](https://lightningcss.dev/) builds the stylesheet from the
+files in [`src/`](src):
 
-- There is no reset/normalize layer, grid or responsive breakpoints yet.
-  The only utilities so far are `stil-bg-*`.
+```text
+src/tokens.css, derived.css      layer stil.tokens: tokens, color modes, derived colors
+src/reset.css                    layer stil.reset
+src/base.css                     layer stil.base: element styles inside .stil-scope
+src/layout.css, components/*.css layer stil.components
+src/utilities.css                layer stil.utilities (the hand-written ones)
+build/generate.mjs               generates grid columns, variants and utilities
+build/build.mjs                  bundles everything into dist/
+```
+
+```shell
+npm install
+npm run build    # writes dist/stil.css and dist/stil.min.css
+npm run watch    # rebuilds on every change; the Blazor demo picks it up live
+npm run check    # fails if dist/ is stale or a contrast check fails (CI runs this)
+```
+
+`dist/` is committed, so neither the .NET build nor anyone who copies the
+file needs Node.js. Commit `dist/` together with your source changes.

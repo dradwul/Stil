@@ -1,0 +1,80 @@
+/* Base (layer stil.base): element styles, opt-in with .stil-scope (put it on <body> for a whole app). */
+
+.stil-scope {
+    font-family: var(--stil-font-family);
+    line-height: var(--stil-line-height);
+    color: var(--stil-color-text);
+    -webkit-text-size-adjust: 100%;
+}
+
+.stil-scope :is(h1, h2, h3, h4, h5, h6) {
+    margin: var(--stil-heading-margin);
+    line-height: 1.2;
+    letter-spacing: var(--stil-letter-spacing);
+}
+
+.stil-scope h1 { font-size: var(--stil-font-size-xl); }
+.stil-scope h2 { font-size: var(--stil-font-size-lg); }
+.stil-scope h3 { font-size: var(--stil-font-size-md); }
+.stil-scope h4 { font-size: var(--stil-font-size-sm); }
+.stil-scope :is(h5, h6) { font-size: var(--stil-font-size-xs); }
+
+.stil-scope a {
+    color: var(--_accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+}
+
+.stil-scope a:hover { text-decoration-thickness: 2px; }
+
+.stil-scope a:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+    border-radius: var(--stil-radius-sm);
+}
+
+.stil-scope :is(code, kbd, samp, pre) {
+    font-family: var(--stil-font-family-mono);
+    font-size: 0.875em;
+}
+
+.stil-scope :not(pre) > code {
+    padding: 0.1em 0.3em;
+    border-radius: var(--stil-radius-sm);
+    background-color: var(--stil-color-surface-muted);
+}
+
+.stil-scope pre {
+    padding: var(--stil-space-3);
+    overflow: auto;
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface-muted);
+}
+
+.stil-scope kbd {
+    padding: 0.1em 0.35em;
+    border-radius: var(--stil-radius-sm);
+    background-color: var(--stil-color-text);
+    color: var(--stil-color-body-bg);
+}
+
+.stil-scope hr {
+    margin-block: var(--stil-space-4);
+    border: 0;
+    border-top: 1px solid var(--stil-color-border);
+}
+
+.stil-scope blockquote {
+    padding-inline-start: var(--stil-space-4);
+    border-inline-start: 4px solid var(--stil-color-border);
+    color: var(--stil-color-text-muted);
+}
+
+.stil-scope small { font-size: 0.875em; }
+
+.stil-scope mark {
+    padding: 0 0.15em;
+    background-color: color-mix(in srgb, var(--stil-color-warning) 45%, transparent);
+    color: inherit;
+}

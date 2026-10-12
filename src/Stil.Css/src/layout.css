@@ -1,0 +1,47 @@
+/* Layout (layer stil.components). Grid column classes are generated, see build/generate.mjs. */
+
+.stil-container {
+    width: 100%;
+    max-width: var(--stil-container-max);
+    margin-inline: auto;
+    padding-inline: var(--stil-space-4);
+}
+
+.stil-container-fluid { max-width: none; }
+
+/* A 12-column grid. Children span all 12 columns until a stil-col-* class says otherwise. */
+.stil-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--stil-space-4);
+}
+
+.stil-grid > :where(*) { grid-column: span 12; }
+
+/* Vertical rhythm: children stacked with even gaps. */
+.stil-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stil-space-4);
+}
+
+/* Inline group: children in a wrapping row, vertically centered. */
+.stil-cluster {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--stil-space-2);
+}
+
+/* App shell: a sidebar next to the main content from the lg breakpoint; stacked below it. */
+.stil-with-sidebar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--stil-space-4);
+}
+
+@media (min-width: 992px) {
+    .stil-with-sidebar {
+        grid-template-columns: var(--stil-sidebar-width) minmax(0, 1fr);
+    }
+}

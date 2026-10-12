@@ -1,18 +1,20 @@
 // Checks that Stil's default tokens meet WCAG AA contrast in light and dark mode, and that the
-// derived colors in stil.css (auto text color and accent) hold up for a range of brand colors.
-// Usage: node tools/check-contrast.mjs [path/to/stil.css]
+// derived colors (auto text color, ink and accent) hold up for a range of brand colors.
+// Usage: node tools/check-contrast.mjs [path/to/source/dir]
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const cssPath = process.argv[2] ?? new URL('../src/Stil.Css/stil.css', import.meta.url);
-const css = readFileSync(cssPath, 'utf8');
+const sourceDir = process.argv[2] ?? fileURLToPath(new URL('../src/Stil.Css/src', import.meta.url));
+const css = ['tokens.css', 'derived.css'].map(file => readFileSync(join(sourceDir, file), 'utf8')).join('\n');
 
-// The derived-color formulas below mirror stil.css. If a constant changes there, change it here.
+// The derived-color formulas below mirror src/derived.css. If a constant changes there, change it here.
 const FG_THRESHOLD = 0.1791; // luminance where black and white text give equal contrast
 const ACCENT_MAX_LIGHT = 0.15; // accent luminance cap in light mode
 const ACCENT_MIN_DARK = 1 - 0.7; // accent luminance floor in dark mode
 for (const constant of ['(0.1791 -', '0.15 / (', '0.7 / (']) {
     if (!css.includes(constant)) {
-        fail(`stil.css no longer contains "${constant}". Update tools/check-contrast.mjs to match.`);
+        fail(`derived.css no longer contains "${constant}". Update tools/check-contrast.mjs to match.`);
     }
 }
 
@@ -24,6 +26,7 @@ const SAMPLE_COLORS = [
 
 const tokens = parseRootTokens(css);
 const modes = { light: 0, dark: 1 };
+const variants = ['primary', 'secondary', 'success', 'danger', 'warning', 'info'];
 const failures = [];
 let checks = 0;
 
@@ -48,13 +51,19 @@ for (const [mode, index] of Object.entries(modes)) {
         check(`${mode}: text-muted on ${bg}`, color('text-muted'), color(bg), 4.5);
         check(`${mode}: border-strong on ${bg}`, color('border-strong'), color(bg), 3);
 
-        for (const brand of [color('primary'), ...SAMPLE_COLORS]) {
-            check(`${mode}: accent from ${toHex(brand)} on ${bg}`, accent(brand, mode), color(bg), 4.5);
+        // Ink (outline buttons, error text, toast edges) and accent use the same formula.
+        for (const brand of [...variants.map(color), ...SAMPLE_COLORS]) {
+            check(`${mode}: ink from ${toHex(brand)} on ${bg}`, accent(brand, mode), color(bg), 4.5);
         }
+    }
+
+    // Subtle alerts and badges: normal text on a 15% tint of the variant over the surface.
+    for (const variant of variants) {
+        const tint = mix(color(variant), color('surface'), 0.15);
+        check(`${mode}: text on subtle ${variant}`, color('text'), tint, 4.5);
     }
 }
 
-const variants = ['primary', 'secondary', 'success', 'danger', 'warning', 'info'];
 for (const background of [...variants.map(v => tokens[v][0]), ...SAMPLE_COLORS]) {
     check(`auto text on ${toHex(background)}`, autoForeground(background), background, 4.5);
 }
@@ -79,6 +88,11 @@ function accent(primary, mode) {
     }
     const factor = Math.min(1, (1 - ACCENT_MIN_DARK) / (1.0001 - y));
     return linear.map(c => 1 - (1 - c) * factor).map(fromLinear);
+}
+
+// color-mix(in srgb, a p, b): linear interpolation of the gamma-encoded channels.
+function mix(a, b, p) {
+    return a.map((c, i) => c * p + b[i] * (1 - p));
 }
 
 // --- Color math --------------------------------------------------------------------------

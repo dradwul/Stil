@@ -1,4 +1,4 @@
-@import url("../../src/Stil.Css/stil.css");
+@import url("../../src/Stil.Css/dist/stil.css");
 
 /* Showcase-only styles. They use Stil tokens, so the page follows the selected theme. */
 
@@ -42,11 +42,6 @@ body {
     margin-left: auto;
 }
 
-.theme-picker .stil-input {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-}
-
 .component-group {
     display: flex;
     flex-direction: column;
@@ -57,50 +52,31 @@ body {
     gap: 0.25rem;
 }
 
-.component-group code {
-    display: block;
-    overflow-wrap: anywhere;
-    background: var(--stil-color-surface-muted);
-    padding: 0.25rem;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-}
+/* Live examples; examples.js shows each one's markup in a .example-code block above it. */
 
-.component-group-code-example {
-    background: var(--stil-color-surface);
-    padding: 0.5rem;
-    border-radius: 0.25rem;
+.component-group > p { margin: 0 0 0.5rem; }
+
+.example-code {
+    margin: 0.5rem 0 0;
+    padding: 0.75rem;
+    overflow-x: auto;
     border: 1px solid var(--stil-color-border);
+    border-bottom: 0;
+    border-radius: 0.25rem 0.25rem 0 0;
+    background: var(--stil-color-surface);
+    font-size: 0.8125rem;
+    white-space: pre;
 }
 
-.component-group-code-example-content {
+.example-code code { padding: 0; background: none; }
+
+.example {
+    margin-bottom: 0.5rem;
+    padding: 1rem;
+    border: 1px solid var(--stil-color-border);
+    border-radius: 0 0 0.25rem 0.25rem;
     background: var(--stil-color-body-bg);
-    padding: 0.5rem;
-    border-radius: 0.25rem;
-    display: flex;
-    flex-direction: column;
 }
 
-.component-group-code-example-outcome {
-    background: var(--stil-color-body-bg);
-    padding: 0.5rem;
-    margin-top: 0.5rem;
-    border-radius: 0.25rem;
-    display: flex;
-    flex-direction: column;
-}
-
-.component-group-code-example-outcome > span { margin-bottom: 0.5rem; }
-
-.component-group-code-example-outcome nav {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
-.color-swatch {
-    display: inline-block;
-    padding: 0.5rem;
-    border-radius: 0.25rem;
-}
+/* Fixed elements (toasts) are shown in place inside examples. */
+.example .stil-toast-container { position: static; }

@@ -5,25 +5,35 @@ plus a Blazor component library built on it that can replace Radzen or
 Blazorise. Each phase ends with something usable. Phases 2 and 3 can overlap
 once Phase 1 is done.
 
-## Where we are (0.1.0, Phases 0 and 1 done)
+## Where we are (0.1.0, Phases 0–2 done)
 
-- **CSS:** a single stylesheet in cascade layers. It has a full `--stil-*`
-  token set on `:root` (colors, neutrals, typography, spacing, shape, focus,
-  z-index, motion), light and dark mode through `data-stil-theme`, and
-  derived colors that stay WCAG AA readable for any brand color. It has
-  `stil-*` classes for container, button, form, input, card, alert and
-  table, plus `stil-bg-*`. Base element styles (font, text color, headings,
-  links) apply only inside `.stil-scope`.
+- **Stil CSS:** an npm package (`stil-css`, not yet published). It is built
+  with Lightning CSS from partials into `dist/stil.css` and `stil.min.css`
+  (about 10 kB gzipped).
+  - Cascade layers.
+  - A full `--stil-*` token set.
+  - Light and dark mode.
+  - Derived colors that stay WCAG AA for any brand color.
+  - A scoped reset and base.
+  - A 12-column grid and layout helpers.
+  - Bootstrap-equivalent components and about 900 utility classes with
+    responsive variants.
+  - A [Bootstrap migration guide](src/Stil.Css/MIGRATING-FROM-BOOTSTRAP.md).
 - **Blazor:** `StilContainer`, `StilCard` and `StilAlert`, plus the shared
-  `StilVariant` enum. Extra HTML attributes are passed through and `class`
-  values are merged. The library has 12 bUnit tests.
-- **Samples:** a plain-HTML showcase and a Blazor demo that shows the same
-  sections.
-- **Groundwork:** naming rules, scope model and browser support are recorded
-  in [CONTRIBUTING.md](CONTRIBUTING.md). CI checks contrast, then builds,
-  tests and packs on every push and pull request.
-- **Samples:** both showcases have a theme picker (light, dark or auto, and
-  four palettes).
+  `StilVariant` enum. Extra HTML attributes pass through to the element,
+  and a `class` you supply is merged with the component's own. The library
+  has 12 bUnit tests.
+- **Samples:**
+  - `samples/Stil.Html/index.html` shows every class. Each example's
+    markup is shown from the live element, so the two cannot drift apart.
+  - `admin.html` is a full dashboard built only with Stil CSS.
+  - The Blazor demo shows the components.
+  - All three have a theme picker.
+- **Groundwork:**
+  - [CONTRIBUTING.md](CONTRIBUTING.md) records the naming rules, scope
+    model, browser support and workflow.
+  - On every push and pull request, CI checks that `dist/` is up to date
+    and that contrast passes, then builds, tests and packs.
 
 ### Known issues found in review
 
@@ -34,10 +44,10 @@ once Phase 1 is done.
 | 3 | White text had 1.5–2.1:1 contrast on every default color except danger. | ✅ Fixed in Phase 1: text on colors is picked automatically (at least 4.58:1), and CI checks every token pair. |
 | 4 | The variant names were mixed (`error`/`alert`/`warning`/"Danger"). | ✅ Fixed in Phase 0: `primary`, `secondary`, `success`, `danger`, `warning` and `info` everywhere. |
 | 5 | Neutral colors were hard-coded (`#ccc`, `#fff`, `#e3e3e3`, `white`), so dark mode was impossible. | ✅ Fixed in Phase 1: all colors are tokens, and neutrals use `light-dark()`. |
-| 6 | `a` inside `.stil-scope` gets padding, so inline links in text shift. | Phase 2 (`form` became the `stil-form` class in Phase 0) |
+| 6 | `a` inside `.stil-scope` got padding, so inline links in text shifted. | ✅ Fixed in Phase 2: links are underlined and have no padding. Navigation uses `stil-nav-link`. |
 | 7 | There were no cascade layers, so app CSS had to win on specificity. | ✅ Fixed in Phase 1: every rule is in a `stil.*` layer, so unlayered app CSS always wins. |
 | 8 | `StilCard` always renders an `<h2>`. `StilAlert` always has `role="alert"`, which screen readers interrupt for even when the message is static. | Phase 3 |
-| 9 | `samples/Stil.Demo/Components/Pages/Home.razor` copies the HTML showcase by hand, so the two will drift apart. | Phase 5 |
+| 9 | `samples/Stil.Demo/Components/Pages/Home.razor` copies the HTML showcase by hand, so the two will drift apart. | Partly fixed in Phase 2: the HTML showcase now shows each example's markup from the live element. The Blazor demo will be rebuilt around the components in Phase 3. |
 | 10 | There was no CI, and nobody had checked the package names. | ✅ Fixed in Phase 0: CI added. `Stil` is free on NuGet and `stil-css` is free on npm. |
 
 ## Phase 0: Decisions and groundwork ✅
@@ -83,33 +93,64 @@ showcases. Tested in the browser with teal, purple and sunset palettes in
 light and dark mode. In the Blazor demo, the host footer outside the themed
 `<main>` stays unchanged.
 
-## Phase 2: Stil CSS 1.0 (Bootstrap replacement)
+## Phase 2: Stil CSS 1.0 (Bootstrap replacement) ✅
 
-- [ ] Split the source into partials (tokens, reset, base, layout, components,
-  utilities). Build `dist/stil.css` and `dist/stil.min.css` with Lightning CSS
-  or PostCSS.
-- [ ] Fill the empty `stil.reset` layer: box-sizing, margins, and font
-  inheritance for form elements.
-- [ ] Layout: 12-column grid, `stack`/`cluster` helpers, and
-  responsive breakpoints (`sm`, `md`, `lg`, `xl`).
-- [ ] Utility classes (`stil-mt-2`, `stil-d-flex`, …): spacing, display,
-  flex and grid, gap, text, color, sizing, borders and visibility, with
-  responsive variants. `stil-bg-*` already exists.
-- [ ] Components:
-  - Buttons: solid, outline and ghost styles; sizes; disabled and loading
-    states.
-  - Forms: input, select, checkbox, radio, switch, input group, validation
-    states.
-  - Content: card, alert, badge, table (striped, hover, compact).
-  - Navigation: nav, navbar, breadcrumb, pagination, tabs.
-  - Overlays: dialog (`<dialog>`), dropdown and tooltip (Popover API).
-  - Feedback: progress, spinner, toast.
-- [ ] Publish to npm as `stil-css` and to jsDelivr, and keep shipping the stylesheet in the
-  NuGet package.
-- [ ] A Bootstrap migration guide with a class mapping table.
+- [x] Sources split into partials in `src/Stil.Css/src/`. `build/build.mjs`
+  (Lightning CSS) writes `dist/stil.css` and `dist/stil.min.css`.
+  `build/generate.mjs` generates the grid columns, variants and utilities.
+  `dist/` is committed, and CI fails if it is out of date.
+- [x] A scoped reset (box-sizing, margins, form fonts, images, fieldsets).
+- [x] A new base: typography, links (underlined instead of padded), code,
+  `kbd`, `hr`, `blockquote`, `mark`.
+- [x] Layout: `stil-container` (plus `-fluid`), a 12-column `stil-grid`
+  with responsive `stil-col-*`, `stil-stack`, `stil-cluster`,
+  `stil-with-sidebar`. Breakpoints are sm/md/lg/xl.
+- [x] About 900 utilities with Bootstrap names and responsive variants:
+  display, flex, alignment, gap, spacing, sizing, text, color, borders,
+  shadow, position and visibility.
+- [x] Components:
+  - Buttons: solid, outline, ghost, sizes, icon, disabled, loading
+    (`aria-busy`), toggle (`aria-pressed`), group, close.
+  - Forms: field, label, hint, error, input, select, check, radio, switch,
+    input group, `aria-invalid`.
+  - Card (header, flush children), alert (subtle, dismissible), badge,
+    avatar, table (striped, hover, compact, bordered, responsive).
+  - Navigation: nav, pills, vertical, navbar, breadcrumb, pagination,
+    tabs.
+  - Dialog (`<dialog>`), dropdown (`<details>`, no JavaScript), tooltip
+    (CSS only), progress, spinner, toast.
+- [x] A [Bootstrap migration guide](src/Stil.Css/MIGRATING-FROM-BOOTSTRAP.md).
+- [x] The npm package is prepared (`src/Stil.Css/package.json`, name
+  `stil-css`).
+- [ ] **Publish** to npm, which also makes it available on jsDelivr. This
+  needs the package owner: run `npm publish` in `src/Stil.Css`, or add a
+  release workflow with an `NPM_TOKEN` secret.
 
-**Done when:** a typical Bootstrap admin page can be rebuilt using only Stil
-CSS.
+**Verified:** `samples/Stil.Html/admin.html` is built only with Stil CSS.
+It has a navbar, sidebar, stat cards, an orders table with menus and
+pagination, a settings form with tabs and validation, a confirm dialog and a
+toast. No custom CSS was needed. It was checked in light and dark mode,
+narrow and wide, with no horizontal overflow.
+
+**Changes from the plan:**
+
+- The dropdown uses `<details>` instead of the Popover API. CSS anchor
+  positioning is not yet available in all target browsers.
+- The tooltip is pure CSS.
+
+### Gaps found while building the admin page
+
+| Gap | Planned for |
+| --- | --- |
+| Icons (no icon set; inline SVG works) | Phase 3 (`StilIcon` and an icon strategy) |
+| Mobile navigation: navbar toggle, collapsible or offcanvas sidebar | Phase 3 (needs behaviour), with CSS in Phase 2.x |
+| Dropdowns closing on an outside click or Escape | Phase 3 (`StilDropdown`) |
+| Accordion, list group, offcanvas, popover, carousel | Phase 2.x (CSS), and Phase 3/4 (components) |
+| Fixed width/max-width scale, sticky offsets below a sticky navbar | Phase 2.x |
+| Tooltips on elements that already use `::after` (dropdown summary, busy button) | Phase 2.x (move to a popover-based tooltip once anchor positioning is available) |
+| Neutral or "on-color" button variant | Phase 2.x. Meanwhile, `stil-btn-ghost stil-text-inherit` works on colored bars. |
+| Striped or animated progress bars | Phase 2.x |
+| KPI/stat card pattern and charts | Phase 4 |
 
 ## Phase 3: Stil for Blazor core (forms and basics)
 

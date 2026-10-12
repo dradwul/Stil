@@ -1,0 +1,208 @@
+/* Content components: card, alert, badge and table. */
+
+/* Card */
+
+.stil-card {
+    --_pad: var(--stil-space-4);
+    display: flow-root;
+    min-width: 0;
+    padding: var(--_pad);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+    box-shadow: var(--stil-shadow-md);
+}
+
+.stil-card-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--stil-space-2);
+    margin: calc(-1 * var(--_pad)) calc(-1 * var(--_pad)) var(--_pad);
+    padding: var(--stil-space-3) var(--_pad);
+    border-bottom: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-md) var(--stil-radius-md) 0 0;
+    background-color: var(--stil-color-surface-muted);
+}
+
+.stil-card-title {
+    margin: 0 0 var(--stil-space-2);
+    font-size: var(--stil-font-size-lg);
+    letter-spacing: var(--stil-letter-spacing);
+}
+
+.stil-card-header .stil-card-title { margin: 0; }
+
+.stil-card-subtitle {
+    margin: 0 0 var(--stil-space-2);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+}
+
+/* A child that runs edge to edge, such as a table. */
+.stil-card-flush { margin-inline: calc(-1 * var(--_pad)); }
+.stil-card-flush :is(th, td):first-child { padding-inline-start: var(--_pad); }
+.stil-card-flush :is(th, td):last-child { padding-inline-end: var(--_pad); }
+.stil-card-flush > .stil-table,
+.stil-card-flush.stil-table { margin-block-end: 0; }
+
+.stil-card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--stil-space-2);
+    margin: var(--_pad) calc(-1 * var(--_pad)) calc(-1 * var(--_pad));
+    padding: var(--stil-space-3) var(--_pad);
+    border-top: 1px solid var(--stil-color-border);
+}
+
+/* Alert. Variant classes (stil-alert-{variant}) are generated after all components. */
+
+.stil-alert {
+    --_bg: var(--stil-color-info);
+    --_contrast: initial;
+    position: relative;
+    margin-block-end: var(--stil-space-4);
+    padding: var(--stil-space-3) var(--stil-space-4);
+    border: 1px solid transparent;
+    border-radius: var(--stil-radius-md);
+    background-color: var(--_bg);
+    color: var(--_fg);
+}
+
+/* A light tint of the variant color with normal text, for less prominent messages. */
+.stil-alert-subtle {
+    border-color: color-mix(in srgb, var(--_bg) 45%, var(--stil-color-surface));
+    background-color: color-mix(in srgb, var(--_bg) 15%, var(--stil-color-surface));
+    color: var(--stil-color-text);
+}
+
+.stil-alert-title {
+    margin: 0 0 var(--stil-space-1);
+    font-size: var(--stil-font-size-md);
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-alert:has(> .stil-close) { padding-inline-end: 3rem; }
+
+.stil-alert > .stil-close {
+    position: absolute;
+    top: var(--stil-space-2);
+    inset-inline-end: var(--stil-space-2);
+}
+
+/* Badge. Variant classes (stil-badge-{variant}) are generated after all components. */
+
+.stil-badge {
+    --_bg: var(--stil-color-primary);
+    --_contrast: initial;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25em;
+    padding: 0.3em 0.6em;
+    border-radius: var(--stil-radius-pill);
+    background-color: var(--_bg);
+    color: var(--_fg);
+    font-size: var(--stil-font-size-xs);
+    font-weight: var(--stil-font-weight-bold);
+    line-height: 1;
+    white-space: nowrap;
+    vertical-align: 0.1em;
+}
+
+.stil-badge-subtle {
+    background-color: color-mix(in srgb, var(--_bg) 15%, var(--stil-color-surface));
+    color: var(--stil-color-text);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--_bg) 45%, var(--stil-color-surface));
+}
+
+/* Table */
+
+.stil-table {
+    --_pad-y: var(--stil-space-2);
+    --_pad-x: var(--stil-space-3);
+    width: 100%;
+    margin-block-end: var(--stil-space-4);
+    border-collapse: collapse;
+    color: inherit;
+}
+
+.stil-table :is(th, td) {
+    padding: var(--_pad-y) var(--_pad-x);
+    border-bottom: 1px solid var(--stil-color-border);
+    text-align: start;
+    vertical-align: middle;
+}
+
+.stil-table th { font-weight: var(--stil-font-weight-bold); }
+
+.stil-table > thead > tr > th {
+    border-bottom-width: 2px;
+    vertical-align: bottom;
+}
+
+.stil-table > caption {
+    padding-block: var(--stil-space-2);
+    caption-side: bottom;
+    color: var(--stil-color-text-muted);
+    text-align: start;
+}
+
+.stil-table-compact {
+    --_pad-y: var(--stil-space-1);
+    --_pad-x: var(--stil-space-2);
+}
+
+.stil-table-bordered :is(th, td) { border: 1px solid var(--stil-color-border); }
+
+.stil-table-striped > tbody > tr:nth-child(odd) > * {
+    background-color: var(--stil-color-surface-muted);
+}
+
+.stil-table-hover > tbody > tr:hover > * {
+    background-color: color-mix(in srgb, var(--stil-color-text) 7%, transparent);
+}
+
+/* Wrap a wide table to let it scroll sideways on small screens. */
+.stil-table-responsive {
+    position: relative; /* contains absolutely positioned children such as stil-visually-hidden */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.stil-table-responsive > .stil-table { margin-block-end: 0; }
+
+/* No extra space after the last element inside a padded box. */
+:where(.stil-card, .stil-alert, .stil-toast-body, .stil-dialog-body) > :where(:last-child:not(.stil-card-footer)) {
+    margin-block-end: 0;
+}
+
+/* Avatar: an image or initials in a circle. */
+
+.stil-avatar {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    overflow: hidden;
+    border-radius: 50%;
+    background-color: var(--stil-color-surface-muted);
+    color: var(--stil-color-text);
+    font-size: var(--stil-font-size-sm);
+    font-weight: var(--stil-font-weight-bold);
+    line-height: 1;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+.stil-avatar > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.stil-avatar-sm { width: 1.75rem; height: 1.75rem; font-size: var(--stil-font-size-xs); }
+.stil-avatar-lg { width: 4rem; height: 4rem; font-size: var(--stil-font-size-lg); }

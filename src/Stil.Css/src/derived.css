@@ -1,0 +1,44 @@
+/*
+ * Derived colors (layer stil.tokens).
+ *
+ * They are computed on every element with a stil- class (and on links inside .stil-scope),
+ * not on :root, so a theme set on any ancestor reaches them. A component sets --_bg to its
+ * color (and --_contrast to an optional override); these rules turn that into:
+ *
+ *   --_fg      Text on --_bg. White below the WCAG luminance crossover (0.1791), black above
+ *              it, which always gives at least 4.58:1.
+ *   --_ink     --_bg adjusted to be readable as text or a border on the neutral surfaces.
+ *   --_accent  The same adjustment applied to the primary color, for links, focus rings and
+ *              selected states. Set --stil-color-accent to override.
+ *
+ * Ink and accent are darkened to at most 0.15 luminance in light mode and lightened to at
+ * least 0.3 in dark mode, keeping the hue. The math is checked by tools/check-contrast.mjs;
+ * keep the constants (0.1791, 0.15, 0.7) in sync with it.
+ */
+
+:where([class^="stil-"], [class*=" stil-"], .stil-scope a) {
+    --_fg: var(--_contrast, color(from var(--_bg) srgb-linear
+        clamp(0, (0.1791 - (0.2126 * r + 0.7152 * g + 0.0722 * b)) * 100000, 1)
+        clamp(0, (0.1791 - (0.2126 * r + 0.7152 * g + 0.0722 * b)) * 100000, 1)
+        clamp(0, (0.1791 - (0.2126 * r + 0.7152 * g + 0.0722 * b)) * 100000, 1)));
+
+    --_ink: light-dark(
+        color(from var(--_bg) srgb-linear
+            calc(r * min(1, 0.15 / (0.2126 * r + 0.7152 * g + 0.0722 * b + 0.0001)))
+            calc(g * min(1, 0.15 / (0.2126 * r + 0.7152 * g + 0.0722 * b + 0.0001)))
+            calc(b * min(1, 0.15 / (0.2126 * r + 0.7152 * g + 0.0722 * b + 0.0001)))),
+        color(from var(--_bg) srgb-linear
+            calc(1 - (1 - r) * min(1, 0.7 / (1.0001 - (0.2126 * r + 0.7152 * g + 0.0722 * b))))
+            calc(1 - (1 - g) * min(1, 0.7 / (1.0001 - (0.2126 * r + 0.7152 * g + 0.0722 * b))))
+            calc(1 - (1 - b) * min(1, 0.7 / (1.0001 - (0.2126 * r + 0.7152 * g + 0.0722 * b))))));
+
+    --_accent: var(--stil-color-accent, light-dark(
+        color(from var(--stil-color-primary) srgb-linear
+            calc(r * min(1, 0.15 / (0.2126 * r + 0.7152 * g + 0.0722 * b + 0.0001)))
+            calc(g * min(1, 0.15 / (0.2126 * r + 0.7152 * g + 0.0722 * b + 0.0001)))
+            calc(b * min(1, 0.15 / (0.2126 * r + 0.7152 * g + 0.0722 * b + 0.0001)))),
+        color(from var(--stil-color-primary) srgb-linear
+            calc(1 - (1 - r) * min(1, 0.7 / (1.0001 - (0.2126 * r + 0.7152 * g + 0.0722 * b))))
+            calc(1 - (1 - g) * min(1, 0.7 / (1.0001 - (0.2126 * r + 0.7152 * g + 0.0722 * b))))
+            calc(1 - (1 - b) * min(1, 0.7 / (1.0001 - (0.2126 * r + 0.7152 * g + 0.0722 * b)))))));
+}

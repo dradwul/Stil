@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en" data-theme-target data-stil-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard · Nordvik Supply</title>
+    <!-- Built only with Stil CSS: no custom styles. -->
+    <link rel="stylesheet" href="../../src/Stil.Css/dist/stil.css">
+
+    <!-- Optional showcase font -->
+    <link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap" rel="stylesheet">
+</head>
+<body class="stil-scope stil-m-0">
+    <a class="stil-visually-hidden-focusable stil-btn stil-m-2" href="#main">Skip to main content</a>
+
+    <header class="stil-navbar stil-sticky-top">
+        <a class="stil-navbar-brand" href="#">
+            <img src="../../assets/stil-logo.svg" alt="" width="57" height="28">
+            Nordvik Supply
+        </a>
+
+        <form class="stil-flex-1 stil-d-none stil-d-md-block" role="search" action="#">
+            <label for="global-search" class="stil-visually-hidden">Search</label>
+            <div class="stil-input-group">
+                <span class="stil-input-group-text">
+                    <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                </span>
+                <input id="global-search" class="stil-input" type="search" name="q" placeholder="Search orders, customers, products…">
+            </div>
+        </form>
+
+        <div class="stil-navbar-end">
+            <div class="stil-cluster">
+                <select class="stil-select stil-select-sm stil-w-auto" data-theme-mode aria-label="Color mode">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                    <option value="auto">Auto (OS)</option>
+                </select>
+                <select class="stil-select stil-select-sm stil-w-auto" data-theme-palette aria-label="Palette">
+                    <option value="teal">Teal (default)</option>
+                    <option value="purple">Purple</option>
+                    <option value="forest">Forest</option>
+                    <option value="sunset">Sunset</option>
+                </select>
+            </div>
+
+            <button type="button" class="stil-btn stil-btn-ghost stil-btn-icon stil-text-body stil-position-relative" aria-label="Notifications, 3 unread">
+                <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                <span class="stil-badge stil-badge-danger stil-position-absolute stil-top-0 stil-end-0" aria-hidden="true">3</span>
+            </button>
+
+            <details class="stil-dropdown">
+                <summary class="stil-btn stil-btn-ghost stil-text-body">Anna Berg</summary>
+                <div class="stil-dropdown-menu stil-dropdown-menu-end">
+                    <p class="stil-px-3 stil-py-2 stil-m-0 stil-fs-sm stil-text-muted">Signed in as anna.berg@nordvik.example</p>
+                    <a class="stil-dropdown-item" href="#">Your profile</a>
+                    <a class="stil-dropdown-item" href="#">Account settings</a>
+                    <a class="stil-dropdown-item" href="#">Help and support</a>
+                    <hr class="stil-dropdown-divider">
+                    <button type="button" class="stil-dropdown-item">Sign out</button>
+                </div>
+            </details>
+        </div>
+    </header>
+
+    <div class="stil-container stil-mw-100 stil-py-5">
+        <div class="stil-with-sidebar">
+            <aside aria-label="Sidebar">
+                <nav aria-label="Main">
+                    <ul class="stil-nav stil-nav-vertical stil-nav-pills">
+                        <li><a class="stil-nav-link" href="#" aria-current="page">Dashboard</a></li>
+                        <li>
+                            <a class="stil-nav-link" href="#">
+                                Orders
+                                <span class="stil-badge stil-badge-secondary stil-ms-auto">12<span class="stil-visually-hidden"> new</span></span>
+                            </a>
+                        </li>
+                        <li><a class="stil-nav-link" href="#">Customers</a></li>
+                        <li><a class="stil-nav-link" href="#">Products</a></li>
+                        <li><a class="stil-nav-link" href="#">Reports</a></li>
+                        <li><a class="stil-nav-link" href="#">Settings</a></li>
+                    </ul>
+                </nav>
+
+                <div class="stil-card stil-mt-5">
+                    <p class="stil-fw-bold stil-mb-2" id="storage-label">Storage</p>
+                    <div class="stil-progress" role="progressbar" aria-labelledby="storage-label" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100" aria-valuetext="36 GB of 50 GB used">
+                        <div class="stil-progress-bar" style="width: 72%"></div>
+                    </div>
+                    <p class="stil-fs-sm stil-text-muted stil-mt-2 stil-mb-0">36 GB of 50 GB used</p>
+                    <div class="stil-mt-3">
+                        <a class="stil-btn stil-btn-outline stil-btn-sm" href="#">Upgrade plan</a>
+                    </div>
+                </div>
+            </aside>
+
+            <main id="main">
+                <nav aria-label="Breadcrumb">
+                    <ol class="stil-breadcrumb">
+                        <li><a href="#">Home</a></li>
+                        <li><span aria-current="page">Dashboard</span></li>
+                    </ol>
+                </nav>
+
+                <div class="stil-d-flex stil-flex-wrap stil-justify-content-between stil-align-items-center stil-gap-3 stil-mb-4">
+                    <div>
+                        <h1 class="stil-mb-1">Dashboard</h1>
+                        <p class="stil-text-muted stil-m-0">Overview for the last 30 days.</p>
+                    </div>
+                    <div class="stil-cluster">
+                        <button type="button" class="stil-btn stil-btn-outline">Download report</button>
+                        <button type="button" class="stil-btn">New order</button>
+                    </div>
+                </div>
+
+                <div class="stil-alert stil-alert-subtle stil-alert-info" role="status">
+                    <p class="stil-alert-title">Scheduled maintenance</p>
+                    <p class="stil-m-0">The warehouse sync is paused on Sunday 18 October from 02:00 to 04:00 CET. Orders placed in that window are queued.</p>
+                    <button type="button" class="stil-close" aria-label="Dismiss" data-dismiss=".stil-alert"></button>
+                </div>
+
+                <div class="stil-grid stil-mb-5">
+                    <div class="stil-card stil-col-12 stil-col-sm-6 stil-col-xl-3">
+                        <p class="stil-text-muted stil-fs-sm stil-mb-1">Revenue</p>
+                        <p class="stil-fs-xl stil-fw-bold stil-mb-2">€84,210</p>
+                        <div class="stil-cluster">
+                            <span class="stil-badge stil-badge-success stil-badge-subtle"><span aria-hidden="true">▲</span><span class="stil-visually-hidden">Up</span> 12.4%</span>
+                            <span class="stil-fs-xs stil-text-muted">vs last month</span>
+                        </div>
+                    </div>
+                    <div class="stil-card stil-col-12 stil-col-sm-6 stil-col-xl-3">
+                        <p class="stil-text-muted stil-fs-sm stil-mb-1">Orders</p>
+                        <p class="stil-fs-xl stil-fw-bold stil-mb-2">1,326</p>
+                        <div class="stil-cluster">
+                            <span class="stil-badge stil-badge-success stil-badge-subtle"><span aria-hidden="true">▲</span><span class="stil-visually-hidden">Up</span> 4.1%</span>
+                            <span class="stil-fs-xs stil-text-muted">vs last month</span>
+                        </div>
+                    </div>
+                    <div class="stil-card stil-col-12 stil-col-sm-6 stil-col-xl-3">
+                        <p class="stil-text-muted stil-fs-sm stil-mb-1">New customers</p>
+                        <p class="stil-fs-xl stil-fw-bold stil-mb-2">87</p>
+                        <div class="stil-cluster">
+                            <span class="stil-badge stil-badge-danger stil-badge-subtle"><span aria-hidden="true">▼</span><span class="stil-visually-hidden">Down</span> 2.3%</span>
+                            <span class="stil-fs-xs stil-text-muted">vs last month</span>
+                        </div>
+                    </div>
+                    <div class="stil-card stil-col-12 stil-col-sm-6 stil-col-xl-3">
+                        <p class="stil-text-muted stil-fs-sm stil-mb-1">Return rate</p>
+                        <p class="stil-fs-xl stil-fw-bold stil-mb-2">1.8%</p>
+                        <div class="stil-cluster">
+                            <span class="stil-badge stil-badge-secondary stil-badge-subtle">No change</span>
+                            <span class="stil-fs-xs stil-text-muted">vs last month</span>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="stil-card stil-mb-5" aria-labelledby="orders-title">
+                    <div class="stil-card-header">
+                        <h2 class="stil-card-title" id="orders-title">Recent orders</h2>
+                        <div class="stil-cluster">
+                            <label for="order-filter" class="stil-visually-hidden">Filter by status</label>
+                            <select id="order-filter" class="stil-select stil-select-sm stil-w-auto">
+                                <option>All statuses</option>
+                                <option>Paid</option>
+                                <option>Pending</option>
+                                <option>Shipped</option>
+                                <option>Refunded</option>
+                            </select>
+                            <button type="button" class="stil-btn stil-btn-outline stil-btn-sm">Export CSV</button>
+                        </div>
+                    </div>
+
+                    <div class="stil-table-responsive">
+                        <table class="stil-table stil-table-hover" aria-labelledby="orders-title">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Order</th>
+                                    <th scope="col">Customer</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col" class="stil-text-end">Amount</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col"><span class="stil-visually-hidden">Actions</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><a class="stil-font-mono" href="#">#1048</a></td>
+                                    <td>Fjällbacka Café</td>
+                                    <td class="stil-text-nowrap"><time datetime="2026-10-12">12 Oct 2026</time></td>
+                                    <td class="stil-text-end">€1,240.00</td>
+                                    <td><span class="stil-badge stil-badge-success">Paid</span></td>
+                                    <td class="stil-text-end">
+                                        <details class="stil-dropdown">
+                                            <summary class="stil-btn stil-btn-ghost stil-btn-sm stil-text-body">
+                                                <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                                                <span class="stil-visually-hidden">Actions for order #1048</span>
+                                            </summary>
+                                            <div class="stil-dropdown-menu stil-dropdown-menu-end">
+                                                <a class="stil-dropdown-item" href="#">View order</a>
+                                                <a class="stil-dropdown-item" href="#">Print invoice</a>
+                                                <hr class="stil-dropdown-divider">
+                                                <button type="button" class="stil-dropdown-item">Refund</button>
+                                            </div>
+                                        </details>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a class="stil-font-mono" href="#">#1047</a></td>
+                                    <td>Hallberg &amp; Söner AB</td>
+                                    <td class="stil-text-nowrap"><time datetime="2026-10-11">11 Oct 2026</time></td>
+                                    <td class="stil-text-end">€3,895.50</td>
+                                    <td><span class="stil-badge stil-badge-warning">Pending</span></td>
+                                    <td class="stil-text-end">
+                                        <details class="stil-dropdown">
+                                            <summary class="stil-btn stil-btn-ghost stil-btn-sm stil-text-body">
+                                                <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                                                <span class="stil-visually-hidden">Actions for order #1047</span>
+                                            </summary>
+                                            <div class="stil-dropdown-menu stil-dropdown-menu-end">
+                                                <a class="stil-dropdown-item" href="#">View order</a>
+                                                <a class="stil-dropdown-item" href="#">Send payment reminder</a>
+                                                <hr class="stil-dropdown-divider">
+                                                <button type="button" class="stil-dropdown-item">Cancel order</button>
+                                            </div>
+                                        </details>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a class="stil-font-mono" href="#">#1046</a></td>
+                                    <td>Lindqvist Bygg</td>
+                                    <td class="stil-text-nowrap"><time datetime="2026-10-10">10 Oct 2026</time></td>
+                                    <td class="stil-text-end">€612.00</td>
+                                    <td><span class="stil-badge stil-badge-danger">Refunded</span></td>
+                                    <td class="stil-text-end">
+                                        <details class="stil-dropdown">
+                                            <summary class="stil-btn stil-btn-ghost stil-btn-sm stil-text-body">
+                                                <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                                                <span class="stil-visually-hidden">Actions for order #1046</span>
+                                            </summary>
+                                            <div class="stil-dropdown-menu stil-dropdown-menu-end">
+                                                <a class="stil-dropdown-item" href="#">View order</a>
+                                                <a class="stil-dropdown-item" href="#">View refund</a>
+                                            </div>
+                                        </details>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a class="stil-font-mono" href="#">#1045</a></td>
+                                    <td>Østerby Marine</td>
+                                    <td class="stil-text-nowrap"><time datetime="2026-10-09">9 Oct 2026</time></td>
+                                    <td class="stil-text-end">€9,120.75</td>
+                                    <td><span class="stil-badge stil-badge-success">Paid</span></td>
+                                    <td class="stil-text-end">
+                                        <details class="stil-dropdown">
+                                            <summary class="stil-btn stil-btn-ghost stil-btn-sm stil-text-body">
+                                                <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                                                <span class="stil-visually-hidden">Actions for order #1045</span>
+                                            </summary>
+                                            <div class="stil-dropdown-menu stil-dropdown-menu-end">
+                                                <a class="stil-dropdown-item" href="#">View order</a>
+                                                <a class="stil-dropdown-item" href="#">Print invoice</a>
+                                                <hr class="stil-dropdown-divider">
+                                                <button type="button" class="stil-dropdown-item">Refund</button>
+                                            </div>
+                                        </details>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a class="stil-font-mono" href="#">#1044</a></td>
+                                    <td>Kallio Design Oy</td>
+                                    <td class="stil-text-nowrap"><time datetime="2026-10-08">8 Oct 2026</time></td>
+                                    <td class="stil-text-end">€455.20</td>
+                                    <td><span class="stil-badge stil-badge-warning">Pending</span></td>
+                                    <td class="stil-text-end">
+                                        <details class="stil-dropdown">
+                                            <summary class="stil-btn stil-btn-ghost stil-btn-sm stil-text-body">
+                                                <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                                                <span class="stil-visually-hidden">Actions for order #1044</span>
+                                            </summary>
+                                            <div class="stil-dropdown-menu stil-dropdown-menu-end">
+                                                <a class="stil-dropdown-item" href="#">View order</a>
+                                                <a class="stil-dropdown-item" href="#">Send payment reminder</a>
+                                                <hr class="stil-dropdown-divider">
+                                                <button type="button" class="stil-dropdown-item">Cancel order</button>
+                                            </div>
+                                        </details>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a class="stil-font-mono" href="#">#1043</a></td>
+                                    <td>Berglund Outdoor</td>
+                                    <td class="stil-text-nowrap"><time datetime="2026-10-07">7 Oct 2026</time></td>
+                                    <td class="stil-text-end">€2,078.90</td>
+                                    <td><span class="stil-badge stil-badge-info">Shipped</span></td>
+                                    <td class="stil-text-end">
+                                        <details class="stil-dropdown">
+                                            <summary class="stil-btn stil-btn-ghost stil-btn-sm stil-text-body">
+                                                <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                                                <span class="stil-visually-hidden">Actions for order #1043</span>
+                                            </summary>
+                                            <div class="stil-dropdown-menu stil-dropdown-menu-end">
+                                                <a class="stil-dropdown-item" href="#">View order</a>
+                                                <a class="stil-dropdown-item" href="#">Track shipment</a>
+                                            </div>
+                                        </details>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="stil-card-footer stil-justify-content-between stil-align-items-center">
+                        <p class="stil-m-0 stil-fs-sm stil-text-muted">Showing 1–6 of 48 orders</p>
+                        <nav aria-label="Recent orders pages">
+                            <ul class="stil-pagination">
+                                <li><a class="stil-page-link" aria-disabled="true">Previous</a></li>
+                                <li><a class="stil-page-link" href="#" aria-current="page">1</a></li>
+                                <li><a class="stil-page-link" href="#">2</a></li>
+                                <li><a class="stil-page-link" href="#">3</a></li>
+                                <li><span class="stil-page-link" aria-disabled="true">…</span></li>
+                                <li><a class="stil-page-link" href="#">8</a></li>
+                                <li><a class="stil-page-link" href="#">Next</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </section>
+
+                <div class="stil-grid">
+                    <section class="stil-card stil-col-12 stil-col-xl-7" aria-labelledby="settings-title">
+                        <h2 class="stil-card-title" id="settings-title">Account settings</h2>
+                        <p class="stil-card-subtitle">Manage your profile and how Nordvik Supply contacts you.</p>
+
+                        <div class="stil-tabs" role="tablist" aria-label="Account settings">
+                            <button type="button" class="stil-tab" role="tab" id="tab-profile" aria-controls="panel-profile" aria-selected="true">Profile</button>
+                            <button type="button" class="stil-tab" role="tab" id="tab-notifications" aria-controls="panel-notifications" aria-selected="false" tabindex="-1">Notifications</button>
+                            <button type="button" class="stil-tab" role="tab" id="tab-security" aria-controls="panel-security" aria-selected="false" tabindex="-1">Security</button>
+                        </div>
+
+                        <div role="tabpanel" id="panel-profile" aria-labelledby="tab-profile">
+                            <form class="stil-form" action="#">
+                                <div class="stil-field">
+                                    <label class="stil-label" for="profile-name">Full name</label>
+                                    <input class="stil-input" id="profile-name" name="name" autocomplete="name" value="Anna Berg" aria-describedby="profile-name-hint">
+                                    <span class="stil-field-hint" id="profile-name-hint">Shown on invoices and order confirmations.</span>
+                                </div>
+
+                                <div class="stil-field">
+                                    <label class="stil-label" for="profile-email">Email</label>
+                                    <input class="stil-input" id="profile-email" name="email" type="email" autocomplete="email" value="anna.berg@" aria-invalid="true" aria-describedby="profile-email-error">
+                                    <span class="stil-field-error" id="profile-email-error">Enter a complete email address, like name@example.com.</span>
+                                </div>
+
+                                <div class="stil-field">
+                                    <label class="stil-label" for="profile-timezone">Time zone</label>
+                                    <select class="stil-select" id="profile-timezone" name="timezone">
+                                        <option>Europe/Stockholm (CET)</option>
+                                        <option>Europe/Helsinki (EET)</option>
+                                        <option>Europe/London (GMT)</option>
+                                    </select>
+                                </div>
+
+                                <label class="stil-check">
+                                    <input type="checkbox" role="switch" class="stil-switch" name="digest" checked>
+                                    Send me a weekly sales digest
+                                </label>
+
+                                <fieldset class="stil-border-0 stil-p-0 stil-m-0">
+                                    <legend class="stil-label stil-p-0 stil-mb-2">Show on my dashboard</legend>
+                                    <div class="stil-stack stil-gap-2">
+                                        <label class="stil-check">
+                                            <input type="checkbox" class="stil-check-input" name="widgets" value="revenue" checked>
+                                            Revenue chart
+                                        </label>
+                                        <label class="stil-check">
+                                            <input type="checkbox" class="stil-check-input" name="widgets" value="stock" checked>
+                                            Low-stock products
+                                        </label>
+                                        <label class="stil-check">
+                                            <input type="checkbox" class="stil-check-input" name="widgets" value="tickets">
+                                            Open support tickets
+                                        </label>
+                                    </div>
+                                </fieldset>
+
+                                <div class="stil-d-flex stil-flex-wrap stil-justify-content-between stil-gap-2 stil-border-top stil-pt-4">
+                                    <button type="button" class="stil-btn stil-btn-outline stil-btn-secondary" aria-busy="true">Syncing with directory</button>
+                                    <div class="stil-cluster">
+                                        <button type="reset" class="stil-btn stil-btn-ghost">Cancel</button>
+                                        <button type="submit" class="stil-btn">Save changes</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div role="tabpanel" id="panel-notifications" aria-labelledby="tab-notifications" hidden>
+                            <div class="stil-stack">
+                                <label class="stil-check">
+                                    <input type="checkbox" role="switch" class="stil-switch" name="notify-orders" checked>
+                                    <span>
+                                        New orders
+                                        <span class="stil-d-block stil-fs-sm stil-text-muted">An email for every order over €1,000.</span>
+                                    </span>
+                                </label>
+                                <label class="stil-check">
+                                    <input type="checkbox" role="switch" class="stil-switch" name="notify-stock" checked>
+                                    <span>
+                                        Low stock
+                                        <span class="stil-d-block stil-fs-sm stil-text-muted">When a product drops below its reorder level.</span>
+                                    </span>
+                                </label>
+                                <label class="stil-check">
+                                    <input type="checkbox" role="switch" class="stil-switch" name="notify-product">
+                                    <span>
+                                        Product news
+                                        <span class="stil-d-block stil-fs-sm stil-text-muted">Occasional updates about new features.</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div role="tabpanel" id="panel-security" aria-labelledby="tab-security" hidden>
+                            <div class="stil-stack">
+                                <label class="stil-check">
+                                    <input type="checkbox" role="switch" class="stil-switch" name="two-factor" checked>
+                                    Require two-factor authentication
+                                </label>
+                                <p class="stil-m-0 stil-text-muted">Last sign-in: 12 Oct 2026, 08:14 from Göteborg, Sweden.</p>
+                                <div class="stil-cluster">
+                                    <button type="button" class="stil-btn stil-btn-outline">Change password</button>
+                                    <button type="button" class="stil-btn stil-btn-ghost stil-btn-danger">Sign out of all devices</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="stil-stack stil-col-12 stil-col-xl-5">
+                        <section class="stil-card" aria-labelledby="team-title">
+                            <div class="stil-d-flex stil-justify-content-between stil-align-items-center stil-gap-2 stil-mb-3">
+                                <h2 class="stil-card-title stil-mb-0" id="team-title">Team</h2>
+                                <button type="button" class="stil-btn stil-btn-outline stil-btn-sm">Invite member</button>
+                            </div>
+                            <div class="stil-stack stil-gap-3" role="list">
+                                <div class="stil-cluster stil-justify-content-between" role="listitem">
+                                    <div>
+                                        <p class="stil-fw-bold stil-m-0">Anna Berg</p>
+                                        <p class="stil-fs-sm stil-text-muted stil-m-0">Operations manager</p>
+                                    </div>
+                                    <span class="stil-badge">Owner</span>
+                                </div>
+                                <div class="stil-cluster stil-justify-content-between stil-border-top stil-pt-3" role="listitem">
+                                    <div>
+                                        <p class="stil-fw-bold stil-m-0">Mikael Sundström</p>
+                                        <p class="stil-fs-sm stil-text-muted stil-m-0">Warehouse lead</p>
+                                    </div>
+                                    <span class="stil-badge stil-badge-info stil-badge-subtle">Admin</span>
+                                </div>
+                                <div class="stil-cluster stil-justify-content-between stil-border-top stil-pt-3" role="listitem">
+                                    <div>
+                                        <p class="stil-fw-bold stil-m-0">Leila Haddad</p>
+                                        <p class="stil-fs-sm stil-text-muted stil-m-0">Customer support</p>
+                                    </div>
+                                    <span class="stil-badge stil-badge-secondary stil-badge-subtle">Editor</span>
+                                </div>
+                                <div class="stil-cluster stil-justify-content-between stil-border-top stil-pt-3" role="listitem">
+                                    <div>
+                                        <p class="stil-fw-bold stil-m-0">Jonas Eklund</p>
+                                        <p class="stil-fs-sm stil-text-muted stil-m-0">Finance</p>
+                                    </div>
+                                    <span class="stil-badge stil-badge-warning stil-badge-subtle">Invited</span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="stil-card stil-border-danger" aria-labelledby="danger-title">
+                            <h2 class="stil-card-title stil-text-danger" id="danger-title">Danger zone</h2>
+                            <p class="stil-text-muted">Deleting the workspace removes all orders, customers and reports. This cannot be undone.</p>
+                            <div>
+                                <button type="button" class="stil-btn stil-btn-danger" data-open-dialog="delete-dialog">Delete workspace</button>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <dialog class="stil-dialog stil-dialog-sm" id="delete-dialog" aria-labelledby="delete-dialog-title">
+        <div class="stil-dialog-header">
+            <h2 class="stil-dialog-title" id="delete-dialog-title">Delete workspace?</h2>
+            <button type="button" class="stil-close" aria-label="Close" data-close-dialog></button>
+        </div>
+        <div class="stil-dialog-body">
+            <p class="stil-m-0">All data for <strong>Nordvik Supply</strong> will be permanently deleted, including 48 orders and 312 customers.</p>
+        </div>
+        <div class="stil-dialog-footer">
+            <button type="button" class="stil-btn stil-btn-outline stil-btn-secondary" data-close-dialog>Cancel</button>
+            <button type="button" class="stil-btn stil-btn-danger" data-close-dialog>Delete workspace</button>
+        </div>
+    </dialog>
+
+    <div class="stil-toast-container">
+        <div class="stil-toast stil-toast-success" role="status">
+            <div class="stil-toast-body">
+                <p class="stil-toast-title">Order #1043 shipped</p>
+                <p class="stil-m-0 stil-fs-sm">Berglund Outdoor will receive it by Thursday.</p>
+            </div>
+            <button type="button" class="stil-close" aria-label="Close notification" data-dismiss=".stil-toast"></button>
+        </div>
+    </div>
+
+    <script src="theme-picker.js"></script>
+    <script>
+        // Tabs: click or use the arrow keys to select a tab and show its panel.
+        document.querySelectorAll('[role="tablist"]').forEach(tablist => {
+            const tabs = [...tablist.querySelectorAll('[role="tab"]')];
+            const select = tab => {
+                tabs.forEach(other => {
+                    const selected = other === tab;
+                    other.setAttribute('aria-selected', selected);
+                    other.tabIndex = selected ? 0 : -1;
+                    document.getElementById(other.getAttribute('aria-controls')).hidden = !selected;
+                });
+                tab.focus();
+            };
+            tablist.addEventListener('click', event => {
+                const tab = event.target.closest('[role="tab"]');
+                if (tab) select(tab);
+            });
+            tablist.addEventListener('keydown', event => {
+                const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
+                if (!step) return;
+                const index = tabs.indexOf(document.activeElement);
+                select(tabs[(index + step + tabs.length) % tabs.length]);
+            });
+        });
+
+        // Dialogs open and close; dismiss buttons remove their alert or toast.
+        document.addEventListener('click', event => {
+            const opener = event.target.closest('[data-open-dialog]');
+            if (opener) document.getElementById(opener.dataset.openDialog).showModal();
+
+            const closer = event.target.closest('[data-close-dialog]');
+            if (closer) closer.closest('dialog').close();
+
+            const dismiss = event.target.closest('[data-dismiss]');
+            if (dismiss) dismiss.closest(dismiss.dataset.dismiss).remove();
+        });
+    </script>
+</body>
+</html>

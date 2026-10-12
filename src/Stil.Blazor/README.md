@@ -16,7 +16,8 @@ components with hand-written Stil markup and restyle both with the same
 dotnet add package Stil
 ```
 
-Add the stylesheet to the `<head>` in `Components/App.razor`:
+Add the stylesheet to the `<head>` in `Components/App.razor`. Use `stil.min.css` for
+the minified version:
 
 ```razor
 <link rel="stylesheet" href="@Assets["_content/Stil/stil.css"]" />
@@ -104,15 +105,16 @@ component's own classes, not used in place of them:
 
 ### Plain CSS classes
 
-Buttons, inputs, tables and forms do not have components yet (they are
-planned as `StilButton`, `StilTextBox`, …). Until then, use the Stil CSS
-classes directly. They work anywhere:
+Most of Stil CSS (buttons, forms, tables, navigation, dialogs and so on)
+does not have Blazor components yet. They are planned as `StilButton`,
+`StilTextBox` and so on. Until then, use the Stil CSS classes directly.
+They work anywhere:
 
 ```razor
 <button class="stil-btn stil-btn-primary" @onclick="Save">Save</button>
 ```
 
-See the [Stil CSS class reference](https://github.com/dradwul/StilCSS/tree/main/src/Stil.Css#classes).
+See the [Stil CSS class reference](https://github.com/dradwul/StilCSS/tree/main/src/Stil.Css#components).
 
 ## Theming
 
@@ -144,6 +146,6 @@ See the [theming guide and full token list](https://github.com/dradwul/StilCSS/t
 
 The component source is in this folder. The tests are in
 `tests/Stil.Blazor.Tests`, and a runnable demo is in `samples/Stil.Demo`.
-The stylesheet is served directly from `src/Stil.Css/stil.css`. Make style
-changes there. Naming rules are in
+The stylesheet is served directly from `src/Stil.Css/dist/`, which is built
+from `src/Stil.Css/src/`. Make style changes there. Naming rules are in
 [CONTRIBUTING.md](https://github.com/dradwul/StilCSS/blob/main/CONTRIBUTING.md).

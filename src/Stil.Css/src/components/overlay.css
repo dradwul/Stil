@@ -1,0 +1,303 @@
+/* Overlays and feedback: dialog, dropdown, tooltip, progress, spinner and toast. */
+
+/* Dialog: a native <dialog class="stil-dialog">, opened with showModal(). */
+
+.stil-dialog {
+    width: min(32rem, calc(100vw - 2 * var(--stil-space-4)));
+    max-height: calc(100dvh - 2 * var(--stil-space-4));
+    padding: 0;
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-lg);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+    box-shadow: var(--stil-shadow-lg);
+}
+
+.stil-dialog[open] {
+    display: flex;
+    flex-direction: column;
+    animation: stil-pop-in var(--stil-duration-fast) var(--stil-easing);
+}
+
+/* ::backdrop does not inherit custom properties in every browser, hence the fallback. */
+.stil-dialog::backdrop { background-color: var(--stil-backdrop, rgb(0 0 0 / 0.5)); }
+
+.stil-dialog-sm { width: min(22rem, calc(100vw - 2 * var(--stil-space-4))); }
+.stil-dialog-lg { width: min(48rem, calc(100vw - 2 * var(--stil-space-4))); }
+
+.stil-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--stil-space-2);
+    padding: var(--stil-space-3) var(--stil-space-4);
+    border-bottom: 1px solid var(--stil-color-border);
+}
+
+.stil-dialog-title {
+    margin: 0;
+    font-size: var(--stil-font-size-lg);
+    letter-spacing: var(--stil-letter-spacing);
+}
+
+.stil-dialog-body {
+    padding: var(--stil-space-4);
+    overflow-y: auto;
+}
+
+.stil-dialog-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--stil-space-2);
+    padding: var(--stil-space-3) var(--stil-space-4);
+    border-top: 1px solid var(--stil-color-border);
+}
+
+@keyframes stil-pop-in {
+    from {
+        opacity: 0;
+        transform: scale(0.97);
+    }
+}
+
+/* Dropdown: works without JavaScript using <details>:
+   <details class="stil-dropdown"><summary class="stil-btn">Menu</summary>
+     <div class="stil-dropdown-menu"><a class="stil-dropdown-item">…</a></div></details> */
+
+.stil-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.stil-dropdown > summary { list-style: none; }
+.stil-dropdown > summary::-webkit-details-marker { display: none; }
+
+.stil-dropdown > summary::after {
+    content: "";
+    display: inline-block;
+    width: 0.4em;
+    height: 0.4em;
+    margin-block-start: -0.25em;
+    border-right: 0.125em solid currentColor;
+    border-bottom: 0.125em solid currentColor;
+    margin-inline-start: 0.4em;
+    vertical-align: middle;
+    rotate: 45deg;
+}
+
+.stil-dropdown > summary.stil-btn::after { margin-inline-start: 0; }
+.stil-dropdown > summary.stil-btn-icon::after { display: none; }
+
+.stil-dropdown[open] > summary::after {
+    margin-block-start: 0.15em;
+    rotate: 225deg;
+}
+
+.stil-dropdown-menu {
+    display: flex;
+    flex-direction: column;
+    min-width: 12rem;
+    margin: 0;
+    padding: var(--stil-space-1);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+    box-shadow: var(--stil-shadow-lg);
+    list-style: none;
+}
+
+.stil-dropdown > .stil-dropdown-menu {
+    position: absolute;
+    z-index: var(--stil-z-dropdown);
+    top: calc(100% + var(--stil-space-1));
+    inset-inline-start: 0;
+}
+
+.stil-dropdown > .stil-dropdown-menu-end {
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+}
+
+.stil-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: var(--stil-space-2);
+    width: 100%;
+    padding: var(--stil-space-2) var(--stil-space-3);
+    border: 0;
+    border-radius: var(--stil-radius-sm);
+    background-color: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.stil-dropdown-item:hover { background-color: var(--stil-color-surface-muted); }
+
+.stil-dropdown-item:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: -2px;
+}
+
+.stil-dropdown-item:is(:disabled, [aria-disabled="true"]) {
+    color: var(--stil-color-text-muted);
+    pointer-events: none;
+}
+
+.stil-dropdown-header {
+    padding: var(--stil-space-1) var(--stil-space-3);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+}
+
+.stil-dropdown-divider {
+    height: 1px;
+    margin: var(--stil-space-1) 0;
+    border: 0;
+    background-color: var(--stil-color-border);
+}
+
+/* Tooltip: data-stil-tooltip="Text" on any element. The text is not read by screen readers,
+   so also give the element an accessible name (for example aria-label). */
+
+[data-stil-tooltip] { position: relative; }
+
+[data-stil-tooltip]::after {
+    content: attr(data-stil-tooltip);
+    position: absolute;
+    z-index: var(--stil-z-popover);
+    bottom: calc(100% + 6px);
+    left: 50%;
+    width: max-content;
+    max-width: 16rem;
+    padding: var(--stil-space-1) var(--stil-space-2);
+    border-radius: var(--stil-radius-sm);
+    background-color: var(--stil-color-text);
+    color: var(--stil-color-body-bg);
+    font-size: var(--stil-font-size-xs);
+    font-weight: var(--stil-font-weight-normal);
+    line-height: 1.4;
+    text-align: center;
+    white-space: normal;
+    opacity: 0;
+    translate: -50% 4px;
+    pointer-events: none;
+    transition:
+        opacity var(--stil-duration-fast) var(--stil-easing),
+        translate var(--stil-duration-fast) var(--stil-easing);
+}
+
+[data-stil-tooltip]:is(:hover, :focus-visible)::after {
+    opacity: 1;
+    translate: -50% 0;
+}
+
+.stil-tooltip-bottom::after {
+    top: calc(100% + 6px);
+    bottom: auto;
+}
+
+/* Progress: <div class="stil-progress" role="progressbar" aria-valuenow="40" …>
+     <div class="stil-progress-bar" style="width: 40%"></div></div> */
+
+.stil-progress {
+    display: flex;
+    height: 0.75rem;
+    overflow: hidden;
+    border-radius: var(--stil-radius-pill);
+    background-color: var(--stil-color-surface-muted);
+    font-size: var(--stil-font-size-xs);
+}
+
+.stil-progress-lg { height: 1.25rem; }
+
+.stil-progress-bar {
+    --_bg: var(--_accent);
+    --_contrast: initial;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: var(--_bg);
+    color: var(--_fg);
+    white-space: nowrap;
+    transition: width var(--stil-duration-md) var(--stil-easing);
+}
+
+/* Spinner: <span class="stil-spinner" role="status"><span class="stil-visually-hidden">Loading…</span></span> */
+
+@keyframes stil-spin {
+    to { rotate: 360deg; }
+}
+
+.stil-spinner {
+    display: inline-block;
+    flex: none;
+    width: 2rem;
+    height: 2rem;
+    border: 0.25em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    vertical-align: middle;
+    animation: stil-spin 0.75s linear infinite;
+}
+
+.stil-spinner-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.18em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stil-spinner,
+    .stil-btn[aria-busy="true"]::after { animation-duration: 1.5s; }
+}
+
+/* Toast: put toasts in a stil-toast-container (fixed to the bottom corner). Variant classes
+   (stil-toast-{variant}) are generated after all components and color the edge. */
+
+.stil-toast-container {
+    position: fixed;
+    z-index: var(--stil-z-toast);
+    inset-block-end: var(--stil-space-4);
+    inset-inline-end: var(--stil-space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--stil-space-2);
+    width: min(22rem, calc(100vw - 2 * var(--stil-space-4)));
+    pointer-events: none;
+}
+
+.stil-toast-container > * { pointer-events: auto; }
+
+.stil-toast {
+    --_bg: var(--stil-color-info);
+    --_contrast: initial;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--stil-space-3);
+    padding: var(--stil-space-3) var(--stil-space-4);
+    border: 1px solid var(--stil-color-border);
+    border-inline-start: 4px solid var(--_ink);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+    box-shadow: var(--stil-shadow-lg);
+}
+
+.stil-toast-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.stil-toast-title {
+    margin: 0 0 var(--stil-space-1);
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-toast > .stil-close { margin: calc(-1 * var(--stil-space-1)) calc(-1 * var(--stil-space-2)) 0 0; }

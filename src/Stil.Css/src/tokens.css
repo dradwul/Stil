@@ -1,0 +1,98 @@
+/*
+ * Tokens (layer stil.tokens). Override them on :root, or on any element to theme just that
+ * part of the page. Neutral colors use light-dark(), so they follow data-stil-theme.
+ *
+ * Breakpoints are fixed because custom properties cannot be used in media queries:
+ * sm 576px, md 768px, lg 992px, xl 1200px (min-width, mobile first).
+ */
+
+:root {
+    /* Brand and semantic colors. Text on them is picked automatically (black or white,
+       whichever contrasts more); set --stil-color-{variant}-contrast to override. */
+    --stil-color-primary: #34dbbf;
+    --stil-color-secondary: #a6dbd2;
+    --stil-color-success: #34db58;
+    --stil-color-danger: #db3434;
+    --stil-color-warning: #ebc444;
+    --stil-color-info: #34c2db;
+
+    /* Neutrals: light-dark(light mode, dark mode). */
+    --stil-color-body-bg: light-dark(#ffffff, #121417);
+    --stil-color-surface: light-dark(#ffffff, #1b1e23);
+    --stil-color-surface-muted: light-dark(#f1f3f5, #262a30);
+    --stil-color-text: light-dark(#1f2328, #e6e8eb);
+    --stil-color-text-muted: light-dark(#59636e, #9da7b3);
+    --stil-color-border: light-dark(#d0d7de, #343a42);
+    --stil-color-border-strong: light-dark(#818b98, #6e7781);
+    --stil-backdrop: rgb(0 0 0 / 0.5);
+
+    /* Typography */
+    --stil-font-family: 'Didact Gothic', sans-serif;
+    --stil-font-family-mono: ui-monospace, 'Cascadia Code', Consolas, monospace;
+    --stil-font-size-xs: 0.75rem;
+    --stil-font-size-sm: 0.875rem;
+    --stil-font-size-md: 1rem;
+    --stil-font-size-lg: 1.25rem;
+    --stil-font-size-xl: 1.8rem;
+    --stil-font-size-2xl: 2.5rem;
+    --stil-font-weight-normal: 400;
+    --stil-font-weight-bold: 600;
+    --stil-line-height: 1.5;
+    --stil-letter-spacing: 0.05rem;
+    --stil-heading-margin: 0 0 0.5rem;
+
+    /* Spacing scale */
+    --stil-space-1: 0.25rem;
+    --stil-space-2: 0.5rem;
+    --stil-space-3: 0.75rem;
+    --stil-space-4: 1rem;
+    --stil-space-5: 1.5rem;
+    --stil-space-6: 2rem;
+    --stil-space-7: 3rem;
+
+    /* Layout */
+    --stil-container-max: 1200px;
+    --stil-sidebar-width: 16rem;
+
+    /* Shape and depth */
+    --stil-radius-sm: 0.125rem;
+    --stil-radius-md: 0.25rem;
+    --stil-radius-lg: 0.5rem;
+    --stil-radius-pill: 999px;
+    --stil-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.08);
+    --stil-shadow-md: 0 2px 4px rgb(0 0 0 / 0.1);
+    --stil-shadow-lg: 0 8px 24px rgb(0 0 0 / 0.15);
+    --stil-focus-ring-width: 2px;
+    --stil-focus-ring-offset: 2px;
+
+    /* Layering */
+    --stil-z-dropdown: 1000;
+    --stil-z-sticky: 1020;
+    --stil-z-overlay: 1040;
+    --stil-z-modal: 1050;
+    --stil-z-popover: 1070;
+    --stil-z-toast: 1090;
+
+    /* Motion */
+    --stil-duration-fast: 150ms;
+    --stil-duration-md: 300ms;
+    --stil-easing: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --stil-duration-fast: 0ms;
+        --stil-duration-md: 0ms;
+    }
+}
+
+/* Color mode. Without the attribute Stil renders light, so a host page is never switched to
+   dark by accident. Use it on <html> for the whole page, or on any element. */
+[data-stil-theme] {
+    background-color: var(--stil-color-body-bg);
+    color: var(--stil-color-text);
+}
+
+[data-stil-theme="light"] { color-scheme: light; }
+[data-stil-theme="dark"] { color-scheme: dark; }
+[data-stil-theme="auto"] { color-scheme: light dark; }

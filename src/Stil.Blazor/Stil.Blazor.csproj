@@ -27,17 +27,19 @@
   </ItemGroup>
 
   <!--
-    src/Stil.Css is the single source of the stylesheet. Register it as a static web asset
-    with that folder as content root, so it is served as _content/Stil/stil.css, packed into
-    the NuGet package, and picked up live (no copy) when running the demo.
+    The stylesheet is built from src/Stil.Css into src/Stil.Css/dist (committed, so this build
+    needs no Node.js). Register the built files as static web assets with that folder as content
+    root, so they are served as _content/Stil/stil.css and stil.min.css, packed into the NuGet
+    package, and picked up live (no copy) when running the demo with "npm run watch".
   -->
   <PropertyGroup>
-    <StilCssDirectory>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '..', 'Stil.Css'))</StilCssDirectory>
+    <StilCssDirectory>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '..', 'Stil.Css', 'dist'))</StilCssDirectory>
   </PropertyGroup>
 
   <Target Name="DefineStilCssStaticWebAssets" AfterTargets="ResolveProjectStaticWebAssets" Condition="'$(NoBuild)' != 'true'">
     <ItemGroup>
       <_StilCssCandidate Include="$(StilCssDirectory)stil.css" RelativePath="stil.css" />
+      <_StilCssCandidate Include="$(StilCssDirectory)stil.min.css" RelativePath="stil.min.css" />
     </ItemGroup>
 
     <DefineStaticWebAssets

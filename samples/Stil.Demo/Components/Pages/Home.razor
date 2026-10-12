@@ -13,12 +13,12 @@
             <a href="#typography">Typography</a>
             <a href="#tables">Tables</a>
             <div class="theme-picker">
-                <select class="stil-input" data-theme-mode aria-label="Color mode">
+                <select class="stil-select stil-select-sm" data-theme-mode aria-label="Color mode">
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
                     <option value="auto">Auto (OS)</option>
                 </select>
-                <select class="stil-input" data-theme-palette aria-label="Palette">
+                <select class="stil-select stil-select-sm" data-theme-palette aria-label="Palette">
                     <option value="teal">Teal (default)</option>
                     <option value="purple">Purple</option>
                     <option value="forest">Forest</option>
@@ -48,22 +48,22 @@
     <section class="component-group" aria-labelledby="navigation-heading">
         <h1 id="navigation-heading">Navigation</h1>
         <div class="component-group-code-example">
-            <code>&lt;nav&gt;</code>
+            <code>&lt;nav class="stil-nav"&gt;</code>
             <div class="component-group-code-example-content">
-                <span>&lt;a href="#"&gt;Home&lt;/a&gt;</span>
-                <span>&lt;a href="#"&gt;About&lt;/a&gt;</span>
-                <span>&lt;a href="#"&gt;Services&lt;/a&gt;</span>
-                <span>&lt;a href="#"&gt;Contact&lt;/a&gt;</span>
+                <span>&lt;a href="#" class="stil-nav-link" aria-current="page"&gt;Home&lt;/a&gt;</span>
+                <span>&lt;a href="#" class="stil-nav-link"&gt;About&lt;/a&gt;</span>
+                <span>&lt;a href="#" class="stil-nav-link"&gt;Services&lt;/a&gt;</span>
+                <span>&lt;a href="#" class="stil-nav-link"&gt;Contact&lt;/a&gt;</span>
             </div>
             <code>&lt;/nav&gt;</code>
         </div>
         <div class="component-group-code-example-outcome">
             <span>Outcome:</span>
-            <nav aria-label="Example navigation">
-                <a href="#layout-heading">Home</a>
-                <a href="#typography">About</a>
-                <a href="#buttons">Services</a>
-                <a href="#forms-heading">Contact</a>
+            <nav class="stil-nav" aria-label="Example navigation">
+                <a href="#layout-heading" class="stil-nav-link" aria-current="page">Home</a>
+                <a href="#typography" class="stil-nav-link">About</a>
+                <a href="#buttons" class="stil-nav-link">Services</a>
+                <a href="#forms-heading" class="stil-nav-link">Contact</a>
             </nav>
         </div>
     </section>
@@ -98,7 +98,7 @@
         </div>
         <div class="component-group-code-example-outcome">
             <span>Outcome:</span>
-            <div class="stil-btn-group">
+            <div class="stil-cluster">
                 <button type="button" class="stil-btn stil-btn-primary">Primary Button</button>
                 <button type="button" class="stil-btn stil-btn-secondary">Secondary Button</button>
                 <button type="button" class="stil-btn stil-btn-success">Success Button</button>
@@ -106,7 +106,7 @@
                 <button type="button" class="stil-btn stil-btn-warning">Warning Button</button>
                 <button type="button" class="stil-btn stil-btn-info">Info Button</button>
             </div>
-            <div class="stil-btn-group">
+            <div class="stil-cluster">
                 <button type="button" class="stil-btn stil-btn-sm stil-btn-primary">Primary Button</button>
                 <button type="button" class="stil-btn stil-btn-sm stil-btn-secondary">Secondary Button</button>
                 <button type="button" class="stil-btn stil-btn-sm stil-btn-success">Success Button</button>
@@ -114,7 +114,7 @@
                 <button type="button" class="stil-btn stil-btn-sm stil-btn-warning">Warning Button</button>
                 <button type="button" class="stil-btn stil-btn-sm stil-btn-info">Info Button</button>
             </div>
-            <div class="stil-btn-group">
+            <div class="stil-cluster">
                 <button type="button" class="stil-btn stil-btn-lg stil-btn-primary">Primary Button</button>
                 <button type="button" class="stil-btn stil-btn-lg stil-btn-secondary">Secondary Button</button>
                 <button type="button" class="stil-btn stil-btn-lg stil-btn-success">Success Button</button>
@@ -128,17 +128,17 @@
     <section class="component-group" aria-labelledby="inputs">
         <h1 id="inputs">Inputs</h1>
         <div class="component-group-code-example">
-            <code>&lt;div class="stil-input-group"&gt;</code>
+            <code>&lt;div class="stil-field"&gt;</code>
             <div class="component-group-code-example-content">
-                <span>&lt;label for="text-input"&gt;Text input&lt;/label&gt;</span>
+                <span>&lt;label for="text-input" class="stil-label"&gt;Text input&lt;/label&gt;</span>
                 <span>&lt;input type="text" id="text-input" class="stil-input"&gt;</span>
             </div>
             <code>&lt;/div&gt;</code>
         </div>
         <div class="component-group-code-example-outcome">
             <span>Outcome:</span>
-            <div class="stil-input-group">
-                <label for="text-input">Text input</label>
+            <div class="stil-field">
+                <label for="text-input" class="stil-label">Text input</label>
                 <input type="text" id="text-input" class="stil-input" />
             </div>
         </div>
@@ -251,11 +251,11 @@
         <div class="component-group-code-example">
             <code>&lt;form class="stil-form"&gt;</code>
             <div class="component-group-code-example-content">
-                <span>&lt;label for="name"&gt;Name&lt;/label&gt;</span>
+                <span>&lt;label for="name" class="stil-label"&gt;Name&lt;/label&gt;</span>
                 <span>&lt;input type="text" id="name" class="stil-input"&gt;</span>
-                <span>&lt;label for="email"&gt;Email&lt;/label&gt;</span>
+                <span>&lt;label for="email" class="stil-label"&gt;Email&lt;/label&gt;</span>
                 <span>&lt;input type="email" id="email" class="stil-input"&gt;</span>
-                <span>&lt;label for="message"&gt;Message&lt;/label&gt;</span>
+                <span>&lt;label for="message" class="stil-label"&gt;Message&lt;/label&gt;</span>
                 <span>&lt;textarea id="message" class="stil-input"&gt;&lt;/textarea&gt;</span>
                 <span>&lt;button type="submit" class="stil-btn stil-btn-lg stil-btn-primary"&gt;Submit&lt;/button&gt;</span>
             </div>
@@ -264,16 +264,16 @@
         <div class="component-group-code-example-outcome">
             <span>Outcome:</span>
             <form class="stil-form">
-                <div class="stil-input-group">
-                    <label for="name">Name</label>
+                <div class="stil-field">
+                    <label for="name" class="stil-label">Name</label>
                     <input type="text" id="name" class="stil-input" />
                 </div>
-                <div class="stil-input-group">
-                    <label for="email">Email</label>
+                <div class="stil-field">
+                    <label for="email" class="stil-label">Email</label>
                     <input type="email" id="email" class="stil-input" />
                 </div>
-                <div class="stil-input-group">
-                    <label for="message">Message</label>
+                <div class="stil-field">
+                    <label for="message" class="stil-label">Message</label>
                     <textarea id="message" class="stil-input"></textarea>
                 </div>
                 <button type="submit" class="stil-btn stil-btn-lg stil-btn-primary">Submit</button>

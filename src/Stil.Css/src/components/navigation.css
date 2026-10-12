@@ -1,0 +1,226 @@
+/* Navigation: nav, navbar, breadcrumb, pagination and tabs. Mark the current item with
+   aria-current="page" (or aria-selected="true" for tabs); there are no "active" classes. */
+
+/* Nav: links in a row (or a column with stil-nav-vertical). Uses the current text color, so it
+   also works on colored backgrounds such as a stil-bg-primary navbar. */
+
+.stil-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--stil-space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stil-nav-vertical { flex-direction: column; }
+
+.stil-nav-link {
+    display: flex;
+    align-items: center;
+    gap: var(--stil-space-2);
+    padding: var(--stil-space-2) var(--stil-space-3);
+    border: 0;
+    border-radius: var(--stil-radius-md);
+    background-color: transparent;
+    color: inherit;
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color var(--stil-duration-fast) var(--stil-easing);
+}
+
+.stil-nav-link:hover { background-color: color-mix(in srgb, currentColor 10%, transparent); }
+
+.stil-nav-link:focus-visible {
+    outline: var(--stil-focus-ring-width) solid currentColor;
+    outline-offset: 0;
+}
+
+.stil-nav-link[aria-current]:not([aria-current="false"]) {
+    font-weight: var(--stil-font-weight-bold);
+    box-shadow: inset 0 -2px 0 currentColor;
+}
+
+.stil-nav-vertical .stil-nav-link[aria-current]:not([aria-current="false"]) {
+    box-shadow: inset 3px 0 0 currentColor;
+}
+
+/* Pills: the current link is filled with the accent color. */
+.stil-nav-pills .stil-nav-link[aria-current]:not([aria-current="false"]) {
+    --_bg: var(--_accent);
+    --_contrast: initial;
+    background-color: var(--_bg);
+    color: var(--_fg);
+    box-shadow: none;
+}
+
+/* Navbar: brand, nav and actions in a bar that wraps on small screens. */
+
+.stil-navbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--stil-space-2) var(--stil-space-4);
+    padding: var(--stil-space-2) var(--stil-space-4);
+    border-bottom: 1px solid var(--stil-color-border);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+}
+
+.stil-navbar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--stil-space-2);
+    color: inherit;
+    font-size: var(--stil-font-size-lg);
+    letter-spacing: var(--stil-letter-spacing);
+    text-decoration: none;
+}
+
+.stil-navbar-end {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--stil-space-2);
+    margin-inline-start: auto;
+}
+
+/* Breadcrumb: <nav aria-label="Breadcrumb"><ol class="stil-breadcrumb"><li>… */
+
+.stil-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0 0 var(--stil-space-4);
+    padding: 0;
+    font-size: var(--stil-font-size-sm);
+    list-style: none;
+}
+
+.stil-breadcrumb > li + li::before {
+    content: "/";
+    padding-inline: var(--stil-space-2);
+    color: var(--stil-color-text-muted);
+}
+
+.stil-breadcrumb a {
+    color: var(--_accent);
+    text-decoration: none;
+}
+
+.stil-breadcrumb a:hover { text-decoration: underline; }
+
+.stil-breadcrumb [aria-current="page"] { color: var(--stil-color-text-muted); }
+
+/* Pagination: <nav><ul class="stil-pagination"><li><a class="stil-page-link">… */
+
+.stil-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stil-page-link {
+    display: block;
+    min-width: 2.5rem;
+    margin-inline-start: -1px;
+    padding: var(--stil-space-2) var(--stil-space-3);
+    border: 1px solid var(--stil-color-border);
+    background-color: var(--stil-color-surface);
+    color: var(--_accent);
+    font: inherit;
+    line-height: var(--stil-line-height);
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.stil-pagination > li:first-child > .stil-page-link {
+    margin-inline-start: 0;
+    border-start-start-radius: var(--stil-radius-md);
+    border-end-start-radius: var(--stil-radius-md);
+}
+
+.stil-pagination > li:last-child > .stil-page-link {
+    border-start-end-radius: var(--stil-radius-md);
+    border-end-end-radius: var(--stil-radius-md);
+}
+
+.stil-page-link:hover { background-color: var(--stil-color-surface-muted); }
+
+.stil-page-link:focus-visible {
+    position: relative;
+    z-index: 2;
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: 0;
+}
+
+.stil-page-link[aria-current="page"] {
+    --_bg: var(--_accent);
+    --_contrast: initial;
+    position: relative;
+    z-index: 1;
+    border-color: var(--_bg);
+    background-color: var(--_bg);
+    color: var(--_fg);
+}
+
+/* A <span class="stil-page-link"> is a non-interactive item, for example an ellipsis. */
+span.stil-page-link {
+    color: var(--stil-color-text-muted);
+    cursor: default;
+}
+
+span.stil-page-link:hover { background-color: var(--stil-color-surface); }
+
+.stil-pagination-sm .stil-page-link {
+    min-width: 2rem;
+    padding: var(--stil-space-1) var(--stil-space-2);
+    font-size: var(--stil-font-size-sm);
+}
+
+.stil-page-link[aria-disabled="true"] {
+    color: var(--stil-color-text-muted);
+    pointer-events: none;
+}
+
+/* Tabs: <div role="tablist" class="stil-tabs"><button role="tab" class="stil-tab" aria-selected="true">…
+   Switching panels needs a few lines of script (or a Stil Blazor component). */
+
+.stil-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--stil-space-1);
+    margin-block-end: var(--stil-space-4);
+    border-bottom: 1px solid var(--stil-color-border);
+}
+
+.stil-tab {
+    margin-block-end: -1px;
+    padding: var(--stil-space-2) var(--stil-space-3);
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background-color: transparent;
+    color: var(--stil-color-text-muted);
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.stil-tab:hover {
+    border-bottom-color: var(--stil-color-border-strong);
+    color: var(--stil-color-text);
+}
+
+.stil-tab:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: -2px;
+}
+
+.stil-tab[aria-selected="true"] {
+    border-bottom-color: currentColor;
+    color: var(--_accent);
+}
