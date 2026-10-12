@@ -8,7 +8,7 @@
     <AssemblyName>Stil.Blazor</AssemblyName>
     <RootNamespace>Stil.Blazor</RootNamespace>
     <Version>0.1.0</Version>
-    <Description>Themeable Blazor components built on the Stil CSS class library.</Description>
+    <Description>Themeable Blazor components built on the Stil CSS class library: buttons, forms with validation, lists, cards, tabs, dropdowns, dialogs and toasts.</Description>
     <PackageTags>Blazor;CSS;components;Stil</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -29,7 +29,7 @@
   <!--
     The stylesheet is built from src/Stil.Css into src/Stil.Css/dist (committed, so this build
     needs no Node.js). Register the built files as static web assets with that folder as content
-    root, so they are served as _content/Stil/stil.css and stil.min.css, packed into the NuGet
+    root, so they are served as _content/Stil/stil.css, stil.min.css and stil.js, packed into the NuGet
     package, and picked up live (no copy) when running the demo with "npm run watch".
   -->
   <PropertyGroup>
@@ -40,6 +40,7 @@
     <ItemGroup>
       <_StilCssCandidate Include="$(StilCssDirectory)stil.css" RelativePath="stil.css" />
       <_StilCssCandidate Include="$(StilCssDirectory)stil.min.css" RelativePath="stil.min.css" />
+      <_StilCssCandidate Include="$(StilCssDirectory)stil.js" RelativePath="stil.js" />
     </ItemGroup>
 
     <DefineStaticWebAssets

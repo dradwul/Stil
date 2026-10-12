@@ -1,0 +1,140 @@
+@inherits StilComponentBase
+
+<CascadingValue Value="this" IsFixed="true">
+    <div @attributes="AdditionalAttributes" class="@Classes()">
+        <div role="tablist" aria-label="@Label" class="stil-tabs">
+            @for (var i = 0; i < _tabs.Count; i++)
+            {
+                var index = i;
+                var tab = _tabs[index];
+                var selected = index == ActiveIndex;
+                <button type="button" role="tab" class="stil-tab" id="@TabId(index)"
+                        aria-selected="@(selected ? "true" : "false")" aria-controls="@PanelId(index)"
+                        tabindex="@(selected ? 0 : -1)" disabled="@tab.Disabled"
+                        @ref="tab.Element" @onclick="() => SelectAsync(index)" @onkeydown="e => OnKeyDownAsync(e, index)">
+                    @tab.Title
+                </button>
+            }
+        </div>
+        @ChildContent
+    </div>
+</CascadingValue>
+
+@code {
+    private readonly List<StilTab> _tabs = [];
+    private readonly List<StilTab> _renderOrder = [];
+    private readonly string _id = StilIds.Next("tabs");
+    private bool _focusSelected;
+
+    /// <summary>The index of the selected tab. Supports two-way binding.</summary>
+    [Parameter]
+    public int ActiveIndex { get; set; }
+
+    [Parameter]
+    public EventCallback<int> ActiveIndexChanged { get; set; }
+
+    /// <summary>The accessible name of the tab list.</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>The StilTab components.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    internal string TabId(int index) => $"{_id}-tab-{index}";
+
+    internal string PanelId(int index) => $"{_id}-panel-{index}";
+
+    internal int IndexOf(StilTab tab) => _tabs.IndexOf(tab);
+
+    internal bool IsActive(StilTab tab) => IndexOf(tab) == ActiveIndex;
+
+    internal void Register(StilTab tab)
+    {
+        if (!_tabs.Contains(tab))
+        {
+            _tabs.Add(tab);
+            StateHasChanged();
+        }
+    }
+
+    internal void Unregister(StilTab tab)
+    {
+        if (_tabs.Remove(tab))
+        {
+            StateHasChanged();
+        }
+    }
+
+    internal void TabChanged() => StateHasChanged();
+
+    // Called by each tab as it renders. When every tab has rendered in one pass, their order is
+    // the markup order; a tab that appeared later in the middle is moved to its place.
+    internal void Touch(StilTab tab)
+    {
+        if (!_renderOrder.Contains(tab))
+        {
+            _renderOrder.Add(tab);
+        }
+    }
+
+    private async Task SelectAsync(int index)
+    {
+        if (index == ActiveIndex || _tabs[index].Disabled)
+        {
+            return;
+        }
+
+        ActiveIndex = index;
+        await ActiveIndexChanged.InvokeAsync(index);
+    }
+
+    // Arrow keys, Home and End move between tabs and select them (WAI-ARIA tabs pattern).
+    private async Task OnKeyDownAsync(KeyboardEventArgs e, int index)
+    {
+        var enabled = Enumerable.Range(0, _tabs.Count).Where(i => !_tabs[i].Disabled).ToList();
+        if (enabled.Count == 0)
+        {
+            return;
+        }
+
+        var position = enabled.IndexOf(index);
+        int? target = e.Key switch
+        {
+            "ArrowRight" => enabled[(position + 1) % enabled.Count],
+            "ArrowLeft" => enabled[(position - 1 + enabled.Count) % enabled.Count],
+            "Home" => enabled[0],
+            "End" => enabled[^1],
+            _ => null
+        };
+
+        if (target is { } next)
+        {
+            _focusSelected = true;
+            await SelectAsync(next);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var reorder = _renderOrder.Count == _tabs.Count && !_renderOrder.SequenceEqual(_tabs);
+        if (reorder)
+        {
+            _tabs.Clear();
+            _tabs.AddRange(_renderOrder);
+        }
+
+        _renderOrder.Clear();
+        if (reorder)
+        {
+            StateHasChanged();
+            return;
+        }
+
+        if (_focusSelected && ActiveIndex >= 0 && ActiveIndex < _tabs.Count)
+        {
+            _focusSelected = false;
+            await _tabs[ActiveIndex].Element.FocusAsync();
+        }
+    }
+}

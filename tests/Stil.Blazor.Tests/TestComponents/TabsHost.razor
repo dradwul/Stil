@@ -1,0 +1,23 @@
+@* Three tabs (the second optionally disabled) with two-way bound ActiveIndex. *@
+<StilTabs Label="Sections" @bind-ActiveIndex="ActiveIndex" @bind-ActiveIndex:after="() => Changes.Add(ActiveIndex)">
+    <StilTab Title="One">Panel one</StilTab>
+    <StilTab Title="Two" Disabled="DisableSecond">Panel two</StilTab>
+    <StilTab Title="Three">Panel three</StilTab>
+    @if (ShowFourth)
+    {
+        <StilTab Title="Four">Panel four</StilTab>
+    }
+</StilTabs>
+
+@code {
+    [Parameter]
+    public int ActiveIndex { get; set; }
+
+    [Parameter]
+    public bool DisableSecond { get; set; }
+
+    [Parameter]
+    public bool ShowFourth { get; set; }
+
+    public List<int> Changes { get; } = [];
+}

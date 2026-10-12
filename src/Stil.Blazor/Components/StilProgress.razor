@@ -1,0 +1,42 @@
+@inherits StilComponentBase
+
+<div role="progressbar" aria-label="@Label" aria-valuemin="0" aria-valuemax="@Format(Max)" aria-valuenow="@Format(Clamped)"
+     @attributes="AdditionalAttributes" class="@CssClass">
+    <div class="@BarClass" style="width: @Format(Percent)%">@(ShowValue ? $"{Math.Round(Percent)}%" : null)</div>
+</div>
+
+@code {
+    [Parameter]
+    public double Value { get; set; }
+
+    [Parameter]
+    public double Max { get; set; } = 100;
+
+    /// <summary>The accessible name of the progress bar.</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>Shows the percentage inside the bar (use with Size="Large").</summary>
+    [Parameter]
+    public bool ShowValue { get; set; }
+
+    /// <summary>The bar uses the accent color unless a variant is set.</summary>
+    [Parameter]
+    public StilVariant? Variant { get; set; }
+
+    /// <summary>Medium (default) or Large.</summary>
+    [Parameter]
+    public StilSize Size { get; set; }
+
+    private double Clamped => Max <= 0 ? 0 : Math.Clamp(Value, 0, Max);
+
+    private double Percent => Max <= 0 ? 0 : Clamped / Max * 100;
+
+    private string CssClass => Classes("stil-progress", Size == StilSize.Large ? "stil-progress-lg" : null);
+
+    private string BarClass => Variant is { } variant
+        ? $"stil-progress-bar {StilCssClasses.Variant("stil-bg", variant)}"
+        : "stil-progress-bar";
+
+    private static string Format(double value) => value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+}

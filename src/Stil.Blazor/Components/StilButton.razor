@@ -1,0 +1,74 @@
+@inherits StilComponentBase
+
+@if (Href is not null)
+{
+    <a href="@(Disabled ? null : Href)" target="@Target" role="@(Disabled ? "link" : null)"
+       aria-disabled="@StilCssClasses.AriaBool(Disabled)" aria-busy="@StilCssClasses.AriaBool(Loading)" aria-pressed="@PressedValue"
+       @attributes="AdditionalAttributes" class="@CssClass" @onclick="HandleClickAsync">@ChildContent</a>
+}
+else
+{
+    <button type="@Type" disabled="@Disabled"
+            aria-busy="@StilCssClasses.AriaBool(Loading)" aria-pressed="@PressedValue"
+            @attributes="AdditionalAttributes" class="@CssClass" @onclick="HandleClickAsync">@ChildContent</button>
+}
+
+@code {
+    [Parameter]
+    public StilVariant Variant { get; set; } = StilVariant.Primary;
+
+    [Parameter]
+    public StilButtonAppearance Appearance { get; set; }
+
+    [Parameter]
+    public StilSize Size { get; set; }
+
+    /// <summary>The button type: "button" (default), "submit" or "reset".</summary>
+    [Parameter]
+    public string Type { get; set; } = "button";
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>Shows a spinner and ignores clicks (aria-busy).</summary>
+    [Parameter]
+    public bool Loading { get; set; }
+
+    /// <summary>For toggle buttons: true or false renders aria-pressed; null leaves it out.</summary>
+    [Parameter]
+    public bool? Pressed { get; set; }
+
+    /// <summary>A square button for a single icon. Give it an aria-label.</summary>
+    [Parameter]
+    public bool IconOnly { get; set; }
+
+    /// <summary>Renders a link styled as a button.</summary>
+    [Parameter]
+    public string? Href { get; set; }
+
+    [Parameter]
+    public string? Target { get; set; }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string? PressedValue => Pressed?.ToString().ToLowerInvariant();
+
+    private string CssClass => Classes(
+        "stil-btn",
+        StilCssClasses.Variant("stil-btn", Variant),
+        Appearance switch
+        {
+            StilButtonAppearance.Outline => "stil-btn-outline",
+            StilButtonAppearance.Ghost => "stil-btn-ghost",
+            _ => null
+        },
+        StilCssClasses.Size("stil-btn", Size),
+        IconOnly ? "stil-btn-icon" : null);
+
+    private Task HandleClickAsync(MouseEventArgs args) =>
+        Disabled || Loading ? Task.CompletedTask : OnClick.InvokeAsync(args);
+}

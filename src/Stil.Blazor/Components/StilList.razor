@@ -1,0 +1,14 @@
+@inherits StilComponentBase
+
+<div @attributes="AdditionalAttributes" class="@Classes("stil-list", Flush ? "stil-list-flush" : null)">
+    @ChildContent
+</div>
+
+@code {
+    /// <summary>No outer border or radius, for a list inside a card.</summary>
+    [Parameter]
+    public bool Flush { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

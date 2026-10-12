@@ -1,151 +1,293 @@
 # Stil for Blazor
 
 Stil for Blazor is a set of themeable Blazor components built on
-[Stil CSS](https://github.com/dradwul/StilCSS/tree/main/src/Stil.Css). Each
-component renders plain HTML with `stil-*` CSS classes. You can mix
-components with hand-written Stil markup and restyle both with the same
-`--stil-*` tokens.
+[Stil CSS](https://github.com/dradwul/StilCSS/tree/main/src/Stil.Css). It
+includes buttons, form fields with validation, lists, cards, alerts, tabs,
+dropdowns, dialogs and toasts. Every component renders plain HTML with
+`stil-*` classes. You can mix the components with hand-written Stil markup,
+and theme both with the same `--stil-*` tokens.
 
 > **Status:** early preview (`0.1.0`, not yet on NuGet). Requires .NET 10.
 > APIs may still change before `1.0`. See the
 > [roadmap](https://github.com/dradwul/StilCSS/blob/main/ROADMAP.md).
 
-## Install
+## Get started
 
-```shell
-dotnet add package Stil
-```
+1. Install the package:
 
-Add the stylesheet to the `<head>` in `Components/App.razor`. Use `stil.min.css` for
-the minified version:
+   ```shell
+   dotnet add package Stil
+   ```
 
-```razor
-<link rel="stylesheet" href="@Assets["_content/Stil/stil.css"]" />
-```
+2. Register the services in `Program.cs`:
 
-Add the namespace to `_Imports.razor`:
+   ```csharp
+   builder.Services.AddStil();
+   // Optional global theme:
+   // builder.Services.AddStil(o => o.Theme.Primary = "#6741d9");
+   ```
 
-```razor
-@using Stil.Blazor.Components
-```
+3. Add the stylesheet (and the global theme) to the `<head>` in `Components/App.razor`:
 
-Optional: put `class="stil-scope"` on `<body>` so that Stil also styles the
-font, headings and links on your pages.
+   ```razor
+   <StilHead />
+   ```
 
-The components work in every render mode: static SSR, Interactive Server and
-WebAssembly. No service registration or JavaScript is needed.
+   `StilHead` links `_content/Stil/stil.min.css`. To link the file yourself,
+   use `<link rel="stylesheet" href="@Assets["_content/Stil/stil.css"]" />`.
+   Add `class="stil-scope"` to `<body>` so Stil also styles the font,
+   headings and links on your pages.
 
-## Naming
+4. Add the namespaces to `_Imports.razor`:
 
-Each component is named `Stil` + the component name and renders the
-matching CSS class:
+   ```razor
+   @using Stil.Blazor
+   @using Stil.Blazor.Components
+   ```
 
-| Component | CSS class |
+5. If you use dialogs or toasts from code, add the hosts once to an
+   interactive layout:
+
+   ```razor
+   <StilDialogHost />
+   <StilToastHost />
+   ```
+
+The library also ships a small script, `stil.js`, which Blazor loads
+automatically. It closes dropdowns on an outside click or Escape and handles
+dismissing alerts on statically rendered pages. You do not need to add a
+`<script>` tag.
+
+## Render modes
+
+| Works in static SSR | Needs an interactive render mode (Server, WebAssembly or Auto) |
 | --- | --- |
-| `StilContainer` | `stil-container` |
-| `StilCard` | `stil-card` |
-| `StilAlert` | `stil-alert` |
-
-Color variants use the shared `StilVariant` enum: `Primary`, `Secondary`,
-`Success`, `Danger`, `Warning`, `Info`.
+| Button (links and submit), Badge, Card, Container, Heading, List, ListItem (as a link), Progress, Spinner, Tooltip, ThemeProvider, Head, form fields inside an enhanced `EditForm`, Dropdown, dismissible Alert | Button `OnClick`, ListItem `OnClick`, Tabs switching, Dialog, DialogService, ToastService |
 
 ## Components
 
-### `StilContainer`
+The color components share the `StilVariant` enum: `Primary`, `Secondary`,
+`Success`, `Danger`, `Warning` and `Info`. Sizes use `StilSize`: `Medium`,
+`Small` and `Large`. Every component passes extra HTML attributes to its root
+element. A `class` you supply is added to the component's own classes and
+never replaces them.
 
-A centered layout box.
+### Buttons and badges
 
 ```razor
-<StilContainer>
-    Page content
-</StilContainer>
+<StilButton OnClick="Save">Save</StilButton>
+<StilButton Variant="StilVariant.Danger" Appearance="StilButtonAppearance.Outline">Delete</StilButton>
+<StilButton Loading="_saving" Type="submit">Save</StilButton>
+<StilButton Href="/orders" Appearance="StilButtonAppearance.Ghost">All orders</StilButton>
+<StilBadge Variant="StilVariant.Success">Delivered</StilBadge>
 ```
 
-### `StilCard`
+| Component | Parameters |
+| --- | --- |
+| `StilButton` | `Variant`, `Appearance` (Solid, Outline, Ghost), `Size`, `Type` (default "button"), `Disabled`, `Loading` (spinner, ignores clicks), `Pressed` (toggle, aria-pressed), `IconOnly`, `Href`/`Target` (renders a link), `OnClick` |
+| `StilBadge` | `Variant`, `Subtle` |
 
-A card with an optional title.
+### Lists
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| `HeaderText` | `string?` | Shown as `<h2 class="stil-card-title">`. Left out when empty. |
-| `ChildContent` | `RenderFragment?` | Card body. |
+A row with a title, an optional description and content at the start or end.
+On its own, a row is a bordered box; inside a `StilList` the rows are joined.
+A row with `Href` becomes a link, and one with `OnClick` becomes a button.
 
 ```razor
-<StilCard HeaderText="Profile">
-    <p>Card body</p>
-    <div class="stil-card-footer">
-        <button class="stil-btn stil-btn-primary">Save</button>
-    </div>
+<StilListItem Title="Order #1042" Badge="Delivered" BadgeVariant="StilVariant.Success" />
+
+<StilList>
+    @foreach (var order in orders)
+    {
+        <StilListItem Title="@($"Order #{order.Id}")" Description="@order.Customer"
+                      Badge="@order.Status" BadgeVariant="@VariantOf(order.Status)"
+                      Href="@($"orders/{order.Id}")" />
+    }
+</StilList>
+```
+
+| Component | Parameters |
+| --- | --- |
+| `StilList` | `Flush` (no outer border, for use inside a card) |
+| `StilListItem` | `Title`, `Description`, `Start`, `End`, `Badge`/`BadgeVariant`/`BadgeSubtle`, `Href`, `OnClick`, `Selected` (aria-current), `Disabled`, `ChildContent` |
+
+### Cards, alerts and layout
+
+```razor
+<StilCard Title="Team" Subtitle="4 members" HeadingLevel="3">
+    <HeaderActions><StilButton Size="StilSize.Small">Invite</StilButton></HeaderActions>
+    <ChildContent>…</ChildContent>
+    <Footer><StilButton>Save</StilButton></Footer>
 </StilCard>
+
+<StilAlert Variant="StilVariant.Warning" Title="Heads up" Subtle Dismissible>Maintenance on Sunday.</StilAlert>
 ```
 
-### `StilAlert`
+| Component | Parameters |
+| --- | --- |
+| `StilCard` | `Title`, `Subtitle`, `HeadingLevel` (default 2), `HeaderActions` (moves the title into a header bar), `Footer` |
+| `StilAlert` | `Variant` (default Info), `Subtle`, `Title`, `Dismissible`, `OnDismiss`, `Role`. Danger and Warning use `role="alert"`; the others use `"status"`. |
+| `StilContainer` | `Fluid` |
+| `StilHeading` | `Level` (1–6) |
 
-A colored message box with `role="alert"`.
+### Forms
 
-| Parameter | Type | Description |
+Each field renders a label, the control, an optional hint and its validation
+messages. It wires up `id`, `for`, `aria-describedby` and `aria-invalid`.
+Bind with `@bind-Value`. Inside an `EditForm`, validation messages appear
+automatically; fields also work without one.
+
+```razor
+<EditForm Model="order" OnValidSubmit="Save" class="stil-form">
+    <DataAnnotationsValidator />
+    <StilTextBox @bind-Value="order.Customer" Label="Customer" />
+    <StilTextBox @bind-Value="order.Email" Label="Email" Type="email" Hint="We send the receipt here." />
+    <div class="stil-grid">
+        <StilNumeric @bind-Value="order.Amount" Label="Amount" Step="0.01" class="stil-col-md-6" />
+        <StilDatePicker @bind-Value="order.Date" Label="Date" class="stil-col-md-6" />
+    </div>
+    <StilSelect @bind-Value="order.Status" Label="Status" />              @* enum: options generated *@
+    <StilRadioGroup @bind-Value="order.Shipping" Label="Shipping" Inline />
+    <StilSwitch @bind-Value="order.Express" Label="Express delivery" />
+    <StilCheckbox @bind-Value="order.Gift" Label="This is a gift" />
+    <StilButton Type="submit">Save</StilButton>
+</EditForm>
+```
+
+| Component | Value type | Extra parameters |
 | --- | --- | --- |
-| `Variant` | `StilVariant` | The color. The default is `Info`. |
-| `ChildContent` | `RenderFragment?` | Message content. |
+| `StilTextBox` | `string?` | `Type` (text, email, password, …), `Placeholder`, `Size` |
+| `StilTextArea` | `string?` | `Rows`, `Placeholder` |
+| `StilNumeric<TValue>` | numbers | `Min`, `Max`, `Step`, `Placeholder`, `Size` |
+| `StilDatePicker<TValue>` | `DateTime`, `DateOnly`, `TimeOnly`, … | `Type` (Date, DateTimeLocal, Month, Time), `Min`, `Max`, `Size` |
+| `StilSelect<TValue>` | any | `Items`, `ItemText`, `Placeholder`, `Size`, or `<option>` elements as child content. Enums need no items. |
+| `StilRadioGroup<TValue>` | any | `Items`, `ItemText`, `Inline`. Enums need no items. |
+| `StilCheckbox`, `StilSwitch` | `bool` | Rich label as child content |
+
+All fields share `Label`, `Hint`, `Id` (generated if not set), `Disabled` and
+`InputClass` (classes on the control).
+
+**Attributes on fields:** `class` and `style` go on the field wrapper, so
+`class="stil-col-md-6"` places the whole field in a grid. Other attributes,
+such as `placeholder`, `autocomplete` and `aria-label`, go on the control.
+
+`StilField` is the wrapper the fields use. Use it to give a custom control
+the same label, hint and error layout.
+
+### Tabs, dropdowns and tooltips
 
 ```razor
-<StilAlert Variant="StilVariant.Danger">Something went wrong.</StilAlert>
+<StilTabs @bind-ActiveIndex="tab" Label="Settings">
+    <StilTab Title="Profile">…</StilTab>
+    <StilTab Title="Security">…</StilTab>
+</StilTabs>
+
+<StilDropdown Text="Actions" Appearance="StilButtonAppearance.Outline" AlignEnd>
+    <StilDropdownHeader>Order #1043</StilDropdownHeader>
+    <StilDropdownItem OnClick="Edit">Edit</StilDropdownItem>
+    <StilDropdownDivider />
+    <StilDropdownItem OnClick="Delete">Delete</StilDropdownItem>
+</StilDropdown>
+
+<StilTooltip Text="Copies the link"><StilButton>Share</StilButton></StilTooltip>
 ```
 
-### Extra HTML attributes
+| Component | Parameters |
+| --- | --- |
+| `StilTabs` | `ActiveIndex` (two-way), `Label`. Arrow keys, Home and End move between tabs; disabled tabs are skipped. |
+| `StilTab` | `Title`, `Disabled`. Only the selected tab's content is rendered. |
+| `StilDropdown` | `Text` or `Toggle`, `AriaLabel`, `Variant`, `Appearance`, `Size`, `IconOnly`, `AlignEnd` |
+| `StilDropdownItem` | `Href` or `OnClick`, `Disabled` |
+| `StilTooltip` | `Text`, `Position` (Top, Bottom). Screen readers do not read it, so the wrapped element needs its own accessible name. |
 
-Every component passes extra HTML attributes (`id`, `data-*`, `aria-*`, and
-so on) to its root element. A `class` you supply is appended to the
-component's own classes, not used in place of them:
+### Progress and spinners
 
 ```razor
-<StilCard class="profile-card" id="profile" aria-label="Profile card" />
-@* renders class="stil-card profile-card" *@
+<StilProgress Value="uploaded" Max="total" Label="Upload" />
+<StilSpinner Size="StilSize.Small" Label="Loading orders…" />
 ```
 
-### Plain CSS classes
+| Component | Parameters |
+| --- | --- |
+| `StilProgress` | `Value`, `Max` (default 100), `Label`, `ShowValue`, `Variant`, `Size` (Medium, Large) |
+| `StilSpinner` | `Size` (Medium, Small), `Variant`, `Label` (for screen readers) |
 
-Most of Stil CSS (buttons, forms, tables, navigation, dialogs and so on)
-does not have Blazor components yet. They are planned as `StilButton`,
-`StilTextBox` and so on. Until then, use the Stil CSS classes directly.
-They work anywhere:
+### Dialogs
+
+A dialog in markup, bound to a field:
 
 ```razor
-<button class="stil-btn stil-btn-primary" @onclick="Save">Save</button>
+<StilButton OnClick="() => open = true">Invite</StilButton>
+
+<StilDialog @bind-Open="open" Title="Invite a member">
+    <ChildContent>…</ChildContent>
+    <Footer>
+        <StilButton Appearance="StilButtonAppearance.Ghost" OnClick="() => open = false">Cancel</StilButton>
+        <StilButton OnClick="Invite">Send</StilButton>
+    </Footer>
+</StilDialog>
 ```
 
-See the [Stil CSS class reference](https://github.com/dradwul/StilCSS/tree/main/src/Stil.Css#components).
+It is a native modal `<dialog>`: focus stays inside it, Escape closes it, and
+the page behind it is inert. Parameters: `Open`, `Title`, `Size`,
+`ShowClose`, `CloseLabel`, `OnClose`, `Footer`.
+
+Dialogs from code, through `IStilDialogService`:
+
+```razor
+@inject IStilDialogService Dialogs
+
+var confirmed = await Dialogs.ConfirmAsync("Delete order?", "This cannot be undone.",
+    new StilConfirmOptions { ConfirmText = "Delete", ConfirmVariant = StilVariant.Danger });
+
+var result = await Dialogs.OpenAsync<EditCustomer>("Edit customer",
+    new Dictionary<string, object?> { ["CustomerId"] = 42 });
+```
+
+A component opened with `OpenAsync` receives a cascading
+`StilDialogReference`. Call `Close(result)` on it to return a value. For a
+destructive confirmation (Danger), focus starts on Cancel.
+
+### Toasts
+
+```razor
+@inject IStilToastService Toasts
+
+Toasts.Success("Order #1043 shipped.");
+Toasts.Error("The payment provider did not respond.", title: "Payment failed");
+Toasts.Show("Saved", duration: TimeSpan.Zero);   // stays until closed
+```
+
+Toasts close after `StilOptions.DefaultToastDuration` (5 seconds). Danger and
+Warning toasts use `role="alert"`; the others use `"status"`.
 
 ## Theming
 
-Override the tokens in your own CSS, for example in `wwwroot/app.css`.
-Stil's rules live in cascade layers, so your CSS always wins:
-
-```css
-:root {
-    --stil-color-primary: #6741d9;
-    --stil-color-danger: #c92a2a;
-    --stil-font-family: system-ui, sans-serif;
-}
-```
-
-Text on colored components, link colors and focus rings are derived from
-these tokens and stay WCAG AA readable. Tokens set on a wrapper element apply
-only to the components inside it.
-
-For dark mode, set `data-stil-theme` to `light`, `dark` or `auto`, either on
-`<html>` in `App.razor` or on any element:
+Use `AddStil(o => o.Theme = …)` with `<StilHead />` for the whole app, or
+`StilThemeProvider` for part of a page:
 
 ```razor
-<html lang="en" data-stil-theme="auto">
+<StilThemeProvider Mode="StilThemeMode.Auto"
+                   Theme="@(new StilTheme { Primary = "#6741d9", Radius = "0.5rem" })">
+    …
+</StilThemeProvider>
 ```
 
-See the [theming guide and full token list](https://github.com/dradwul/StilCSS/tree/main/src/Stil.Css#theming).
+`StilTheme` has `Primary`, `Secondary`, `Success`, `Danger`, `Warning`,
+`Info`, `Accent`, `FontFamily`, `Radius` and `Tokens` (any `--stil-*` token).
+Text on colored components, link colors and focus rings are derived from the
+tokens and stay WCAG AA readable. Put `StilDialogHost` and `StilToastHost`
+inside the provider so dialogs and toasts follow its theme.
+
+You can also override tokens in CSS. Stil's rules are in cascade layers, so
+your CSS always wins. See the
+[theming guide and full token list](https://github.com/dradwul/StilCSS/tree/main/src/Stil.Css#theming).
 
 ## Development
 
 The component source is in this folder. The tests are in
-`tests/Stil.Blazor.Tests`, and a runnable demo is in `samples/Stil.Demo`.
-The stylesheet is served directly from `src/Stil.Css/dist/`, which is built
-from `src/Stil.Css/src/`. Make style changes there. Naming rules are in
+`tests/Stil.Blazor.Tests`, and a runnable demo, with a component gallery and
+a CRUD page, is in `samples/Stil.Demo`. The stylesheet and `stil.js` are
+served from `src/Stil.Css/dist/`, which is built from `src/Stil.Css/src/`.
+Naming rules are in
 [CONTRIBUTING.md](https://github.com/dradwul/StilCSS/blob/main/CONTRIBUTING.md).

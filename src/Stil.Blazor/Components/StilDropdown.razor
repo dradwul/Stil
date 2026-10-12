@@ -1,0 +1,68 @@
+@inherits StilComponentBase
+
+@* A <details> dropdown: it opens without JavaScript, and stil.js (loaded automatically by
+   Stil for Blazor) closes it on an outside click, on Escape and after choosing an item. *@
+<details @attributes="AdditionalAttributes" class="@Classes("stil-dropdown")">
+    <summary class="@SummaryClass" aria-label="@AriaLabel">
+        @if (Toggle is not null)
+        {
+            @Toggle
+        }
+        else
+        {
+            @Text
+        }
+    </summary>
+    <div class="@(AlignEnd ? "stil-dropdown-menu stil-dropdown-menu-end" : "stil-dropdown-menu")">
+        @ChildContent
+    </div>
+</details>
+
+@code {
+    /// <summary>The text on the toggle button.</summary>
+    [Parameter]
+    public string? Text { get; set; }
+
+    /// <summary>Rich toggle content instead of Text, for example an icon.</summary>
+    [Parameter]
+    public RenderFragment? Toggle { get; set; }
+
+    /// <summary>The accessible name of the toggle when it only shows an icon.</summary>
+    [Parameter]
+    public string? AriaLabel { get; set; }
+
+    [Parameter]
+    public StilVariant Variant { get; set; } = StilVariant.Primary;
+
+    [Parameter]
+    public StilButtonAppearance Appearance { get; set; }
+
+    [Parameter]
+    public StilSize Size { get; set; }
+
+    /// <summary>A square icon-only toggle without the arrow.</summary>
+    [Parameter]
+    public bool IconOnly { get; set; }
+
+    /// <summary>Align the menu with the end of the toggle instead of the start.</summary>
+    [Parameter]
+    public bool AlignEnd { get; set; }
+
+    /// <summary>StilDropdownItem, StilDropdownHeader and StilDropdownDivider components.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string SummaryClass => string.Join(' ', new[]
+    {
+        "stil-btn",
+        StilCssClasses.Variant("stil-btn", Variant),
+        Appearance switch
+        {
+            StilButtonAppearance.Outline => "stil-btn-outline",
+            StilButtonAppearance.Ghost => "stil-btn-ghost",
+            _ => null
+        },
+        StilCssClasses.Size("stil-btn", Size),
+        IconOnly ? "stil-btn-icon" : null,
+    }.Where(c => c is not null));
+}

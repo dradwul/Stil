@@ -1,21 +1,58 @@
-<div @attributes="AdditionalAttributes" class="@CssClass">
-    @if (!string.IsNullOrWhiteSpace(HeaderText))
+@inherits StilComponentBase
+
+<div @attributes="AdditionalAttributes" class="@Classes("stil-card")">
+    @if (HeaderActions is not null)
     {
-        <h2 class="stil-card-title">@HeaderText</h2>
+        <div class="stil-card-header">
+            <div>
+                @TitleMarkup
+            </div>
+            <div class="stil-cluster">@HeaderActions</div>
+        </div>
+    }
+    else
+    {
+        @TitleMarkup
     }
 
     @ChildContent
+
+    @if (Footer is not null)
+    {
+        <div class="stil-card-footer">@Footer</div>
+    }
 </div>
 
 @code {
     [Parameter]
-    public string? HeaderText { get; set; }
+    public string? Title { get; set; }
+
+    [Parameter]
+    public string? Subtitle { get; set; }
+
+    /// <summary>The heading level of the title, 1 to 6. The default is 2.</summary>
+    [Parameter]
+    public int HeadingLevel { get; set; } = 2;
+
+    /// <summary>Buttons or other controls. When set, the title moves into a header bar.</summary>
+    [Parameter]
+    public RenderFragment? HeaderActions { get; set; }
+
+    /// <summary>Actions in a footer bar, aligned to the end.</summary>
+    [Parameter]
+    public RenderFragment? Footer { get; set; }
 
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
-    [Parameter(CaptureUnmatchedValues = true)]
-    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
-
-    private string CssClass => StilCssClasses.Merge("stil-card", AdditionalAttributes);
+    private RenderFragment TitleMarkup => @<text>
+        @if (!string.IsNullOrWhiteSpace(Title))
+        {
+            <StilHeading Level="HeadingLevel" class="stil-card-title">@Title</StilHeading>
+        }
+        @if (!string.IsNullOrWhiteSpace(Subtitle))
+        {
+            <p class="stil-card-subtitle">@Subtitle</p>
+        }
+    </text>;
 }

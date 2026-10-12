@@ -1,0 +1,59 @@
+@implements IDisposable
+
+@if (Parent is not null && Parent.IndexOf(this) is var index and >= 0)
+{
+    <div role="tabpanel" id="@Parent.PanelId(index)" aria-labelledby="@Parent.TabId(index)" tabindex="0"
+         hidden="@(!Parent.IsActive(this))">
+        @if (Parent.IsActive(this))
+        {
+            @ChildContent
+        }
+    </div>
+}
+
+@code {
+    [CascadingParameter]
+    private StilTabs? Parent { get; set; }
+
+    /// <summary>The text on the tab.</summary>
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = "";
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>The panel content. It is only rendered while the tab is selected.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    internal ElementReference Element { get; set; }
+
+    private string? _renderedTitle;
+    private bool _renderedDisabled;
+
+    protected override void OnInitialized()
+    {
+        if (Parent is null)
+        {
+            throw new InvalidOperationException($"{nameof(StilTab)} must be placed inside {nameof(StilTabs)}.");
+        }
+
+        Parent.Register(this);
+    }
+
+    protected override void OnParametersSet()
+    {
+        Parent?.Touch(this);
+
+        // The tab buttons are rendered by the parent, so tell it when they change.
+        if (_renderedTitle is not null && (_renderedTitle != Title || _renderedDisabled != Disabled))
+        {
+            Parent?.TabChanged();
+        }
+
+        _renderedTitle = Title;
+        _renderedDisabled = Disabled;
+    }
+
+    public void Dispose() => Parent?.Unregister(this);
+}

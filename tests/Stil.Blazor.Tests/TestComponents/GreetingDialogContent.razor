@@ -1,0 +1,11 @@
+@* Dialog content for IStilDialogService.OpenAsync tests: closes itself through the cascading reference. *@
+<p class="greeting">@Greeting</p>
+<button type="button" class="pick" @onclick="() => Dialog?.Close(Greeting.ToUpperInvariant())">Pick</button>
+
+@code {
+    [CascadingParameter]
+    public StilDialogReference? Dialog { get; set; }
+
+    [Parameter]
+    public string Greeting { get; set; } = "";
+}

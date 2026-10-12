@@ -1,0 +1,14 @@
+@inject StilOptions Options
+
+@* Put <StilHead /> in the <head> of App.razor: it adds the stylesheet and the global theme. *@
+<link rel="stylesheet" href="@Assets[Minified ? "_content/Stil/stil.min.css" : "_content/Stil/stil.css"]" />
+@if (Options.Theme.HasOverrides)
+{
+    @((MarkupString)$"<style>:root {{ {Options.Theme.ToCssDeclarations()} }}</style>")
+}
+
+@code {
+    /// <summary>Use the minified stylesheet. The default is true.</summary>
+    [Parameter]
+    public bool Minified { get; set; } = true;
+}

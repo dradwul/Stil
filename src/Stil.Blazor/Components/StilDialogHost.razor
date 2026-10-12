@@ -1,0 +1,21 @@
+@implements IDisposable
+@inject IStilDialogService DialogService
+
+@* Renders the dialogs opened with IStilDialogService. Put it once in an interactive layout. *@
+@foreach (var dialog in DialogService.Dialogs)
+{
+    <CascadingValue Value="dialog" IsFixed="true" @key="dialog.Id">
+        <StilDialog Open="true" Title="@dialog.Title" Size="@dialog.Options.Size" ShowClose="@dialog.Options.ShowClose"
+                    OnClose="() => dialog.Close()">
+            @dialog.Content
+        </StilDialog>
+    </CascadingValue>
+}
+
+@code {
+    protected override void OnInitialized() => DialogService.DialogsChanged += OnDialogsChanged;
+
+    private void OnDialogsChanged() => _ = InvokeAsync(StateHasChanged);
+
+    public void Dispose() => DialogService.DialogsChanged -= OnDialogsChanged;
+}

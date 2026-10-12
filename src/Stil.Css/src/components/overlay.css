@@ -192,7 +192,7 @@
         translate var(--stil-duration-fast) var(--stil-easing);
 }
 
-[data-stil-tooltip]:is(:hover, :focus-visible)::after {
+[data-stil-tooltip]:is(:hover, :focus-visible, :has(:focus-visible))::after {
     opacity: 1;
     translate: -50% 0;
 }

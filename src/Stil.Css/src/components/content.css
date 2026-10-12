@@ -206,3 +206,94 @@
 
 .stil-avatar-sm { width: 1.75rem; height: 1.75rem; font-size: var(--stil-font-size-xs); }
 .stil-avatar-lg { width: 4rem; height: 4rem; font-size: var(--stil-font-size-lg); }
+
+/* List: rows with a title, optional description and start/end content (badges, buttons).
+   <ul class="stil-list"><li class="stil-list-item">…</li></ul>. A stil-list-item on its own
+   is a single bordered row. Links and buttons as items are interactive. */
+
+.stil-list {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+    list-style: none;
+}
+
+/* Round the first and last rows instead of clipping with overflow, so menus inside rows can
+   extend beyond the list. */
+.stil-list > .stil-list-item:first-child {
+    border-start-start-radius: inherit;
+    border-start-end-radius: inherit;
+}
+
+.stil-list > .stil-list-item:last-child {
+    border-end-start-radius: inherit;
+    border-end-end-radius: inherit;
+}
+
+.stil-list-flush {
+    border-inline: 0;
+    border-radius: 0;
+}
+
+.stil-list-item {
+    display: flex;
+    align-items: center;
+    gap: var(--stil-space-3);
+    width: 100%;
+    padding: var(--stil-space-3) var(--stil-space-4);
+    border: 0;
+    background-color: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    text-decoration: none;
+}
+
+.stil-list > .stil-list-item + .stil-list-item { border-top: 1px solid var(--stil-color-border); }
+
+.stil-list-item:not(.stil-list > *) {
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+}
+
+:is(a, button).stil-list-item { cursor: pointer; }
+:is(a, button).stil-list-item:hover { background-color: var(--stil-color-surface-muted); }
+
+:is(a, button).stil-list-item:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: -2px;
+}
+
+.stil-list-item[aria-current]:not([aria-current="false"]) { box-shadow: inset 3px 0 0 var(--_accent); }
+
+.stil-list-item:is([aria-disabled="true"], :disabled) {
+    color: var(--stil-color-text-muted);
+    pointer-events: none;
+}
+
+.stil-list-item-start,
+.stil-list-item-end {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--stil-space-2);
+}
+
+.stil-list-item-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.stil-list-item-description {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+}

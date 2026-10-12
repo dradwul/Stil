@@ -1,0 +1,44 @@
+@typeparam TValue
+@inherits StilInputBase<TValue>
+
+<StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
+    <InputNumber TValue="TValue" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression"
+                 @attributes="NumberAttributes" />
+</StilField>
+
+@code {
+    [Parameter]
+    public string? Min { get; set; }
+
+    [Parameter]
+    public string? Max { get; set; }
+
+    /// <summary>The step between values, for example "0.01". "any" allows any decimal.</summary>
+    [Parameter]
+    public string? Step { get; set; }
+
+    [Parameter]
+    public string? Placeholder { get; set; }
+
+    [Parameter]
+    public StilSize Size { get; set; }
+
+    private IReadOnlyDictionary<string, object> NumberAttributes
+    {
+        get
+        {
+            var attributes = new Dictionary<string, object>(ControlAttributes(StilCss));
+            foreach (var (name, value) in new[] { ("min", Min), ("max", Max), ("step", Step), ("placeholder", Placeholder) })
+            {
+                if (value is not null)
+                {
+                    attributes[name] = value;
+                }
+            }
+
+            return attributes;
+        }
+    }
+
+    private string StilCss => $"stil-input {StilCssClasses.Size("stil-input", Size)}".TrimEnd();
+}

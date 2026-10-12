@@ -1,0 +1,138 @@
+@page "/orders"
+@inject OrderStore Store
+@inject IStilDialogService Dialogs
+@inject IStilToastService Toasts
+
+<PageTitle>Orders · Stil for Blazor</PageTitle>
+
+<div class="stil-d-flex stil-flex-wrap stil-justify-content-between stil-align-items-center stil-gap-3 stil-mb-4">
+    <div>
+        <h1 class="stil-mb-1">Orders</h1>
+        <p class="stil-text-muted stil-mb-0">A small CRUD page built only with Stil for Blazor components.</p>
+    </div>
+    <StilButton OnClick="New">New order</StilButton>
+</div>
+
+<StilTabs @bind-ActiveIndex="_filter" Label="Filter orders">
+    @foreach (var filter in Filters)
+    {
+        <StilTab Title="@($"{filter.Title} ({Count(filter.Status)})")">
+            @if (Visible(filter.Status) is { Count: > 0 } orders)
+            {
+                <StilList>
+                    @foreach (var order in orders)
+                    {
+                        <StilListItem @key="order.Id" Title="@($"Order #{order.Id}")"
+                                      Description="@($"{order.Customer} · {order.OrderDate:d MMM yyyy} · {order.Amount:N2} €")"
+                                      Badge="@order.Status.ToString()" BadgeVariant="@VariantOf(order.Status)">
+                            <End>
+                                @if (order.Express)
+                                {
+                                    <StilBadge Variant="StilVariant.Warning" Subtle>Express</StilBadge>
+                                }
+                                <StilDropdown Text="⋯" AriaLabel="@($"Actions for order {order.Id}")" Appearance="StilButtonAppearance.Ghost"
+                                              Variant="StilVariant.Secondary" Size="StilSize.Small" AlignEnd IconOnly>
+                                    <StilDropdownItem OnClick="() => Edit(order)">Edit</StilDropdownItem>
+                                    <StilDropdownDivider />
+                                    <StilDropdownItem class="stil-text-danger" OnClick="() => DeleteAsync(order)">Delete…</StilDropdownItem>
+                                </StilDropdown>
+                            </End>
+                        </StilListItem>
+                    }
+                </StilList>
+            }
+            else
+            {
+                <StilAlert Subtle>No orders here yet.</StilAlert>
+            }
+        </StilTab>
+    }
+</StilTabs>
+
+<StilDialog @bind-Open="_editing" Title="@(_draft.Id == 0 ? "New order" : $"Edit order #{_draft.Id}")">
+    <ChildContent>
+        <EditForm Model="_draft" OnValidSubmit="Save" class="stil-form" id="order-form" novalidate>
+            <DataAnnotationsValidator />
+            <StilTextBox @bind-Value="_draft.Customer" Label="Customer" autocomplete="organization" />
+            <StilTextBox @bind-Value="_draft.Email" Label="Email" Type="email" />
+            <div class="stil-grid">
+                <StilNumeric @bind-Value="_draft.Amount" Label="Amount (€)" Step="0.01" Min="0" class="stil-col-sm-6" />
+                <StilDatePicker @bind-Value="_draft.OrderDate" Label="Order date" class="stil-col-sm-6" />
+            </div>
+            <StilSelect @bind-Value="_draft.Status" Label="Status" />
+            <StilSwitch @bind-Value="_draft.Express" Label="Express delivery" Hint="Ships within 24 hours." />
+        </EditForm>
+    </ChildContent>
+    <Footer>
+        <StilButton Appearance="StilButtonAppearance.Ghost" Variant="StilVariant.Secondary" OnClick="() => _editing = false">Cancel</StilButton>
+        <StilButton Type="submit" form="order-form">Save</StilButton>
+    </Footer>
+</StilDialog>
+
+@code {
+    private static readonly (string Title, OrderStatus? Status)[] Filters =
+    [
+        ("All", null),
+        ("Pending", OrderStatus.Pending),
+        ("Shipped", OrderStatus.Shipped),
+        ("Delivered", OrderStatus.Delivered),
+    ];
+
+    private IReadOnlyList<Order> _orders = [];
+    private int _filter;
+    private bool _editing;
+    private Order _draft = new();
+
+    protected override void OnInitialized() => _orders = Store.All();
+
+    private List<Order> Visible(OrderStatus? status) =>
+        _orders.Where(o => status is null || o.Status == status).ToList();
+
+    private int Count(OrderStatus? status) => Visible(status).Count;
+
+    private static StilVariant VariantOf(OrderStatus status) => status switch
+    {
+        OrderStatus.Pending => StilVariant.Warning,
+        OrderStatus.Shipped => StilVariant.Info,
+        OrderStatus.Delivered => StilVariant.Success,
+        _ => StilVariant.Danger,
+    };
+
+    private void New()
+    {
+        _draft = new Order();
+        _editing = true;
+    }
+
+    private void Edit(Order order)
+    {
+        _draft = order.Clone();
+        _editing = true;
+    }
+
+    private void Save()
+    {
+        var isNew = _draft.Id == 0;
+        Store.Save(_draft);
+        _orders = Store.All();
+        _editing = false;
+        Toasts.Success(isNew ? $"Order #{_draft.Id} created." : $"Order #{_draft.Id} saved.");
+    }
+
+    private async Task DeleteAsync(Order order)
+    {
+        var confirmed = await Dialogs.ConfirmAsync(
+            $"Delete order #{order.Id}?",
+            $"The order for {order.Customer} will be removed. This cannot be undone.",
+            new StilConfirmOptions { ConfirmText = "Delete", ConfirmVariant = StilVariant.Danger });
+
+        if (!confirmed)
+        {
+            return;
+        }
+
+        Store.Delete(order.Id);
+        _orders = Store.All();
+        Toasts.Warning($"Order #{order.Id} deleted.");
+    }
+}

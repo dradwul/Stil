@@ -1,8 +1,16 @@
 {
   "name": "stil-css",
   "version": "0.1.0",
-  "description": "A themeable, framework-independent CSS class library with dark mode and WCAG AA colors.",
-  "keywords": ["css", "framework", "design-system", "theme", "dark-mode", "components", "utilities"],
+  "description": "A themeable, framework-independent CSS class library with dark mode and WCAG AA colors, plus an optional behaviours module.",
+  "keywords": [
+    "css",
+    "framework",
+    "design-system",
+    "theme",
+    "dark-mode",
+    "components",
+    "utilities"
+  ],
   "homepage": "https://github.com/dradwul/StilCSS/tree/main/src/Stil.Css#readme",
   "repository": {
     "type": "git",
@@ -16,9 +24,14 @@
   "exports": {
     ".": "./dist/stil.css",
     "./min": "./dist/stil.min.css",
-    "./dist/*": "./dist/*"
+    "./dist/*": "./dist/*",
+    "./js": "./dist/stil.js"
   },
-  "files": ["dist", "src", "README.md"],
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
   "browserslist": [
     "last 2 Chrome versions",
     "last 2 Edge versions",

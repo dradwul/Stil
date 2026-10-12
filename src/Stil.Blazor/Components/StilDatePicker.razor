@@ -1,0 +1,26 @@
+@typeparam TValue
+@inherits StilInputBase<TValue>
+
+<StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
+    <InputDate TValue="TValue" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression"
+               Type="@Type" min="@Min" max="@Max"
+               @attributes="ControlAttributes(StilCss)" />
+</StilField>
+
+@code {
+    /// <summary>Date (default), DateTimeLocal, Month or Time.</summary>
+    [Parameter]
+    public InputDateType Type { get; set; } = InputDateType.Date;
+
+    /// <summary>The earliest value, in the input's format (for a date: yyyy-MM-dd).</summary>
+    [Parameter]
+    public string? Min { get; set; }
+
+    [Parameter]
+    public string? Max { get; set; }
+
+    [Parameter]
+    public StilSize Size { get; set; }
+
+    private string StilCss => $"stil-input {StilCssClasses.Size("stil-input", Size)}".TrimEnd();
+}

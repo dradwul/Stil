@@ -1,18 +1,65 @@
-<div role="alert" @attributes="AdditionalAttributes" class="@CssClass">
-    @ChildContent
-</div>
+@inherits StilComponentBase
+
+@if (!_dismissed)
+{
+    <div role="@AlertRole" @attributes="AdditionalAttributes" class="@CssClass">
+        @if (!string.IsNullOrWhiteSpace(Title))
+        {
+            <p class="stil-alert-title">@Title</p>
+        }
+        @ChildContent
+        @if (Dismissible)
+        {
+            @* With static rendering, stil.js removes the alert (data-stil-dismiss). When interactive, Blazor does. *@
+            <button type="button" class="stil-close" aria-label="@CloseLabel"
+                    data-stil-dismiss="@(RendererInfo.IsInteractive ? null : "")" @onclick="DismissAsync"></button>
+        }
+    </div>
+}
 
 @code {
     [Parameter]
     public StilVariant Variant { get; set; } = StilVariant.Info;
 
+    /// <summary>A light tint with normal text instead of a solid color.</summary>
+    [Parameter]
+    public bool Subtle { get; set; }
+
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>Shows a close button. The alert hides itself and raises OnDismiss.</summary>
+    [Parameter]
+    public bool Dismissible { get; set; }
+
+    [Parameter]
+    public string CloseLabel { get; set; } = "Close";
+
+    [Parameter]
+    public EventCallback OnDismiss { get; set; }
+
+    /// <summary>
+    /// The ARIA role. By default Danger and Warning use "alert" (read immediately) and the
+    /// others use "status" (read politely).
+    /// </summary>
+    [Parameter]
+    public string? Role { get; set; }
+
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
-    [Parameter(CaptureUnmatchedValues = true)]
-    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+    private bool _dismissed;
 
-    private string CssClass => StilCssClasses.Merge(
-        $"stil-alert {StilCssClasses.Variant("stil-alert", Variant)}",
-        AdditionalAttributes);
+    private string AlertRole => Role ?? (Variant is StilVariant.Danger or StilVariant.Warning ? "alert" : "status");
+
+    private string CssClass => Classes(
+        "stil-alert",
+        StilCssClasses.Variant("stil-alert", Variant),
+        Subtle ? "stil-alert-subtle" : null);
+
+    private async Task DismissAsync()
+    {
+        _dismissed = true;
+        await OnDismiss.InvokeAsync();
+    }
 }

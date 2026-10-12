@@ -1,0 +1,20 @@
+@* The body and buttons of IStilDialogService.ConfirmAsync. *@
+<p>@Message</p>
+<div class="stil-cluster stil-justify-content-end stil-mt-4">
+    <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost" OnClick="() => Dialog?.Close(false)" autofocus="@IsDestructive">@Options.CancelText</StilButton>
+    <StilButton Variant="Options.ConfirmVariant" OnClick="() => Dialog?.Close(true)" autofocus="@(!IsDestructive)">@Options.ConfirmText</StilButton>
+</div>
+
+@code {
+    [CascadingParameter]
+    private StilDialogReference? Dialog { get; set; }
+
+    [Parameter]
+    public string Message { get; set; } = "";
+
+    [Parameter]
+    public StilConfirmOptions Options { get; set; } = new();
+
+    // For destructive actions, focus starts on Cancel so Enter does not confirm by accident.
+    private bool IsDestructive => Options.ConfirmVariant == StilVariant.Danger;
+}

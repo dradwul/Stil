@@ -1,0 +1,22 @@
+@inherits StilComponentBase
+
+<span role="status" @attributes="AdditionalAttributes" class="@CssClass"><span class="stil-visually-hidden">@Label</span></span>
+
+@code {
+    /// <summary>Medium (default) or Small.</summary>
+    [Parameter]
+    public StilSize Size { get; set; }
+
+    /// <summary>The spinner uses the current text color unless a variant is set.</summary>
+    [Parameter]
+    public StilVariant? Variant { get; set; }
+
+    /// <summary>Text for screen readers.</summary>
+    [Parameter]
+    public string Label { get; set; } = "Loading…";
+
+    private string CssClass => Classes(
+        "stil-spinner",
+        Size == StilSize.Small ? "stil-spinner-sm" : null,
+        Variant is { } variant ? StilCssClasses.Variant("stil-text", variant) : null);
+}

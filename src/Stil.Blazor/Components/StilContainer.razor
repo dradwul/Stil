@@ -1,13 +1,16 @@
+@inherits StilComponentBase
+
 <div @attributes="AdditionalAttributes" class="@CssClass">
     @ChildContent
 </div>
 
 @code {
+    /// <summary>Full width instead of the maximum container width.</summary>
+    [Parameter]
+    public bool Fluid { get; set; }
+
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
-    [Parameter(CaptureUnmatchedValues = true)]
-    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
-
-    private string CssClass => StilCssClasses.Merge("stil-container", AdditionalAttributes);
+    private string CssClass => Classes("stil-container", Fluid ? "stil-container-fluid" : null);
 }

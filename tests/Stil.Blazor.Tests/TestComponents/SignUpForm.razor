@@ -1,0 +1,21 @@
+@* An EditForm with DataAnnotationsValidator and one of each Stil field, used by FormValidationTests. *@
+<EditForm Model="Model" OnValidSubmit="() => ValidSubmits++">
+    <DataAnnotationsValidator />
+    <StilTextBox Id="name" Label="Name" @bind-Value="Model.Name" />
+    <StilTextBox Id="email" Label="Email" Type="email" Hint="We never share it." @bind-Value="Model.Email" />
+    <StilTextArea Id="bio" Label="Bio" @bind-Value="Model.Bio" />
+    <StilNumeric Id="age" Label="Age" @bind-Value="Model.Age" />
+    <StilDatePicker Id="start" Label="Start date" @bind-Value="Model.StartDate" />
+    <StilSelect Id="color" Label="Color" Placeholder="Choose…" @bind-Value="Model.Color" />
+    <StilCheckbox Id="terms" Label="I accept the terms" @bind-Value="Model.AcceptTerms" />
+    <StilSwitch Id="notifications" Label="Notifications" @bind-Value="Model.Notifications" />
+    <StilRadioGroup Id="plan" Label="Plan" @bind-Value="Model.Plan" />
+    <button type="submit">Sign up</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public SignUpModel Model { get; set; } = new();
+
+    public int ValidSubmits { get; private set; }
+}

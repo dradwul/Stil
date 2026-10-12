@@ -27,8 +27,8 @@ Use one of these options:
 
 - **Copy the file:** [`dist/stil.css`](dist/stil.css) or
   [`dist/stil.min.css`](dist/stil.min.css).
-- **Blazor/.NET:** the `Stil` NuGet package serves both files as
-  `_content/Stil/stil.css` and `_content/Stil/stil.min.css`. See
+- **Blazor/.NET:** the `Stil` NuGet package serves the files as
+  `_content/Stil/stil.css`, `stil.min.css` and `stil.js`. See
   [Stil for Blazor](../Stil.Blazor/README.md).
 
 ## Quick start
@@ -107,6 +107,7 @@ classes: `aria-current="page"`, `aria-selected="true"`,
 | Alert | `stil-alert` + `stil-alert-{variant}`, `stil-alert-subtle`, `stil-alert-title`. A `stil-close` inside makes it dismissible. |
 | Badge | `stil-badge` + `stil-badge-{variant}`, `stil-badge-subtle` |
 | Avatar | `stil-avatar` (`-sm`, `-lg`) holding initials or an `<img>` |
+| List | `stil-list` (`stil-list-flush`) > `stil-list-item` with `stil-list-item-start`, `stil-list-item-content` (`stil-list-item-title`, `stil-list-item-description`) and `stil-list-item-end`. A `stil-list-item` on its own is a single bordered row; `<a>` and `<button>` rows are interactive. |
 | Table | `stil-table` with `stil-table-striped`, `stil-table-hover`, `stil-table-compact`, `stil-table-bordered`. Wrap it in `stil-table-responsive` to scroll sideways. |
 | Nav | `stil-nav` > `stil-nav-link`, with `stil-nav-vertical` and `stil-nav-pills` |
 | Navbar | `stil-navbar` with `stil-navbar-brand`, a `stil-nav` and `stil-navbar-end` |
@@ -124,6 +125,24 @@ To see every class with its markup, open
 [`samples/Stil.Html/index.html`](../../samples/Stil.Html/index.html). For a
 full page built only with Stil, open
 [`samples/Stil.Html/admin.html`](../../samples/Stil.Html/admin.html).
+
+## Optional JavaScript
+
+Stil works without JavaScript. The optional `dist/stil.js` module, 3 kB with
+no dependencies, adds a few behaviours:
+
+```html
+<script type="module" src="stil.js"></script>
+```
+
+- Dropdowns close on an outside click, on Escape and after you choose an
+  item. Opening one closes the others.
+- `data-stil-dismiss` on a button removes the closest alert or toast, or the
+  element that matches the attribute's value (a CSS selector).
+- `data-stil-dialog-open="id"` opens that `<dialog>` as a modal.
+  `data-stil-dialog-close` closes the dialog the button is in.
+
+Stil for Blazor loads it automatically.
 
 ## Utilities
 

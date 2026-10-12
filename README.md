@@ -9,7 +9,7 @@ Stil is a themeable UI toolkit in two parts:
 | Part | What it is | Replaces | Docs |
 | --- | --- | --- | --- |
 | **Stil CSS** | A framework-independent CSS class library: layout, components and utilities, about 10 kB gzipped. Works with plain HTML or any framework. | Bootstrap, Tailwind, Bulma | [`src/Stil.Css`](src/Stil.Css/README.md) |
-| **Stil for Blazor** | A Blazor component library built on Stil CSS, shipped as the `Stil` NuGet package. | Radzen, Blazorise, MudBlazor | [`src/Stil.Blazor`](src/Stil.Blazor/README.md) |
+| **Stil for Blazor** | A Blazor component library built on Stil CSS: forms with validation, lists, tabs, dropdowns, dialogs and toasts. Shipped as the `Stil` NuGet package. | Radzen, Blazorise, MudBlazor | [`src/Stil.Blazor`](src/Stil.Blazor/README.md) |
 
 The Blazor components render ordinary HTML with Stil CSS classes, so a page
 can mix components and hand-written markup. Every class starts with `stil-`
@@ -44,9 +44,14 @@ Plain HTML:
 Blazor:
 
 ```razor
-<StilCard HeaderText="Welcome">
-    <StilAlert Variant="StilVariant.Success">Saved!</StilAlert>
-</StilCard>
+<StilListItem Title="Order #1042" Badge="Delivered" BadgeVariant="StilVariant.Success" />
+
+<EditForm Model="order" OnValidSubmit="Save" class="stil-form">
+    <DataAnnotationsValidator />
+    <StilTextBox @bind-Value="order.Customer" Label="Customer" />
+    <StilSelect @bind-Value="order.Status" Label="Status" />
+    <StilButton Type="submit">Save</StilButton>
+</EditForm>
 ```
 
 Your own theme, with dark mode that follows the OS:
@@ -76,7 +81,7 @@ assets/              Logo and other shared brand files
 src/Stil.Css/        Stil CSS: sources (src/), build scripts (build/), output (dist/), npm package
 src/Stil.Blazor/     Stil for Blazor: Razor class library, packed as NuGet "Stil"
 samples/Stil.Html/   Plain-HTML showcase of every CSS class, plus an admin page built with Stil
-samples/Stil.Demo/   Blazor web app showing the components
+samples/Stil.Demo/   Blazor web app: component gallery and an orders CRUD page
 tests/               bUnit/xUnit tests for the Blazor components
 tools/               check-contrast.mjs: WCAG contrast check run by CI
 CONTRIBUTING.md      Naming rules, scope model, browser support, workflow

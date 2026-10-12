@@ -1,4 +1,5 @@
-// Builds dist/stil.css and dist/stil.min.css from the files in src/ and the generated parts.
+// Builds dist/stil.css and dist/stil.min.css from the files in src/ and the generated parts,
+// and copies the optional behaviours module src/stil.js to dist/stil.js.
 //   node build/build.mjs           build once
 //   node build/build.mjs --watch   rebuild when a source file changes
 //   node build/build.mjs --check   fail if dist/ is out of date (used by CI)
@@ -58,6 +59,7 @@ function compile() {
     return {
         'stil.css': banner + pretty.code.toString(),
         'stil.min.css': banner + minified.code.toString(),
+        'stil.js': banner + readFileSync(join(src, 'stil.js'), 'utf8').replace(/\r\n/g, '\n'),
     };
 }
 

@@ -1,0 +1,22 @@
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Stil.Blazor;
+
+namespace Microsoft.Extensions.DependencyInjection;
+
+public static class StilServiceCollectionExtensions
+{
+    /// <summary>
+    /// Registers the Stil dialog and toast services and the global options. Add
+    /// <c>&lt;StilDialogHost /&gt;</c> and <c>&lt;StilToastHost /&gt;</c> to an interactive layout.
+    /// </summary>
+    public static IServiceCollection AddStil(this IServiceCollection services, Action<StilOptions>? configure = null)
+    {
+        var options = new StilOptions();
+        configure?.Invoke(options);
+
+        services.TryAddSingleton(options);
+        services.TryAddScoped<IStilDialogService, StilDialogService>();
+        services.TryAddScoped<IStilToastService, StilToastService>();
+        return services;
+    }
+}

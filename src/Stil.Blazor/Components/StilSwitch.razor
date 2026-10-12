@@ -1,0 +1,24 @@
+@inherits StilInputBase<bool>
+
+<StilField Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
+    <label class="stil-check">
+        <InputCheckbox Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression"
+                       role="switch" @attributes="Attributes" />
+        @if (ChildContent is not null)
+        {
+            @ChildContent
+        }
+        else
+        {
+            @Label
+        }
+    </label>
+</StilField>
+
+@code {
+    private IReadOnlyDictionary<string, object> Attributes => ControlAttributes("stil-switch");
+
+    /// <summary>Rich label content instead of Label.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

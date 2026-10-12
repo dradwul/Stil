@@ -1,9 +1,50 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
-<main class="demo-canvas" data-theme-target data-stil-theme="light">
-    @Body
-</main>
+@* The whole app is themed with StilThemeProvider. The dialog and toast hosts are inside it, so
+   dialogs and toasts follow the selected mode and palette. *@
+<StilThemeProvider Mode="_mode" Theme="Palettes[_palette]" class="demo-shell">
+    <header class="stil-navbar stil-sticky-top">
+        <a class="stil-navbar-brand" href="">
+            <img src="stil-logo.svg" alt="" width="64" height="31" />
+            Stil for Blazor
+        </a>
+        <nav class="stil-nav" aria-label="Main">
+            <NavLink class="stil-nav-link" href="" Match="NavLinkMatch.All">Components</NavLink>
+            <NavLink class="stil-nav-link" href="orders">Orders (CRUD)</NavLink>
+        </nav>
+        <div class="stil-navbar-end">
+            <StilSelect @bind-Value="_mode" Size="StilSize.Small" aria-label="Color mode" />
+            <StilSelect @bind-Value="_palette" Items="Palettes.Keys" Size="StilSize.Small" aria-label="Palette" />
+        </div>
+    </header>
+
+    <main class="stil-container stil-py-5">
+        @Body
+    </main>
+
+    <StilDialogHost />
+    <StilToastHost />
+</StilThemeProvider>
 
 <footer class="demo-host-content">
-    Demo-appens egen footer ligger utanför Stil-komponenternas stilomfång.
+    The demo app's own footer sits outside Stil's theme and scope.
 </footer>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+@code {
+    private static readonly Dictionary<string, StilTheme> Palettes = new()
+    {
+        ["Teal"] = new(),
+        ["Purple"] = new() { Primary = "#7048e8", Secondary = "#d0bfff" },
+        ["Forest"] = new() { Primary = "#2b8a3e", Secondary = "#b2f2bb" },
+        ["Sunset"] = new() { Primary = "#e8590c", Secondary = "#ffd8a8" },
+    };
+
+    private StilThemeMode _mode = StilThemeMode.Light;
+    private string _palette = "Teal";
+}

@@ -1,0 +1,17 @@
+@inherits StilInputBase<string?>
+
+<StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
+    <InputTextArea Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression"
+                   rows="@Rows" placeholder="@Placeholder"
+                   @attributes="Attributes" />
+</StilField>
+
+@code {
+    private IReadOnlyDictionary<string, object> Attributes => ControlAttributes("stil-input");
+
+    [Parameter]
+    public int Rows { get; set; } = 3;
+
+    [Parameter]
+    public string? Placeholder { get; set; }
+}

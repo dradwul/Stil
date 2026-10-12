@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -9,16 +9,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="@Assets["_content/Stil/stil.css"]" />
+    @* Stil's stylesheet and the global theme from AddStil(). *@
+    <StilHead />
     <link rel="stylesheet" href="@Assets["app.css"]" />
     <ImportMap />
-    <HeadOutlet />
+    <HeadOutlet @rendermode="InteractiveServer" />
 </head>
 
-<body>
-    <Routes />
+<body class="stil-scope">
+    <Routes @rendermode="InteractiveServer" />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
-    <script src="@Assets["theme-picker.js"]"></script>
 </body>
 
 </html>

@@ -12,8 +12,10 @@ The main differences:
   `disabled` or `aria-disabled="true"` instead of `.disabled`. That makes the
   markup accessible by default.
 - **No JavaScript bundle.** Dialogs use the native `<dialog>` element,
-  dropdowns use `<details>`, and tooltips are pure CSS. Tabs need a few lines
-  of your own script, or the Stil Blazor components.
+  dropdowns use `<details>`, and tooltips are pure CSS. The optional 3 kB
+  `stil.js` closes dropdowns on an outside click and handles
+  `data-stil-dismiss` and `data-stil-dialog-open`. Tabs need a few lines of
+  your own script, or the Stil Blazor components.
 - **Base styles are opt-in.** Bootstrap's Reboot styles every page. Stil
   only styles headings, links and so on inside `class="stil-scope"`. Put it
   on `<body>` to get the Bootstrap behaviour.
@@ -91,6 +93,7 @@ Breakpoints are the same as Bootstrap's: `sm` 576px, `md` 768px, `lg` 992px,
 | `dropdown-menu`, `dropdown-item`, `dropdown-divider`, `dropdown-header` | `stil-dropdown-menu`, `stil-dropdown-item`, `stil-dropdown-divider`, `stil-dropdown-header` |
 | `dropdown-menu-end` | `stil-dropdown-menu-end` |
 | Tooltips (JavaScript + Popper) | `data-stil-tooltip="Text"` (CSS only). Add `stil-tooltip-bottom` to show it below. |
+| `list-group`, `list-group-item`, `list-group-item-action`, `list-group-flush` | `stil-list`, `stil-list-item` (an `<a>` or `<button>` item is interactive), `stil-list-flush` |
 | `progress`, `progress-bar` | `stil-progress`, `stil-progress-bar` |
 | `spinner-border`, `spinner-border-sm` | `stil-spinner`, `stil-spinner-sm` |
 | `toast-container`, `toast` | `stil-toast-container`, `stil-toast stil-toast-{variant}` |
@@ -134,7 +137,7 @@ Utilities keep Bootstrap's names, with responsive infixes in the same place:
 ## Not in Stil (yet)
 
 Carousel, accordion (a `<details>` element works in the meantime), offcanvas,
-collapse and the navbar toggler, list group, placeholders, ratio helpers,
+collapse and the navbar toggler, placeholders, ratio helpers,
 floating labels, popovers and scrollspy. Bootstrap Icons can be used
 alongside Stil. Some of these are planned for the Blazor components. See the
 [roadmap](../../ROADMAP.md).

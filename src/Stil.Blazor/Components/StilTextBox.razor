@@ -1,0 +1,21 @@
+@inherits StilInputBase<string?>
+
+<StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
+    <InputText Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression"
+               type="@Type" placeholder="@Placeholder"
+               @attributes="ControlAttributes(StilCss)" />
+</StilField>
+
+@code {
+    /// <summary>The input type: text (default), email, password, search, tel or url.</summary>
+    [Parameter]
+    public string Type { get; set; } = "text";
+
+    [Parameter]
+    public string? Placeholder { get; set; }
+
+    [Parameter]
+    public StilSize Size { get; set; }
+
+    private string StilCss => $"stil-input {StilCssClasses.Size("stil-input", Size)}".TrimEnd();
+}

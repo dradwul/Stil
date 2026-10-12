@@ -1,0 +1,50 @@
+@* The layout of a form field: label, control, hint and validation messages. The Stil input
+   components use it; use it directly to wrap a custom control. *@
+<div class="@ClassValue" style="@Style">
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <label class="stil-label" for="@InputId">@Label</label>
+    }
+    @ChildContent
+    @if (!string.IsNullOrWhiteSpace(Hint))
+    {
+        <div class="stil-field-hint" id="@($"{InputId}-hint")">@Hint</div>
+    }
+    @if (Messages is { Count: > 0 })
+    {
+        <div class="stil-field-error" id="@($"{InputId}-error")">
+            @foreach (var message in Messages)
+            {
+                <div>@message</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string? Label { get; set; }
+
+    [Parameter]
+    public string? Hint { get; set; }
+
+    /// <summary>The id of the control, used by the label and for the hint and error ids.</summary>
+    [Parameter]
+    public string? InputId { get; set; }
+
+    [Parameter]
+    public IReadOnlyList<string>? Messages { get; set; }
+
+    /// <summary>Extra classes on the field wrapper.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Inline style on the field wrapper.</summary>
+    [Parameter]
+    public string? Style { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string ClassValue => string.IsNullOrWhiteSpace(Class) ? "stil-field" : $"stil-field {Class}";
+}

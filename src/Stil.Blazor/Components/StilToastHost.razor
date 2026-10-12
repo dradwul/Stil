@@ -1,0 +1,63 @@
+@implements IDisposable
+@inject IStilToastService ToastService
+
+@* Renders the toasts shown with IStilToastService. Put it once in an interactive layout. The
+   container is always present so screen readers announce new toasts. *@
+<div class="stil-toast-container" role="region" aria-label="@Label">
+    @foreach (var toast in ToastService.Toasts)
+    {
+        <div @key="toast.Id" class="stil-toast @VariantClass(toast)"
+             role="@(toast.Variant is StilVariant.Danger or StilVariant.Warning ? "alert" : "status")">
+            <div class="stil-toast-body">
+                @if (!string.IsNullOrWhiteSpace(toast.Title))
+                {
+                    <p class="stil-toast-title">@toast.Title</p>
+                }
+                @toast.Message
+            </div>
+            <button type="button" class="stil-close" aria-label="@CloseLabel" @onclick="() => ToastService.Close(toast)"></button>
+        </div>
+    }
+</div>
+
+@code {
+    private readonly HashSet<string> _scheduled = [];
+
+    /// <summary>The accessible name of the toast region.</summary>
+    [Parameter]
+    public string Label { get; set; } = "Notifications";
+
+    [Parameter]
+    public string CloseLabel { get; set; } = "Close";
+
+    protected override void OnInitialized()
+    {
+        ToastService.ToastsChanged += OnToastsChanged;
+        ScheduleAutoClose();
+    }
+
+    private void OnToastsChanged()
+    {
+        ScheduleAutoClose();
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private void ScheduleAutoClose()
+    {
+        foreach (var toast in ToastService.Toasts.Where(t => t.Duration > TimeSpan.Zero && _scheduled.Add(t.Id)))
+        {
+            _ = CloseLaterAsync(toast);
+        }
+    }
+
+    private async Task CloseLaterAsync(StilToast toast)
+    {
+        await Task.Delay(toast.Duration);
+        await InvokeAsync(() => ToastService.Close(toast));
+        _scheduled.Remove(toast.Id);
+    }
+
+    private static string VariantClass(StilToast toast) => StilCssClasses.Variant("stil-toast", toast.Variant);
+
+    public void Dispose() => ToastService.ToastsChanged -= OnToastsChanged;
+}

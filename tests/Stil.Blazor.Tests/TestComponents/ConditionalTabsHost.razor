@@ -1,0 +1,14 @@
+@* A tab that appears in the middle of the list after the first render. *@
+<StilTabs Label="Sections">
+    <StilTab Title="First">Panel first</StilTab>
+    @if (ShowMiddle)
+    {
+        <StilTab Title="Middle">Panel middle</StilTab>
+    }
+    <StilTab Title="Last">Panel last</StilTab>
+</StilTabs>
+
+@code {
+    [Parameter]
+    public bool ShowMiddle { get; set; }
+}

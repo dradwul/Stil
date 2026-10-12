@@ -1,0 +1,92 @@
+@inherits StilComponentBase
+
+@if (Href is not null)
+{
+    <a href="@(Disabled ? null : Href)" aria-current="@Current" aria-disabled="@StilCssClasses.AriaBool(Disabled)"
+       @attributes="AdditionalAttributes" class="@Classes("stil-list-item")">@Inner</a>
+}
+else if (OnClick.HasDelegate)
+{
+    <button type="button" disabled="@Disabled" aria-current="@Current"
+            @attributes="AdditionalAttributes" class="@Classes("stil-list-item")" @onclick="OnClick">@Inner</button>
+}
+else
+{
+    <div aria-current="@Current" @attributes="AdditionalAttributes" class="@Classes("stil-list-item")">@Inner</div>
+}
+
+@code {
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>Smaller, muted text under the title.</summary>
+    [Parameter]
+    public string? Description { get; set; }
+
+    /// <summary>Content before the title, for example an avatar or an icon.</summary>
+    [Parameter]
+    public RenderFragment? Start { get; set; }
+
+    /// <summary>Content at the end of the row, after the Badge, for example buttons or a menu.</summary>
+    [Parameter]
+    public RenderFragment? End { get; set; }
+
+    /// <summary>Shortcut for a status badge at the end of the row.</summary>
+    [Parameter]
+    public string? Badge { get; set; }
+
+    [Parameter]
+    public StilVariant BadgeVariant { get; set; } = StilVariant.Secondary;
+
+    [Parameter]
+    public bool BadgeSubtle { get; set; }
+
+    /// <summary>Makes the row a link.</summary>
+    [Parameter]
+    public string? Href { get; set; }
+
+    /// <summary>Makes the row a button.</summary>
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    /// <summary>Marks the row as the current item (aria-current).</summary>
+    [Parameter]
+    public bool Selected { get; set; }
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>Extra content under the title and description.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string? Current => Selected ? "true" : null;
+
+    private RenderFragment Inner => @<text>
+        @if (Start is not null)
+        {
+            <span class="stil-list-item-start">@Start</span>
+        }
+        <span class="stil-list-item-content">
+            @if (!string.IsNullOrWhiteSpace(Title))
+            {
+                <span class="stil-list-item-title">@Title</span>
+            }
+            @if (!string.IsNullOrWhiteSpace(Description))
+            {
+                <span class="stil-list-item-description">@Description</span>
+            }
+            @ChildContent
+        </span>
+        @if (End is not null || !string.IsNullOrWhiteSpace(Badge))
+        {
+            <span class="stil-list-item-end">
+                @if (!string.IsNullOrWhiteSpace(Badge))
+                {
+                    <StilBadge Variant="BadgeVariant" Subtle="BadgeSubtle">@Badge</StilBadge>
+                }
+                @End
+            </span>
+        }
+    </text>;
+}

@@ -1,0 +1,8 @@
+@inherits StilComponentBase
+
+<div @attributes="AdditionalAttributes" class="@Classes("stil-dropdown-header")">@ChildContent</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

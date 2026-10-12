@@ -1,0 +1,32 @@
+@inherits StilComponentBase
+
+<div @attributes="AdditionalAttributes" data-stil-theme="@ModeValue" style="@Style">
+    @ChildContent
+</div>
+
+@code {
+    /// <summary>Light, Dark or Auto for this part of the page. Null keeps the surrounding mode.</summary>
+    [Parameter]
+    public StilThemeMode? Mode { get; set; }
+
+    /// <summary>Token overrides for this part of the page.</summary>
+    [Parameter]
+    public StilTheme? Theme { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string? ModeValue => Mode is { } mode ? StilCssClasses.ThemeMode(mode) : null;
+
+    // The theme's declarations come first; a style attribute from the consumer is appended.
+    private string? Style
+    {
+        get
+        {
+            var declarations = Theme?.ToCssDeclarations();
+            var custom = AdditionalAttributes?.TryGetValue("style", out var value) == true ? value?.ToString() : null;
+            var style = string.Join(' ', new[] { declarations, custom }.Where(s => !string.IsNullOrWhiteSpace(s)));
+            return style.Length == 0 ? null : style;
+        }
+    }
+}

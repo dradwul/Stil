@@ -1,283 +1,248 @@
 @page "/"
+@inject IStilDialogService Dialogs
+@inject IStilToastService Toasts
 
-<PageTitle>Stil</PageTitle>
+<PageTitle>Stil for Blazor</PageTitle>
 
-<div class="stil-scope site-container">
-    <header class="site-header stil-bg-primary">
-        <img src="/stil-logo.svg" alt="Stil" class="logo" />
-        <nav aria-label="Component sections">
-            <a href="#buttons">Buttons</a>
-            <a href="#inputs">Inputs</a>
-            <a href="#cards">Cards</a>
-            <a href="#alerts">Alerts</a>
-            <a href="#typography">Typography</a>
-            <a href="#tables">Tables</a>
-            <div class="theme-picker">
-                <select class="stil-select stil-select-sm" data-theme-mode aria-label="Color mode">
-                    <option value="light">Light</option>
-                    <option value="dark">Dark</option>
-                    <option value="auto">Auto (OS)</option>
-                </select>
-                <select class="stil-select stil-select-sm" data-theme-palette aria-label="Palette">
-                    <option value="teal">Teal (default)</option>
-                    <option value="purple">Purple</option>
-                    <option value="forest">Forest</option>
-                    <option value="sunset">Sunset</option>
-                </select>
+<h1>Components</h1>
+<p class="stil-text-muted">
+    Every Stil for Blazor component, rendered interactively. For the plain CSS classes, open
+    <code>samples/Stil.Html/index.html</code>; for a full CRUD example, see <a href="orders">Orders</a>.
+</p>
+
+<section class="demo-section" aria-labelledby="buttons">
+    <h2 id="buttons">Buttons</h2>
+    <div class="stil-stack">
+        <div class="stil-cluster">
+            @foreach (var variant in Enum.GetValues<StilVariant>())
+            {
+                <StilButton Variant="variant">@variant</StilButton>
+            }
+        </div>
+        <div class="stil-cluster">
+            <StilButton Appearance="StilButtonAppearance.Outline">Outline</StilButton>
+            <StilButton Appearance="StilButtonAppearance.Ghost">Ghost</StilButton>
+            <StilButton Size="StilSize.Small">Small</StilButton>
+            <StilButton Size="StilSize.Large">Large</StilButton>
+            <StilButton Disabled>Disabled</StilButton>
+            <StilButton Loading="_saving" OnClick="SaveAsync">@(_saving ? "Saving" : "Save (loading)")</StilButton>
+            <StilButton Pressed="_bold" OnClick="() => _bold = !_bold" Appearance="StilButtonAppearance.Outline" Variant="StilVariant.Secondary">Bold (toggle)</StilButton>
+            <StilButton Href="orders" Appearance="StilButtonAppearance.Ghost">Link to orders</StilButton>
+        </div>
+    </div>
+</section>
+
+<section class="demo-section" aria-labelledby="lists">
+    <h2 id="lists">Lists and badges</h2>
+    <p>A row with a title and a status, on its own or grouped in a <code>StilList</code>.</p>
+    <div class="stil-stack">
+        <StilListItem Title="Order #1042" Badge="Delivered" BadgeVariant="StilVariant.Success" />
+
+        <StilList>
+            <StilListItem Title="Order #1043" Description="Berglund Outdoor · 7 Oct 2026" Badge="Shipped" BadgeVariant="StilVariant.Info" />
+            <StilListItem Title="Order #1044" Description="Kallio Design Oy · 8 Oct 2026" Badge="Pending" BadgeVariant="StilVariant.Warning" BadgeSubtle />
+            <StilListItem Title="Order #1045" Description="Østerby Marine · 9 Oct 2026" Badge="Cancelled" BadgeVariant="StilVariant.Danger"
+                          OnClick="@(() => Toasts.Info("You clicked order #1045."))" />
+            <StilListItem Title="Anna Berg" Description="Administrator">
+                <Start><span class="stil-avatar stil-avatar-sm">AB</span></Start>
+                <End>
+                    <StilBadge Variant="StilVariant.Secondary" Subtle>Owner</StilBadge>
+                    <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Ghost">Edit</StilButton>
+                </End>
+            </StilListItem>
+        </StilList>
+
+        <div class="stil-cluster">
+            @foreach (var variant in Enum.GetValues<StilVariant>())
+            {
+                <StilBadge Variant="variant">@variant</StilBadge>
+            }
+            <StilBadge Variant="StilVariant.Danger" Subtle>Subtle</StilBadge>
+        </div>
+    </div>
+</section>
+
+<section class="demo-section" aria-labelledby="cards">
+    <h2 id="cards">Cards and alerts</h2>
+    <div class="stil-grid">
+        <StilCard Title="Monthly report" Subtitle="October 2026" HeadingLevel="3" class="stil-col-md-6">
+            <ChildContent>
+                <p>Revenue is up 12% on last month.</p>
+            </ChildContent>
+            <Footer>
+                <StilButton Appearance="StilButtonAppearance.Ghost">Dismiss</StilButton>
+                <StilButton>Open report</StilButton>
+            </Footer>
+        </StilCard>
+        <StilCard Title="Team" HeadingLevel="3" class="stil-col-md-6">
+            <HeaderActions>
+                <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Outline">Invite</StilButton>
+            </HeaderActions>
+            <ChildContent>
+                <p>Four members, one pending invitation.</p>
+            </ChildContent>
+        </StilCard>
+    </div>
+    <div class="stil-stack stil-mt-4">
+        <StilAlert Variant="StilVariant.Success" Title="Saved">Your changes are live.</StilAlert>
+        <StilAlert Variant="StilVariant.Warning" Subtle Dismissible OnDismiss="@(() => Toasts.Info("Alert dismissed."))">
+            Scheduled maintenance on Sunday at 02:00.
+        </StilAlert>
+    </div>
+</section>
+
+<section class="demo-section" aria-labelledby="forms">
+    <h2 id="forms">Forms and validation</h2>
+    <p>Fields bind with <code>@@bind-Value</code> and show DataAnnotations messages inside an <code>EditForm</code>.</p>
+    <StilCard>
+        <EditForm Model="_signup" OnValidSubmit="SignUpAsync" class="stil-form" novalidate>
+            <DataAnnotationsValidator />
+            <div class="stil-grid">
+                <StilTextBox @bind-Value="_signup.Name" Label="Name" Hint="As it appears on invoices." class="stil-col-md-6" autocomplete="name" />
+                <StilTextBox @bind-Value="_signup.Email" Label="Email" Type="email" class="stil-col-md-6" autocomplete="email" />
+                <StilNumeric @bind-Value="_signup.Seats" Label="Seats" Min="1" Max="500" class="stil-col-md-4" />
+                <StilSelect @bind-Value="_signup.Plan" Label="Plan" class="stil-col-md-4" />
+                <StilDatePicker @bind-Value="_signup.StartDate" Label="Start date" class="stil-col-md-4" />
             </div>
-        </nav>
-    </header>
-
-    <section class="component-group" aria-labelledby="layout-heading">
-        <h1 id="layout-heading">Layout</h1>
-        <div class="component-group-code-example">
-            <code>&lt;div class="stil-container"&gt;</code>
-            <div class="component-group-code-example-content">
-                <span>This is a simple container.</span>
-            </div>
-            <code>&lt;/div&gt;</code>
-        </div>
-        <div class="component-group-code-example-outcome">
-            <span>Outcome:</span>
-            <div class="stil-container">
-                <p>This is a simple container.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="component-group" aria-labelledby="navigation-heading">
-        <h1 id="navigation-heading">Navigation</h1>
-        <div class="component-group-code-example">
-            <code>&lt;nav class="stil-nav"&gt;</code>
-            <div class="component-group-code-example-content">
-                <span>&lt;a href="#" class="stil-nav-link" aria-current="page"&gt;Home&lt;/a&gt;</span>
-                <span>&lt;a href="#" class="stil-nav-link"&gt;About&lt;/a&gt;</span>
-                <span>&lt;a href="#" class="stil-nav-link"&gt;Services&lt;/a&gt;</span>
-                <span>&lt;a href="#" class="stil-nav-link"&gt;Contact&lt;/a&gt;</span>
-            </div>
-            <code>&lt;/nav&gt;</code>
-        </div>
-        <div class="component-group-code-example-outcome">
-            <span>Outcome:</span>
-            <nav class="stil-nav" aria-label="Example navigation">
-                <a href="#layout-heading" class="stil-nav-link" aria-current="page">Home</a>
-                <a href="#typography" class="stil-nav-link">About</a>
-                <a href="#buttons" class="stil-nav-link">Services</a>
-                <a href="#forms-heading" class="stil-nav-link">Contact</a>
-            </nav>
-        </div>
-    </section>
-
-    <section class="component-group" aria-labelledby="colors-heading">
-        <h1 id="colors-heading">Colors</h1>
-        <div class="component-group-code-example">
-            <code>&lt;div class="color-swatch stil-bg-primary"&gt;Primary&lt;/div&gt;</code>
-            <code>&lt;div class="color-swatch stil-bg-secondary"&gt;Secondary&lt;/div&gt;</code>
-            <code>&lt;div class="color-swatch stil-bg-success"&gt;Success&lt;/div&gt;</code>
-            <code>&lt;div class="color-swatch stil-bg-danger"&gt;Danger&lt;/div&gt;</code>
-            <code>&lt;div class="color-swatch stil-bg-warning"&gt;Warning&lt;/div&gt;</code>
-            <code>&lt;div class="color-swatch stil-bg-info"&gt;Info&lt;/div&gt;</code>
-        </div>
-        <div class="component-group-code-example-outcome">
-            <span>Outcome:</span>
-            <div class="color-swatch stil-bg-primary">Primary</div>
-            <div class="color-swatch stil-bg-secondary">Secondary</div>
-            <div class="color-swatch stil-bg-success">Success</div>
-            <div class="color-swatch stil-bg-danger">Danger</div>
-            <div class="color-swatch stil-bg-warning">Warning</div>
-            <div class="color-swatch stil-bg-info">Info</div>
-        </div>
-    </section>
-
-    <section class="component-group" aria-labelledby="buttons">
-        <h1 id="buttons">Buttons</h1>
-        <div class="component-group-code-example">
-            <code>&lt;button class="stil-btn stil-btn-primary"&gt;Primary Button&lt;/button&gt;</code>
-            <code>&lt;button class="stil-btn stil-btn-sm stil-btn-primary"&gt;Small Button&lt;/button&gt;</code>
-            <code>&lt;button class="stil-btn stil-btn-lg stil-btn-primary"&gt;Large Button&lt;/button&gt;</code>
-        </div>
-        <div class="component-group-code-example-outcome">
-            <span>Outcome:</span>
+            <StilRadioGroup @bind-Value="_signup.Billing" Label="Billing" Inline />
+            <StilTextArea @bind-Value="_signup.Notes" Label="Notes" Rows="2" />
+            <StilSwitch @bind-Value="_signup.Newsletter" Label="Send me product updates" />
+            <StilCheckbox @bind-Value="_signup.AcceptTerms" Label="I accept the terms" />
             <div class="stil-cluster">
-                <button type="button" class="stil-btn stil-btn-primary">Primary Button</button>
-                <button type="button" class="stil-btn stil-btn-secondary">Secondary Button</button>
-                <button type="button" class="stil-btn stil-btn-success">Success Button</button>
-                <button type="button" class="stil-btn stil-btn-danger">Danger Button</button>
-                <button type="button" class="stil-btn stil-btn-warning">Warning Button</button>
-                <button type="button" class="stil-btn stil-btn-info">Info Button</button>
+                <StilButton Type="submit">Sign up</StilButton>
+                <StilButton Appearance="StilButtonAppearance.Ghost" OnClick="() => _signup = new()">Reset</StilButton>
             </div>
-            <div class="stil-cluster">
-                <button type="button" class="stil-btn stil-btn-sm stil-btn-primary">Primary Button</button>
-                <button type="button" class="stil-btn stil-btn-sm stil-btn-secondary">Secondary Button</button>
-                <button type="button" class="stil-btn stil-btn-sm stil-btn-success">Success Button</button>
-                <button type="button" class="stil-btn stil-btn-sm stil-btn-danger">Danger Button</button>
-                <button type="button" class="stil-btn stil-btn-sm stil-btn-warning">Warning Button</button>
-                <button type="button" class="stil-btn stil-btn-sm stil-btn-info">Info Button</button>
-            </div>
-            <div class="stil-cluster">
-                <button type="button" class="stil-btn stil-btn-lg stil-btn-primary">Primary Button</button>
-                <button type="button" class="stil-btn stil-btn-lg stil-btn-secondary">Secondary Button</button>
-                <button type="button" class="stil-btn stil-btn-lg stil-btn-success">Success Button</button>
-                <button type="button" class="stil-btn stil-btn-lg stil-btn-danger">Danger Button</button>
-                <button type="button" class="stil-btn stil-btn-lg stil-btn-warning">Warning Button</button>
-                <button type="button" class="stil-btn stil-btn-lg stil-btn-info">Info Button</button>
-            </div>
-        </div>
-    </section>
+        </EditForm>
+    </StilCard>
+</section>
 
-    <section class="component-group" aria-labelledby="inputs">
-        <h1 id="inputs">Inputs</h1>
-        <div class="component-group-code-example">
-            <code>&lt;div class="stil-field"&gt;</code>
-            <div class="component-group-code-example-content">
-                <span>&lt;label for="text-input" class="stil-label"&gt;Text input&lt;/label&gt;</span>
-                <span>&lt;input type="text" id="text-input" class="stil-input"&gt;</span>
-            </div>
-            <code>&lt;/div&gt;</code>
-        </div>
-        <div class="component-group-code-example-outcome">
-            <span>Outcome:</span>
-            <div class="stil-field">
-                <label for="text-input" class="stil-label">Text input</label>
-                <input type="text" id="text-input" class="stil-input" />
-            </div>
-        </div>
-    </section>
+<section class="demo-section" aria-labelledby="tabs">
+    <h2 id="tabs">Tabs</h2>
+    <StilTabs @bind-ActiveIndex="_tab" Label="Account settings">
+        <StilTab Title="Profile"><p>Profile settings. Use the arrow keys to move between tabs.</p></StilTab>
+        <StilTab Title="Notifications"><p>Choose what we email you about.</p></StilTab>
+        <StilTab Title="Billing" Disabled><p>Not available on the free plan.</p></StilTab>
+        <StilTab Title="Security"><p>Two-factor authentication is on.</p></StilTab>
+    </StilTabs>
+</section>
 
-    <section class="component-group" aria-labelledby="cards">
-        <h1 id="cards">Cards</h1>
-        <div class="component-group-code-example">
-            <code>&lt;StilCard HeaderText="Card Title"&gt;</code>
-            <div class="component-group-code-example-content">
-                <span>This is a simple card component.</span>
-                <span>Put your content and actions inside the component.</span>
-            </div>
-            <code>&lt;/StilCard&gt;</code>
-        </div>
-        <div class="component-group-code-example-outcome">
-            <span>Outcome:</span>
-            <StilCard HeaderText="Card Title">
-                <p>This is a simple card component.</p>
-                <div class="stil-card-footer">
-                    <button type="button" class="stil-btn stil-btn-primary">Action</button>
-                </div>
-            </StilCard>
-        </div>
-    </section>
+<section class="demo-section" aria-labelledby="menus">
+    <h2 id="menus">Dropdowns and tooltips</h2>
+    <div class="stil-cluster">
+        <StilDropdown Text="Actions" Appearance="StilButtonAppearance.Outline">
+            <StilDropdownHeader>Order #1043</StilDropdownHeader>
+            <StilDropdownItem OnClick="@(() => Toasts.Info("Edit clicked."))">Edit</StilDropdownItem>
+            <StilDropdownItem OnClick="@(() => Toasts.Info("Duplicated."))">Duplicate</StilDropdownItem>
+            <StilDropdownItem Disabled>Archive</StilDropdownItem>
+            <StilDropdownDivider />
+            <StilDropdownItem class="stil-text-danger" OnClick="DeleteDemoAsync">Delete…</StilDropdownItem>
+        </StilDropdown>
+        <StilTooltip Text="Saves without leaving the page">
+            <StilButton Variant="StilVariant.Secondary">Hover me</StilButton>
+        </StilTooltip>
+        <StilTooltip Text="Shown below" Position="StilTooltipPosition.Bottom">
+            <StilButton Appearance="StilButtonAppearance.Ghost">And me</StilButton>
+        </StilTooltip>
+    </div>
+</section>
 
-    <section class="component-group" aria-labelledby="alerts">
-        <h1 id="alerts">Alerts</h1>
-        <div class="component-group-code-example">
-            <code>&lt;StilAlert Variant="StilVariant.Success"&gt;This is a success alert.&lt;/StilAlert&gt;</code>
-            <code>&lt;StilAlert Variant="StilVariant.Danger"&gt;This is a danger alert.&lt;/StilAlert&gt;</code>
-            <code>&lt;StilAlert Variant="StilVariant.Warning"&gt;This is a warning message.&lt;/StilAlert&gt;</code>
+<section class="demo-section" aria-labelledby="feedback">
+    <h2 id="feedback">Progress, spinners, dialogs and toasts</h2>
+    <div class="stil-stack">
+        <StilProgress Value="_progress" Label="Upload" />
+        <StilProgress Value="72" Label="Storage" ShowValue Size="StilSize.Large" Variant="StilVariant.Success" />
+        <div class="stil-cluster">
+            <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Outline" OnClick="() => _progress = Math.Min(100, _progress + 10)">+10%</StilButton>
+            <StilSpinner Size="StilSize.Small" />
+            <StilSpinner Variant="StilVariant.Primary" />
         </div>
-        <div class="component-group-code-example-outcome">
-            <span>Outcome:</span>
-            <StilAlert Variant="StilVariant.Success">This is a success alert.</StilAlert>
-            <StilAlert Variant="StilVariant.Danger">This is a danger alert.</StilAlert>
-            <StilAlert Variant="StilVariant.Warning">This is a warning message.</StilAlert>
+        <div class="stil-cluster">
+            <StilButton OnClick="() => _dialogOpen = true">Open dialog</StilButton>
+            <StilButton Variant="StilVariant.Danger" Appearance="StilButtonAppearance.Outline" OnClick="DeleteDemoAsync">Confirm dialog</StilButton>
+            <StilButton Variant="StilVariant.Success" Appearance="StilButtonAppearance.Outline" OnClick="@(() => Toasts.Success("Order #1043 shipped.", "Shipped"))">Success toast</StilButton>
+            <StilButton Variant="StilVariant.Danger" Appearance="StilButtonAppearance.Outline" OnClick="@(() => Toasts.Error("The payment provider did not respond."))">Error toast</StilButton>
         </div>
-    </section>
+    </div>
+</section>
 
-    <section class="component-group" aria-labelledby="typography">
-        <h1 id="typography">Typography</h1>
-        <div class="component-group-code-example">
-            <code>&lt;p&gt;This is a paragraph of text.&lt;/p&gt;</code>
-            <code>&lt;h2&gt;Heading 2&lt;/h2&gt;</code>
-            <code>&lt;h3&gt;Heading 3&lt;/h3&gt;</code>
-            <code>&lt;h4&gt;Heading 4&lt;/h4&gt;</code>
-            <code>&lt;h5&gt;Heading 5&lt;/h5&gt;</code>
-        </div>
-        <div class="component-group-code-example-outcome">
-            <span>Outcome:</span>
-            <p>This is a paragraph of text. It uses the Didact Gothic font.</p>
-            <h2>Heading 2</h2>
-            <h3>Heading 3</h3>
-            <h4>Heading 4</h4>
-            <h5>Heading 5</h5>
-        </div>
-    </section>
+<StilDialog @bind-Open="_dialogOpen" Title="Invite a team member">
+    <ChildContent>
+        <p>They will get an email with a link to join.</p>
+        <StilTextBox @bind-Value="_inviteEmail" Label="Email" Type="email" />
+    </ChildContent>
+    <Footer>
+        <StilButton Appearance="StilButtonAppearance.Ghost" OnClick="() => _dialogOpen = false">Cancel</StilButton>
+        <StilButton OnClick="Invite">Send invite</StilButton>
+    </Footer>
+</StilDialog>
 
-    <section class="component-group" aria-labelledby="tables">
-        <h1 id="tables">Tables</h1>
-        <div class="component-group-code-example">
-            <code>&lt;table class="stil-table"&gt;</code>
-            <div class="component-group-code-example-content">
-                <span>&lt;tr&gt;&lt;th&gt;Header 1&lt;/th&gt;&lt;th&gt;Header 2&lt;/th&gt;&lt;/tr&gt;</span>
-                <span>&lt;tr&gt;&lt;td&gt;Data 1&lt;/td&gt;&lt;td&gt;Data 2&lt;/td&gt;&lt;/tr&gt;</span>
-            </div>
-            <code>&lt;/table&gt;</code>
-        </div>
-        <div class="component-group-code-example-outcome">
-            <span>Outcome:</span>
-            <table class="stil-table">
-                <thead>
-                    <tr>
-                        <th scope="col">Header 1</th>
-                        <th scope="col">Header 2</th>
-                        <th scope="col">Header 3</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Data 1</td>
-                        <td>Data 2</td>
-                        <td>Data 3</td>
-                    </tr>
-                    <tr>
-                        <td>Data 4</td>
-                        <td>Data 5</td>
-                        <td>Data 6</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
+@code {
+    private bool _saving;
+    private bool _bold;
+    private int _tab;
+    private double _progress = 40;
+    private bool _dialogOpen;
+    private string? _inviteEmail;
+    private SignUp _signup = new();
 
-    <section class="component-group" aria-labelledby="links-heading">
-        <h1 id="links-heading">Links</h1>
-        <div class="component-group-code-example">
-            <code>&lt;a href="#buttons"&gt;This is a link&lt;/a&gt;</code>
-        </div>
-        <div class="component-group-code-example-outcome">
-            <span>Outcome:</span>
-            <a href="#buttons">This is a link</a>
-        </div>
-    </section>
+    private async Task SaveAsync()
+    {
+        _saving = true;
+        await Task.Delay(1500);
+        _saving = false;
+        Toasts.Success("Saved.");
+    }
 
-    <section class="component-group" aria-labelledby="forms-heading">
-        <h1 id="forms-heading">Forms</h1>
-        <div class="component-group-code-example">
-            <code>&lt;form class="stil-form"&gt;</code>
-            <div class="component-group-code-example-content">
-                <span>&lt;label for="name" class="stil-label"&gt;Name&lt;/label&gt;</span>
-                <span>&lt;input type="text" id="name" class="stil-input"&gt;</span>
-                <span>&lt;label for="email" class="stil-label"&gt;Email&lt;/label&gt;</span>
-                <span>&lt;input type="email" id="email" class="stil-input"&gt;</span>
-                <span>&lt;label for="message" class="stil-label"&gt;Message&lt;/label&gt;</span>
-                <span>&lt;textarea id="message" class="stil-input"&gt;&lt;/textarea&gt;</span>
-                <span>&lt;button type="submit" class="stil-btn stil-btn-lg stil-btn-primary"&gt;Submit&lt;/button&gt;</span>
-            </div>
-            <code>&lt;/form&gt;</code>
-        </div>
-        <div class="component-group-code-example-outcome">
-            <span>Outcome:</span>
-            <form class="stil-form">
-                <div class="stil-field">
-                    <label for="name" class="stil-label">Name</label>
-                    <input type="text" id="name" class="stil-input" />
-                </div>
-                <div class="stil-field">
-                    <label for="email" class="stil-label">Email</label>
-                    <input type="email" id="email" class="stil-input" />
-                </div>
-                <div class="stil-field">
-                    <label for="message" class="stil-label">Message</label>
-                    <textarea id="message" class="stil-input"></textarea>
-                </div>
-                <button type="submit" class="stil-btn stil-btn-lg stil-btn-primary">Submit</button>
-            </form>
-        </div>
-    </section>
-</div>
+    private async Task DeleteDemoAsync()
+    {
+        var confirmed = await Dialogs.ConfirmAsync("Delete order?", "Order #1043 will be removed. This cannot be undone.",
+            new StilConfirmOptions { ConfirmText = "Delete", ConfirmVariant = StilVariant.Danger });
+        if (confirmed)
+        {
+            Toasts.Warning("Order #1043 deleted (not really, this is a demo).");
+        }
+    }
+
+    private void Invite()
+    {
+        _dialogOpen = false;
+        Toasts.Success($"Invitation sent to {_inviteEmail}.");
+        _inviteEmail = null;
+    }
+
+    private Task SignUpAsync()
+    {
+        Toasts.Success($"Welcome, {_signup.Name}! Plan: {_signup.Plan}.", "Signed up");
+        return Task.CompletedTask;
+    }
+
+    private enum Plan { Free, Team, Enterprise }
+
+    private enum Billing { Monthly, Yearly }
+
+    private sealed class SignUp
+    {
+        [Required(ErrorMessage = "Enter your name.")]
+        public string? Name { get; set; }
+
+        [Required(ErrorMessage = "Enter your email.")]
+        [EmailAddress(ErrorMessage = "Enter a complete email address, like name@example.com.")]
+        public string? Email { get; set; }
+
+        [Range(1, 500, ErrorMessage = "Choose between 1 and 500 seats.")]
+        public int Seats { get; set; } = 5;
+
+        public Plan Plan { get; set; } = Plan.Team;
+
+        public DateOnly? StartDate { get; set; }
+
+        public Billing Billing { get; set; }
+
+        public string? Notes { get; set; }
+
+        public bool Newsletter { get; set; } = true;
+
+        [Range(typeof(bool), "true", "true", ErrorMessage = "You need to accept the terms.")]
+        public bool AcceptTerms { get; set; }
+    }
+}

@@ -1,0 +1,68 @@
+@typeparam TValue
+@inherits StilInputBase<TValue>
+
+<fieldset @attributes="AdditionalAttributes" class="@WrapperClass" id="@InputId" aria-describedby="@DescribedBy">
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <legend class="stil-label">@Label</legend>
+    }
+    <InputRadioGroup TValue="TValue" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression" Name="@InputId">
+        <div class="@(Inline ? "stil-cluster stil-gap-4" : "stil-stack stil-gap-2")">
+            @foreach (var item in OptionItems)
+            {
+                <label class="stil-check">
+                    <InputRadio TValue="TValue" Value="item" class="@RadioClass" disabled="@Disabled"
+                                aria-invalid="@StilCssClasses.AriaBool(Messages.Count > 0)" />
+                    @Text(item)
+                </label>
+            }
+        </div>
+    </InputRadioGroup>
+    @if (!string.IsNullOrWhiteSpace(Hint))
+    {
+        <div class="stil-field-hint" id="@HintId">@Hint</div>
+    }
+    @if (Messages.Count > 0)
+    {
+        <div class="stil-field-error" id="@ErrorId">
+            @foreach (var message in Messages)
+            {
+                <div>@message</div>
+            }
+        </div>
+    }
+</fieldset>
+
+@code {
+    /// <summary>The options. When not set and the value is an enum, every enum value is an option.</summary>
+    [Parameter]
+    public IEnumerable<TValue>? Items { get; set; }
+
+    /// <summary>The label for an item. The default is the item's ToString().</summary>
+    [Parameter]
+    public Func<TValue, string>? ItemText { get; set; }
+
+    /// <summary>Show the options in a row instead of a column.</summary>
+    [Parameter]
+    public bool Inline { get; set; }
+
+    private string WrapperClass => StilCssClasses.Merge(AdditionalAttributes, "stil-field");
+
+    private string RadioClass => string.IsNullOrWhiteSpace(InputClass) ? "stil-check-input" : $"stil-check-input {InputClass}";
+
+    private IEnumerable<TValue> OptionItems
+    {
+        get
+        {
+            if (Items is not null)
+            {
+                return Items;
+            }
+
+            var enumType = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+            return enumType.IsEnum ? Enum.GetValues(enumType).Cast<TValue>() : [];
+        }
+    }
+
+    private string Text(TValue item) => ItemText is not null ? ItemText(item) : item?.ToString() ?? "";
+}

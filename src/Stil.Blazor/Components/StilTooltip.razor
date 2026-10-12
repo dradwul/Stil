@@ -1,0 +1,19 @@
+@inherits StilComponentBase
+
+<span data-stil-tooltip="@Text" @attributes="AdditionalAttributes"
+      class="@Classes("stil-d-inline-block", Position == StilTooltipPosition.Bottom ? "stil-tooltip-bottom" : null)">@ChildContent</span>
+
+@code {
+    /// <summary>
+    /// The tooltip text. Screen readers do not read it, so the wrapped element still needs an
+    /// accessible name, for example its text or an aria-label.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public string Text { get; set; } = "";
+
+    [Parameter]
+    public StilTooltipPosition Position { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

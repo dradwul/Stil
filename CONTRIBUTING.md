@@ -104,21 +104,47 @@ showcases (each has a theme picker).
 
 ### Blazor components
 
-- A component is named `Stil` plus the full name in PascalCase, and it
-  renders the matching CSS block: `StilButton` renders `stil-btn`,
-  `StilCard` renders `stil-card`, `StilAlert` renders `stil-alert`.
-- Shared parameter names and types:
+- **Naming:** a component is named `Stil` plus the full name in PascalCase,
+  and it renders the matching CSS block: `StilButton` renders `stil-btn`,
+  `StilListItem` renders `stil-list-item`. Public types live in
+  `Stil.Blazor.Components`; services and options live in `Stil.Blazor`.
+- **Shared parameters:**
 
   | Parameter | Type |
   | --- | --- |
   | `Variant` | `StilVariant` |
-  | `Size` | `StilSize` (from Phase 3) |
+  | `Size` | `StilSize` (Medium is the default and adds no class) |
+  | `Appearance` | `StilButtonAppearance` (buttons and dropdown toggles) |
+  | `Subtle` | `bool` (badges and alerts) |
+  | `Disabled` | `bool` |
   | `ChildContent` | `RenderFragment?` |
 
-- Every component captures unmatched attributes and passes them to its
-  root element. A consumer's `class` is appended with
-  `StilCssClasses.Merge`; it never replaces the component's own classes.
-- Public types live in the `Stil.Blazor.Components` namespace.
+- **Base class:** inherit `StilComponentBase`. It captures unmatched
+  attributes for the root element. Build the class with
+  `Classes("stil-x", …)`, which appends the consumer's `class` instead of
+  replacing it. Put `@attributes` before `class=` in markup.
+- **Form fields:** inherit `StilInputBase<TValue>` and wrap Blazor's
+  built-in input (`InputText`, `InputNumber`, …) in `StilField`. For fields,
+  `class` and `style` go on the field wrapper and every other attribute goes
+  on the control. `InputClass` adds classes to the control.
+- **Accessibility:**
+  - Map states to ARIA: `aria-busy`, `aria-pressed`, `aria-current`,
+    `aria-selected`, `aria-invalid`.
+  - Generate ids with `StilIds.Next(...)`.
+  - Implement keyboard patterns from the
+    [WAI-ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/), for
+    example the tabs' arrow keys.
+- **Render modes:**
+  - Components must render correctly with static SSR.
+  - Behaviour that needs events or JS interop is documented in the Blazor
+    README's render-mode table.
+  - Prefer HTML that works without interactivity (`<details>` dropdowns,
+    links) and let `stil.js` enhance it.
+- **JavaScript:** shared behaviour goes in `src/Stil.Css/src/stil.js`, so
+  plain-HTML users get it too. `Stil.lib.module.js` loads it automatically.
+  Components import it with `import("./_content/Stil/stil.js")` for interop.
+- **Tests:** every public parameter, ARIA attribute and keyboard path gets a
+  bUnit test in `tests/Stil.Blazor.Tests`.
 
 ## Scope model
 

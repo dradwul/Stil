@@ -1,0 +1,20 @@
+@inherits StilComponentBase
+
+<span @attributes="AdditionalAttributes" class="@CssClass">@ChildContent</span>
+
+@code {
+    [Parameter]
+    public StilVariant Variant { get; set; } = StilVariant.Primary;
+
+    /// <summary>A light tint with normal text instead of a solid color.</summary>
+    [Parameter]
+    public bool Subtle { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string CssClass => Classes(
+        "stil-badge",
+        StilCssClasses.Variant("stil-badge", Variant),
+        Subtle ? "stil-badge-subtle" : null);
+}
