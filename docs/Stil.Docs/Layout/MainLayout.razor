@@ -1,0 +1,90 @@
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+
+<StilThemeProvider Mode="_mode" class="docs-shell">
+    <a class="stil-visually-hidden-focusable docs-skip" href="#main">Skip to content</a>
+    <StilNavbar Sticky CollapseBelow="StilBreakpoint.Large">
+        <Brand>
+            <a href="" class="docs-brand">
+                <img src="stil-logo.svg" alt="" width="58" height="28" />
+                Stil
+            </a>
+        </Brand>
+        <ChildContent>
+            <StilNav Label="Main">
+                <StilNavLink Href="get-started">Docs</StilNavLink>
+                <StilNavLink Href="components/buttons">Components</StilNavLink>
+                <StilNavLink Href="theme-builder">Theme builder</StilNavLink>
+                <StilNavLink Href="https://github.com/dradwul/StilCSS" Icon="@StilIcons.External">GitHub</StilNavLink>
+            </StilNav>
+            <div class="docs-mobile-nav">
+                <DocsNav />
+            </div>
+        </ChildContent>
+        <End>
+            <StilSelect TValue="StilThemeMode" Value="_mode" ValueChanged="SetModeAsync" Size="StilSize.Small" aria-label="Color mode" />
+        </End>
+    </StilNavbar>
+
+    <div class="docs-body">
+        <aside class="docs-sidebar" aria-label="Documentation">
+            <DocsNav />
+        </aside>
+        <main id="main" class="docs-main" tabindex="-1">
+            @Body
+            <DocsPager />
+        </main>
+    </div>
+
+    <StilDialogHost />
+    <StilToastHost />
+</StilThemeProvider>
+
+@code {
+    private const string ModeKey = "stil-docs-mode";
+    private StilThemeMode _mode = StilThemeMode.Auto;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Navigation.LocationChanged += OnLocationChanged;
+        try
+        {
+            var saved = await JS.InvokeAsync<string?>("localStorage.getItem", ModeKey);
+            if (Enum.TryParse<StilThemeMode>(saved, ignoreCase: true, out var mode))
+            {
+                _mode = mode;
+            }
+        }
+        catch (JSException)
+        {
+            // Storage can be blocked; the default mode is fine.
+        }
+    }
+
+    private async Task SetModeAsync(StilThemeMode mode)
+    {
+        _mode = mode;
+        var value = mode.ToString().ToLowerInvariant();
+        try
+        {
+            await JS.InvokeVoidAsync("localStorage.setItem", ModeKey, value);
+            await JS.InvokeVoidAsync("document.documentElement.setAttribute", "data-stil-theme", value);
+        }
+        catch (JSException)
+        {
+        }
+    }
+
+    // Scroll to the top on a new page; keep the position for links to a heading on the same page.
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        if (!e.Location.Contains('#'))
+        {
+            _ = JS.InvokeVoidAsync("scrollTo", 0, 0);
+        }
+    }
+
+    public void Dispose() => Navigation.LocationChanged -= OnLocationChanged;
+}

@@ -1,0 +1,9 @@
+<StilMultiSelect TItem="string" @bind-Value="_tags" Items="_options" Label="Tags" Placeholder="Add tags"
+                 Hint="Backspace in the empty input removes the last tag." />
+<p class="stil-text-muted stil-mt-2 stil-mb-0">@(_tags.Count == 0 ? "No tags." : string.Join(", ", _tags))</p>
+
+@code {
+    private static readonly string[] _options = ["Urgent", "Billing", "Wholesale", "Returns", "Export", "Fragile", "Gift"];
+
+    private IReadOnlyCollection<string> _tags = ["Urgent", "Export"];
+}

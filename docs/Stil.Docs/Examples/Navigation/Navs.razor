@@ -1,0 +1,24 @@
+<div class="stil-stack stil-gap-5">
+    <StilNav Label="Components">
+        <StilNavLink Href="components/navigation">Navigation</StilNavLink>
+        <StilNavLink Href="components/menus">Menus</StilNavLink>
+        <StilNavLink Href="components/dialogs">Dialogs</StilNavLink>
+    </StilNav>
+
+    <StilNav Pills Label="Data components">
+        <StilNavLink Href="components/navigation" Icon="@StilIcons.Home">Navigation</StilNavLink>
+        <StilNavLink Href="components/data-grid" Icon="@StilIcons.Filter" Badge="New">Data grid</StilNavLink>
+        <StilNavLink Href="components/tree-view" Icon="@StilIcons.Folder">Tree view</StilNavLink>
+    </StilNav>
+
+    <StilNav Vertical Label="Form components" Items="_links" style="max-width: 16rem" />
+</div>
+
+@code {
+    private static readonly StilLinkItem[] _links =
+    [
+        new("Forms", "components/forms"),
+        new("Pickers and uploads", "components/pickers"),
+        new("Navigation", "components/navigation"),
+    ];
+}

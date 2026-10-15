@@ -30,6 +30,7 @@
     [Parameter]
     public int ActiveIndex { get; set; }
 
+    /// <summary>Raised when another tab is selected.</summary>
     [Parameter]
     public EventCallback<int> ActiveIndexChanged { get; set; }
 
@@ -40,6 +41,7 @@
     [Parameter]
     public string? ActiveId { get; set; }
 
+    /// <summary>Raised with the Id of the tab when another tab is selected.</summary>
     [Parameter]
     public EventCallback<string?> ActiveIdChanged { get; set; }
 

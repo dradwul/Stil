@@ -1,0 +1,21 @@
+/* Applied by Playwright only while it takes a screenshot (expect.toHaveScreenshot.stylePath). */
+
+/* Spinners and busy buttons spin forever: show them in a fixed position instead of masking them,
+   so changes to their look are still caught. */
+.stil-spinner,
+.stil-btn[aria-busy="true"]::after {
+    animation: none !important;
+}
+
+/* No blinking text cursor in inputs. */
+input,
+textarea,
+[contenteditable] {
+    caret-color: transparent !important;
+}
+
+/* The Blazor reconnect UI and error bar never belong in a baseline. */
+#components-reconnect-modal,
+#blazor-error-ui {
+    display: none !important;
+}

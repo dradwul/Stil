@@ -1,0 +1,281 @@
+@namespace Stil.Charts
+@typeparam TItem
+@attribute [CascadingTypeParameter(nameof(TItem))]
+@inherits StilCartesianChartBase<TItem>
+
+@* A bar chart: vertical columns or horizontal bars, grouped or stacked. Bars are at most 24px
+   thick with a 4px rounded end away from the baseline and a 2px gap between touching bars. *@
+@RenderChart
+
+@code {
+    private const double Gap = 2;
+    private const double MaxThickness = 24;
+
+    /// <summary>Vertical (columns, the default) or Horizontal (bars).</summary>
+    [Parameter]
+    public StilChartOrientation Orientation { get; set; }
+
+    /// <summary>Stacks the series on top of each other instead of side by side. Negative values stack below zero.</summary>
+    [Parameter]
+    public bool Stacked { get; set; }
+
+    /// <summary>
+    /// Writes the value at the end of each bar. Stacked bars show their total. Vertical grouped
+    /// bars have no room for it, so they show their values in the tooltip and the data table only.
+    /// </summary>
+    [Parameter]
+    public bool ShowValues { get; set; }
+
+    /// <summary>The word for the sum of a stack, in tooltips and the data table.</summary>
+    [Parameter]
+    public string TotalText { get; set; } = "Total";
+
+    private bool IsStacked => Stacked && Data.Series.Count > 1;
+
+    private int SlotsPerBand => IsStacked ? 1 : Math.Max(1, Data.Series.Count);
+
+    private bool ShowColumnValues => ShowValues && Orientation == StilChartOrientation.Vertical && SlotsPerBand == 1;
+
+    private protected override string KindClass =>
+        Orientation == StilChartOrientation.Horizontal ? "stil-chart-bar stil-chart-bar-horizontal" : "stil-chart-bar";
+
+    private protected override string KindName => IsStacked ? "Stacked bar chart" : "Bar chart";
+
+    private protected override bool Horizontal => Orientation == StilChartOrientation.Horizontal;
+
+    private protected override bool TableTotals => IsStacked;
+
+    private protected override string TotalHeader => TotalText;
+
+    private protected override double ExtraTop => ShowColumnValues ? 16 : 0;
+
+    private protected override double HorizontalBand =>
+        SlotsPerBand == 1 ? 36 : SlotsPerBand * 14 + (SlotsPerBand - 1) * Gap + 16;
+
+    private protected override double EndValueWidth =>
+        ShowValues ? EndLabels().Select(l => ChartText.Width(l)).DefaultIfEmpty(0).Max() + 10 : 0;
+
+    private protected override RenderFragment RenderPlot =>
+        Orientation == StilChartOrientation.Horizontal ? HorizontalFrame(HorizontalBars) : VerticalFrame(VerticalBars);
+
+    private protected override (double Min, double Max) ValueExtent()
+    {
+        if (!IsStacked)
+        {
+            return base.ValueExtent();
+        }
+
+        var count = Data.Categories.Count;
+        var positive = Enumerable.Range(0, count).Select(i => Data.Series.Sum(s => Math.Max(0, s.Values[i] ?? 0))).DefaultIfEmpty(0);
+        var negative = Enumerable.Range(0, count).Select(i => Data.Series.Sum(s => Math.Min(0, s.Values[i] ?? 0))).DefaultIfEmpty(0);
+        return (negative.Min(), positive.Max());
+    }
+
+    private protected override IEnumerable<string> ExtraSummary()
+    {
+        if (!IsStacked)
+        {
+            yield break;
+        }
+
+        var totals = Enumerable.Range(0, Data.Categories.Count).Select(i => (Total: CategoryTotal(i), Index: i)).ToList();
+        var low = totals.MinBy(t => t.Total);
+        var high = totals.MaxBy(t => t.Total);
+        yield return $"{TotalText}s range from {ChartText.Value(low.Total, Format)} ({Data.Categories[low.Index]}) " +
+                     $"to {ChartText.Value(high.Total, Format)} ({Data.Categories[high.Index]}).";
+    }
+
+    /// <summary>The value labels at the bar ends: every value, or each stack's total.</summary>
+    private IEnumerable<string> EndLabels() => IsStacked
+        ? Enumerable.Range(0, Data.Categories.Count).Select(i => ChartText.Value(CategoryTotal(i), Format))
+        : Data.Series.SelectMany(s => s.Present.Select(v => ChartText.Value(v, s.Format)));
+
+    /// <summary>One drawn bar or stack segment.</summary>
+    private sealed record Segment(ChartSeriesData Series, int Slot, double From, double To, bool Rounded, bool GapAtEnd, string Tooltip);
+
+    /// <summary>The bars of one category, from the baseline outwards.</summary>
+    private List<Segment> Segments(int index)
+    {
+        var category = Data.Categories[index];
+        var segments = new List<Segment>();
+        if (!IsStacked)
+        {
+            foreach (var series in Data.Series)
+            {
+                if (series.Values[index] is { } value)
+                {
+                    segments.Add(new Segment(series, series.Index, Scale.Baseline, value, value != 0, false,
+                        $"{category}\n{series.Name}: {FormatValue(value, series, MissingText)}"));
+                }
+            }
+
+            return segments;
+        }
+
+        var total = $"\n{TotalText}: {ChartText.Value(CategoryTotal(index), Format)}";
+        var lastPositive = Data.Series.LastOrDefault(s => s.Values[index] > 0);
+        var lastNegative = Data.Series.LastOrDefault(s => s.Values[index] < 0);
+        double up = 0, down = 0;
+        foreach (var series in Data.Series)
+        {
+            if (series.Values[index] is not { } value || value == 0)
+            {
+                continue;
+            }
+
+            var tooltip = $"{category}\n{series.Name}: {FormatValue(value, series, MissingText)}{total}";
+            if (value > 0)
+            {
+                var outer = ReferenceEquals(series, lastPositive);
+                segments.Add(new Segment(series, 0, up, up + value, outer, !outer, tooltip));
+                up += value;
+            }
+            else
+            {
+                var outer = ReferenceEquals(series, lastNegative);
+                segments.Add(new Segment(series, 0, down, down + value, outer, !outer, tooltip));
+                down += value;
+            }
+        }
+
+        return segments;
+    }
+
+    private RenderFragment VerticalBars => __builder =>
+    {
+        var layout = Layout;
+        var count = Data.Categories.Count;
+        var slots = SlotsPerBand;
+        var band = 1.0 / count;
+        var labelWidth = EndLabels().Select(l => ChartText.Width(l)).DefaultIfEmpty(0).Max() + 8;
+        for (var i = 0; i < count; i++)
+        {
+            var center = ChartLayout.BandCenter(i, count);
+            // Fallback geometry for browsers without CSS x/width on SVG rects; stil-chart-col refines it.
+            var fallbackWidth = band * 0.6 / slots;
+            foreach (var segment in Segments(i))
+            {
+                var y0 = layout.Y(Scale, segment.From);
+                var y1 = layout.Y(Scale, segment.To);
+                var top = Math.Min(y0, y1);
+                var height = Math.Abs(y1 - y0);
+                var up = segment.To >= segment.From;
+                if (segment.GapAtEnd && height > Gap + 1)
+                {
+                    height -= Gap;
+                    top += up ? Gap : 0;
+                }
+
+                var x = ChartText.Pct(center - band * 0.3 + segment.Slot * fallbackWidth + fallbackWidth * 0.05);
+                var width = ChartText.Pct(fallbackWidth * 0.9);
+                <g class="stil-chart-bar-item" style="--_color: @segment.Series.Color; --_c: @ChartText.Pct(center); --_b: @ChartText.Pct(band); --_m: @slots; --_j: @segment.Slot">
+                    <title>@segment.Tooltip</title>
+                    @if (!IsStacked)
+                    {
+                        <rect class="stil-chart-hit stil-chart-col" x="@x" y="@ChartText.N(layout.PlotTop)" width="@width" height="@ChartText.N(layout.PlotHeight)" />
+                    }
+                    @if (height >= 0.5)
+                    {
+                        <rect class="stil-chart-bar-mark stil-chart-col" x="@x" y="@ChartText.N(top)" width="@width" height="@ChartText.N(height)"
+                              rx="@(segment.Rounded ? "4" : null)" />
+                        @if (segment.Rounded)
+                        {
+                            @* Squares the corners at the baseline end. *@
+                            <rect class="stil-chart-bar-mark stil-chart-col" x="@x" y="@ChartText.N(up ? top + height / 2 : top)" width="@width" height="@ChartText.N(height / 2)" />
+                        }
+                    }
+                </g>
+            }
+
+            if (ShowColumnValues)
+            {
+                var value = IsStacked ? CategoryTotal(i) : Data.Series[0].Values[i];
+                if (value is { } v)
+                {
+                    var up = IsStacked ? Data.Series.Sum(s => Math.Max(0, s.Values[i] ?? 0)) : Math.Max(0, v);
+                    var down = IsStacked ? Data.Series.Sum(s => Math.Min(0, s.Values[i] ?? 0)) : Math.Min(0, v);
+                    var above = up > 0 || down == 0;
+                    var y = above ? layout.Y(Scale, up) - 6 : layout.Y(Scale, down) + 14;
+                    var text = IsStacked ? ChartText.Value(v, Format) : FormatValue(v, Data.Series[0], MissingText);
+                    @SvgText(text, ChartText.Pct(center), ChartText.N(y),
+                        CssClass("stil-chart-label stil-chart-value", layout.ThinningClass(i, count, labelWidth)), "middle")
+                }
+            }
+        }
+    };
+
+    private RenderFragment HorizontalBars => __builder =>
+    {
+        var layout = Layout;
+        var count = Data.Categories.Count;
+        var slots = SlotsPerBand;
+        var band = BandHeight;
+        var thickness = slots == 1
+            ? Math.Min(MaxThickness, band * 0.6)
+            : Math.Max(1, Math.Min(MaxThickness, (band * 0.72 - (slots - 1) * Gap) / slots));
+        var groupHeight = slots * thickness + (slots - 1) * Gap;
+        for (var i = 0; i < count; i++)
+        {
+            var groupTop = layout.PlotTop + band * i + (band - groupHeight) / 2;
+            var segments = Segments(i);
+            foreach (var segment in segments)
+            {
+                var x0 = Scale.Fraction(segment.From);
+                var x1 = Scale.Fraction(segment.To);
+                var left = Math.Min(x0, x1);
+                var width = Math.Abs(x1 - x0);
+                var y = groupTop + segment.Slot * (thickness + Gap);
+                var right = segment.To >= segment.From;
+                <g class="stil-chart-bar-item" style="--_color: @segment.Series.Color">
+                    <title>@segment.Tooltip</title>
+                    @if (!IsStacked)
+                    {
+                        <rect class="stil-chart-hit" x="0" y="@ChartText.N(y - Gap / 2)" width="100%" height="@ChartText.N(thickness + Gap)" />
+                    }
+                    @if (width > 0)
+                    {
+                        <rect class="stil-chart-bar-mark" x="@ChartText.Pct(left)" y="@ChartText.N(y)" width="@ChartText.Pct(width)" height="@ChartText.N(thickness)"
+                              rx="@(segment.Rounded ? "4" : null)" />
+                        @if (segment.Rounded)
+                        {
+                            <rect class="stil-chart-bar-mark" x="@ChartText.Pct(right ? left : left + width / 2)" y="@ChartText.N(y)"
+                                  width="@ChartText.Pct(width / 2)" height="@ChartText.N(thickness)" />
+                        }
+                    }
+                </g>
+            }
+
+            if (IsStacked)
+            {
+                // The 2px surface gap between stacked segments.
+                foreach (var segment in segments.Where(s => s.GapAtEnd))
+                {
+                    var x = ChartText.Pct(Scale.Fraction(segment.To));
+                    <line class="stil-chart-gap" x1="@x" x2="@x" y1="@ChartText.N(groupTop)" y2="@ChartText.N(groupTop + thickness)" />
+                }
+            }
+
+            if (ShowValues)
+            {
+                if (IsStacked)
+                {
+                    var up = Data.Series.Sum(s => Math.Max(0, s.Values[i] ?? 0));
+                    var down = Data.Series.Sum(s => Math.Min(0, s.Values[i] ?? 0));
+                    var positive = up > 0 || down == 0;
+                    @SvgText(ChartText.Value(CategoryTotal(i), Format), ChartText.Pct(Scale.Fraction(positive ? up : down)), ChartText.N(groupTop + thickness / 2),
+                        "stil-chart-label stil-chart-value", positive ? "start" : "end", "0.32em", dx: positive ? "6" : "-6")
+                }
+                else
+                {
+                    foreach (var segment in segments)
+                    {
+                        var positive = segment.To >= 0;
+                        @SvgText(FormatValue(segment.To, segment.Series, MissingText), ChartText.Pct(Scale.Fraction(segment.To)),
+                            ChartText.N(groupTop + segment.Slot * (thickness + Gap) + thickness / 2),
+                            "stil-chart-label stil-chart-value", positive ? "start" : "end", "0.32em", dx: positive ? "6" : "-6")
+                    }
+                }
+            }
+        }
+    };
+}

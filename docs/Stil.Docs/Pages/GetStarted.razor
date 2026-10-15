@@ -1,0 +1,93 @@
+@page "/get-started"
+
+<DocsHeader Title="Installation" Eyebrow="Get started">
+    <Lead>Add Stil for Blazor to a Blazor app, or use Stil CSS on its own.</Lead>
+</DocsHeader>
+
+<StilAlert Variant="StilVariant.Info" Subtle Title="Preview">
+    The packages are not on NuGet and npm yet. Until they are, reference <code>src/Stil.Blazor</code> as a project,
+    or copy <code>src/Stil.Css/dist/stil.css</code>.
+</StilAlert>
+
+<h2 id="blazor">Stil for Blazor</h2>
+
+<p>1. Add the package:</p>
+<CodeBlock Language="shell" Code="dotnet add package Stil" />
+
+<p>2. Register the services in <code>Program.cs</code>. The theme is optional:</p>
+<CodeBlock Language="csharp" Code="@ProgramSnippet" />
+
+<p>3. Add the stylesheet and the global theme in <code>App.razor</code>, and put <code>stil-scope</code> on the body so the base styles apply:</p>
+<CodeBlock Language="razor" Code="@AppSnippet" />
+
+<p>4. Add the hosts for dialogs and toasts to your layout, and use the components:</p>
+<CodeBlock Language="razor" Code="@LayoutSnippet" />
+
+<p>Or start from the template, which sets all of this up:</p>
+<CodeBlock Language="shell" Code="@TemplateSnippet" />
+
+<h2 id="render-modes">Render modes</h2>
+<p>
+    Components that only display things work in static server rendering. Anything that reacts to
+    clicks, typing or keys needs an interactive render mode (Server, WebAssembly or Auto). The
+    optional <code>stil.js</code>, loaded automatically, adds the small behaviours that static pages need,
+    such as closing dropdowns and dismissing alerts.
+</p>
+
+<h2 id="css">Stil CSS on its own</h2>
+<CodeBlock Language="shell" Code="npm install stil-css" />
+<CodeBlock Language="html" Code="@CssSnippet" />
+<p>
+    Stil's base styles (headings, links, forms) apply inside <code>.stil-scope</code>; the <code>stil-*</code>
+    classes work anywhere. Everything is in cascade layers, so your own CSS wins without fighting specificity.
+</p>
+
+@code {
+    private const string ProgramSnippet = """
+        builder.Services.AddStil(options =>
+        {
+            options.Theme.Primary = "#6741d9";
+        });
+        """;
+
+    private const string AppSnippet = """
+        <head>
+            ...
+            <StilHead />
+            <HeadOutlet />
+        </head>
+        <body class="stil-scope">
+            <Routes />
+            <script src="_framework/blazor.web.js"></script>
+        </body>
+        """;
+
+    private const string LayoutSnippet = """
+        <StilThemeProvider Mode="StilThemeMode.Auto">
+            <StilNavbar BrandText="My app">
+                <StilNav Label="Main">
+                    <StilNavLink Href="" Match="NavLinkMatch.All">Home</StilNavLink>
+                </StilNav>
+            </StilNavbar>
+            <main class="stil-container stil-py-5">@Body</main>
+            <StilDialogHost />
+            <StilToastHost />
+        </StilThemeProvider>
+        """;
+
+    private const string TemplateSnippet = """
+        dotnet new install Stil.Templates
+        dotnet new stil-app -o MyApp --Primary "#6741d9"
+        """;
+
+    private const string CssSnippet = """
+        <link rel="stylesheet" href="node_modules/stil-css/dist/stil.css">
+        <script type="module" src="node_modules/stil-css/dist/stil.js"></script>
+
+        <body class="stil-scope" data-stil-theme="auto">
+          <div class="stil-container">
+            <button class="stil-btn stil-btn-primary">Save</button>
+          </div>
+        </body>
+        """;
+}

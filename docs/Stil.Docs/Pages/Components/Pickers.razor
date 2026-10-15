@@ -1,0 +1,67 @@
+@page "/components/pickers"
+@using Stil.Docs.Examples.Pickers
+
+<DocsHeader Title="Pickers and uploads" Eyebrow="Components">
+    <Lead>An autocomplete for long or searched lists, a multi-select with chips, a date range picker and a file drop zone.</Lead>
+</DocsHeader>
+
+<p>
+    These are form fields like the ones on the <a href="components/forms">Forms</a> page: <code>Label</code>,
+    <code>Hint</code>, validation messages and <code>class</code> on the wrapper work the same way. They need an
+    interactive render mode.
+</p>
+
+<h2 id="autocomplete">Autocomplete</h2>
+<DocExample Type="typeof(CityAutocomplete)">
+    <p>
+        <code>StilAutocomplete</code> filters <code>Items</code> in memory as you type (case-insensitive "contains").
+        It follows the WAI-ARIA combobox pattern: focus stays in the input, the arrow keys move through the options,
+        Enter chooses one and Escape closes the list. Typing something else clears the value; leaving the field shows
+        the chosen option's text again.
+    </p>
+</DocExample>
+
+<h2 id="search">Searching on a server</h2>
+<DocExample Type="typeof(CustomerSearch)">
+    <p>
+        With <code>Search</code>, the component calls your method after typing pauses (<code>Debounce</code>, 250 ms by
+        default) and cancels the token when the text changes again. <code>ItemText</code> is the text of an option,
+        <code>ItemTemplate</code> renders it in the list, and <code>ItemKey</code> matches options that are new objects on
+        every search. <code>MinLength</code> is 1 with <code>Search</code>.
+    </p>
+</DocExample>
+
+<h2 id="multi-select">Multi-select</h2>
+<DocExample Type="typeof(Tags)">
+    <p>
+        <code>StilMultiSelect</code> binds an <code>IReadOnlyCollection&lt;TItem&gt;</code>. Chosen options are chips with
+        a remove button; choosing an option again removes it. It takes the same <code>Items</code>, <code>Search</code>
+        and item parameters as the autocomplete.
+    </p>
+</DocExample>
+
+<h2 id="date-range">Date range</h2>
+<DocExample Type="typeof(DeliveryWindow)">
+    <p>
+        <code>StilDateRangePicker</code> is two date fields in a <code>&lt;fieldset&gt;</code>; <code>Label</code> is the
+        legend. Bind <code>@@bind-Start</code> and <code>@@bind-End</code> to <code>DateOnly</code> or <code>DateTime</code>,
+        nullable or not. The end field cannot go before the start. An end before the start is a validation error
+        (<code>RangeErrorText</code>) that blocks <code>OnValidSubmit</code>, also outside an <code>EditForm</code>.
+    </p>
+</DocExample>
+
+<h2 id="file-upload">File upload</h2>
+<DocExample Type="typeof(Attachments)">
+    <p>
+        <code>StilFileUpload</code> is a drop zone around Blazor's <code>InputFile</code>: click it, drop files on it or
+        press Enter or Space when it has focus. Files that break <code>Accept</code>, <code>MaxFileSize</code> or
+        <code>MaxFiles</code> are listed as errors and not added. <code>OnChange</code> gets the whole list of accepted
+        files; uploading them is up to you. <code>Files</code> and <code>Clear()</code> are public, through <code>@@ref</code>.
+    </p>
+</DocExample>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilAutocomplete<>)" />
+<ApiTable Type="typeof(StilMultiSelect<>)" />
+<ApiTable Type="typeof(StilDateRangePicker<>)" />
+<ApiTable Type="typeof(StilFileUpload)" />

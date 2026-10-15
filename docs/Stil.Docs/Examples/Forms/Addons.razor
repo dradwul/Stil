@@ -1,0 +1,26 @@
+<div class="stil-form">
+    <StilGrid>
+        <StilTextBox @bind-Value="_shop" Label="Shop address" PrependText="https://" AppendText=".nordvik.example" class="stil-col-md-6" />
+        <StilNumeric @bind-Value="_price" Label="Price" AppendText="€" Step="0.01" class="stil-col-md-6" />
+    </StilGrid>
+    <StilTextBox @bind-Value="_query" Label="Find an order" Type="search" Placeholder="Order number or customer">
+        <Append>
+            <StilButton Appearance="StilButtonAppearance.Outline" OnClick="Search">
+                <StilIcon Name="@StilIcons.Search" /> Search
+            </StilButton>
+        </Append>
+    </StilTextBox>
+    @if (_searched is not null)
+    {
+        <p class="stil-text-muted stil-mb-0">Searched for "@_searched".</p>
+    }
+</div>
+
+@code {
+    private string? _shop = "fjallbacka-cafe";
+    private decimal _price = 249m;
+    private string? _query;
+    private string? _searched;
+
+    private void Search() => _searched = _query;
+}

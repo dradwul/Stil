@@ -3,6 +3,7 @@
 <div @attributes="AdditionalAttributes" class="@Classes("stil-dropdown-header")">@ChildContent</div>
 
 @code {
+    /// <summary>The header text.</summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 }

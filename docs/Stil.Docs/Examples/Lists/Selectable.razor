@@ -1,0 +1,25 @@
+<div class="stil-stack stil-gap-3">
+    <StilList>
+        @foreach (var city in _cities)
+        {
+            <StilListItem Title="@city.Name" Description="@($"{city.Orders} open orders")"
+                          Selected="@(city == _selected)" Disabled="@(city.Orders == 0)"
+                          OnClick="() => _selected = city" />
+        }
+    </StilList>
+    <p class="stil-mb-0">Selected: @(_selected?.Name ?? "none")</p>
+</div>
+
+@code {
+    private static readonly City[] _cities =
+    [
+        new("Trondheim", 12),
+        new("Uppsala", 7),
+        new("Oulu", 0),
+        new("Odense", 4),
+    ];
+
+    private City? _selected;
+
+    private sealed record City(string Name, int Orders);
+}

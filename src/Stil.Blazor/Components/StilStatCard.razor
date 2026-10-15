@@ -28,6 +28,7 @@ else
     [Parameter]
     public string? Trend { get; set; }
 
+    /// <summary>Neutral (default), Up or Down. Sets the arrow and the default trend color.</summary>
     [Parameter]
     public StilTrendDirection TrendDirection { get; set; }
 
@@ -54,9 +55,11 @@ else
     [Parameter]
     public string UpText { get; set; } = "up";
 
+    /// <summary>The word for Down in the default TrendLabel.</summary>
     [Parameter]
     public string DownText { get; set; } = "down";
 
+    /// <summary>The word for Neutral in the default TrendLabel.</summary>
     [Parameter]
     public string NeutralText { get; set; } = "unchanged";
 

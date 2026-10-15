@@ -1,0 +1,15 @@
+<div class="stil-cluster">
+    @if (_visible)
+    {
+        <StilBadge Variant="StilVariant.Info" Subtle>City: Stockholm</StilBadge>
+        <StilCloseButton Label="Remove the Stockholm filter" OnClick="() => _visible = false" />
+    }
+    else
+    {
+        <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Ghost" OnClick="() => _visible = true">Add the filter again</StilButton>
+    }
+</div>
+
+@code {
+    private bool _visible = true;
+}

@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json.schemastore.org/template",
+  "author": "Stil contributors",
+  "classifications": [ "Web", "Blazor" ],
+  "identity": "Stil.Templates.StilApp",
+  "groupIdentity": "Stil.Templates.StilApp",
+  "name": "Stil for Blazor App",
+  "description": "A Blazor Web App styled with Stil for Blazor: a navbar, a color-mode switch, themes, dialogs and toasts, and optional sample pages with a data grid and a form.",
+  "shortName": "stil-app",
+  "defaultName": "StilApp",
+  "sourceName": "StilApp",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "condition": "(IncludeSampleContent)",
+          "exclude": [ "Components/Pages/Home.Empty.razor" ]
+        },
+        {
+          "condition": "(!IncludeSampleContent)",
+          "exclude": [ "Components/Pages/Home.razor", "Components/Pages/NewOrder.razor", "Data/**" ],
+          "rename": { "Components/Pages/Home.Empty.razor": "Components/Pages/Home.razor" }
+        }
+      ]
+    }
+  ],
+  "symbols": {
+    "AppTitle": {
+      "type": "derived",
+      "valueSource": "name",
+      "valueTransform": "identity",
+      "replaces": "My Stil App"
+    },
+    "Framework": {
+      "type": "parameter",
+      "description": "The target framework for the project.",
+      "datatype": "choice",
+      "choices": [
+        { "choice": "net10.0", "description": "Target net10.0" }
+      ],
+      "replaces": "net10.0",
+      "defaultValue": "net10.0"
+    },
+    "Primary": {
+      "type": "parameter",
+      "description": "The brand color, as a CSS color such as #7048e8. It is set with AddStil() in Program.cs. Without it, the app uses Stil's default teal (#34dbbf).",
+      "datatype": "text",
+      "defaultValue": "",
+      "replaces": "STIL_PRIMARY_COLOR"
+    },
+    "HasPrimary": {
+      "type": "computed",
+      "value": "(Primary != \"\")"
+    },
+    "ColorMode": {
+      "type": "parameter",
+      "description": "The color mode the app starts in. Users can change it with the switch in the navbar.",
+      "datatype": "choice",
+      "choices": [
+        { "choice": "light", "description": "Light mode" },
+        { "choice": "dark", "description": "Dark mode" },
+        { "choice": "auto", "description": "Follow the operating system setting" }
+      ],
+      "defaultValue": "auto"
+    },
+    "ColorModeValue": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "StilThemeMode.Auto",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          { "condition": "(ColorMode == \"light\")", "value": "StilThemeMode.Light" },
+          { "condition": "(ColorMode == \"dark\")", "value": "StilThemeMode.Dark" },
+          { "condition": "", "value": "StilThemeMode.Auto" }
+        ]
+      }
+    },
+    "Interactivity": {
+      "type": "parameter",
+      "description": "The render mode of the app.",
+      "datatype": "choice",
+      "choices": [
+        { "choice": "Server", "description": "Interactive server rendering for the whole app" },
+        { "choice": "None", "description": "Static server rendering only (no interactivity)" }
+      ],
+      "defaultValue": "Server"
+    },
+    "UseServer": {
+      "type": "computed",
+      "value": "(Interactivity == \"Server\")"
+    },
+    "IncludeSampleContent": {
+      "type": "parameter",
+      "description": "Add a dashboard page with KPI cards and a data grid, and a form page with validation. Without it, the app has one empty Home page.",
+      "datatype": "bool",
+      "defaultValue": "true"
+    },
+    "StilVersion": {
+      "type": "parameter",
+      "description": "The version of the Stil NuGet package to reference.",
+      "datatype": "text",
+      "defaultValue": "0.1.0",
+      "replaces": "STIL_PACKAGE_VERSION"
+    },
+    "skipRestore": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "If specified, skips the automatic restore of the project on create.",
+      "defaultValue": "false"
+    },
+    "HttpPort": {
+      "type": "parameter",
+      "datatype": "integer",
+      "description": "Port number to use for the HTTP endpoint in launchSettings.json."
+    },
+    "HttpPortGenerated": {
+      "type": "generated",
+      "generator": "port",
+      "parameters": { "low": 5000, "high": 5300 }
+    },
+    "HttpPortReplacer": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": { "sourceVariableName": "HttpPort", "fallbackVariableName": "HttpPortGenerated" },
+      "replaces": "5500"
+    },
+    "HttpsPort": {
+      "type": "parameter",
+      "datatype": "integer",
+      "description": "Port number to use for the HTTPS endpoint in launchSettings.json."
+    },
+    "HttpsPortGenerated": {
+      "type": "generated",
+      "generator": "port",
+      "parameters": { "low": 7000, "high": 7300 }
+    },
+    "HttpsPortReplacer": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": { "sourceVariableName": "HttpsPort", "fallbackVariableName": "HttpsPortGenerated" },
+      "replaces": "5501"
+    }
+  },
+  "primaryOutputs": [
+    { "path": "StilApp.csproj" }
+  ],
+  "postActions": [
+    {
+      "id": "restore",
+      "condition": "(!skipRestore)",
+      "description": "Restore NuGet packages required by this project.",
+      "manualInstructions": [ { "text": "Run 'dotnet restore'" } ],
+      "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
+      "continueOnError": true
+    }
+  ]
+}

@@ -45,6 +45,7 @@ public sealed class StilDataGridColumn<TItem, TValue> : StilDataGridColumnBase<T
     [Parameter]
     public string TrueText { get; set; } = "Yes";
 
+    /// <summary>The text for false in a bool filter.</summary>
     [Parameter]
     public string FalseText { get; set; } = "No";
 

@@ -1,0 +1,39 @@
+<div class="stil-stack stil-gap-3">
+    <StilTable TItem="Order" Items="PageOfOrders" OnRowClick="Open" Caption="Click a row to open the order"
+               RowClass="@(o => o.Overdue ? "stil-text-danger" : null)">
+        <Columns>
+            <StilColumn Title="Order" Field="@(o => $"#{o.Id}")" />
+            <StilColumn Title="Customer" Field="@(o => o.Customer)" />
+            <StilColumn Title="Payment" Field="@(o => o.Overdue ? "Overdue" : "On time")" />
+            <StilColumn Title="Amount (€)" Field="@(o => o.Amount)" Format="N2" Align="StilTextAlign.End" />
+        </Columns>
+    </StilTable>
+    <StilCluster Justify="StilJustify.Between">
+        <span>@(_opened is null ? "No order opened." : $"Opened order #{_opened.Id} for {_opened.Customer}.")</span>
+        <StilPagination @bind-Page="_page" TotalItems="_orders.Length" PageSize="PageSize" Size="StilSize.Small" />
+    </StilCluster>
+</div>
+
+@code {
+    private const int PageSize = 3;
+
+    private static readonly Order[] _orders =
+    [
+        new(1048, "Fjällbacka Café", 1240m, false),
+        new(1047, "Hallberg & Söner AB", 3895.5m, true),
+        new(1046, "Lindqvist Bygg", 612m, false),
+        new(1045, "Østerby Marine", 9120.75m, false),
+        new(1044, "Kallio Design Oy", 455.2m, true),
+        new(1043, "Berglund Outdoor", 2078.9m, false),
+        new(1042, "Nordvik Supply", 1499.5m, false),
+    ];
+
+    private int _page = 1;
+    private Order? _opened;
+
+    private void Open(Order order) => _opened = order;
+
+    private IEnumerable<Order> PageOfOrders => _orders.Skip((_page - 1) * PageSize).Take(PageSize);
+
+    private sealed record Order(int Id, string Customer, decimal Amount, bool Overdue);
+}

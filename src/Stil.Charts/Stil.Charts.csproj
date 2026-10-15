@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PackageId>Stil.Charts</PackageId>
+    <AssemblyName>Stil.Charts</AssemblyName>
+    <RootNamespace>Stil.Charts</RootNamespace>
+    <Version>0.1.0</Version>
+    <Description>Themeable SVG charts for Stil for Blazor: line, area, bar, donut and sparkline charts that render on the server, work in static SSR and follow the Stil tokens and dark mode.</Description>
+    <PackageTags>Blazor;charts;SVG;CSS;Stil</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+    <InternalsVisibleTo Include="Stil.Charts.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Stil.Blazor\Stil.Blazor.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

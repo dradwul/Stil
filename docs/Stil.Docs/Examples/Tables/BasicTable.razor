@@ -1,0 +1,20 @@
+<StilTable Items="_orders" Caption="Recent orders">
+    <Columns>
+        <StilColumn Title="Order" Field="@(o => $"#{o.Id}")" />
+        <StilColumn Title="Customer" Field="@(o => o.Customer)" />
+        <StilColumn Title="Date" Field="@(o => o.Date)" Format="d MMM yyyy" />
+        <StilColumn Title="Amount (€)" Field="@(o => o.Amount)" Format="N2" Align="StilTextAlign.End" />
+    </Columns>
+</StilTable>
+
+@code {
+    private static readonly Order[] _orders =
+    [
+        new(1048, "Fjällbacka Café", new(2026, 10, 12), 1240m),
+        new(1047, "Hallberg & Söner AB", new(2026, 10, 11), 3895.5m),
+        new(1046, "Lindqvist Bygg", new(2026, 10, 9), 612m),
+        new(1045, "Østerby Marine", new(2026, 10, 9), 9120.75m),
+    ];
+
+    private sealed record Order(int Id, string Customer, DateOnly Date, decimal Amount);
+}

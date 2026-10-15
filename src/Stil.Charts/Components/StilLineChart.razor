@@ -1,0 +1,150 @@
+@namespace Stil.Charts
+@typeparam TItem
+@attribute [CascadingTypeParameter(nameof(TItem))]
+@inherits StilCartesianChartBase<TItem>
+
+@* A line chart, or an area chart with Area. Lines are drawn in a horizontally stretched inner SVG
+   with non-scaling strokes; markers, text and hover bands use percentages, so nothing distorts. *@
+@RenderChart
+
+@code {
+    private const int DirectLabelChars = 16;
+    private List<(ChartSeriesData Series, double X, double Y)> _labels = [];
+
+    /// <summary>Fills the area under each line with a light wash of its color. The axis then starts at zero.</summary>
+    [Parameter]
+    public bool Area { get; set; }
+
+    /// <summary>Shows a marker at every point. The default shows the last point of each line only.</summary>
+    [Parameter]
+    public bool ShowMarkers { get; set; }
+
+    /// <summary>
+    /// Writes each series' name at the end of its line when there are two to four series, they end
+    /// far enough apart and the chart is wide enough. The default is true.
+    /// </summary>
+    [Parameter]
+    public bool DirectLabels { get; set; } = true;
+
+    /// <summary>Starts the value axis at zero. The default is true; set false to zoom in on small changes.</summary>
+    [Parameter]
+    public bool BeginAtZero { get; set; } = true;
+
+    private protected override string KindClass => Area ? "stil-chart-line stil-chart-line-area" : "stil-chart-line";
+
+    private protected override string KindName => Area ? "Area chart" : "Line chart";
+
+    private protected override bool LegendUsesLines => !Area;
+
+    private protected override bool IncludeZero => BeginAtZero || Area;
+
+    private protected override RenderFragment RenderPlot => VerticalFrame(Marks);
+
+    private protected override void Prepare()
+    {
+        base.Prepare();
+        _labels = DirectLabelPositions();
+        Layout.EndLabels = _labels.Count == 0
+            ? 0
+            : Math.Ceiling(_labels.Max(l => ChartText.Width(ChartText.Truncate(l.Series.Name, DirectLabelChars))) + 14);
+    }
+
+    /// <summary>Labels for the series that end at the last category, or none when two would overlap.</summary>
+    private List<(ChartSeriesData Series, double X, double Y)> DirectLabelPositions()
+    {
+        var count = Data.Categories.Count;
+        if (!DirectLabels || Data.Series.Count is < 2 or > 4 || count < 2)
+        {
+            return [];
+        }
+
+        var labels = Data.Series
+            .Where(s => s.Values[^1].HasValue)
+            .Select(s => (Series: s, X: ChartLayout.BandCenter(count - 1, count), Y: Layout.Y(Scale, s.Values[^1]!.Value)))
+            .OrderBy(l => l.Y)
+            .ToList();
+        for (var i = 1; i < labels.Count; i++)
+        {
+            if (labels[i].Y - labels[i - 1].Y < ChartLayout.FontSize + 2)
+            {
+                return [];
+            }
+        }
+
+        return labels;
+    }
+
+    private RenderFragment Marks => __builder =>
+    {
+        var layout = Layout;
+        var count = Data.Categories.Count;
+        var baseline = layout.Y(Scale, Scale.Baseline);
+        <svg class="stil-chart-stretch" width="100%" height="@ChartText.N(layout.Height)" viewBox="0 0 100 @ChartText.N(layout.Height)"
+             preserveAspectRatio="none" overflow="visible">
+            @foreach (var series in Data.Series)
+            {
+                <g class="stil-chart-series" style="--_color: @series.Color">
+                    @foreach (var run in ChartPaths.Runs(series.Values))
+                    {
+                        var points = run.Select(p => (ChartLayout.BandCenter(p.Index, count) * 100, layout.Y(Scale, p.Value))).ToList();
+                        if (Area)
+                        {
+                            <path class="stil-chart-area" d="@ChartPaths.Area(points, baseline)" />
+                        }
+                        if (points.Count > 1)
+                        {
+                            <path class="stil-chart-line-path" d="@ChartPaths.Line(points)" vector-effect="non-scaling-stroke" />
+                        }
+                    }
+                </g>
+            }
+        </svg>
+        <g class="stil-chart-markers">
+            @foreach (var series in Data.Series)
+            {
+                var runs = ChartPaths.Runs(series.Values);
+                var last = runs.Count == 0 ? -1 : runs[^1][^1].Index;
+                <g style="--_color: @series.Color">
+                    @foreach (var run in runs)
+                    {
+                        foreach (var (index, value) in run)
+                        {
+                            if (ShowMarkers || run.Count == 1 || index == last)
+                            {
+                                <circle class="stil-chart-marker" cx="@ChartText.Pct(ChartLayout.BandCenter(index, count))" cy="@ChartText.N(layout.Y(Scale, value))" r="5" />
+                            }
+                        }
+                    }
+                </g>
+            }
+        </g>
+        @if (_labels.Count > 0)
+        {
+            <g class="stil-chart-end-labels">
+                @foreach (var label in _labels)
+                {
+                    @SvgText(ChartText.Truncate(label.Series.Name, DirectLabelChars), ChartText.Pct(label.X), ChartText.N(label.Y),
+                        "stil-chart-label stil-chart-end-label", "start", "0.32em", label.Series.Name, dx: "10")
+                }
+            </g>
+        }
+        @for (var i = 0; i < count; i++)
+        {
+            var center = ChartText.Pct(ChartLayout.BandCenter(i, count));
+            <g class="stil-chart-band">
+                <title>@CategoryTooltip(i)</title>
+                <rect class="stil-chart-hit" x="@ChartText.Pct((double)i / count)" y="@ChartText.N(layout.PlotTop)"
+                      width="@ChartText.Pct(1.0 / count)" height="@ChartText.N(layout.PlotHeight)" />
+                <line class="stil-chart-crosshair" x1="@center" x2="@center" y1="@ChartText.N(layout.PlotTop)" y2="@ChartText.N(layout.PlotBottom)" />
+                @foreach (var series in Data.Series)
+                {
+                    if (series.Values[i] is { } value)
+                    {
+                        <circle class="stil-chart-marker stil-chart-hover-marker" style="--_color: @series.Color"
+                                cx="@center" cy="@ChartText.N(layout.Y(Scale, value))" r="5" />
+                    }
+                }
+            </g>
+        }
+    };
+}

@@ -1,0 +1,17 @@
+<StilTabs @bind-ActiveId="_period" Appearance="StilTabsAppearance.Pills" KeepAlive Label="Report period">
+    <StilTab Id="week" Title="Week">
+        <StilTextBox @bind-Value="_note" Label="Note" Hint="Switch tabs and come back: the text is kept." class="stil-mt-3" />
+    </StilTab>
+    <StilTab Id="month" Title="Month">
+        <p class="stil-mt-3 stil-mb-0">1,326 orders in October.</p>
+    </StilTab>
+    <StilTab Id="year" Title="Year">
+        <p class="stil-mt-3 stil-mb-0">14,870 orders in 2026 so far.</p>
+    </StilTab>
+</StilTabs>
+<p class="stil-text-muted stil-mt-3 stil-mb-0">Selected: @_period</p>
+
+@code {
+    private string? _period = "month";
+    private string? _note;
+}

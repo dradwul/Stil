@@ -12,6 +12,12 @@
       "runtimeExecutable": "node",
       "runtimeArgs": ["C:/Users/LUDVIG~1.AND/AppData/Local/Temp/claude/C--Repos-Luddes-StilCSS/b865aa1c-be3c-4ddb-bd45-4cb4ee8a5baa/scratchpad/serve.mjs", "C:/Repos/Luddes/StilCSS"],
       "port": 5199
+    },
+    {
+      "name": "stil-docs",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "docs/Stil.Docs", "--launch-profile", "http"],
+      "port": 5193
     }
   ]
 }

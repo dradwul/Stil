@@ -16,6 +16,7 @@ else
 }
 
 @code {
+    /// <summary>The main text of the row.</summary>
     [Parameter]
     public string? Title { get; set; }
 
@@ -35,9 +36,11 @@ else
     [Parameter]
     public string? Badge { get; set; }
 
+    /// <summary>The color of the Badge. The default is Secondary.</summary>
     [Parameter]
     public StilVariant BadgeVariant { get; set; } = StilVariant.Secondary;
 
+    /// <summary>Shows the Badge as a light tint.</summary>
     [Parameter]
     public bool BadgeSubtle { get; set; }
 
@@ -53,6 +56,7 @@ else
     [Parameter]
     public bool Selected { get; set; }
 
+    /// <summary>The row cannot be used. Applies to rows with Href or OnClick.</summary>
     [Parameter]
     public bool Disabled { get; set; }
 

@@ -1,0 +1,30 @@
+@using System.ComponentModel.DataAnnotations
+
+<EditForm Model="_booking" OnValidSubmit="Book" class="stil-form" novalidate>
+    <DataAnnotationsValidator />
+    <StilDateRangePicker TValue="DateOnly?" @bind-Start="_booking.From" @bind-End="_booking.To"
+                         Label="Delivery window" Min="2026-01-01" Max="2026-12-31" Hint="Deliveries run from Monday to Saturday." />
+    <div>
+        <StilButton Type="submit">Book</StilButton>
+    </div>
+    @if (_booked is not null)
+    {
+        <StilAlert Variant="StilVariant.Success" Subtle>@_booked</StilAlert>
+    }
+</EditForm>
+
+@code {
+    private readonly Booking _booking = new();
+    private string? _booked;
+
+    private void Book() => _booked = $"Booked from {_booking.From:d MMM} to {_booking.To:d MMM yyyy}.";
+
+    public sealed class Booking
+    {
+        [Required(ErrorMessage = "Choose the first day.")]
+        public DateOnly? From { get; set; }
+
+        [Required(ErrorMessage = "Choose the last day.")]
+        public DateOnly? To { get; set; }
+    }
+}

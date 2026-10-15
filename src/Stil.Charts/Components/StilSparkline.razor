@@ -1,0 +1,112 @@
+@namespace Stil.Charts
+@inherits StilComponentBase
+
+@* A small line without axes, for example under the value of a StilStatCard. The line is drawn in a
+   horizontally stretched SVG with a non-scaling stroke, so it fills any width. *@
+<span @attributes="AdditionalAttributes" class="@Classes("stil-chart-sparkline")" style="@ColorStyle">
+    <svg class="stil-chart-sparkline-svg" width="100%" height="@Height" role="@(Decorative ? null : "img")"
+         aria-label="@AccessibleLabel" aria-hidden="@(Decorative ? "true" : null)" focusable="false">
+        @if (_values.Count > 0)
+        {
+            <svg width="100%" height="100%" viewBox="0 0 100 @Height" preserveAspectRatio="none" overflow="visible">
+                @if (Area && _values.Count > 1)
+                {
+                    <path class="stil-chart-sparkline-area" d="@ChartPaths.Area(_points, Height - Pad)" />
+                }
+                @if (_values.Count > 1)
+                {
+                    <path class="stil-chart-sparkline-line" d="@ChartPaths.Line(_points)" vector-effect="non-scaling-stroke" />
+                }
+            </svg>
+            @if (ShowEndDot || _values.Count == 1)
+            {
+                <circle class="stil-chart-sparkline-dot" cx="@ChartText.Pct(_points[^1].X / 100)" cy="@ChartText.N(_points[^1].Y)" r="3" />
+            }
+        }
+    </svg>
+</span>
+
+@code {
+    private const double Pad = 4;
+    private List<double> _values = [];
+    private List<(double X, double Y)> _points = [];
+
+    /// <summary>The values, oldest first.</summary>
+    [Parameter]
+    public IEnumerable<double>? Values { get; set; }
+
+    /// <summary>
+    /// What the line shows, for example "Revenue, last 12 months". Screen readers hear it with the
+    /// first, last, lowest and highest value. Without a label the sparkline is decorative and hidden
+    /// from screen readers, so only leave it out when the numbers are already in the text.
+    /// </summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>A format string for the values screen readers hear, for example "N0".</summary>
+    [Parameter]
+    public string? Format { get; set; }
+
+    /// <summary>The height in pixels. The default is 32. The width follows the container.</summary>
+    [Parameter]
+    public int Height { get; set; } = 32;
+
+    /// <summary>
+    /// A CSS color for the line and the end dot. The default is a muted line
+    /// (--stil-chart-sparkline) with the end dot in --stil-chart-1.
+    /// </summary>
+    [Parameter]
+    public string? Color { get; set; }
+
+    /// <summary>Fills the area under the line with a light wash.</summary>
+    [Parameter]
+    public bool Area { get; set; }
+
+    /// <summary>Marks the last value with a dot. The default is true.</summary>
+    [Parameter]
+    public bool ShowEndDot { get; set; } = true;
+
+    private bool Decorative => string.IsNullOrWhiteSpace(Label);
+
+    private string? ColorStyle => string.IsNullOrWhiteSpace(Color) ? null : $"--_line: {Color}; --_dot: {Color}";
+
+    private string? AccessibleLabel
+    {
+        get
+        {
+            if (Decorative)
+            {
+                return null;
+            }
+
+            if (_values.Count == 0)
+            {
+                return Label;
+            }
+
+            return $"{Label}: {_values.Count} values from {V(_values[0])} to {V(_values[^1])}, lowest {V(_values.Min())}, highest {V(_values.Max())}.";
+        }
+    }
+
+    private string V(double value) => ChartText.Value(value, Format);
+
+    protected override void OnParametersSet()
+    {
+        _values = Values?.Where(double.IsFinite).ToList() ?? [];
+        _points = [];
+        if (_values.Count == 0)
+        {
+            return;
+        }
+
+        var min = _values.Min();
+        var max = _values.Max();
+        var plot = Math.Max(1, Height - Pad * 2);
+        for (var i = 0; i < _values.Count; i++)
+        {
+            var x = _values.Count == 1 ? 50 : i * 100.0 / (_values.Count - 1);
+            var y = max == min ? Height / 2.0 : Pad + (max - _values[i]) / (max - min) * plot;
+            _points.Add((x, y));
+        }
+    }
+}

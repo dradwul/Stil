@@ -1,0 +1,11 @@
+<div class="stil-stack stil-gap-3">
+    <StilCluster Gap="4">
+        <StilPagination @bind-Page="_page" TotalItems="480" PageSize="20" />
+        <span class="stil-text-muted">Page @_page of 24</span>
+    </StilCluster>
+    <StilPagination @bind-Page="_page" PageCount="24" ShowFirstLast MaxVisiblePages="9" Size="StilSize.Small" Label="Order pages" />
+</div>
+
+@code {
+    private int _page = 3;
+}

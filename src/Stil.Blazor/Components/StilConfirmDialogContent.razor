@@ -9,9 +9,11 @@
     [CascadingParameter]
     private StilDialogReference? Dialog { get; set; }
 
+    /// <summary>The message above the buttons.</summary>
     [Parameter]
     public string Message { get; set; } = "";
 
+    /// <summary>The button texts and the color of the confirm button.</summary>
     [Parameter]
     public StilConfirmOptions Options { get; set; } = new();
 

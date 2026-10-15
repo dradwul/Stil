@@ -1,0 +1,18 @@
+<div class="stil-stack stil-gap-3">
+    <StilBreadcrumbs Items="_trail" />
+
+    <StilBreadcrumbs Label="Order location">
+        <StilBreadcrumbItem Href="components/data-grid"><StilIcon Name="@StilIcons.Home" /> Orders</StilBreadcrumbItem>
+        <StilBreadcrumbItem Text="Kallio Design Oy" Href="components/lists" />
+        <StilBreadcrumbItem Text="Order #1044" Current />
+    </StilBreadcrumbs>
+</div>
+
+@code {
+    private static readonly StilLinkItem[] _trail =
+    [
+        new("Home", ""),
+        new("Components", "components/buttons"),
+        new("Navigation"),
+    ];
+}

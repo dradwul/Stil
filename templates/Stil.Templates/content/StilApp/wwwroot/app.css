@@ -1,0 +1,25 @@
+/* Your app's styles. Stil's rules are in cascade layers, so the rules here always win over Stil.
+   Use Stil's tokens (var(--stil-…)) to follow the theme and the color mode. */
+
+.app-shell {
+    min-height: 100vh;
+}
+
+.app-form {
+    max-width: 40rem;
+}
+/*#if (UseServer) */
+
+/* Shown by Blazor when the connection breaks or the app throws. It is styled as a stil-alert. */
+#blazor-error-ui {
+    display: none;
+    position: fixed;
+    inset: auto var(--stil-space-3) var(--stil-space-3);
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+    float: inline-end;
+    cursor: pointer;
+}
+/*#endif */

@@ -1,0 +1,19 @@
+<StilTabs @bind-ActiveIndex="_tab" Label="Order details">
+    <StilTab Title="Summary">
+        <p class="stil-mt-3 stil-mb-0">Order #1043 for Berglund Outdoor, 2,078.90 €.</p>
+    </StilTab>
+    <StilTab Title="Delivery">
+        <p class="stil-mt-3 stil-mb-0">PostNord, to Storgatan 12 in Umeå.</p>
+    </StilTab>
+    <StilTab Title="Invoices" Disabled>
+        <p class="stil-mt-3 stil-mb-0">Not invoiced yet.</p>
+    </StilTab>
+    <StilTab Title="History">
+        <p class="stil-mt-3 stil-mb-0">Created on 7 October by Anna Berg.</p>
+    </StilTab>
+</StilTabs>
+<p class="stil-text-muted stil-mt-3 stil-mb-0">Selected tab: @_tab</p>
+
+@code {
+    private int _tab;
+}

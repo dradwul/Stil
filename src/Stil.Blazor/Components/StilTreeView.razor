@@ -46,6 +46,7 @@
     [Parameter]
     public TItem? SelectedItem { get; set; }
 
+    /// <summary>Raised when another item is selected.</summary>
     [Parameter]
     public EventCallback<TItem?> SelectedItemChanged { get; set; }
 
@@ -53,6 +54,7 @@
     [Parameter]
     public IReadOnlyCollection<TItem>? ExpandedItems { get; set; }
 
+    /// <summary>Raised when an item is expanded or collapsed.</summary>
     [Parameter]
     public EventCallback<IReadOnlyCollection<TItem>> ExpandedItemsChanged { get; set; }
 

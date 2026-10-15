@@ -51,15 +51,19 @@ public abstract class StilComboboxBase<TItem, TValue> : StilInputBase<TValue>
     [Parameter]
     public int MaxResults { get; set; } = 50;
 
+    /// <summary>Text shown while the input is empty.</summary>
     [Parameter]
     public string? Placeholder { get; set; }
 
+    /// <summary>Small, Medium (default) or Large.</summary>
     [Parameter]
     public StilSize Size { get; set; }
 
+    /// <summary>The message when no option matches.</summary>
     [Parameter]
     public string NoResultsText { get; set; } = "No results";
 
+    /// <summary>The message while Search is running.</summary>
     [Parameter]
     public string SearchingText { get; set; } = "Searching…";
 

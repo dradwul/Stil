@@ -1,0 +1,76 @@
+@page "/components/navigation"
+@using Stil.Docs.Examples.Navigation
+
+<DocsHeader Title="Navigation" Eyebrow="Components">
+    <Lead>A navbar, navigation links with collapsible groups, breadcrumbs and pagination.</Lead>
+</DocsHeader>
+
+<p>
+    The links in these examples go to pages of this site, so you can see how the current page is marked. In your app,
+    use your own routes.
+</p>
+
+<h2 id="navbar">Navbar</h2>
+<DocExample Type="typeof(Navbar)">
+    <p>
+        <code>StilNavbar</code> is a <code>&lt;header&gt;</code> with a brand, the main content (usually a
+        <code>StilNav</code>) and <code>End</code> content such as a sign-in button. With <code>CollapseBelow</code>, the
+        content hides behind a menu button below that breakpoint; the menu closes after navigating, and the button works
+        on static pages through <code>stil.js</code>. <code>Sticky</code> keeps the bar at the top and <code>Variant</code>
+        colors it.
+    </p>
+</DocExample>
+
+<h2 id="nav">Nav links</h2>
+<DocExample Type="typeof(Navs)">
+    <p>
+        <code>StilNav</code> is a <code>&lt;nav&gt;</code> landmark; give it a <code>Label</code> when a page has more than one.
+        <code>StilNavLink</code> wraps Blazor's <code>NavLink</code>, so <code>aria-current="page"</code> follows the route.
+        <code>Match="NavLinkMatch.All"</code> marks a link only on its exact URL. Links take an <code>Icon</code> and a
+        <code>Badge</code>. <code>Pills</code> fills the current link, <code>Vertical</code> stacks the links for a sidebar,
+        and <code>Items</code> builds the links from data.
+    </p>
+</DocExample>
+
+<h2 id="nav-groups">Nav groups</h2>
+<DocExample Type="typeof(NavGroups)">
+    <p>
+        A <code>StilNavGroup</code> is a collapsible group in a vertical nav. It is a <code>&lt;details&gt;</code> element,
+        so it opens and closes without interactivity, and it opens by itself when one of its links is the current page.
+        Follow it with <code>@@bind-Expanded</code>.
+    </p>
+</DocExample>
+
+<h2 id="breadcrumbs">Breadcrumbs</h2>
+<DocExample Type="typeof(Breadcrumbs)">
+    <p>
+        Pass <code>Items</code> (<code>StilLinkItem</code> records with a text and an optional link) or
+        <code>StilBreadcrumbItem</code> children. With <code>Items</code>, the last one is the current page; with children,
+        mark it <code>Current</code>. The current item is not a link and has <code>aria-current="page"</code>.
+    </p>
+</DocExample>
+
+<h2 id="pagination">Pagination</h2>
+<DocExample Type="typeof(Pagination)">
+    <p>
+        Bind the 1-based page with <code>@@bind-Page</code> and set <code>PageCount</code>, or <code>TotalItems</code> and
+        <code>PageSize</code>. Long ranges get ellipses; <code>MaxVisiblePages</code> sets how many slots show.
+        <code>ShowFirstLast</code> adds buttons for the first and last page. The arrow buttons have screen reader texts
+        (<code>PreviousText</code>, <code>NextText</code>, …) that you can translate.
+    </p>
+    <p>
+        These buttons need an interactive render mode. For static pages, set <code>HrefTemplate</code>, for example
+        <code>"orders?page={0}"</code>: the pages become links and you read the page number from the query string.
+    </p>
+</DocExample>
+
+<p>For a side panel that slides in, for example navigation on small screens, see the <a href="components/dialogs#drawer">drawer</a>.</p>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilNavbar)" />
+<ApiTable Type="typeof(StilNav)" />
+<ApiTable Type="typeof(StilNavLink)" />
+<ApiTable Type="typeof(StilNavGroup)" />
+<ApiTable Type="typeof(StilBreadcrumbs)" />
+<ApiTable Type="typeof(StilBreadcrumbItem)" />
+<ApiTable Type="typeof(StilPagination)" />

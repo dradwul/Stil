@@ -6,9 +6,11 @@
 </div>
 
 @code {
+    /// <summary>The current value, from 0 to Max.</summary>
     [Parameter]
     public double Value { get; set; }
 
+    /// <summary>The value of a full bar. The default is 100.</summary>
     [Parameter]
     public double Max { get; set; } = 100;
 

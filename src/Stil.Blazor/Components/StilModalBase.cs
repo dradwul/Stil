@@ -25,15 +25,19 @@ public abstract class StilModalBase<TSelf> : StilComponentBase, IAsyncDisposable
     [Parameter]
     public bool Open { get; set; }
 
+    /// <summary>Raised when it opens or closes.</summary>
     [Parameter]
     public EventCallback<bool> OpenChanged { get; set; }
 
+    /// <summary>The heading, also the accessible name.</summary>
     [Parameter]
     public string? Title { get; set; }
 
+    /// <summary>Shows a close button in the header. The default is true.</summary>
     [Parameter]
     public bool ShowClose { get; set; } = true;
 
+    /// <summary>The accessible name of the close button.</summary>
     [Parameter]
     public string CloseLabel { get; set; } = "Close";
 
@@ -45,6 +49,7 @@ public abstract class StilModalBase<TSelf> : StilComponentBase, IAsyncDisposable
     [Parameter]
     public RenderFragment? Footer { get; set; }
 
+    /// <summary>The body content.</summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 

@@ -9,9 +9,11 @@
 @code {
     private IReadOnlyDictionary<string, object> Attributes => ControlAttributes("stil-input");
 
+    /// <summary>The number of visible text lines. The default is 3.</summary>
     [Parameter]
     public int Rows { get; set; } = 3;
 
+    /// <summary>Text shown while the control is empty.</summary>
     [Parameter]
     public string? Placeholder { get; set; }
 }

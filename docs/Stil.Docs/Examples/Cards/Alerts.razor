@@ -1,0 +1,17 @@
+<div class="stil-stack stil-gap-3">
+    <StilAlert Variant="StilVariant.Success" Title="Saved">Order #1043 is on its way to Umeå.</StilAlert>
+    <StilAlert Variant="StilVariant.Info">The warehouse in Tampere is closed on 6 December.</StilAlert>
+    <StilAlert Variant="StilVariant.Warning" Subtle Title="Heads up">Ferry traffic to Gotland is delayed by the storm.</StilAlert>
+    <StilAlert Variant="StilVariant.Danger" Subtle>The payment provider did not respond. Try again in a minute.</StilAlert>
+    <StilAlert Variant="StilVariant.Secondary" Subtle Dismissible OnDismiss="() => _dismissed = true">
+        Scheduled maintenance on Sunday at 02:00.
+    </StilAlert>
+    @if (_dismissed)
+    {
+        <p class="stil-text-muted stil-mb-0">You dismissed the maintenance notice.</p>
+    }
+</div>
+
+@code {
+    private bool _dismissed;
+}

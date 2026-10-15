@@ -1,0 +1,26 @@
+name: Docs
+
+# Builds the documentation site (docs/Stil.Docs, Blazor WebAssembly) to check that it compiles
+# and publishes. It is not deployed anywhere.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Publish the docs site
+        run: dotnet publish docs/Stil.Docs --configuration Release --output site

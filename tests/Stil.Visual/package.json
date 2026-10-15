@@ -1,0 +1,22 @@
+{
+  "name": "stil-visual-tests",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Visual regression and accessibility tests for Stil CSS and Stil for Blazor (Playwright + axe-core).",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:update": "playwright test --update-snapshots",
+    "test:visual": "playwright test --grep @visual",
+    "test:a11y": "playwright test --grep @a11y",
+    "report": "playwright show-report",
+    "serve": "node static-server.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.63.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

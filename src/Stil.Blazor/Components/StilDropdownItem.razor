@@ -16,12 +16,15 @@ else
     [Parameter]
     public string? Href { get; set; }
 
+    /// <summary>Raised when the item is chosen. Not used with Href.</summary>
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+    /// <summary>The item cannot be chosen.</summary>
     [Parameter]
     public bool Disabled { get; set; }
 
+    /// <summary>The item text.</summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 }

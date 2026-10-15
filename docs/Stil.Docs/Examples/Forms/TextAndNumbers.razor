@@ -1,0 +1,23 @@
+<div class="stil-form">
+    <StilGrid>
+        <StilTextBox @bind-Value="_name" Label="Name" Placeholder="Anna Berg" autocomplete="name" class="stil-col-md-6" />
+        <StilTextBox @bind-Value="_phone" Label="Phone" Type="tel" autocomplete="tel" class="stil-col-md-6" />
+        <StilTextBox @bind-Value="_website" Label="Website" Type="url" Placeholder="https://" class="stil-col-md-6" />
+        <StilTextBox @bind-Value="_password" Label="Password" Type="password" Hint="At least 12 characters."
+                     autocomplete="new-password" class="stil-col-md-6" />
+        <StilNumeric @bind-Value="_quantity" Label="Quantity" Min="1" Max="99" class="stil-col-md-6" />
+        <StilNumeric @bind-Value="_weight" Label="Weight (kg)" Step="0.1" Min="0" class="stil-col-md-6" />
+    </StilGrid>
+    <StilTextArea @bind-Value="_notes" Label="Delivery notes" Rows="3" Placeholder="Leave the parcel at the reception." />
+    <p class="stil-text-muted stil-mb-0">@_quantity × @(_weight?.ToString("N1") ?? "?") kg for @(_name ?? "nobody yet")</p>
+</div>
+
+@code {
+    private string? _name;
+    private string? _phone;
+    private string? _website;
+    private string? _password;
+    private int _quantity = 1;
+    private decimal? _weight;
+    private string? _notes;
+}

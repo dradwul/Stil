@@ -1,0 +1,13 @@
+<div class="stil-form">
+    <StilTextBox @bind-Value="_city" Label="Small" Size="StilSize.Small" />
+    <StilTextBox @bind-Value="_city" Label="Medium" />
+    <StilTextBox @bind-Value="_city" Label="Large" Size="StilSize.Large" />
+    <StilSelect @bind-Value="_city" Label="Small select" Size="StilSize.Small" Items="_cities" />
+    <StilTextBox Value="1043" Label="Order number" Disabled Hint="Set by the system." />
+    <StilSwitch Value="true" Label="Paid" Disabled />
+</div>
+
+@code {
+    private static readonly string[] _cities = ["Kiruna", "Bodø", "Joensuu"];
+    private string? _city = "Kiruna";
+}

@@ -1,0 +1,82 @@
+@page "/components/forms"
+@using Stil.Docs.Examples.Forms
+
+<DocsHeader Title="Forms" Eyebrow="Components">
+    <Lead>Form fields with a label, a hint and validation messages built in. They wrap Blazor's own inputs, so they work with EditForm and DataAnnotations.</Lead>
+</DocsHeader>
+
+<p>
+    Each field renders a label, the control, an optional <code>Hint</code> and its validation messages, and wires up
+    <code>id</code>, <code>for</code>, <code>aria-describedby</code> and <code>aria-invalid</code>. Bind with
+    <code>@@bind-Value</code>. Fields work inside an <code>EditForm</code> and on their own.
+</p>
+
+<h2 id="validation">Validation</h2>
+<DocExample Type="typeof(Validation)">
+    <p>
+        Inside an <code>EditForm</code> with a <code>DataAnnotationsValidator</code>, each field shows its own messages
+        under the control and sets <code>aria-invalid</code>. Press Save with empty fields to see them. Put
+        <code>stil-form</code> on the form for even spacing, and <code>novalidate</code> so the browser leaves
+        validation to Blazor. In static server rendering, fields work inside an enhanced <code>EditForm</code>.
+    </p>
+</DocExample>
+
+<h2 id="text-and-numbers">Text and numbers</h2>
+<DocExample Type="typeof(TextAndNumbers)">
+    <p>
+        <code>StilTextBox</code> takes a <code>Type</code>: text, email, password, search, tel or url. Set
+        <code>autocomplete</code> so browsers can fill in the field. <code>StilNumeric</code> binds any number type, with
+        <code>Min</code>, <code>Max</code> and <code>Step</code>. <code>StilTextArea</code> has <code>Rows</code>.
+    </p>
+</DocExample>
+
+<h2 id="dates">Dates and times</h2>
+<DocExample Type="typeof(DatesAndTimes)">
+    <p><code>StilDatePicker</code> uses the browser's date picker. It binds <code>DateOnly</code>, <code>DateTime</code>, <code>DateTimeOffset</code> or <code>TimeOnly</code>, nullable or not. <code>Type</code> is <code>Date</code>, <code>DateTimeLocal</code>, <code>Month</code> or <code>Time</code>. <code>Min</code> and <code>Max</code> use the input's format, for example <code>2026-01-01</code>. For a start and an end date, see the <a href="components/pickers#date-range">date range picker</a>.</p>
+</DocExample>
+
+<h2 id="choices">Selects, radios, checkboxes and switches</h2>
+<DocExample Type="typeof(Choices)">
+    <p>
+        For an enum, <code>StilSelect</code> and <code>StilRadioGroup</code> list every value without <code>Items</code>.
+        Otherwise pass <code>Items</code> and, if the text differs from the value, <code>ItemText</code>. You can also write
+        <code>&lt;option&gt;</code> elements yourself. <code>Placeholder</code> adds an empty first option.
+        A radio group is a <code>&lt;fieldset&gt;</code> with the label as its legend; <code>Inline</code> puts the options in a row.
+        <code>StilCheckbox</code> and <code>StilSwitch</code> bind a <code>bool</code>; use child content for a rich label.
+        The switch has <code>role="switch"</code>.
+    </p>
+</DocExample>
+
+<h2 id="addons">Add-ons</h2>
+<DocExample Type="typeof(Addons)">
+    <p><code>StilTextBox</code>, <code>StilNumeric</code>, <code>StilSelect</code> and <code>StilDatePicker</code> can have text or content joined to the control: <code>PrependText</code> and <code>AppendText</code> for text such as a currency, <code>Prepend</code> and <code>Append</code> for content such as a button.</p>
+</DocExample>
+
+<h2 id="sizes">Sizes and disabled fields</h2>
+<DocExample Type="typeof(SizesAndDisabled)">
+    <p>Text boxes, numbers, selects, dates and pickers take <code>Size</code>. <code>Disabled</code> works on every field. Fields also work with <code>Value</code> alone, or <code>Value</code> plus <code>ValueChanged</code>, instead of <code>@@bind-Value</code>.</p>
+</DocExample>
+
+<h2 id="custom">Custom controls</h2>
+<DocExample Type="typeof(CustomField)">
+    <p><code>StilField</code> is the wrapper the fields use. Wrap your own control in it to get the same label, hint and error layout. Give the control the <code>InputId</code> as its id, and point <code>aria-describedby</code> at <code>{InputId}-hint</code>.</p>
+</DocExample>
+
+<h2 id="attributes">Attributes and layout</h2>
+<p>
+    On a field, <code>class</code> and <code>style</code> go on the field wrapper, so <code>class="stil-col-md-6"</code>
+    places the whole field in a grid. Other attributes, such as <code>placeholder</code>, <code>autocomplete</code> and
+    <code>aria-label</code>, go on the control. Use <code>InputClass</code> for classes on the control. The <code>Id</code>
+    is generated when you do not set one.
+</p>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilTextBox)" />
+<ApiTable Type="typeof(StilTextArea)" />
+<ApiTable Type="typeof(StilNumeric<>)" />
+<ApiTable Type="typeof(StilDatePicker<>)" />
+<ApiTable Type="typeof(StilSelect<>)" />
+<ApiTable Type="typeof(StilRadioGroup<>)" />
+<ApiTable Type="typeof(StilCheckbox)" />
+<ApiTable Type="typeof(StilSwitch)" />
+<ApiTable Type="typeof(StilField)" />

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" data-stil-theme="auto">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stil</title>
+    <meta name="description" content="Stil: a themeable CSS library and a Blazor component library built on it." />
+    <!-- The deploy workflow rewrites this for a sub-path such as /StilCSS/ on GitHub Pages. -->
+    <base href="/" />
+    <link rel="icon" type="image/svg+xml" href="stil-logo.svg" />
+    <link rel="preload" id="webassembly" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="_content/Stil/stil.css" />
+    <link rel="stylesheet" href="css/docs.css" />
+    <link rel="stylesheet" href="Stil.Docs.styles.css" />
+    <script type="importmap"></script>
+    <script>
+        // Apply the saved color mode before Blazor starts, so the page does not flash.
+        try {
+            const mode = localStorage.getItem('stil-docs-mode');
+            if (mode) document.documentElement.setAttribute('data-stil-theme', mode);
+        } catch { }
+    </script>
+</head>
+
+<body class="stil-scope">
+    <div id="app">
+        <div class="docs-loading" role="status">
+            <img src="stil-logo.svg" alt="" width="96" height="46" />
+            <span>Loading the Stil docs…</span>
+        </div>
+    </div>
+
+    <div id="blazor-error-ui" class="stil-alert stil-alert-danger" role="alert">
+        Something went wrong.
+        <a href="." class="reload">Reload</a>
+        <button type="button" class="dismiss stil-close" aria-label="Dismiss"></button>
+    </div>
+    <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
+</body>
+
+</html>

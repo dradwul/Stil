@@ -6,10 +6,10 @@
 
 Stil is a themeable UI toolkit in two parts:
 
-| Part | What it is | Replaces | Docs |
-| --- | --- | --- | --- |
-| **Stil CSS** | A framework-independent CSS class library: layout, components and utilities, about 14 kB gzipped. Works with plain HTML or any framework. | Bootstrap, Tailwind, Bulma | [`src/Stil.Css`](src/Stil.Css/README.md) |
-| **Stil for Blazor** | A Blazor component library built on Stil CSS: forms with validation, a data grid, pickers, tree view, tabs, dropdowns, dialogs and toasts. Shipped as the `Stil` NuGet package. | Radzen, Blazorise, MudBlazor | [`src/Stil.Blazor`](src/Stil.Blazor/README.md) |
+| Part | What it is | Docs |
+| --- | --- | --- |
+| **Stil CSS** | A framework-independent CSS class library: layout, components and utilities, about 14 kB gzipped. Works with plain HTML or any framework. | [`src/Stil.Css`](src/Stil.Css/README.md) |
+| **Stil for Blazor** | A Blazor component library built on Stil CSS: forms with validation, a data grid, pickers, tree view, tabs, dropdowns, dialogs and toasts. Shipped as the `Stil` NuGet package. | [`src/Stil.Blazor`](src/Stil.Blazor/README.md) |
 
 The Blazor components render ordinary HTML with Stil CSS classes, so a page
 can mix components and hand-written markup. Every class starts with `stil-`

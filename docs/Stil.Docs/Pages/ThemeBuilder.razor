@@ -1,0 +1,352 @@
+@page "/theme-builder"
+@using System.Globalization
+@using System.Text
+@using System.Text.RegularExpressions
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+@inject IStilToastService Toasts
+
+<DocsHeader Title="Theme builder" Eyebrow="Get started">
+    <Lead>Pick your colors, font and corners, see them on real components in light and dark mode, then copy the CSS or C#.</Lead>
+</DocsHeader>
+
+<div class="docs-theme-builder">
+    <div class="docs-theme-controls stil-stack">
+        <StilSelect TValue="string" Value="_preset" ValueChanged="ApplyPresetAsync" Items="Presets.Keys" Label="Start from" />
+
+        @foreach (var color in _colors)
+        {
+            <div class="docs-color-input">
+                <input type="color" value="@color.Value" aria-label="@($"{color.Label} color picker")"
+                       @oninput="e => SetColor(color, e.Value?.ToString())" />
+                <StilTextBox Value="@color.Value" ValueChanged="v => SetColor(color, v)" Label="@color.Label"
+                             Size="StilSize.Small" spellcheck="false" autocomplete="off" />
+            </div>
+        }
+
+        <StilSelect TValue="string" @bind-Value="_font" Items="Fonts.Keys" Label="Font" />
+
+        <div class="stil-field">
+            <label class="stil-label" for="radius">Corner radius: @(_radius.ToString("0.###", CultureInfo.InvariantCulture))rem</label>
+            <input id="radius" type="range" min="0" max="1" step="0.0625" value="@_radius.ToString(CultureInfo.InvariantCulture)"
+                   @oninput="SetRadius" />
+        </div>
+
+        <StilRadioGroup TValue="StilThemeMode" @bind-Value="_previewMode" Items="PreviewModes" Label="Preview" Inline />
+
+        <div class="stil-cluster stil-gap-2">
+            <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Outline" OnClick="CopyLinkAsync">Copy link</StilButton>
+            <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Ghost" Variant="StilVariant.Secondary" OnClick="() => ApplyPresetAsync(DefaultPreset)">Reset</StilButton>
+        </div>
+    </div>
+
+    <div class="stil-stack stil-gap-5">
+        <StilThemeProvider Theme="Theme" Mode="_previewMode" class="docs-preview-frame stil-scope" aria-label="Preview">
+            <ThemePreview />
+        </StilThemeProvider>
+
+        <div>
+            <h2 class="stil-mt-0">Use the theme</h2>
+            <StilTabs Label="Theme output" Appearance="StilTabsAppearance.Pills">
+                <StilTab Title="Blazor">
+                    <p>In <code>Program.cs</code>, with <code>&lt;StilHead /&gt;</code> in <code>App.razor</code>:</p>
+                    <CodeBlock Language="csharp" Code="@CSharp" />
+                </StilTab>
+                <StilTab Title="CSS">
+                    <p>After <code>stil.css</code>, in your own stylesheet:</p>
+                    <CodeBlock Language="css" Code="@Css" />
+                </StilTab>
+                <StilTab Title="Part of a page">
+                    <p>Theme only part of a page with <code>StilThemeProvider</code>:</p>
+                    <CodeBlock Language="razor" Code="@Provider" />
+                </StilTab>
+            </StilTabs>
+        </div>
+    </div>
+</div>
+
+@code {
+    private const string DefaultPreset = "Teal (default)";
+
+    private sealed class ColorSetting(string label, string token, string property)
+    {
+        public string Label { get; } = label;
+        public string Token { get; } = token;
+        public string Property { get; } = property;
+        public string Value { get; set; } = "";
+        public string Default { get; set; } = "";
+        public bool IsValid => HexColor().IsMatch(Value);
+        public bool Changed => IsValid && !string.Equals(Value, Default, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static readonly Dictionary<string, string[]> Presets = new()
+    {
+        // primary, secondary, success, danger, warning, info
+        [DefaultPreset] = ["#34dbbf", "#a6dbd2", "#34db58", "#db3434", "#ebc444", "#34c2db"],
+        ["Purple"] = ["#7048e8", "#d0bfff", "#34db58", "#db3434", "#ebc444", "#34c2db"],
+        ["Forest"] = ["#2b8a3e", "#b2f2bb", "#37b24d", "#c92a2a", "#f59f00", "#1c7ed6"],
+        ["Sunset"] = ["#e8590c", "#ffd8a8", "#2f9e44", "#c92a2a", "#fab005", "#4dabf7"],
+        ["Ocean"] = ["#1864ab", "#a5d8ff", "#2b8a3e", "#e03131", "#f08c00", "#15aabf"],
+        ["Graphite"] = ["#343a40", "#ced4da", "#2f9e44", "#e03131", "#fcc419", "#339af0"],
+    };
+
+    private static readonly Dictionary<string, string?> Fonts = new()
+    {
+        ["Didact Gothic (default)"] = null,
+        ["System UI"] = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+        ["Serif"] = "Georgia, 'Times New Roman', serif",
+        ["Monospace"] = "ui-monospace, 'Cascadia Code', Consolas, monospace",
+    };
+
+    private static readonly StilThemeMode[] PreviewModes = [StilThemeMode.Light, StilThemeMode.Dark];
+
+    private const double DefaultRadius = 0.25;
+
+    private readonly List<ColorSetting> _colors =
+    [
+        new("Primary", "--stil-color-primary", nameof(StilTheme.Primary)),
+        new("Secondary", "--stil-color-secondary", nameof(StilTheme.Secondary)),
+        new("Success", "--stil-color-success", nameof(StilTheme.Success)),
+        new("Danger", "--stil-color-danger", nameof(StilTheme.Danger)),
+        new("Warning", "--stil-color-warning", nameof(StilTheme.Warning)),
+        new("Info", "--stil-color-info", nameof(StilTheme.Info)),
+    ];
+
+    private string _preset = DefaultPreset;
+    private string _font = Fonts.Keys.First();
+    private double _radius = DefaultRadius;
+    private StilThemeMode _previewMode = StilThemeMode.Light;
+
+    private static readonly Regex Hex = new("^#[0-9a-fA-F]{6}$", RegexOptions.Compiled);
+
+    private static Regex HexColor() => Hex;
+
+    [SupplyParameterFromQuery(Name = "colors")]
+    private string? ColorsQuery { get; set; }
+
+    [SupplyParameterFromQuery(Name = "font")]
+    private string? FontQuery { get; set; }
+
+    [SupplyParameterFromQuery(Name = "radius")]
+    private string? RadiusQuery { get; set; }
+
+    protected override void OnInitialized()
+    {
+        var defaults = Presets[DefaultPreset];
+        for (var i = 0; i < _colors.Count; i++)
+        {
+            _colors[i].Default = defaults[i];
+            _colors[i].Value = defaults[i];
+        }
+
+        // A shared link: ?colors=34dbbf,a6dbd2,…&font=Serif&radius=0.5
+        if (ColorsQuery?.Split(',') is { Length: 6 } shared)
+        {
+            for (var i = 0; i < _colors.Count; i++)
+            {
+                SetColor(_colors[i], "#" + shared[i]);
+            }
+
+            _preset = "";
+        }
+
+        if (FontQuery is not null && Fonts.ContainsKey(FontQuery))
+        {
+            _font = FontQuery;
+        }
+
+        if (double.TryParse(RadiusQuery, NumberStyles.Float, CultureInfo.InvariantCulture, out var radius))
+        {
+            _radius = Math.Clamp(radius, 0, 1);
+        }
+    }
+
+    private Task ApplyPresetAsync(string? name)
+    {
+        if (name is null || !Presets.TryGetValue(name, out var values))
+        {
+            return Task.CompletedTask;
+        }
+
+        _preset = name;
+        for (var i = 0; i < _colors.Count; i++)
+        {
+            _colors[i].Value = values[i];
+        }
+
+        if (name == DefaultPreset)
+        {
+            _font = Fonts.Keys.First();
+            _radius = DefaultRadius;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private void SetColor(ColorSetting color, string? value)
+    {
+        value = value?.Trim() ?? "";
+        if (value.Length == 6 && !value.StartsWith('#'))
+        {
+            value = "#" + value;
+        }
+
+        color.Value = value.ToLowerInvariant();
+    }
+
+    private void SetRadius(ChangeEventArgs e)
+    {
+        if (double.TryParse(e.Value?.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var radius))
+        {
+            _radius = radius;
+        }
+    }
+
+    private string? FontValue => Fonts[_font];
+
+    private bool RadiusChanged => Math.Abs(_radius - DefaultRadius) > 0.001;
+
+    private string RadiusValue => _radius.ToString("0.####", CultureInfo.InvariantCulture) + "rem";
+
+    // Only what differs from the defaults is part of the theme.
+    private StilTheme Theme
+    {
+        get
+        {
+            var theme = new StilTheme { FontFamily = FontValue };
+            foreach (var color in _colors.Where(c => c.Changed))
+            {
+                typeof(StilTheme).GetProperty(color.Property)!.SetValue(theme, color.Value);
+            }
+
+            if (RadiusChanged)
+            {
+                theme.Radius = RadiusValue;
+                theme.Tokens["--stil-radius-sm"] = (_radius / 2).ToString("0.####", CultureInfo.InvariantCulture) + "rem";
+                theme.Tokens["--stil-radius-lg"] = (_radius * 2).ToString("0.####", CultureInfo.InvariantCulture) + "rem";
+            }
+
+            return theme;
+        }
+    }
+
+    private IEnumerable<(string Token, string Value)> Declarations
+    {
+        get
+        {
+            foreach (var color in _colors.Where(c => c.Changed))
+            {
+                yield return (color.Token, color.Value);
+            }
+
+            if (FontValue is { } font)
+            {
+                yield return ("--stil-font-family", font);
+            }
+
+            if (RadiusChanged)
+            {
+                yield return ("--stil-radius-sm", (_radius / 2).ToString("0.####", CultureInfo.InvariantCulture) + "rem");
+                yield return ("--stil-radius-md", RadiusValue);
+                yield return ("--stil-radius-lg", (_radius * 2).ToString("0.####", CultureInfo.InvariantCulture) + "rem");
+            }
+        }
+    }
+
+    private string Css
+    {
+        get
+        {
+            var declarations = Declarations.ToList();
+            if (declarations.Count == 0)
+            {
+                return "/* The defaults: nothing to override. */";
+            }
+
+            var css = new StringBuilder(":root {\n");
+            foreach (var (token, value) in declarations)
+            {
+                css.Append(CultureInfo.InvariantCulture, $"    {token}: {value};\n");
+            }
+
+            return css.Append('}').ToString();
+        }
+    }
+
+    private string CSharp
+    {
+        get
+        {
+            var lines = new List<string>();
+            foreach (var color in _colors.Where(c => c.Changed))
+            {
+                lines.Add($"    options.Theme.{color.Property} = \"{color.Value}\";");
+            }
+
+            if (FontValue is { } font)
+            {
+                lines.Add($"    options.Theme.FontFamily = \"{font}\";");
+            }
+
+            if (RadiusChanged)
+            {
+                lines.Add($"    options.Theme.Radius = \"{RadiusValue}\";");
+                foreach (var (token, value) in Declarations.Where(d => d.Token is "--stil-radius-sm" or "--stil-radius-lg"))
+                {
+                    lines.Add($"    options.Theme.Tokens[\"{token}\"] = \"{value}\";");
+                }
+            }
+
+            return lines.Count == 0
+                ? "builder.Services.AddStil();"
+                : "builder.Services.AddStil(options =>\n{\n" + string.Join('\n', lines) + "\n});";
+        }
+    }
+
+    private string Provider
+    {
+        get
+        {
+            var properties = _colors.Where(c => c.Changed).Select(c => $"{c.Property} = \"{c.Value}\"").ToList();
+            if (FontValue is { } font)
+            {
+                properties.Add($"FontFamily = \"{font}\"");
+            }
+
+            if (RadiusChanged)
+            {
+                properties.Add($"Radius = \"{RadiusValue}\"");
+            }
+
+            return $$"""
+                <StilThemeProvider Theme="_theme">
+                    …
+                </StilThemeProvider>
+
+                @code {
+                    private readonly StilTheme _theme = new() { {{string.Join(", ", properties)}} };
+                }
+                """;
+        }
+    }
+
+    private async Task CopyLinkAsync()
+    {
+        var query = new Dictionary<string, object?>
+        {
+            ["colors"] = string.Join(',', _colors.Select(c => c.Value.TrimStart('#'))),
+            ["font"] = _font == Fonts.Keys.First() ? null : _font,
+            ["radius"] = RadiusChanged ? _radius.ToString(CultureInfo.InvariantCulture) : null,
+        };
+        var link = Navigation.GetUriWithQueryParameters(query);
+        try
+        {
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", link);
+            Toasts.Success("Link to this theme copied.");
+        }
+        catch (JSException)
+        {
+            Toasts.Error("Could not copy the link.");
+        }
+    }
+}

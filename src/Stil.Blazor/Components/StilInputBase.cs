@@ -23,15 +23,19 @@ public abstract class StilInputBase<TValue> : ComponentBase, IDisposable
     [CascadingParameter]
     private EditContext? CascadedEditContext { get; set; }
 
+    /// <summary>The value of the field. Bind it with @bind-Value.</summary>
     [Parameter]
     public TValue? Value { get; set; }
 
+    /// <summary>Raised when the user changes the value.</summary>
     [Parameter]
     public EventCallback<TValue?> ValueChanged { get; set; }
 
+    /// <summary>Identifies the bound field for validation. Set by @bind-Value.</summary>
     [Parameter]
     public Expression<Func<TValue?>>? ValueExpression { get; set; }
 
+    /// <summary>The label text.</summary>
     [Parameter]
     public string? Label { get; set; }
 
@@ -43,6 +47,7 @@ public abstract class StilInputBase<TValue> : ComponentBase, IDisposable
     [Parameter]
     public string? Id { get; set; }
 
+    /// <summary>The control cannot be used.</summary>
     [Parameter]
     public bool Disabled { get; set; }
 

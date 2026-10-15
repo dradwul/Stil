@@ -1,0 +1,27 @@
+<div class="stil-cluster">
+    <StilDropdown Text="Actions" Appearance="StilButtonAppearance.Outline">
+        <StilDropdownHeader>Order #1043</StilDropdownHeader>
+        <StilDropdownItem OnClick="@(() => _last = "Edit")">Edit</StilDropdownItem>
+        <StilDropdownItem OnClick="@(() => _last = "Duplicate")">Duplicate</StilDropdownItem>
+        <StilDropdownItem Disabled>Archive</StilDropdownItem>
+        <StilDropdownDivider />
+        <StilDropdownItem class="stil-text-danger" OnClick="@(() => _last = "Delete")">Delete</StilDropdownItem>
+    </StilDropdown>
+
+    <StilDropdown AriaLabel="More actions for order #1043" IconOnly AlignEnd
+                  Appearance="StilButtonAppearance.Ghost" Variant="StilVariant.Secondary">
+        <Toggle><StilIcon Name="@StilIcons.More" /></Toggle>
+        <ChildContent>
+            <StilDropdownItem Href="components/data-grid">Open in the data grid</StilDropdownItem>
+            <StilDropdownItem OnClick="@(() => _last = "Print")">Print</StilDropdownItem>
+        </ChildContent>
+    </StilDropdown>
+
+    <StilDropdown Text="Disabled" Disabled Appearance="StilButtonAppearance.Outline" Variant="StilVariant.Secondary" />
+
+    <span class="stil-text-muted">Last chosen: @(_last ?? "nothing")</span>
+</div>
+
+@code {
+    private string? _last;
+}

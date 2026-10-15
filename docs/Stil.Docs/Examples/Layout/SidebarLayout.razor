@@ -1,0 +1,37 @@
+<StilSidebarLayout SidebarLabel="Order filters" SidebarWidth="14rem">
+    <Sidebar>
+        <div class="stil-form">
+            <StilSelect @bind-Value="_city" Label="City" Placeholder="All cities" Items="_cities" />
+            <StilSwitch @bind-Value="_expressOnly" Label="Express only" />
+        </div>
+    </Sidebar>
+    <ChildContent>
+        <StilList>
+            @foreach (var order in Filtered)
+            {
+                <StilListItem Title="@($"Order #{order.Id}")" Description="@($"{order.Customer}, {order.City}")"
+                              Badge="@(order.Express ? "Express" : null)" BadgeVariant="StilVariant.Info" BadgeSubtle />
+            }
+        </StilList>
+    </ChildContent>
+</StilSidebarLayout>
+
+@code {
+    private static readonly string[] _cities = ["Bergen", "Göteborg", "Turku"];
+    private static readonly Order[] _orders =
+    [
+        new(1041, "Solvik Bageri", "Bergen", false),
+        new(1042, "Visby Keramik", "Göteborg", true),
+        new(1043, "Lappi Tours", "Turku", false),
+        new(1044, "Hvalsø Cykler", "Bergen", true),
+    ];
+
+    private string? _city;
+    private bool _expressOnly;
+
+    private IEnumerable<Order> Filtered => _orders
+        .Where(o => string.IsNullOrEmpty(_city) || o.City == _city)
+        .Where(o => !_expressOnly || o.Express);
+
+    private sealed record Order(int Id, string Customer, string City, bool Express);
+}

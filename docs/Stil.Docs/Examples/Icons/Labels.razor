@@ -1,0 +1,14 @@
+<div class="stil-stack stil-gap-3">
+    @* Decorative: the text next to it says the same thing. *@
+    <p class="stil-mb-0"><StilIcon Name="@StilIcons.Check" /> Paid on 7 October</p>
+
+    @* Meaningful on its own: give it a Label. *@
+    <p class="stil-mb-0">Order #1043 <StilIcon Name="@StilIcons.Warning" Label="Payment overdue" class="stil-text-danger" /></p>
+
+    @* In an icon-only button, label the button instead of the icon. *@
+    <div>
+        <StilButton IconOnly Appearance="StilButtonAppearance.Ghost" Variant="StilVariant.Secondary" aria-label="Delete order #1043">
+            <StilIcon Name="@StilIcons.Close" />
+        </StilButton>
+    </div>
+</div>

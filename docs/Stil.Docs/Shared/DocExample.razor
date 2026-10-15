@@ -1,0 +1,36 @@
+@* A live example and its source. The example is a component in the Examples folder; its .razor
+   file is also embedded, so the code shown is exactly the code that runs. *@
+<section class="docs-example" aria-label="@(Title ?? "Example")">
+    @if (Title is not null)
+    {
+        <h3 class="docs-example-title">@Title</h3>
+    }
+    @if (ChildContent is not null)
+    {
+        <div class="docs-example-description">@ChildContent</div>
+    }
+    <div class="docs-example-preview stil-scope">
+        <DynamicComponent Type="Type" />
+    </div>
+    <details class="docs-example-source" open="@ShowCode">
+        <summary>Code</summary>
+        <CodeBlock Code="@ExampleSource.Get(Type)" Language="razor" />
+    </details>
+</section>
+
+@code {
+    /// <summary>The example component, for example <c>typeof(Examples.Buttons.Variants)</c>.</summary>
+    [Parameter, EditorRequired]
+    public Type Type { get; set; } = default!;
+
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>Show the code without a click.</summary>
+    [Parameter]
+    public bool ShowCode { get; set; }
+
+    /// <summary>A description above the example.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

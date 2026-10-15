@@ -7,11 +7,12 @@
     <PackageId>Stil</PackageId>
     <AssemblyName>Stil.Blazor</AssemblyName>
     <RootNamespace>Stil.Blazor</RootNamespace>
-    <Version>0.1.0</Version>
-    <Description>Themeable Blazor components built on the Stil CSS class library: buttons, forms with validation, lists, cards, tabs, dropdowns, dialogs and toasts.</Description>
-    <PackageTags>Blazor;CSS;components;Stil</PackageTags>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>Themeable Blazor components built on the Stil CSS class library: forms with validation, a data grid, pickers, tree view, tabs, dropdowns, dialogs and toasts. Fully themeable, with dark mode and WCAG AA colors.</Description>
+    <PackageTags>blazor;components;css;datagrid;theme;dark-mode;accessibility;stil</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- XML docs for IntelliSense and the docs site. Not every public member is documented yet. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

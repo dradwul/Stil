@@ -1,0 +1,12 @@
+@* The sidebar: one group per docs section. A group opens by itself for the current page. *@
+<StilNav Vertical Label="Documentation" class="docs-nav">
+    @foreach (var section in DocsPages.Sections)
+    {
+        <StilNavGroup Title="@section.Title" Icon="@section.Icon">
+            @foreach (var link in section.Pages)
+            {
+                <StilNavLink Href="@link.Href" Match="NavLinkMatch.All">@link.Title</StilNavLink>
+            }
+        </StilNavGroup>
+    }
+</StilNav>

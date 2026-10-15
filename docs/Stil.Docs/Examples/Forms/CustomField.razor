@@ -1,0 +1,8 @@
+<StilField Label="Delivery priority" Hint="@($"Level {_priority} of 5. Higher levels ship first.")" InputId="priority">
+    <input id="priority" type="range" min="1" max="5" class="stil-w-100" aria-describedby="priority-hint"
+           @bind="_priority" @bind:event="oninput" />
+</StilField>
+
+@code {
+    private int _priority = 3;
+}

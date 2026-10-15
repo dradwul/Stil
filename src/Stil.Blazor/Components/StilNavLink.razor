@@ -18,6 +18,7 @@
 </NavLink>
 
 @code {
+    /// <summary>The link target.</summary>
     [Parameter, EditorRequired]
     public string Href { get; set; } = "";
 
@@ -33,9 +34,11 @@
     [Parameter]
     public string? Badge { get; set; }
 
+    /// <summary>The color of the Badge. The default is Secondary.</summary>
     [Parameter]
     public StilVariant BadgeVariant { get; set; } = StilVariant.Secondary;
 
+    /// <summary>The link text.</summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 

@@ -1,0 +1,173 @@
+@namespace Stil.Charts
+@typeparam TItem
+@attribute [CascadingTypeParameter(nameof(TItem))]
+@inherits StilChartBase<TItem>
+
+@* A donut chart: the parts of a whole, with the total in the middle and a legend that lists each
+   part's value and share. It reads the first series. *@
+@RenderChart
+
+@code {
+    private const double Outer = 100;
+    private const double Inner = 66;
+    private List<Slice> _slices = [];
+    private double _total;
+
+    /// <summary>
+    /// The most slices to draw. Smaller parts beyond it are combined into one "Other" slice.
+    /// The default is 6, the number of chart color tokens.
+    /// </summary>
+    [Parameter]
+    public int MaxSlices { get; set; } = PaletteSize;
+
+    /// <summary>The name of the combined slice.</summary>
+    [Parameter]
+    public string OtherText { get; set; } = "Other";
+
+    /// <summary>The word under the total in the middle.</summary>
+    [Parameter]
+    public string TotalText { get; set; } = "Total";
+
+    /// <summary>Shows the total in the middle. The default is true.</summary>
+    [Parameter]
+    public bool ShowTotal { get; set; } = true;
+
+    /// <summary>CSS colors for the slices, in order. Slices without one use the chart tokens.</summary>
+    [Parameter]
+    public IReadOnlyList<string>? Colors { get; set; }
+
+    /// <summary>The header of the share column in the data table.</summary>
+    [Parameter]
+    public string ShareText { get; set; } = "Share";
+
+    private sealed record Slice(string Name, double Value, double Share, string Color, bool IsOther);
+
+    private protected override string KindClass => "stil-chart-donut";
+
+    private protected override string KindName => "Donut chart";
+
+    private protected override int DefaultHeight => 200;
+
+    /// <summary>The donut lists its parts in its own legend.</summary>
+    private protected override RenderFragment RenderLegend => _ => { };
+
+    private ChartSeriesData? Series => Data.Series.Count > 0 ? Data.Series[0] : null;
+
+    private protected override void Prepare()
+    {
+        base.Prepare();
+        _slices = [];
+        _total = 0;
+        if (Series is not { } series)
+        {
+            return;
+        }
+
+        var parts = series.Values
+            .Select((v, i) => (Name: Data.Categories[i], Value: v ?? 0, Index: i))
+            .Where(p => p.Value > 0)
+            .ToList();
+        _total = parts.Sum(p => p.Value);
+        if (_total <= 0)
+        {
+            return;
+        }
+
+        var max = Math.Max(1, MaxSlices);
+        var kept = parts.Count <= max
+            ? parts
+            : parts.OrderByDescending(p => p.Value).Take(max - 1).OrderBy(p => p.Index).ToList();
+        for (var k = 0; k < kept.Count; k++)
+        {
+            var color = Colors is { } colors && k < colors.Count && !string.IsNullOrWhiteSpace(colors[k]) ? colors[k] : SeriesColor(k, null);
+            _slices.Add(new Slice(kept[k].Name, kept[k].Value, kept[k].Value / _total, color, false));
+        }
+
+        if (kept.Count < parts.Count)
+        {
+            var other = parts.Except(kept).Sum(p => p.Value);
+            _slices.Add(new Slice(OtherText, other, other / _total, "var(--stil-chart-other, var(--stil-color-border-strong))", true));
+        }
+    }
+
+    private string Value(double value) => Series is { } series ? FormatValue(value, series, MissingText) : ChartText.Value(value, Format);
+
+    private protected override string BuildSummary()
+    {
+        if (_slices.Count == 0)
+        {
+            return EmptyText;
+        }
+
+        var largest = _slices.Where(s => !s.IsOther).MaxBy(s => s.Value) ?? _slices[0];
+        var parts = _slices.Select(s => $"{s.Name} {Value(s.Value)} ({ChartText.Percent(s.Share)})").ToList();
+        return $"{KindName} of {Series!.Name}: {_slices.Count} parts totalling {Value(_total)}. " +
+               $"Largest: {largest.Name}, {ChartText.Percent(largest.Share)}. {string.Join(", ", parts)}.";
+    }
+
+    private protected override (IReadOnlyList<string> Headers, IReadOnlyList<IReadOnlyList<string>> Rows) TableData()
+    {
+        var series = Series!;
+        var headers = new List<string> { CategoryText, series.Name, ShareText };
+        var rows = new List<IReadOnlyList<string>>();
+        for (var i = 0; i < Data.Categories.Count; i++)
+        {
+            var value = series.Values[i];
+            var share = value is > 0 && _total > 0 ? ChartText.Percent(value.Value / _total) : MissingText;
+            rows.Add([Data.Categories[i], FormatValue(value, series, MissingText), share]);
+        }
+
+        rows.Add([TotalText, Value(_total), ChartText.Percent(1)]);
+        return (headers, rows);
+    }
+
+    private protected override RenderFragment RenderPlot => __builder =>
+    {
+        if (_slices.Count == 0)
+        {
+            <div class="stil-chart-empty" style="min-height: @(EffectiveHeight)px">@EmptyText</div>
+            return;
+        }
+
+        var totalText = Value(_total);
+        // Fit the total inside the hole: shrink long numbers.
+        var totalSize = Math.Min(26, Inner * 1.7 / Math.Max(1, totalText.Length * 0.6));
+        <div class="stil-chart-donut-body">
+            <svg class="stil-chart-donut-svg" viewBox="-100 -100 200 200" style="--_size: @(EffectiveHeight)px" role="img"
+                 aria-labelledby="@SvgLabelledBy" aria-label="@SvgLabel" aria-describedby="@DescriptionId">
+                <desc id="@DescriptionId">@SummaryText</desc>
+                @{
+                    var angle = 0.0;
+                }
+                @foreach (var slice in _slices)
+                {
+                    var start = angle;
+                    angle += slice.Share * Math.PI * 2;
+                    <g class="stil-chart-slice" style="--_color: @slice.Color">
+                        <title>@($"{slice.Name}: {Value(slice.Value)} ({ChartText.Percent(slice.Share)})")</title>
+                        <path class="stil-chart-slice-mark" d="@ChartPaths.DonutSlice(0, 0, Outer - 1, Inner, start, Math.Min(angle, Math.PI * 2))"
+                              vector-effect="non-scaling-stroke" />
+                    </g>
+                }
+                @if (ShowTotal)
+                {
+                    <g class="stil-chart-donut-center" style="font-size: @(ChartText.N(totalSize))px">
+                        @SvgText(totalText, "0", ChartText.N(totalSize * 0.3), "stil-chart-donut-total", "middle")
+                        @SvgText(TotalText, "0", ChartText.N(totalSize * 0.3 + 18), "stil-chart-donut-label", "middle")
+                    </g>
+                }
+            </svg>
+            <ul class="stil-chart-donut-legend">
+                @foreach (var slice in _slices)
+                {
+                    <li class="stil-chart-legend-item" style="--_color: @slice.Color">
+                        <span class="stil-chart-key" aria-hidden="true"></span>
+                        <span class="stil-chart-legend-name">@slice.Name</span>
+                        <span class="stil-chart-legend-value">@Value(slice.Value)</span>
+                        <span class="stil-chart-legend-share">@ChartText.Percent(slice.Share)</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    };
+}

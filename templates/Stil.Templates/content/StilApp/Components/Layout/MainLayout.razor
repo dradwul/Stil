@@ -1,0 +1,91 @@
+@inherits LayoutComponentBase
+
+@* StilThemeProvider sets the color mode for the whole app. *@
+<StilThemeProvider Mode="_mode" class="app-shell">
+    <StilNavbar Sticky CollapseBelow="StilBreakpoint.Medium" BrandText="My Stil App">
+        <ChildContent>
+            <StilNav Label="Main">
+                @*#if (IncludeSampleContent)
+                <StilNavLink Href="" Match="NavLinkMatch.All" Icon="@StilIcons.Home">Dashboard</StilNavLink>
+                <StilNavLink Href="orders/new" Icon="@StilIcons.Plus">New order</StilNavLink>
+                ##else
+                <StilNavLink Href="" Match="NavLinkMatch.All" Icon="@StilIcons.Home">Home</StilNavLink>
+                ##endif*@
+            </StilNav>
+        </ChildContent>
+        <End>
+            @*#if (UseServer)
+            <StilSelect @bind-Value="_mode" Size="StilSize.Small" aria-label="Color mode" />
+            ##else
+            @* The app has no interactivity, so the switch is a form. The choice is kept in a cookie. *@
+            <form method="post" @formname="color-mode" @onsubmit="SaveColorMode" data-enhance>
+                <AntiforgeryToken />
+                <StilButtonGroup Label="Color mode">
+                    @foreach (var mode in Enum.GetValues<StilThemeMode>())
+                    {
+                        <StilButton Type="submit" name="ColorMode" value="@mode" Size="StilSize.Small"
+                                    Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline"
+                                    Pressed="@(mode == _mode)">@mode</StilButton>
+                    }
+                </StilButtonGroup>
+            </form>
+            ##endif*@
+        </End>
+    </StilNavbar>
+
+    <main class="stil-container stil-py-5">
+        @Body
+    </main>
+    @*#if (UseServer)
+
+    @* The hosts for IStilDialogService and IStilToastService. Inside the theme provider, dialogs
+       and toasts follow the color mode. *@
+    <StilDialogHost />
+    <StilToastHost />
+
+    <div id="blazor-error-ui" class="stil-alert stil-alert-danger" data-nosnippet>
+        An unhandled error has occurred.
+        <a href="." class="reload">Reload</a>
+        <span class="dismiss">🗙</span>
+    </div>
+    ##endif*@
+</StilThemeProvider>
+@*#if (UseServer)
+
+@code {
+    private StilThemeMode _mode = StilThemeMode.Auto;
+}
+##else
+
+@code {
+    private const string ColorModeCookie = "color-mode";
+
+    private StilThemeMode _mode = StilThemeMode.Auto;
+
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
+
+    [SupplyParameterFromForm(FormName = "color-mode")]
+    private StilThemeMode? ColorMode { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Enum.TryParse<StilThemeMode>(HttpContext?.Request.Cookies[ColorModeCookie], out var saved) && Enum.IsDefined(saved))
+        {
+            _mode = saved;
+        }
+    }
+
+    private void SaveColorMode()
+    {
+        if (ColorMode is not { } mode || !Enum.IsDefined(mode))
+        {
+            return;
+        }
+
+        _mode = mode;
+        HttpContext?.Response.Cookies.Append(ColorModeCookie, mode.ToString(),
+            new() { MaxAge = TimeSpan.FromDays(365), IsEssential = true, HttpOnly = true });
+    }
+}
+##endif*@

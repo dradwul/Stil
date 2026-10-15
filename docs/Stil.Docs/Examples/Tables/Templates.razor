@@ -1,0 +1,32 @@
+<StilTable Items="_orders">
+    <Columns>
+        <StilColumn Title="Order" Field="@(o => $"#{o.Id}")" />
+        <StilColumn Title="Customer">
+            <Template>
+                <StilCluster>
+                    <StilAvatar Name="@context.Contact" Size="StilSize.Small" />
+                    <span>@context.Customer</span>
+                </StilCluster>
+            </Template>
+        </StilColumn>
+        <StilColumn Title="Status">
+            <Template>
+                <StilBadge Variant="@(context.Paid ? StilVariant.Success : StilVariant.Warning)" Subtle>
+                    @(context.Paid ? "Paid" : "Pending")
+                </StilBadge>
+            </Template>
+        </StilColumn>
+        <StilColumn Title="Amount (€)" Field="@(o => o.Amount)" Format="N2" Align="StilTextAlign.End" />
+    </Columns>
+</StilTable>
+
+@code {
+    private static readonly Order[] _orders =
+    [
+        new(1044, "Kallio Design Oy", "Aino Kallio", 455.2m, false),
+        new(1043, "Berglund Outdoor", "Erik Berglund", 2078.9m, true),
+        new(1042, "Nordvik Supply", "Ingrid Nordvik", 1499.5m, false),
+    ];
+
+    private sealed record Order(int Id, string Customer, string Contact, decimal Amount, bool Paid);
+}

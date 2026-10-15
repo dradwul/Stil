@@ -1,0 +1,33 @@
+<div class="stil-stack stil-gap-3">
+    <StilCluster Gap="4">
+        <StilSwitch @bind-Value="_striped" Label="Striped" />
+        <StilSwitch @bind-Value="_hover" Label="Hover" />
+        <StilSwitch @bind-Value="_compact" Label="Compact" />
+        <StilSwitch @bind-Value="_bordered" Label="Bordered" />
+    </StilCluster>
+    <StilTable Items="_stores" Striped="_striped" Hover="_hover" Compact="_compact" Bordered="_bordered">
+        <Columns>
+            <StilColumn Title="Store" Field="@(s => s.City)" />
+            <StilColumn Title="Country" Field="@(s => s.Country)" />
+            <StilColumn Title="Staff" Field="@(s => s.Staff)" Align="StilTextAlign.End" />
+        </Columns>
+    </StilTable>
+</div>
+
+@code {
+    private static readonly Store[] _stores =
+    [
+        new("Reykjavík", "Iceland", 6),
+        new("Tromsø", "Norway", 9),
+        new("Luleå", "Sweden", 11),
+        new("Rovaniemi", "Finland", 8),
+        new("Aalborg", "Denmark", 14),
+    ];
+
+    private bool _striped = true;
+    private bool _hover;
+    private bool _compact;
+    private bool _bordered;
+
+    private sealed record Store(string City, string Country, int Staff);
+}

@@ -1,0 +1,37 @@
+<div class="stil-form">
+    <StilGrid>
+        <StilSelect @bind-Value="_status" Label="Status" class="stil-col-md-6" />
+        <StilSelect @bind-Value="_warehouseId" Label="Warehouse" Items="_warehouses.Keys" ItemText="id => _warehouses[id]"
+                    class="stil-col-md-6" />
+        <StilSelect @bind-Value="_country" Label="Country" Placeholder="Choose a country" class="stil-col-md-6">
+            <option value="DK">Denmark</option>
+            <option value="FI">Finland</option>
+            <option value="IS">Iceland</option>
+            <option value="NO">Norway</option>
+            <option value="SE">Sweden</option>
+        </StilSelect>
+    </StilGrid>
+    <StilRadioGroup @bind-Value="_carrier" Label="Carrier" Items="_carriers" Inline />
+    <StilSwitch @bind-Value="_express" Label="Express delivery" Hint="Ships within 24 hours." />
+    <StilCheckbox @bind-Value="_gift">
+        Wrap as a gift <StilBadge Variant="StilVariant.Info" Subtle>Free</StilBadge>
+    </StilCheckbox>
+    <p class="stil-text-muted stil-mb-0">
+        @_status, from @_warehouses[_warehouseId] to @(string.IsNullOrEmpty(_country) ? "?" : _country) with @_carrier.
+        Express: @(_express ? "yes" : "no"). Gift: @(_gift ? "yes" : "no").
+    </p>
+</div>
+
+@code {
+    private static readonly Dictionary<int, string> _warehouses = new() { [1] = "Göteborg", [2] = "Vantaa", [3] = "Drammen" };
+    private static readonly string[] _carriers = ["PostNord", "Bring", "Pickup point"];
+
+    private OrderStatus _status;
+    private int _warehouseId = 1;
+    private string? _country;
+    private string _carrier = "PostNord";
+    private bool _express;
+    private bool _gift;
+
+    public enum OrderStatus { Pending, Shipped, Delivered, Cancelled }
+}

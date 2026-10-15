@@ -1,0 +1,70 @@
+@* The parameters of a component, read from the component itself and its XML documentation. *@
+<section class="docs-api" aria-labelledby="@_headingId">
+    <h3 id="@_headingId" class="docs-api-title"><code>@Name</code></h3>
+    @if (ChildContent is not null)
+    {
+        <div class="docs-api-description">@ChildContent</div>
+    }
+    <div class="stil-table-responsive">
+        <table class="stil-table stil-table-compact docs-api-table">
+            <thead>
+                <tr>
+                    <th scope="col">Parameter</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Default</th>
+                    <th scope="col">Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var parameter in ApiDocs.Parameters(Type))
+                {
+                    <tr>
+                        <th scope="row">
+                            <code>@parameter.Name</code>
+                            @if (parameter.Required)
+                            {
+                                <StilBadge Variant="StilVariant.Secondary" Subtle class="stil-ms-1">required</StilBadge>
+                            }
+                        </th>
+                        <td><code class="docs-type">@parameter.Type</code></td>
+                        <td>@if (parameter.Default is not null) { <code>@parameter.Default</code> }</td>
+                        <td>@parameter.Description</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <p class="stil-text-muted stil-fs-sm">Other attributes, such as <code>class</code>, <code>id</code> and <code>aria-*</code>, go on the root element@(IsField ? " (for fields: class and style go on the field wrapper, the rest on the control)" : "").</p>
+</section>
+
+@code {
+    private string _headingId = "";
+
+    /// <summary>The component type. Use the open generic type for generic components, for example <c>typeof(StilDataGrid&lt;&gt;)</c>.</summary>
+    [Parameter, EditorRequired]
+    public Type Type { get; set; } = default!;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string Name => Type.IsGenericTypeDefinition
+        ? $"{Type.Name[..Type.Name.IndexOf('`')]}<{string.Join(", ", Type.GetGenericArguments().Select(a => a.Name))}>"
+        : Type.Name;
+
+    private bool IsField => IsFieldType(Type);
+
+    private static bool IsFieldType(Type? type)
+    {
+        for (; type is not null; type = type.BaseType)
+        {
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(StilInputBase<>))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected override void OnParametersSet() => _headingId = "api-" + Type.Name.Split('`')[0].ToLowerInvariant();
+}

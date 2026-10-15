@@ -1,0 +1,17 @@
+<StilGrid>
+    <StilDatePicker @bind-Value="_delivery" Label="Delivery date" Min="2026-01-01" class="stil-col-md-6" />
+    <StilDatePicker @bind-Value="_pickup" Label="Pickup" Type="InputDateType.DateTimeLocal" class="stil-col-md-6" />
+    <StilDatePicker @bind-Value="_month" Label="Billing month" Type="InputDateType.Month" class="stil-col-md-6" />
+    <StilDatePicker @bind-Value="_opens" Label="Store opens" Type="InputDateType.Time" class="stil-col-md-6" />
+</StilGrid>
+<p class="stil-text-muted stil-mt-3 stil-mb-0">
+    Delivery @(_delivery?.ToString("d MMM yyyy") ?? "not set"), pickup @_pickup.ToString("g"),
+    billing @_month.ToString("MMMM yyyy"), opens at @_opens.
+</p>
+
+@code {
+    private DateOnly? _delivery;
+    private DateTime _pickup = new(2026, 11, 3, 9, 30, 0);
+    private DateOnly _month = new(2026, 11, 1);
+    private TimeOnly _opens = new(8, 0);
+}

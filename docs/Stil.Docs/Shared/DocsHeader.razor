@@ -1,0 +1,25 @@
+@* The title, browser tab title and lead paragraph of a docs page. *@
+<PageTitle>@(Title == "Stil" ? "Stil" : $"{Title} · Stil")</PageTitle>
+<header class="docs-header">
+    @if (!string.IsNullOrWhiteSpace(Eyebrow))
+    {
+        <p class="docs-eyebrow">@Eyebrow</p>
+    }
+    <h1 tabindex="-1">@Title</h1>
+    @if (Lead is not null)
+    {
+        <p class="docs-lead">@Lead</p>
+    }
+</header>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = "";
+
+    /// <summary>A small label above the title, for example the section.</summary>
+    [Parameter]
+    public string? Eyebrow { get; set; }
+
+    [Parameter]
+    public RenderFragment? Lead { get; set; }
+}

@@ -1,0 +1,19 @@
+<StilNav Vertical Label="Sections" style="max-width: 16rem">
+    <StilNavLink Href="components/buttons" Icon="@StilIcons.Home">Buttons</StilNavLink>
+    <StilNavGroup Title="Data" Icon="@StilIcons.Folder">
+        <StilNavLink Href="components/data-grid">Data grid</StilNavLink>
+        <StilNavLink Href="components/tree-view">Tree view</StilNavLink>
+    </StilNavGroup>
+    <StilNavGroup Title="Navigation" Icon="@StilIcons.Menu">
+        <StilNavLink Href="components/navigation">Navbar and nav</StilNavLink>
+        <StilNavLink Href="components/menus">Tabs and dropdowns</StilNavLink>
+    </StilNavGroup>
+    <StilNavGroup Title="Help" Icon="@StilIcons.Info" @bind-Expanded="_helpOpen">
+        <StilNavLink Href="https://github.com/dradwul/StilCSS/issues" Icon="@StilIcons.External">Report an issue</StilNavLink>
+    </StilNavGroup>
+</StilNav>
+<p class="stil-text-muted stil-mt-2 stil-mb-0">Help is @(_helpOpen ? "open" : "closed").</p>
+
+@code {
+    private bool _helpOpen;
+}

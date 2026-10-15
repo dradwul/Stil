@@ -45,6 +45,7 @@
     private string? _status;
     private bool _dragOver;
 
+    /// <summary>The label above the drop zone.</summary>
     [Parameter]
     public string? Label { get; set; }
 
@@ -79,6 +80,7 @@
     [Parameter]
     public EventCallback<IReadOnlyList<IBrowserFile>> OnChange { get; set; }
 
+    /// <summary>The drop zone cannot be used.</summary>
     [Parameter]
     public bool Disabled { get; set; }
 

@@ -1,0 +1,16 @@
+<div class="stil-grid">
+    <StilThemeProvider Theme="_admin" class="stil-col-md-6 stil-p-3">
+        <StilAlert Variant="StilVariant.Danger" Subtle Title="Admin area">Changes here affect every user.</StilAlert>
+        <StilButton>Save settings</StilButton>
+    </StilThemeProvider>
+
+    <StilThemeProvider Theme="_forest" class="stil-col-md-6 stil-p-3">
+        <StilAlert Variant="StilVariant.Success" Subtle Title="Forest theme">A different brand, side by side.</StilAlert>
+        <StilButton>Book a cabin</StilButton>
+    </StilThemeProvider>
+</div>
+
+@code {
+    private readonly StilTheme _admin = new() { Primary = "#c92a2a", Radius = "0" };
+    private readonly StilTheme _forest = new() { Primary = "#2b8a3e", Radius = "1rem" };
+}

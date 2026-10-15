@@ -1,0 +1,64 @@
+@page "/components/menus"
+@using Stil.Docs.Examples.Menus
+
+<DocsHeader Title="Tabs, dropdowns and tooltips" Eyebrow="Components">
+    <Lead>Tabs to switch between panels, dropdown menus for actions, and tooltips for short hints.</Lead>
+</DocsHeader>
+
+<h2 id="tabs">Tabs</h2>
+<DocExample Type="typeof(Tabs)">
+    <p>
+        <code>StilTabs</code> follows the WAI-ARIA tabs pattern. Only the selected tab is in the tab order; the arrow keys,
+        Home and End move between tabs and select them, and disabled tabs are skipped. Name the tab list with
+        <code>Label</code>. Bind the selected tab with <code>@@bind-ActiveIndex</code>. Switching tabs needs an interactive
+        render mode. For navigation between pages, use a <a href="components/navigation#nav">nav</a> instead.
+    </p>
+</DocExample>
+
+<h2 id="pills">Pills, ids and kept panels</h2>
+<DocExample Type="typeof(PillTabs)">
+    <p>
+        <code>Appearance="StilTabsAppearance.Pills"</code> fills the selected tab. Give each tab an <code>Id</code> and bind
+        <code>@@bind-ActiveId</code> when tabs can be added or removed. Only the selected panel is rendered, unless
+        <code>KeepAlive</code> is set: then every panel stays rendered and hidden, so form input survives switching.
+    </p>
+</DocExample>
+
+<h2 id="dropdowns">Dropdowns</h2>
+<DocExample Type="typeof(Dropdowns)">
+    <p>
+        <code>StilDropdown</code> is a <code>&lt;details&gt;</code> element, so it opens without interactivity.
+        <code>stil.js</code> closes it on an outside click, on Escape and after choosing an item, and the arrow keys move
+        between items. Items are buttons (<code>OnClick</code>) or links (<code>Href</code>); group them with
+        <code>StilDropdownHeader</code> and <code>StilDropdownDivider</code>. For an icon-only toggle, use
+        <code>Toggle</code>, <code>IconOnly</code> and an <code>AriaLabel</code>. <code>AlignEnd</code> aligns the menu
+        with the end of the toggle and <code>DropUp</code> opens it above.
+    </p>
+</DocExample>
+
+<h2 id="menu-data">Menus from data</h2>
+<DocExample Type="typeof(MenuFromData)">
+    <p>
+        Build the menu from <code>StilMenuItem</code> values: <code>Action</code>, <code>Link</code>, <code>Header</code> and
+        <code>Divider</code>. <code>@@bind-Open</code> follows whether the menu is open.
+    </p>
+</DocExample>
+
+<h2 id="tooltips">Tooltips</h2>
+<DocExample Type="typeof(Tooltips)">
+    <p>
+        <code>StilTooltip</code> shows <code>Text</code> above its content on hover and keyboard focus, or below with
+        <code>Position="StilTooltipPosition.Bottom"</code>. It is CSS only and works in every render mode. Screen readers do
+        not read the tooltip, so the wrapped element needs its own accessible name, such as its text or an
+        <code>aria-label</code>. Do not put essential information only in a tooltip.
+    </p>
+</DocExample>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilTabs)" />
+<ApiTable Type="typeof(StilTab)" />
+<ApiTable Type="typeof(StilDropdown)" />
+<ApiTable Type="typeof(StilDropdownItem)" />
+<ApiTable Type="typeof(StilDropdownHeader)" />
+<ApiTable Type="typeof(StilDropdownDivider)" />
+<ApiTable Type="typeof(StilTooltip)" />

@@ -176,6 +176,7 @@
     [Parameter]
     public bool Filterable { get; set; }
 
+    /// <summary>None (default), Single or Multiple.</summary>
     [Parameter]
     public StilSelectionMode SelectionMode { get; set; }
 
@@ -183,6 +184,7 @@
     [Parameter]
     public TItem? SelectedItem { get; set; }
 
+    /// <summary>Raised when the selected row changes.</summary>
     [Parameter]
     public EventCallback<TItem?> SelectedItemChanged { get; set; }
 
@@ -190,6 +192,7 @@
     [Parameter]
     public IReadOnlyCollection<TItem>? SelectedItems { get; set; }
 
+    /// <summary>Raised when the selected rows change.</summary>
     [Parameter]
     public EventCallback<IReadOnlyCollection<TItem>> SelectedItemsChanged { get; set; }
 
@@ -223,15 +226,19 @@
     [Parameter]
     public string? Height { get; set; }
 
+    /// <summary>A caption shown with the table, also its accessible name.</summary>
     [Parameter]
     public string? Caption { get; set; }
 
+    /// <summary>Shade every other row.</summary>
     [Parameter]
     public bool Striped { get; set; }
 
+    /// <summary>Smaller cell padding.</summary>
     [Parameter]
     public bool Compact { get; set; }
 
+    /// <summary>Borders on every cell.</summary>
     [Parameter]
     public bool Bordered { get; set; }
 
@@ -239,12 +246,15 @@
     [Parameter]
     public RenderFragment? EmptyContent { get; set; }
 
+    /// <summary>The text shown when there are no rows.</summary>
     [Parameter]
     public string EmptyText { get; set; } = "No items";
 
+    /// <summary>The text shown while rows are loading.</summary>
     [Parameter]
     public string LoadingText { get; set; } = "Loading…";
 
+    /// <summary>The placeholder of the text filters.</summary>
     [Parameter]
     public string FilterPlaceholder { get; set; } = "Filter";
 
@@ -252,6 +262,7 @@
     [Parameter]
     public string FilterLabelFormat { get; set; } = "Filter {0}";
 
+    /// <summary>The first option of a choice filter, which shows every row.</summary>
     [Parameter]
     public string AllOptionText { get; set; } = "All";
 
@@ -259,15 +270,19 @@
     [Parameter]
     public string SummaryFormat { get; set; } = "{0}–{1} of {2}";
 
+    /// <summary>The accessible name of the rows per page select.</summary>
     [Parameter]
     public string RowsPerPageLabel { get; set; } = "Rows per page";
 
+    /// <summary>The accessible name of the pager.</summary>
     [Parameter]
     public string PaginationLabel { get; set; } = "Table pages";
 
+    /// <summary>The accessible name of the header checkbox in Multiple mode.</summary>
     [Parameter]
     public string SelectAllLabel { get; set; } = "Select all rows on this page";
 
+    /// <summary>The accessible name of a row checkbox in Multiple mode.</summary>
     [Parameter]
     public string SelectRowLabel { get; set; } = "Select row";
 

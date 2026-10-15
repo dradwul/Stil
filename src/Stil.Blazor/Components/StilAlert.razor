@@ -18,6 +18,7 @@
 }
 
 @code {
+    /// <summary>The color. The default is Info.</summary>
     [Parameter]
     public StilVariant Variant { get; set; } = StilVariant.Info;
 
@@ -25,6 +26,7 @@
     [Parameter]
     public bool Subtle { get; set; }
 
+    /// <summary>A bold title above the message.</summary>
     [Parameter]
     public string? Title { get; set; }
 
@@ -32,9 +34,11 @@
     [Parameter]
     public bool Dismissible { get; set; }
 
+    /// <summary>The accessible name of the close button.</summary>
     [Parameter]
     public string CloseLabel { get; set; } = "Close";
 
+    /// <summary>Raised when the user closes the alert.</summary>
     [Parameter]
     public EventCallback OnDismiss { get; set; }
 
@@ -45,6 +49,7 @@
     [Parameter]
     public string? Role { get; set; }
 
+    /// <summary>The message.</summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 

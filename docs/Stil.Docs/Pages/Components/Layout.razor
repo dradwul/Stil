@@ -1,0 +1,50 @@
+@page "/components/layout"
+@using Stil.Docs.Examples.Layout
+
+<DocsHeader Title="Layout" Eyebrow="Components">
+    <Lead>A 12-column grid, stacks and clusters for spacing, a sidebar layout, containers, headings and themed sections.</Lead>
+</DocsHeader>
+
+<p>
+    The layout components render the Stil CSS layout classes (<code>stil-grid</code>, <code>stil-stack</code>,
+    <code>stil-cluster</code>, <code>stil-with-sidebar</code>, <code>stil-container</code>). They render plain
+    <code>&lt;div&gt;</code> elements and work in every render mode. You can also use the classes directly.
+</p>
+
+<h2 id="grid">Grid</h2>
+<DocExample Type="typeof(Grid)">
+    <p><code>StilGrid</code> is a 12-column grid. A <code>StilCol</code> spans <code>Span</code> columns at every width, and <code>SpanSm</code>, <code>SpanMd</code>, <code>SpanLg</code> and <code>SpanXl</code> from that breakpoint up. Without a span a cell is full width, so the layout stacks on small screens.</p>
+</DocExample>
+
+<h2 id="stack-and-cluster">Stack and cluster</h2>
+<DocExample Type="typeof(StackAndCluster)">
+    <p><code>StilStack</code> puts its children in a column with an even gap. <code>StilCluster</code> puts them in a row that wraps, for buttons, badges and toolbars. <code>Gap</code> is a spacing step from 0 to 7. <code>Justify</code> and <code>Align</code> set how the children are placed.</p>
+</DocExample>
+
+<h2 id="sidebar">Sidebar layout</h2>
+<DocExample Type="typeof(SidebarLayout)">
+    <p><code>StilSidebarLayout</code> puts the <code>Sidebar</code> next to the content from the lg breakpoint (992px wide screens) and above it on smaller screens. The sidebar is an <code>&lt;aside&gt;</code> landmark; name it with <code>SidebarLabel</code>. For a sidebar that slides in, use a <a href="components/dialogs#drawer">drawer</a>.</p>
+</DocExample>
+
+<h2 id="container">Container and headings</h2>
+<DocExample Type="typeof(ContainerAndHeadings)">
+    <p><code>StilContainer</code> centers the page content with a maximum width; <code>Fluid</code> makes it full width. <code>StilHeading</code> renders <code>h1</code> to <code>h6</code> from <code>Level</code>, which helps when a component does not know where it is placed.</p>
+</DocExample>
+
+<h2 id="theme-provider">Themed sections</h2>
+<DocExample Type="typeof(ThemeSection)">
+    <p><code>StilThemeProvider</code> sets the color mode (<code>Light</code>, <code>Dark</code> or <code>Auto</code>) and theme tokens for everything inside it. Text on colored components stays readable whatever colors you choose. See <a href="theming">Theming</a> for the whole app.</p>
+</DocExample>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilGrid)" />
+<ApiTable Type="typeof(StilCol)" />
+<ApiTable Type="typeof(StilStack)" />
+<ApiTable Type="typeof(StilCluster)" />
+<ApiTable Type="typeof(StilSidebarLayout)" />
+<ApiTable Type="typeof(StilContainer)" />
+<ApiTable Type="typeof(StilHeading)" />
+<ApiTable Type="typeof(StilThemeProvider)" />
+<ApiTable Type="typeof(StilHead)">
+    <p>Put <code>&lt;StilHead /&gt;</code> in the <code>&lt;head&gt;</code> of <code>App.razor</code>. It links the stylesheet and adds the global theme from <code>AddStil</code>.</p>
+</ApiTable>

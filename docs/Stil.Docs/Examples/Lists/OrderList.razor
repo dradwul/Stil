@@ -1,0 +1,28 @@
+<StilList>
+    @foreach (var order in _orders)
+    {
+        <StilListItem Title="@($"Order #{order.Id}")" Description="@($"{order.Customer} · {order.Date:d MMM yyyy}")"
+                      Badge="@order.Status" BadgeVariant="@VariantOf(order.Status)" BadgeSubtle
+                      Href="components/data-grid" />
+    }
+</StilList>
+
+@code {
+    private static readonly Order[] _orders =
+    [
+        new(1043, "Berglund Outdoor", new(2026, 10, 7), "Shipped"),
+        new(1044, "Kallio Design Oy", new(2026, 10, 8), "Pending"),
+        new(1045, "Østerby Marine", new(2026, 10, 9), "Cancelled"),
+        new(1046, "Lindqvist Bygg", new(2026, 10, 9), "Delivered"),
+    ];
+
+    private static StilVariant VariantOf(string status) => status switch
+    {
+        "Pending" => StilVariant.Warning,
+        "Shipped" => StilVariant.Info,
+        "Delivered" => StilVariant.Success,
+        _ => StilVariant.Danger,
+    };
+
+    private sealed record Order(int Id, string Customer, DateOnly Date, string Status);
+}

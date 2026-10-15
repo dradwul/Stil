@@ -1,0 +1,58 @@
+@page "/components/buttons"
+@using Stil.Docs.Examples.Buttons
+
+<DocsHeader Title="Buttons and badges" Eyebrow="Components">
+    <Lead>Buttons for actions and links, toggle buttons, button groups and status badges.</Lead>
+</DocsHeader>
+
+<h2 id="variants">Variants</h2>
+<DocExample Type="typeof(Variants)">
+    <p>Every color component uses <code>StilVariant</code>. The text color on the button is picked automatically for contrast.</p>
+</DocExample>
+
+<h2 id="appearances">Appearances and sizes</h2>
+<DocExample Type="typeof(Appearances)">
+    <p><code>Appearance</code> is <code>Solid</code> (the default), <code>Outline</code> or <code>Ghost</code>. Use a solid button for the main action on a screen and outline or ghost buttons for the rest. <code>Size</code> is <code>Small</code>, <code>Medium</code> or <code>Large</code>.</p>
+</DocExample>
+
+<h2 id="states">Loading and toggle</h2>
+<DocExample Type="typeof(Loading)">
+    <p><code>Loading</code> shows a spinner and ignores clicks. <code>Pressed</code> makes a toggle button with <code>aria-pressed</code>.</p>
+</DocExample>
+
+<h2 id="icon-only">Icons and icon-only buttons</h2>
+<DocExample Type="typeof(IconOnly)">
+    <p>Put a <code>StilIcon</code> next to the text. An <code>IconOnly</code> button is square and has no visible text, so give it an <code>aria-label</code>: that is what screen readers announce.</p>
+</DocExample>
+
+<h2 id="links">Links</h2>
+<DocExample Type="typeof(Links)">
+    <p>With <code>Href</code> the button renders an <code>&lt;a&gt;</code>, so it works without interactivity and opens in a new tab with a middle click. Use a link for navigation and a button for actions. A disabled link has no <code>href</code> and gets <code>aria-disabled</code>.</p>
+</DocExample>
+
+<h2 id="button-group">Button group</h2>
+<DocExample Type="typeof(ButtonGroup)">
+    <p><code>StilButtonGroup</code> joins buttons into one control with <code>role="group"</code>. Give it a <code>Label</code>. With <code>Pressed</code> the buttons work as a segmented control.</p>
+</DocExample>
+
+<h2 id="close-button">Close button</h2>
+<DocExample Type="typeof(CloseButton)">
+    <p><code>StilCloseButton</code> is the small × used by alerts, dialogs and toasts. Its accessible name is "Close" unless you set <code>Label</code>; say what it closes or removes when there are several on a screen.</p>
+</DocExample>
+
+<h2 id="badges">Badges</h2>
+<DocExample Type="typeof(Badges)">
+    <p>Badges show a status or a count. <code>Subtle</code> uses a light tint with normal text, which is easier to read in tables and lists. Do not rely on the color alone: the text should say the status.</p>
+</DocExample>
+
+<h2 id="render-modes">Render modes</h2>
+<p>
+    Links, submit buttons and badges work in static server rendering. <code>OnClick</code>, <code>Loading</code> and
+    toggling <code>Pressed</code> need an interactive render mode.
+</p>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilButton)" />
+<ApiTable Type="typeof(StilButtonGroup)" />
+<ApiTable Type="typeof(StilCloseButton)" />
+<ApiTable Type="typeof(StilBadge)" />

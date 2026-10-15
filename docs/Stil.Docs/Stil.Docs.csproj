@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
+    <AssemblyName>Stil.Docs</AssemblyName>
+    <RootNamespace>Stil.Docs</RootNamespace>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.13" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Stil.Blazor\Stil.Blazor.csproj" />
+  </ItemGroup>
+
+  <!-- Every example is compiled as a component and also embedded as text, so a page shows the
+       live example next to its exact source. -->
+  <ItemGroup>
+    <EmbeddedResource Include="Examples\**\*.razor" LogicalName="Examples/%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <!-- The XML documentation of the libraries, embedded so the API tables show each parameter's
+       description. -->
+  <Target Name="EmbedLibraryXmlDocs" AfterTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <EmbeddedResource Include="@(ReferenceCopyLocalPaths)" Condition="'%(Extension)' == '.xml' and $([System.String]::Copy('%(Filename)').StartsWith('Stil.'))" LogicalName="Docs/%(Filename)%(Extension)" />
+    </ItemGroup>
+  </Target>
+
+</Project>

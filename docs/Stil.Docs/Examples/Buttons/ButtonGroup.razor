@@ -1,0 +1,15 @@
+<div class="stil-stack stil-gap-3">
+    <StilButtonGroup Label="View">
+        @foreach (var view in _views)
+        {
+            <StilButton Appearance="StilButtonAppearance.Outline" Variant="StilVariant.Secondary"
+                        Pressed="@(_view == view)" OnClick="() => _view = view">@view</StilButton>
+        }
+    </StilButtonGroup>
+    <p class="stil-mb-0">Showing orders as a @_view.ToLowerInvariant().</p>
+</div>
+
+@code {
+    private static readonly string[] _views = ["List", "Table", "Board"];
+    private string _view = "Table";
+}

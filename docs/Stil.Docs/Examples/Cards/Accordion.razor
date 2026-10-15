@@ -1,0 +1,20 @@
+<div class="stil-stack stil-gap-5">
+    <StilAccordion>
+        <StilAccordionItem Title="How long does shipping take?" Open>Two to four working days within the Nordics.</StilAccordionItem>
+        <StilAccordionItem Title="Can I return an order?">Yes, within 30 days. Opening this item closes the others.</StilAccordionItem>
+        <StilAccordionItem Title="Do you ship to Iceland?">Yes, by sea from Hirtshals once a week.</StilAccordionItem>
+    </StilAccordion>
+
+    <StilAccordion Multiple>
+        <StilAccordionItem Title="Delivery address" @bind-Open="_addressOpen">Storgatan 12, 903 26 Umeå</StilAccordionItem>
+        <StilAccordionItem>
+            <Header><StilIcon Name="@StilIcons.Info" /> Notes from the customer</Header>
+            <ChildContent>Leave the parcel at the reception.</ChildContent>
+        </StilAccordionItem>
+    </StilAccordion>
+    <p class="stil-text-muted stil-mb-0">The address is @(_addressOpen ? "open" : "closed").</p>
+</div>
+
+@code {
+    private bool _addressOpen = true;
+}

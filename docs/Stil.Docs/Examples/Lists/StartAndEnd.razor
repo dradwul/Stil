@@ -1,0 +1,24 @@
+<StilList>
+    @foreach (var member in _members)
+    {
+        <StilListItem Title="@member.Name" Description="@member.Role">
+            <Start><StilAvatar Name="@member.Name" Size="StilSize.Small" /></Start>
+            <End>
+                <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Ghost"
+                            aria-label="@($"Edit {member.Name}")">Edit</StilButton>
+            </End>
+        </StilListItem>
+    }
+    <StilListItem Title="Invite a member" Description="They get an email with a link to join.">
+        <Start><StilIcon Name="@StilIcons.Plus" /></Start>
+    </StilListItem>
+</StilList>
+
+@code {
+    private static readonly (string Name, string Role)[] _members =
+    [
+        ("Anna Berg", "Owner"),
+        ("Mikko Virtanen", "Warehouse, Tampere"),
+        ("Sigrid Ólafsdóttir", "Customer service"),
+    ];
+}

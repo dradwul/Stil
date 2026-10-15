@@ -1,0 +1,49 @@
+@page "/components/icons"
+@using Stil.Docs.Examples.Icons
+
+<DocsHeader Title="Icons" Eyebrow="Components">
+    <Lead>Built-in icons drawn as inline SVG in the current text color, and a way to plug in any other icon set.</Lead>
+</DocsHeader>
+
+<h2 id="built-in">Built-in icons</h2>
+<DocExample Type="typeof(AllIcons)">
+    <p><code>StilIcons</code> has a constant for every name, for example <code>StilIcons.Search</code>. The same icons exist in Stil CSS as <code>stil-icon-*</code> classes.</p>
+</DocExample>
+
+<h2 id="size-and-color">Size and color</h2>
+<DocExample Type="typeof(SizesAndColors)">
+    <p>An icon is 1em, so it follows the font size of its parent. <code>Size</code> takes any CSS length. The icon uses <code>currentColor</code>, so a text color class or the surrounding component colors it.</p>
+</DocExample>
+
+<h2 id="accessibility">Labels and accessibility</h2>
+<DocExample Type="typeof(Labels)">
+    <p>Without <code>Label</code> an icon is decorative and hidden from screen readers (<code>aria-hidden</code>). That is right when text next to it says the same thing. When the icon carries meaning on its own, set <code>Label</code>: it gets <code>role="img"</code> and that accessible name. In an icon-only button, put the <code>aria-label</code> on the button.</p>
+</DocExample>
+
+<h2 id="custom">Custom markup</h2>
+<DocExample Type="typeof(CustomIcons)">
+    <p>Put any markup inside <code>&lt;StilIcon&gt;</code>, such as an SVG or an image. It gets the same 1em box and the same <code>Label</code> handling.</p>
+</DocExample>
+
+<h2 id="providers">Other icon sets</h2>
+<p>
+    To use another icon set by name, register an icon provider. Names the provider does not know fall back to
+    the built-in icons, so <code>StilIcons</code> names keep working. For a ligature font such as Material Symbols,
+    load the font's stylesheet in <code>App.razor</code> and register <code>StilLigatureIconProvider</code>:
+</p>
+<CodeBlock Language="csharp" Code="@ProviderSnippet" />
+<p>
+    For SVG sprites or another set, implement <code>IStilIconProvider</code>. Its <code>GetIcon(name)</code> returns a
+    <code>RenderFragment</code>, or null for a name it does not have.
+</p>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilIcon)" />
+
+@code {
+    private const string ProviderSnippet = """
+        builder.Services.AddStil(o => o.IconProvider = new StilLigatureIconProvider("material-symbols-outlined"));
+
+        // <StilIcon Name="shopping_cart" />
+        """;
+}

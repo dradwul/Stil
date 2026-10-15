@@ -55,12 +55,15 @@
     [Parameter]
     public string? AriaLabel { get; set; }
 
+    /// <summary>The color of the toggle. The default is Primary.</summary>
     [Parameter]
     public StilVariant Variant { get; set; } = StilVariant.Primary;
 
+    /// <summary>The toggle style: Solid (default), Outline or Ghost.</summary>
     [Parameter]
     public StilButtonAppearance Appearance { get; set; }
 
+    /// <summary>The toggle size: Small, Medium (default) or Large.</summary>
     [Parameter]
     public StilSize Size { get; set; }
 
@@ -84,6 +87,7 @@
     [Parameter]
     public bool Open { get; set; }
 
+    /// <summary>Raised when the menu opens or closes.</summary>
     [Parameter]
     public EventCallback<bool> OpenChanged { get; set; }
 

@@ -1,0 +1,9 @@
+<div class="stil-cluster stil-gap-2">
+    @foreach (var name in StilIcons.BuiltIn.Keys.Order())
+    {
+        <div class="stil-stack stil-gap-1 stil-align-items-center stil-p-2" style="width: 7.5rem">
+            <StilIcon Name="@name" Size="1.5rem" />
+            <code class="stil-fs-xs">@name</code>
+        </div>
+    }
+</div>

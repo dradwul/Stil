@@ -1,0 +1,98 @@
+@page "/theming"
+
+<DocsHeader Title="Theming" Eyebrow="Get started">
+    <Lead>Stil is themed entirely with <code>--stil-*</code> CSS custom properties. Change a few, and every component follows, in light and dark mode.</Lead>
+</DocsHeader>
+
+<p>Try it in the <a href="theme-builder">theme builder</a>, then copy the result.</p>
+
+<h2 id="brand">Change the brand</h2>
+<p>Most themes only need the brand colors. In a Blazor app, set them in <code>AddStil</code>; <code>&lt;StilHead /&gt;</code> writes them to the page:</p>
+<CodeBlock Language="csharp" Code="@CSharpSnippet" />
+<p>Or in CSS, after <code>stil.css</code>. Stil's rules are in cascade layers, so your CSS wins wherever it is loaded:</p>
+<CodeBlock Language="css" Code="@CssSnippet" />
+
+<p>Everything derived from a color follows it:</p>
+<ul>
+    <li><strong>Text on colored backgrounds</strong> (buttons, alerts, badges) is black or white, whichever contrasts more. That always meets WCAG AA. To force a color, set <code>--stil-color-{variant}-contrast</code>.</li>
+    <li><strong>Links, focus rings and selected states</strong> use the primary color, darkened in light mode and lightened in dark mode until they are readable. Set <code>--stil-color-accent</code> to use another color.</li>
+    <li><strong>Outline and ghost buttons</strong> and colored text use the variant color, adjusted the same way.</li>
+</ul>
+
+<h2 id="part">Theme part of a page</h2>
+<p>Tokens apply to everything inside the element that sets them. <code>StilThemeProvider</code> does that for you:</p>
+<DocExample Type="typeof(Examples.Theming.Provider)" ShowCode />
+
+<h2 id="modes">Light, dark and auto</h2>
+<p>
+    Stil renders light unless you opt in, so it never turns a host page dark by accident. Set
+    <code>data-stil-theme</code> to <code>light</code>, <code>dark</code> or <code>auto</code> (follows the
+    operating system) on <code>&lt;html&gt;</code> or any element, or use <code>Mode</code> on
+    <code>StilThemeProvider</code>:
+</p>
+<DocExample Type="typeof(Examples.Theming.Modes)" />
+<p>The neutral colors are written as <code>light-dark(light, dark)</code>. Use the same form when you override them:</p>
+<CodeBlock Language="css" Code="@NeutralSnippet" />
+
+<h2 id="tokens">Tokens</h2>
+<div class="stil-table-responsive">
+    <table class="stil-table stil-table-compact">
+        <thead>
+            <tr><th scope="col">Group</th><th scope="col">Tokens</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var (group, tokens) in Tokens)
+            {
+                <tr><th scope="row">@group</th><td><code class="docs-type">@tokens</code></td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<h2 id="fonts">Fonts</h2>
+<p>
+    Stil uses Didact Gothic if your page loads it, for example from Google Fonts, and falls back to
+    <code>sans-serif</code>. The stylesheet never fetches fonts itself. Set <code>--stil-font-family</code>
+    (or <code>StilTheme.FontFamily</code>) to use another font.
+</p>
+
+@code {
+    private const string CSharpSnippet = """
+        builder.Services.AddStil(options =>
+        {
+            options.Theme.Primary = "#6741d9";
+            options.Theme.Secondary = "#d0bfff";
+            options.Theme.FontFamily = "system-ui, sans-serif";
+            options.Theme.Radius = "0.5rem";
+        });
+        """;
+
+    private const string CssSnippet = """
+        :root {
+            --stil-color-primary: #6741d9;
+            --stil-color-secondary: #d0bfff;
+            --stil-font-family: system-ui, sans-serif;
+            --stil-radius-md: 0.5rem;
+        }
+        """;
+
+    private const string NeutralSnippet = """
+        :root {
+            --stil-color-surface: light-dark(#fffdf8, #1a1b1e);
+        }
+        """;
+
+    private static readonly (string Group, string Tokens)[] Tokens =
+    [
+        ("Brand colors", "--stil-color-primary, -secondary, -success, -danger, -warning, -info"),
+        ("Overrides", "--stil-color-{variant}-contrast, --stil-color-accent"),
+        ("Neutrals", "--stil-color-body-bg, -surface, -surface-muted, -text, -text-muted, -border, -border-strong"),
+        ("Typography", "--stil-font-family, --stil-font-family-mono, --stil-font-size-xs … -2xl, --stil-font-weight-normal, -bold, --stil-line-height, --stil-letter-spacing"),
+        ("Spacing", "--stil-space-1 (0.25rem) … --stil-space-7 (3rem)"),
+        ("Layout", "--stil-container-max, --stil-sidebar-width"),
+        ("Shape", "--stil-radius-sm, -md, -lg, -pill, --stil-shadow-sm, -md, -lg, --stil-backdrop"),
+        ("Focus", "--stil-focus-ring-width, --stil-focus-ring-offset"),
+        ("Layering", "--stil-z-dropdown, -sticky, -overlay, -modal, -popover, -toast"),
+        ("Motion", "--stil-duration-fast, --stil-duration-md, --stil-easing (0 ms with reduced motion)"),
+    ];
+}

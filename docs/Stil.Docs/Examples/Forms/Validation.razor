@@ -1,0 +1,66 @@
+@using System.ComponentModel.DataAnnotations
+
+<EditForm Model="_order" OnValidSubmit="Save" class="stil-form" novalidate>
+    <DataAnnotationsValidator />
+    <StilTextBox @bind-Value="_order.Customer" Label="Customer" autocomplete="organization" />
+    <StilTextBox @bind-Value="_order.Email" Label="Email" Type="email" Hint="We send the receipt here." autocomplete="email" />
+    <StilGrid>
+        <StilNumeric @bind-Value="_order.Amount" Label="Amount" Step="0.01" AppendText="€" class="stil-col-md-6" />
+        <StilDatePicker @bind-Value="_order.DeliveryDate" Label="Delivery date" class="stil-col-md-6" />
+    </StilGrid>
+    <StilSelect @bind-Value="_order.Status" Label="Status" />
+    <StilRadioGroup @bind-Value="_order.Carrier" Label="Carrier" Inline />
+    <StilSwitch @bind-Value="_order.Express" Label="Express delivery" />
+    <StilCheckbox @bind-Value="_order.AcceptTerms" Label="The customer accepts the terms" />
+    <StilCluster>
+        <StilButton Type="submit">Save order</StilButton>
+        <StilButton Appearance="StilButtonAppearance.Ghost" Variant="StilVariant.Secondary" OnClick="Reset">Reset</StilButton>
+    </StilCluster>
+    @if (_saved is not null)
+    {
+        <StilAlert Variant="StilVariant.Success" Subtle>@_saved</StilAlert>
+    }
+</EditForm>
+
+@code {
+    private Order _order = new();
+    private string? _saved;
+
+    private void Save() => _saved = $"Saved the order for {_order.Customer}: {_order.Amount:N2} €.";
+
+    private void Reset()
+    {
+        _order = new();
+        _saved = null;
+    }
+
+    public enum OrderStatus { Pending, Shipped, Delivered, Cancelled }
+
+    public enum Carrier { PostNord, Bring, Pickup }
+
+    public sealed class Order
+    {
+        [Required(ErrorMessage = "Enter the customer's name.")]
+        [StringLength(60, ErrorMessage = "Keep the name under 60 characters.")]
+        public string? Customer { get; set; }
+
+        [Required(ErrorMessage = "Enter an email address.")]
+        [EmailAddress(ErrorMessage = "Enter a complete email address, like name@example.com.")]
+        public string? Email { get; set; }
+
+        [Range(1, 1_000_000, ErrorMessage = "The amount must be between 1 and 1,000,000.")]
+        public decimal Amount { get; set; }
+
+        [Required(ErrorMessage = "Choose a delivery date.")]
+        public DateOnly? DeliveryDate { get; set; }
+
+        public OrderStatus Status { get; set; }
+
+        public Carrier Carrier { get; set; }
+
+        public bool Express { get; set; }
+
+        [Range(typeof(bool), "true", "true", ErrorMessage = "The customer must accept the terms.")]
+        public bool AcceptTerms { get; set; }
+    }
+}

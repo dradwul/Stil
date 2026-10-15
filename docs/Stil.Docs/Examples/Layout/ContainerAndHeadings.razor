@@ -1,0 +1,13 @@
+<StilContainer>
+    <StilHeading Level="Level">Delivery times</StilHeading>
+    <p class="stil-mb-0">
+        The container centers the content and limits its width. The heading level is a parameter
+        of this component, so it fits wherever the section is used.
+    </p>
+</StilContainer>
+
+@code {
+    /// <summary>The level of the section heading.</summary>
+    [Parameter]
+    public int Level { get; set; } = 3;
+}

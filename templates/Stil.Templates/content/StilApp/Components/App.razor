@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <ResourcePreloader />
+    @* Stil's stylesheet and the global theme from AddStil(). *@
+    <StilHead />
+    <link rel="stylesheet" href="@Assets["app.css"]" />
+    <ImportMap />
+    @*#if (UseServer)
+    <HeadOutlet @rendermode="InteractiveServer" />
+    ##else
+    <HeadOutlet />
+    ##endif*@
+</head>
+
+@* stil-scope lets Stil style the font, headings and links in your own markup too. *@
+<body class="stil-scope">
+    @*#if (UseServer)
+    <Routes @rendermode="InteractiveServer" />
+    ##else
+    <Routes />
+    ##endif*@
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
+</body>
+
+</html>

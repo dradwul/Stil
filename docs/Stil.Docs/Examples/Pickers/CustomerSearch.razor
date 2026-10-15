@@ -1,0 +1,40 @@
+<StilAutocomplete TItem="Customer" @bind-Value="_customer" Search="FindCustomersAsync"
+                  ItemText="c => c.Name" ItemKey="c => c.Id" Label="Customer" Placeholder="Search by name or city">
+    <ItemTemplate>
+        <span class="stil-d-flex stil-flex-column">
+            <span>@context.Name</span>
+            <span class="stil-text-muted stil-fs-sm">@context.City</span>
+        </span>
+    </ItemTemplate>
+</StilAutocomplete>
+<p class="stil-text-muted stil-mt-2 stil-mb-0">
+    @(_customer is null ? "No customer chosen." : $"Customer #{_customer.Id}: {_customer.Name}, {_customer.City}")
+</p>
+
+@code {
+    private static readonly Customer[] _all =
+    [
+        new(1, "Berglund Outdoor", "Umeå"),
+        new(2, "Ek & Lind Advokatbyrå", "Uppsala"),
+        new(3, "Fjällbacka Café", "Fjällbacka"),
+        new(4, "Hvalsø Cykler", "Hvalsø"),
+        new(5, "Kallio Design Oy", "Helsinki"),
+        new(6, "Lappi Tours", "Rovaniemi"),
+        new(7, "Norrsken AB", "Kiruna"),
+        new(8, "Solvik Bageri", "Bergen"),
+        new(9, "Visby Keramik", "Visby"),
+        new(10, "Østerby Marine", "Skagen"),
+    ];
+
+    private Customer? _customer;
+
+    // Stands in for a call to your API. The token is cancelled when the user types again.
+    private static async Task<IEnumerable<Customer>> FindCustomersAsync(string text, CancellationToken cancellationToken)
+    {
+        await Task.Delay(400, cancellationToken);
+        return _all.Where(c => c.Name.Contains(text, StringComparison.CurrentCultureIgnoreCase)
+                            || c.City.Contains(text, StringComparison.CurrentCultureIgnoreCase));
+    }
+
+    private sealed record Customer(int Id, string Name, string City);
+}

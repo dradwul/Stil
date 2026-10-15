@@ -1,0 +1,102 @@
+@namespace Stil.Charts
+@typeparam TItem
+@inherits StilComponentBase
+
+@* The shared frame of every chart. The concrete charts render @RenderChart and supply RenderPlot. *@
+@RenderChart
+
+@code {
+    private RenderFragment RenderFigure => __builder =>
+    {
+        Prepare();
+        <figure @attributes="AdditionalAttributes" class="@Classes("stil-chart", KindClass)">
+            @if (HasTitle || !string.IsNullOrWhiteSpace(Description))
+            {
+                <figcaption class="stil-chart-header">
+                    @if (HasTitle)
+                    {
+                        <span id="@TitleId" class="stil-chart-title">@Title</span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Description))
+                    {
+                        <span class="stil-chart-description">@Description</span>
+                    }
+                </figcaption>
+            }
+            @if (Data.HasValues)
+            {
+                @if (LegendVisible)
+                {
+                    @RenderLegend
+                }
+                @RenderPlot
+                @RenderDataTable
+            }
+            else
+            {
+                <div class="stil-chart-empty" style="min-height: @(EffectiveHeight)px">@EmptyText</div>
+            }
+        </figure>
+    };
+
+    private protected virtual RenderFragment RenderLegend => @<ul class="stil-chart-legend">
+        @foreach (var series in Data.Series)
+        {
+            <li class="stil-chart-legend-item" style="--_color: @series.Color">
+                <span class="@(LegendUsesLines ? "stil-chart-key stil-chart-key-line" : "stil-chart-key")" aria-hidden="true"></span>
+                @series.Name
+            </li>
+        }
+    </ul>;
+
+    private RenderFragment RenderDataTable => __builder =>
+    {
+        if (DataTable == StilChartDataTable.None)
+        {
+            return;
+        }
+
+        var (headers, rows) = TableData();
+        if (DataTable == StilChartDataTable.Hidden)
+        {
+            <div class="stil-chart-data stil-visually-hidden">@RenderTable(headers, rows)</div>
+        }
+        else
+        {
+            <details class="stil-chart-data">
+                <summary>@ShowDataText</summary>
+                @RenderTable(headers, rows)
+            </details>
+        }
+    };
+
+    private RenderFragment RenderTable(IReadOnlyList<string> headers, IReadOnlyList<IReadOnlyList<string>> rows) =>
+        @<div class="stil-table-responsive">
+            <table class="stil-table stil-table-compact">
+                @if (HasTitle)
+                {
+                    <caption>@Title</caption>
+                }
+                <thead>
+                    <tr>
+                        @for (var c = 0; c < headers.Count; c++)
+                        {
+                            <th scope="col" class="@(c == 0 ? null : "stil-chart-num")">@headers[c]</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in rows)
+                    {
+                        <tr>
+                            <th scope="row">@row[0]</th>
+                            @for (var c = 1; c < row.Count; c++)
+                            {
+                                <td class="stil-chart-num">@row[c]</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>;
+}

@@ -36,9 +36,11 @@
     [CascadingParameter]
     private EditContext? CascadedEditContext { get; set; }
 
+    /// <summary>The start date. Supports two-way binding (@bind-Start).</summary>
     [Parameter]
     public TValue? Start { get; set; }
 
+    /// <summary>Raised when the start date changes.</summary>
     [Parameter]
     public EventCallback<TValue?> StartChanged { get; set; }
 
@@ -46,9 +48,11 @@
     [Parameter]
     public Expression<Func<TValue?>>? StartExpression { get; set; }
 
+    /// <summary>The end date. Supports two-way binding (@bind-End).</summary>
     [Parameter]
     public TValue? End { get; set; }
 
+    /// <summary>Raised when the end date changes.</summary>
     [Parameter]
     public EventCallback<TValue?> EndChanged { get; set; }
 
@@ -60,9 +64,11 @@
     [Parameter]
     public string? Label { get; set; }
 
+    /// <summary>The label of the start field. The default is "From".</summary>
     [Parameter]
     public string StartLabel { get; set; } = "From";
 
+    /// <summary>The label of the end field. The default is "To".</summary>
     [Parameter]
     public string EndLabel { get; set; } = "To";
 
@@ -78,9 +84,11 @@
     [Parameter]
     public string? Hint { get; set; }
 
+    /// <summary>Both fields cannot be used.</summary>
     [Parameter]
     public bool Disabled { get; set; }
 
+    /// <summary>Small, Medium (default) or Large.</summary>
     [Parameter]
     public StilSize Size { get; set; }
 

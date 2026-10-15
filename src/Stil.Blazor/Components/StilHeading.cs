@@ -10,6 +10,7 @@ public sealed class StilHeading : StilComponentBase
     [Parameter]
     public int Level { get; set; } = 2;
 
+    /// <summary>The heading text.</summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 

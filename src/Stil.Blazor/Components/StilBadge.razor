@@ -3,6 +3,7 @@
 <span @attributes="AdditionalAttributes" class="@CssClass">@ChildContent</span>
 
 @code {
+    /// <summary>The color. The default is Primary.</summary>
     [Parameter]
     public StilVariant Variant { get; set; } = StilVariant.Primary;
 
@@ -10,6 +11,7 @@
     [Parameter]
     public bool Subtle { get; set; }
 
+    /// <summary>The badge text.</summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 

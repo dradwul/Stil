@@ -1,0 +1,71 @@
+@page "/orders/new"
+@inject OrderStore Store
+@*#if (UseServer)
+@inject IStilToastService Toasts
+##endif*@
+
+<PageTitle>New order</PageTitle>
+
+<h1>New order</h1>
+<p class="stil-text-muted">The fields are checked with the data annotations on the <code>Order</code> class.</p>
+
+@*#if (!UseServer)
+@if (_saved is not null)
+{
+    <StilAlert Variant="StilVariant.Success" Title="Order saved" Dismissible>
+        Order #@_saved.Id for @_saved.Customer is on the <a href="">dashboard</a>.
+    </StilAlert>
+}
+
+##endif*@
+<StilCard class="app-form">
+    @*#if (UseServer)
+    <EditForm Model="Model" OnValidSubmit="Save" class="stil-form" novalidate>
+    ##else
+    <EditForm Model="Model" FormName="new-order" OnValidSubmit="Save" Enhance class="stil-form" novalidate>
+    ##endif*@
+        <DataAnnotationsValidator />
+        <StilTextBox @bind-Value="Model.Customer" Label="Customer" autocomplete="organization" />
+        <StilTextBox @bind-Value="Model.Email" Label="Email" Type="email" Hint="We send the receipt here." autocomplete="email" />
+        <div class="stil-grid">
+            <StilNumeric @bind-Value="Model.Amount" Label="Amount" Step="0.01" Min="0" class="stil-col-sm-6" />
+            <StilDatePicker @bind-Value="Model.OrderDate" Label="Order date" class="stil-col-sm-6" />
+        </div>
+        <StilSelect @bind-Value="Model.Status" Label="Status" />
+        <StilSwitch @bind-Value="Model.Express" Label="Express delivery" Hint="Ships within 24 hours." />
+        <StilCluster>
+            <StilButton Type="submit">Save order</StilButton>
+            <StilButton Href="" Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost">Cancel</StilButton>
+        </StilCluster>
+    </EditForm>
+</StilCard>
+
+@*#if (UseServer)
+@code {
+    private Order Model { get; set; } = new();
+
+    private void Save()
+    {
+        Store.Add(Model);
+        Toasts.Success($"Order #{Model.Id} for {Model.Customer} saved.");
+        Model = new();
+    }
+}
+##else
+@code {
+    // Static rendering: the posted form fields are bound to this property.
+    [SupplyParameterFromForm]
+    private Order Model { get; set; } = default!;
+
+    private Order? _saved;
+
+    protected override void OnInitialized() => Model ??= new();
+
+    private void Save()
+    {
+        Store.Add(Model);
+        _saved = Model;
+        Model = new();
+    }
+}
+##endif*@

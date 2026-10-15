@@ -31,6 +31,7 @@
     [Parameter]
     public int Page { get; set; } = 1;
 
+    /// <summary>Raised when the user chooses another page.</summary>
     [Parameter]
     public EventCallback<int> PageChanged { get; set; }
 
@@ -38,9 +39,11 @@
     [Parameter]
     public int? PageCount { get; set; }
 
+    /// <summary>The number of items. With PageSize, it sets the number of pages.</summary>
     [Parameter]
     public int? TotalItems { get; set; }
 
+    /// <summary>Items per page, used with TotalItems. The default is 10.</summary>
     [Parameter]
     public int PageSize { get; set; } = 10;
 
@@ -67,15 +70,19 @@
     [Parameter]
     public string Label { get; set; } = "Pagination";
 
+    /// <summary>The accessible name of the previous page button.</summary>
     [Parameter]
     public string PreviousText { get; set; } = "Previous page";
 
+    /// <summary>The accessible name of the next page button.</summary>
     [Parameter]
     public string NextText { get; set; } = "Next page";
 
+    /// <summary>The accessible name of the first page button.</summary>
     [Parameter]
     public string FirstText { get; set; } = "First page";
 
+    /// <summary>The accessible name of the last page button.</summary>
     [Parameter]
     public string LastText { get; set; } = "Last page";
 

@@ -1,0 +1,73 @@
+@page "/"
+@inject OrderStore Store
+
+<PageTitle>Dashboard</PageTitle>
+
+<div class="stil-d-flex stil-flex-wrap stil-justify-content-between stil-align-items-center stil-gap-3 stil-mb-4">
+    <div>
+        <h1 class="stil-mb-1">Dashboard</h1>
+        <p class="stil-text-muted stil-mb-0">Sample orders, kept in memory until the app restarts.</p>
+    </div>
+    <StilButton Href="orders/new"><StilIcon Name="@StilIcons.Plus" /> New order</StilButton>
+</div>
+
+<div class="stil-grid stil-mb-4">
+    <StilStatCard Label="Orders" Value="@_orders.Count.ToString("N0")" Icon="@StilIcons.File"
+                  class="stil-col-sm-6 stil-col-lg-3" />
+    <StilStatCard Label="Revenue" Value="@Revenue.ToString("N0")" Trend="+8.2%" TrendDirection="StilTrendDirection.Up"
+                  Description="vs last month" class="stil-col-sm-6 stil-col-lg-3" />
+    <StilStatCard Label="Pending" Value="@Count(OrderStatus.Pending).ToString()" Description="waiting to ship"
+                  class="stil-col-sm-6 stil-col-lg-3" />
+    <StilStatCard Label="Cancelled" Value="@Count(OrderStatus.Cancelled).ToString()" Trend="-2"
+                  TrendDirection="StilTrendDirection.Down" TrendVariant="StilVariant.Success" Description="vs last month"
+                  class="stil-col-sm-6 stil-col-lg-3" />
+</div>
+
+@*#if (UseServer)
+<StilDataGrid TItem="Order" Items="_orders" Filterable PageSize="8" Caption="Orders, newest first">
+    <Columns>
+        <StilDataGridColumn Property="o => o.Id" Title="Order" InitialSort="StilSortDirection.Descending" Width="7rem">
+            <Template>#@context.Id</Template>
+        </StilDataGridColumn>
+        <StilDataGridColumn Property="o => o.Customer" />
+        <StilDataGridColumn Property="o => o.OrderDate" Title="Date" Format="d MMM yyyy" />
+        <StilDataGridColumn Property="o => o.Status">
+            <Template><StilBadge Variant="@VariantOf(context.Status)" Subtle>@context.Status</StilBadge></Template>
+        </StilDataGridColumn>
+        <StilDataGridColumn Property="o => o.Amount" Format="N2" Align="StilTextAlign.End" />
+    </Columns>
+</StilDataGrid>
+##else
+@* Without interactivity the grid cannot sort, filter or page, so it shows every row. *@
+<StilDataGrid TItem="Order" Items="_orders" PageSize="0" Caption="Orders, newest first">
+    <Columns>
+        <StilDataGridColumn Property="o => o.Id" Title="Order" InitialSort="StilSortDirection.Descending" Sortable="false" Width="7rem">
+            <Template>#@context.Id</Template>
+        </StilDataGridColumn>
+        <StilDataGridColumn Property="o => o.Customer" Sortable="false" />
+        <StilDataGridColumn Property="o => o.OrderDate" Title="Date" Format="d MMM yyyy" Sortable="false" />
+        <StilDataGridColumn Property="o => o.Status" Sortable="false">
+            <Template><StilBadge Variant="@VariantOf(context.Status)" Subtle>@context.Status</StilBadge></Template>
+        </StilDataGridColumn>
+        <StilDataGridColumn Property="o => o.Amount" Format="N2" Align="StilTextAlign.End" Sortable="false" />
+    </Columns>
+</StilDataGrid>
+##endif*@
+
+@code {
+    private IReadOnlyList<Order> _orders = [];
+
+    private decimal Revenue => _orders.Where(o => o.Status != OrderStatus.Cancelled).Sum(o => o.Amount);
+
+    protected override void OnInitialized() => _orders = Store.All();
+
+    private int Count(OrderStatus status) => _orders.Count(o => o.Status == status);
+
+    private static StilVariant VariantOf(OrderStatus status) => status switch
+    {
+        OrderStatus.Pending => StilVariant.Warning,
+        OrderStatus.Shipped => StilVariant.Info,
+        OrderStatus.Delivered => StilVariant.Success,
+        _ => StilVariant.Danger,
+    };
+}

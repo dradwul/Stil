@@ -1,0 +1,390 @@
+/*! Stil Charts v0.1.0 | MIT License | https://github.com/dradwul/StilCSS */
+
+/*
+ * Styles for the Stil.Charts components. Load after stil.css. The layer statement repeats Stil's
+ * order, so the cascade is right even if this file loads first.
+ *
+ * Chart tokens (override them like any --stil-* token, on :root or any wrapper):
+ *   --stil-chart-1 … --stil-chart-6   Series colors, in the order series are declared. A validated
+ *                                     categorical palette: adjacent colors stay distinct with color
+ *                                     vision deficiencies, light and dark steps chosen separately.
+ *   --stil-chart-other                Series 7+ and the donut's "Other" slice. Default: border-strong.
+ *   --stil-chart-surface              The gap between touching marks and the ring around markers.
+ *                                     Default: the surface color. Set it to the page background
+ *                                     when a chart is not on a card.
+ *   --stil-chart-grid                 Gridlines. Default: the border color, softened.
+ *   --stil-chart-axis                 The zero line and the hover crosshair. Default: border-strong.
+ *   --stil-chart-area-opacity         The wash under area lines. Default: 0.1.
+ *   --stil-chart-sparkline            A sparkline's line. Default: the muted text color.
+ */
+
+@layer stil.tokens, stil.reset, stil.base, stil.components, stil.utilities;
+
+@layer stil.tokens {
+    :root {
+        --stil-chart-1: light-dark(#2a78d6, #3987e5);
+        --stil-chart-2: light-dark(#eb6834, #d95926);
+        --stil-chart-3: light-dark(#1baf7a, #199e70);
+        --stil-chart-4: light-dark(#eda100, #c98500);
+        --stil-chart-5: light-dark(#e87ba4, #d55181);
+        --stil-chart-6: #008300;
+        --stil-chart-area-opacity: 0.1;
+    }
+}
+
+@layer stil.components {
+    .stil-chart {
+        /* Derived where used (not on :root), so a theme on a wrapper reaches them. */
+        --_surface: var(--stil-chart-surface, var(--stil-color-surface));
+        --_grid: var(--stil-chart-grid, color-mix(in srgb, var(--stil-color-border) 70%, transparent));
+        --_axis: var(--stil-chart-axis, var(--stil-color-border-strong));
+        --_color: var(--stil-chart-1);
+        container: stil-chart / inline-size;
+        display: flex;
+        flex-direction: column;
+        gap: var(--stil-space-3);
+        min-width: 0;
+        margin: 0;
+        color: var(--stil-color-text);
+    }
+
+    .stil-chart-header {
+        display: flex;
+        flex-direction: column;
+        gap: var(--stil-space-1);
+    }
+
+    .stil-chart-title {
+        font-size: var(--stil-font-size-md);
+        font-weight: var(--stil-font-weight-bold);
+        line-height: 1.3;
+    }
+
+    .stil-chart-description {
+        color: var(--stil-color-text-muted);
+        font-size: var(--stil-font-size-sm);
+    }
+
+    /* Legend: a key that mirrors the mark (a square for bars and areas, a line for lines) and the name in text color. */
+    .stil-chart-legend,
+    .stil-chart-donut-legend {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        font-size: var(--stil-font-size-sm);
+    }
+
+    .stil-chart-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--stil-space-1) var(--stil-space-4);
+    }
+
+    .stil-chart-legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--stil-space-2);
+    }
+
+    .stil-chart-key {
+        flex: none;
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: var(--stil-radius-sm);
+        background-color: var(--_color);
+    }
+
+    .stil-chart-key-line {
+        width: 1rem;
+        height: 3px;
+        border-radius: 2px;
+    }
+
+    /* The drawing. Its padding holds the axis labels; the SVG's content box is the plot. */
+    .stil-chart-plot {
+        padding-inline-start: var(--_start, 2rem);
+        padding-inline-end: calc(var(--_end, 0.75rem) + var(--_labels, 0px));
+        direction: ltr;
+    }
+
+    .stil-chart-svg {
+        display: block;
+        width: 100%;
+        overflow: visible;
+        font-size: var(--stil-font-size-xs);
+    }
+
+    .stil-chart-svg text,
+    .stil-chart-donut-svg text {
+        fill: var(--stil-color-text-muted);
+        font-family: inherit;
+    }
+
+    .stil-chart-tick {
+        font-variant-numeric: tabular-nums;
+    }
+
+    .stil-chart-svg .stil-chart-label,
+    .stil-chart-svg .stil-chart-axis-title {
+        fill: var(--stil-color-text);
+    }
+
+    .stil-chart-gridline {
+        stroke: var(--_grid);
+        stroke-width: 1;
+        shape-rendering: crispEdges;
+    }
+
+    .stil-chart-baseline {
+        stroke: var(--_axis);
+        stroke-width: 1;
+        shape-rendering: crispEdges;
+    }
+
+    /* Lines and areas */
+    .stil-chart-stretch {
+        overflow: visible;
+    }
+
+    .stil-chart-line-path {
+        fill: none;
+        stroke: var(--_color);
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .stil-chart-area {
+        fill: var(--_color);
+        stroke: none;
+        opacity: var(--stil-chart-area-opacity);
+    }
+
+    .stil-chart-marker {
+        fill: var(--_color);
+        stroke: var(--_surface);
+        stroke-width: 2;
+    }
+
+    /* Hover: a crosshair and every series' point in the category; the tooltip is the native title. */
+    .stil-chart-hit {
+        fill: transparent;
+    }
+
+    .stil-chart-crosshair {
+        stroke: var(--_axis);
+        stroke-width: 1;
+        shape-rendering: crispEdges;
+        opacity: 0;
+    }
+
+    .stil-chart-hover-marker {
+        opacity: 0;
+    }
+
+    .stil-chart-band:hover :is(.stil-chart-crosshair, .stil-chart-hover-marker) {
+        opacity: 1;
+    }
+
+    /* Bars. Columns get their x and width from CSS: at most 24px thick, a 2px gap between the
+       bars of a group, centered in the category. The x/width attributes are a fallback. */
+    .stil-chart-col {
+        --_t: max(1px, min(24px, (var(--_b) * 0.8 - (var(--_m) - 1) * 2px) / var(--_m)));
+        x: calc(var(--_c) - (var(--_m) * var(--_t) + (var(--_m) - 1) * 2px) / 2 + var(--_j) * (var(--_t) + 2px));
+        width: var(--_t);
+    }
+
+    .stil-chart-bar-mark {
+        fill: var(--_color);
+        transition: opacity var(--stil-duration-fast) var(--stil-easing);
+    }
+
+    .stil-chart-bar-item:hover .stil-chart-bar-mark,
+    .stil-chart-slice:hover .stil-chart-slice-mark {
+        opacity: 0.8;
+    }
+
+    .stil-chart-gap {
+        stroke: var(--_surface);
+        stroke-width: 2;
+    }
+
+    /* Donut */
+    .stil-chart-donut-body {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--stil-space-4) var(--stil-space-6);
+    }
+
+    .stil-chart-donut-svg {
+        display: block;
+        flex: none;
+        width: min(100%, var(--_size, 200px));
+        height: auto;
+        aspect-ratio: 1;
+        overflow: visible;
+    }
+
+    .stil-chart-slice-mark {
+        fill: var(--_color);
+        stroke: var(--_surface);
+        stroke-width: 2;
+        stroke-linejoin: round;
+        transition: opacity var(--stil-duration-fast) var(--stil-easing);
+    }
+
+    .stil-chart-donut-svg .stil-chart-donut-total {
+        fill: var(--stil-color-text);
+        font-weight: var(--stil-font-weight-bold);
+    }
+
+    .stil-chart-donut-label {
+        font-size: 12px;
+    }
+
+    .stil-chart-donut-legend {
+        flex: 1 1 14rem;
+        display: grid;
+        grid-template-columns: auto 1fr auto auto;
+        gap: var(--stil-space-2) var(--stil-space-3);
+        align-items: center;
+    }
+
+    .stil-chart-donut-legend > .stil-chart-legend-item {
+        display: contents;
+    }
+
+    .stil-chart-legend-value,
+    .stil-chart-legend-share {
+        text-align: end;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .stil-chart-legend-share {
+        color: var(--stil-color-text-muted);
+    }
+
+    /* Data table and empty state */
+    .stil-chart-data > summary {
+        width: fit-content;
+        color: var(--stil-color-text-muted);
+        font-size: var(--stil-font-size-sm);
+        cursor: pointer;
+    }
+
+    .stil-chart-data > summary:focus-visible {
+        outline: var(--stil-focus-ring-width) solid var(--_accent);
+        outline-offset: var(--stil-focus-ring-offset);
+    }
+
+    .stil-chart-data[open] > summary {
+        margin-block-end: var(--stil-space-2);
+    }
+
+    .stil-chart-data .stil-table {
+        margin-block-end: 0;
+    }
+
+    .stil-chart-num {
+        text-align: end;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .stil-chart-empty {
+        display: grid;
+        place-items: center;
+        padding: var(--stil-space-4);
+        border-radius: var(--stil-radius-md);
+        background-color: var(--stil-color-surface-muted);
+        color: var(--stil-color-text-muted);
+        font-size: var(--stil-font-size-sm);
+        text-align: center;
+    }
+
+    /* Narrow charts: thin out crowded labels and drop direct labels (the legend still names the series). */
+    @container stil-chart (width < 30rem) {
+        .stil-chart-plot {
+            padding-inline-end: var(--_end, 0.75rem);
+        }
+
+        .stil-chart-end-labels,
+        .stil-chart-hide-s {
+            display: none;
+        }
+    }
+
+    @container stil-chart (30rem <= width < 50rem) {
+        .stil-chart-hide-m {
+            display: none;
+        }
+    }
+
+    @container stil-chart (width >= 50rem) {
+        .stil-chart-hide-l {
+            display: none;
+        }
+    }
+
+    /* Sparkline */
+    .stil-chart-sparkline {
+        --_line: var(--stil-chart-sparkline, var(--stil-color-text-muted));
+        --_dot: var(--stil-chart-1);
+        display: block;
+        min-width: 0;
+        padding-inline: 4px;
+    }
+
+    .stil-chart-sparkline-svg {
+        display: block;
+        width: 100%;
+        overflow: visible;
+    }
+
+    .stil-chart-sparkline-line {
+        fill: none;
+        stroke: var(--_line);
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .stil-chart-sparkline-area {
+        fill: var(--_line);
+        opacity: var(--stil-chart-area-opacity);
+    }
+
+    .stil-chart-sparkline-dot {
+        fill: var(--_dot);
+        stroke: var(--stil-chart-surface, var(--stil-color-surface));
+        stroke-width: 1.5;
+    }
+
+    /* Windows high contrast: keep the series colors (the legend and the table carry the names)
+       and draw text and chrome in system colors. */
+    @media (forced-colors: active) {
+        .stil-chart-svg,
+        .stil-chart-donut-svg,
+        .stil-chart-key,
+        .stil-chart-sparkline-svg {
+            forced-color-adjust: none;
+        }
+
+        .stil-chart-svg text,
+        .stil-chart-donut-svg text {
+            fill: CanvasText;
+        }
+
+        .stil-chart-gridline,
+        .stil-chart-baseline,
+        .stil-chart-crosshair {
+            stroke: GrayText;
+        }
+
+        .stil-chart-marker,
+        .stil-chart-slice-mark,
+        .stil-chart-gap {
+            stroke: Canvas;
+        }
+    }
+}

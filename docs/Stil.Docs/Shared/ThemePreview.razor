@@ -1,0 +1,62 @@
+@* A sample of components, used by the theme builder to preview a theme. *@
+<div class="stil-stack stil-gap-4">
+    <div class="stil-cluster stil-justify-content-between">
+        <h3 class="stil-mb-0">Orders</h3>
+        <div class="stil-cluster stil-gap-2">
+            <StilButton Appearance="StilButtonAppearance.Ghost" Variant="StilVariant.Secondary">Export</StilButton>
+            <StilButton>New order</StilButton>
+        </div>
+    </div>
+
+    <div class="stil-cluster">
+        @foreach (var variant in Enum.GetValues<StilVariant>())
+        {
+            <StilButton Variant="variant" Size="StilSize.Small">@variant</StilButton>
+        }
+    </div>
+
+    <div class="stil-grid">
+        <StilStatCard Label="Revenue" Value="48,200 €" Trend="+12.4%" TrendDirection="StilTrendDirection.Up" Description="vs last month" class="stil-col-md-6" />
+        <StilStatCard Label="Open tickets" Value="17" Trend="+3" TrendDirection="StilTrendDirection.Up" TrendVariant="StilVariant.Danger" Description="since Monday" class="stil-col-md-6" />
+    </div>
+
+    <StilAlert Variant="StilVariant.Info" Subtle Title="Heads up">The warehouse in Umeå closes early on Friday.</StilAlert>
+
+    <StilTabs Label="Preview tabs">
+        <StilTab Title="Details">
+            <div class="stil-grid">
+                <StilTextBox @bind-Value="_customer" Label="Customer" class="stil-col-md-6" />
+                <StilSelect TValue="string" @bind-Value="_status" Items="Statuses" Label="Status" class="stil-col-md-6" />
+                <StilSwitch @bind-Value="_express" Label="Express delivery" class="stil-col-md-6" />
+                <StilCheckbox @bind-Value="_gift" Label="This is a gift" class="stil-col-md-6" />
+            </div>
+        </StilTab>
+        <StilTab Title="History">
+            <p>Created 7 Oct 2026 by Anna Berg.</p>
+        </StilTab>
+    </StilTabs>
+
+    <StilList>
+        <StilListItem Title="Order #1043" Description="Berglund Outdoor · 7 Oct 2026" Badge="Shipped" BadgeVariant="StilVariant.Info" />
+        <StilListItem Title="Order #1044" Description="Kallio Design Oy · 8 Oct 2026" Badge="Pending" BadgeVariant="StilVariant.Warning" BadgeSubtle />
+        <StilListItem Title="Order #1045" Description="Østerby Marine · 9 Oct 2026" Badge="Cancelled" BadgeVariant="StilVariant.Danger" />
+    </StilList>
+
+    <StilProgress Value="64" Label="Packed" ShowValue />
+
+    <div class="stil-cluster">
+        @foreach (var variant in Enum.GetValues<StilVariant>())
+        {
+            <StilBadge Variant="variant">@variant</StilBadge>
+        }
+        <a href="theme-builder">A link</a>
+    </div>
+</div>
+
+@code {
+    private static readonly string[] Statuses = ["Pending", "Shipped", "Delivered"];
+    private string? _customer = "Fjällbacka Café";
+    private string _status = "Shipped";
+    private bool _express = true;
+    private bool _gift;
+}

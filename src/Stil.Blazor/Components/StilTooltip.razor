@@ -11,9 +11,11 @@
     [Parameter, EditorRequired]
     public string Text { get; set; } = "";
 
+    /// <summary>Top (default) or Bottom.</summary>
     [Parameter]
     public StilTooltipPosition Position { get; set; }
 
+    /// <summary>The element the tooltip describes.</summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 }

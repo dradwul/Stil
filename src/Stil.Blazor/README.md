@@ -504,39 +504,6 @@ Warning toasts use `role="alert"`; the others use `"status"`.
 Utility classes (`stil-mt-4`, `stil-d-flex`, …) have no components. Use them
 as `class` on any component.
 
-## Coming from Radzen
-
-Most Radzen components have a Stil counterpart, so an app can move one
-screen at a time. Both libraries can run side by side while you migrate:
-Stil's classes are prefixed and its CSS is in cascade layers, so it does not
-restyle Radzen components.
-
-| Radzen | Stil for Blazor | Notes |
-| --- | --- | --- |
-| `RadzenDataGrid`, `RadzenDataGridColumn` | `StilDataGrid`, `StilDataGridColumn`, `StilDataGridTemplateColumn` | `Data` → `Items`, `LoadData` → `ItemsProvider` (with `ApplyFiltersAndSorting` for `IQueryable`), `AllowFiltering` → `Filterable`, `Property="Name"` → `Property="o => o.Name"`. Columns sort by default. |
-| `RadzenPager` | `StilPagination` | |
-| `RadzenTextBox`, `RadzenTextArea`, `RadzenNumeric`, `RadzenDatePicker` | `StilTextBox`, `StilTextArea`, `StilNumeric`, `StilDatePicker` | Label, hint and validation are parameters of the field; no separate `RadzenLabel` or validators. |
-| `RadzenDropDown` | `StilSelect`, or `StilAutocomplete` for long or searched lists | `Multiple` → `StilMultiSelect` |
-| `RadzenAutoComplete` | `StilAutocomplete` | `LoadData` → `Search` |
-| `RadzenDateRangePicker` (two pickers) | `StilDateRangePicker` | |
-| `RadzenCheckBox`, `RadzenSwitch`, `RadzenRadioButtonList` | `StilCheckbox`, `StilSwitch`, `StilRadioGroup` | |
-| `RadzenUpload`, `RadzenFileInput` | `StilFileUpload` | Stil gives you `IBrowserFile`s; upload them with your own code. |
-| `RadzenTemplateForm` + validators | `EditForm` + `DataAnnotationsValidator` | |
-| `RadzenButton`, `RadzenSplitButton` | `StilButton`, `StilDropdown` | |
-| `RadzenMenu`, `RadzenProfileMenu` | `StilDropdown` (with `Items`), `StilNavbar` | |
-| `RadzenPanelMenu` | A vertical `StilNav` with `StilNavGroup` | |
-| `RadzenTree` | `StilTreeView` | |
-| `RadzenTabs` | `StilTabs` | |
-| `RadzenAccordion` | `StilAccordion` | |
-| `RadzenBreadCrumb` | `StilBreadcrumbs` | |
-| `RadzenCard`, `RadzenAlert`, `RadzenBadge` | `StilCard`, `StilAlert`, `StilBadge` | |
-| `RadzenProgressBar`, `RadzenProgressBarCircular` | `StilProgress`, `StilSpinner` | |
-| `RadzenRow`/`RadzenColumn`, `RadzenStack` | `StilGrid`/`StilCol`, `StilStack`/`StilCluster` | |
-| `RadzenLayout`, `RadzenSidebar` | `StilSidebarLayout`, `StilDrawer` | |
-| `RadzenIcon` | `StilIcon` | Register `StilLigatureIconProvider("material-icons")` to keep using Material icon names. |
-| `DialogService`, `NotificationService` | `IStilDialogService`, `IStilToastService` | `Confirm` → `ConfirmAsync`, `OpenAsync<T>` → `OpenAsync<T>`, `Notify` → `Success`/`Error`/`Show` |
-| `RadzenChart` | Not yet | Planned as a separate package. Keep using a chart library meanwhile. |
-
 ## Theming
 
 Use `AddStil(o => o.Theme = …)` with `<StilHead />` for the whole app, or

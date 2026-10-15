@@ -1,0 +1,13 @@
+<StilTable Items="_returns" Compact>
+    <Columns>
+        <StilColumn Title="Return" Field="@(r => r.Id)" />
+        <StilColumn Title="Reason" Field="@(r => r.Reason)" />
+    </Columns>
+    <EmptyContent>No returns this week. <a href="components/data-grid">See all orders</a>.</EmptyContent>
+</StilTable>
+
+@code {
+    private readonly List<Return> _returns = [];
+
+    private sealed record Return(int Id, string Reason);
+}

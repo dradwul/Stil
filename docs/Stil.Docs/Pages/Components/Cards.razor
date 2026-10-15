@@ -1,0 +1,49 @@
+@page "/components/cards"
+@using Stil.Docs.Examples.Cards
+
+<DocsHeader Title="Cards and alerts" Eyebrow="Components">
+    <Lead>Cards to group content, alerts for messages, avatars for people and accordions for content that opens and closes.</Lead>
+</DocsHeader>
+
+<h2 id="cards">Cards</h2>
+<DocExample Type="typeof(Cards)">
+    <p>A card has an optional <code>Title</code> and <code>Subtitle</code>, a body and a <code>Footer</code> for actions. With <code>HeaderActions</code> the title moves into a header bar next to the actions. Set <code>HeadingLevel</code> so the title fits the page outline; the default is 2.</p>
+</DocExample>
+
+<h2 id="card-content">Lists and tables in a card</h2>
+<DocExample Type="typeof(CardWithList)">
+    <p>Wrap a list or table in <code>stil-card-flush</code> to let it reach the card edges, and use <code>StilList Flush</code> or a table so the rows line up with the card padding.</p>
+</DocExample>
+
+<h2 id="alerts">Alerts</h2>
+<DocExample Type="typeof(Alerts)">
+    <p>
+        <code>StilAlert</code> shows a message in a variant color, or as a light tint with <code>Subtle</code>.
+        Danger and Warning alerts use <code>role="alert"</code>, so screen readers read them at once; the others use
+        <code>role="status"</code>, which waits for a pause. Set <code>Role</code> to change it.
+        A <code>Dismissible</code> alert has a close button and raises <code>OnDismiss</code>. Dismissing works on
+        static pages too, through <code>stil.js</code>.
+    </p>
+</DocExample>
+
+<h2 id="avatars">Avatars</h2>
+<DocExample Type="typeof(Avatars)">
+    <p><code>StilAvatar</code> shows the initials of <code>Name</code>, or a photo from <code>ImageSrc</code>. The name is its accessible name (<code>role="img"</code>), so do not repeat it in an <code>alt</code> text.</p>
+</DocExample>
+
+<h2 id="accordion">Accordion</h2>
+<DocExample Type="typeof(Accordion)">
+    <p>
+        Accordion items are <code>&lt;details&gt;</code> elements, so they open and close without interactivity and with
+        the keyboard (Enter or Space on the header). By default opening one item closes the others; the browser does this,
+        so it also works on static pages. <code>Multiple</code> lets several stay open. Use <code>Header</code> for rich
+        header content, <code>@@bind-Open</code> to follow an item from code, and <code>Flush</code> inside a card.
+    </p>
+</DocExample>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilCard)" />
+<ApiTable Type="typeof(StilAlert)" />
+<ApiTable Type="typeof(StilAvatar)" />
+<ApiTable Type="typeof(StilAccordion)" />
+<ApiTable Type="typeof(StilAccordionItem)" />

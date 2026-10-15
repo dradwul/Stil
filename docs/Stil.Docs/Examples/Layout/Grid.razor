@@ -1,0 +1,26 @@
+<StilGrid>
+    <StilCol SpanMd="8">
+        <StilCard Title="Orders this week" HeadingLevel="3">
+            <p class="stil-mb-0">Eight columns from the md breakpoint, full width below it.</p>
+        </StilCard>
+    </StilCol>
+    <StilCol SpanMd="4">
+        <StilCard Title="Returns" HeadingLevel="3">
+            <p class="stil-mb-0">Four columns.</p>
+        </StilCard>
+    </StilCol>
+    @foreach (var (city, orders) in _cities)
+    {
+        <StilCol Span="6" SpanLg="3">
+            <StilCard>
+                <p class="stil-text-muted stil-fs-sm stil-mb-1">@city</p>
+                <p class="stil-fs-xl stil-mb-0">@orders</p>
+            </StilCard>
+        </StilCol>
+    }
+</StilGrid>
+
+@code {
+    private static readonly (string City, int Orders)[] _cities =
+        [("Oslo", 214), ("Stockholm", 388), ("Helsinki", 159), ("København", 247)];
+}

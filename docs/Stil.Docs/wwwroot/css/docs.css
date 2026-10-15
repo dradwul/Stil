@@ -1,0 +1,249 @@
+/* The docs site's own layout. Everything else comes from Stil. Docs rules are unlayered, so they
+   win over Stil's layered rules without !important. */
+
+.docs-loading {
+    display: grid;
+    place-items: center;
+    gap: 1rem;
+    min-height: 100vh;
+    color: #59636e;
+    font-family: system-ui, sans-serif;
+}
+
+#blazor-error-ui {
+    position: fixed;
+    inset: auto 1rem 1rem;
+    z-index: 2000;
+    display: none;
+    margin: 0;
+}
+
+#blazor-error-ui .dismiss { margin-inline-start: auto; }
+
+.docs-shell { min-height: 100vh; }
+
+.docs-skip { position: absolute; inset-inline-start: 1rem; top: 0.5rem; z-index: 2000; }
+
+.docs-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--stil-space-2);
+    color: inherit;
+    font-size: var(--stil-font-size-lg);
+    text-decoration: none;
+}
+
+.docs-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 90rem;
+    margin-inline: auto;
+}
+
+.docs-sidebar { display: none; }
+
+.docs-mobile-nav { padding-block: var(--stil-space-3); }
+
+@media (min-width: 992px) {
+    .docs-body { grid-template-columns: 16rem minmax(0, 1fr); }
+
+    .docs-sidebar {
+        position: sticky;
+        top: 4rem;
+        display: block;
+        max-height: calc(100vh - 4rem);
+        overflow-y: auto;
+        padding: var(--stil-space-5) var(--stil-space-3);
+        border-inline-end: 1px solid var(--stil-color-border);
+    }
+
+    .docs-mobile-nav { display: none; }
+}
+
+.docs-main {
+    min-width: 0;
+    max-width: 60rem;
+    padding: var(--stil-space-5) var(--stil-space-4) var(--stil-space-7);
+}
+
+.docs-main:focus { outline: none; }
+
+@media (min-width: 768px) {
+    .docs-main { padding-inline: var(--stil-space-6); }
+}
+
+.docs-main > h2,
+.docs-main section > h2 {
+    margin-block-start: var(--stil-space-7);
+    padding-block-start: var(--stil-space-2);
+    border-top: 1px solid var(--stil-color-border);
+}
+
+.docs-header { margin-block-end: var(--stil-space-5); }
+
+.docs-eyebrow {
+    margin-block-end: var(--stil-space-1);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+    letter-spacing: var(--stil-letter-spacing);
+    text-transform: uppercase;
+}
+
+.docs-lead {
+    max-width: 45rem;
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-lg);
+}
+
+/* Examples */
+.docs-example {
+    margin-block: var(--stil-space-5);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-lg);
+    background-color: var(--stil-color-surface);
+}
+
+.docs-example-title {
+    margin: 0;
+    padding: var(--stil-space-3) var(--stil-space-4) 0;
+    font-size: var(--stil-font-size-md);
+}
+
+.docs-example-description {
+    padding: var(--stil-space-2) var(--stil-space-4) 0;
+    color: var(--stil-color-text-muted);
+}
+
+.docs-example-description > :last-child { margin-block-end: 0; }
+
+.docs-example-preview {
+    padding: var(--stil-space-5) var(--stil-space-4);
+    overflow-x: auto;
+}
+
+.docs-example-source { border-top: 1px solid var(--stil-color-border); }
+
+.docs-example-source > summary {
+    padding: var(--stil-space-2) var(--stil-space-4);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+    cursor: pointer;
+}
+
+.docs-example-source > .docs-code { margin: 0; border: 0; border-top: 1px solid var(--stil-color-border); border-radius: 0 0 var(--stil-radius-lg) var(--stil-radius-lg); }
+
+/* Code */
+.docs-code {
+    margin-block: var(--stil-space-4);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-lg);
+    background-color: var(--stil-color-surface-muted);
+    overflow: hidden;
+}
+
+.docs-code-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--stil-space-1) var(--stil-space-2) var(--stil-space-1) var(--stil-space-4);
+    border-bottom: 1px solid var(--stil-color-border);
+}
+
+.docs-code-language {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-xs);
+    letter-spacing: var(--stil-letter-spacing);
+    text-transform: uppercase;
+}
+
+.docs-code pre {
+    margin: 0;
+    padding: var(--stil-space-3) var(--stil-space-4);
+    overflow-x: auto;
+    background: none;
+    font-size: var(--stil-font-size-sm);
+    line-height: 1.6;
+    tab-size: 4;
+}
+
+.docs-code pre:focus-visible { outline: var(--stil-focus-ring-width) solid var(--stil-color-accent, currentColor); outline-offset: -2px; }
+
+/* API tables */
+.docs-api { margin-block: var(--stil-space-5); }
+
+.docs-api-title { font-size: var(--stil-font-size-lg); }
+
+.docs-api-table th[scope="row"] { white-space: nowrap; font-weight: var(--stil-font-weight-normal); }
+
+.docs-api-table td:nth-child(2) { min-width: 9rem; }
+
+.docs-type { white-space: normal; overflow-wrap: anywhere; }
+
+/* Previous and next */
+.docs-pager {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: var(--stil-space-3);
+    margin-block-start: var(--stil-space-7);
+}
+
+.docs-pager-link {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stil-space-1);
+    padding: var(--stil-space-3) var(--stil-space-4);
+    color: inherit;
+    text-decoration: none;
+}
+
+.docs-pager-link:hover { border-color: var(--stil-color-border-strong); }
+
+.docs-pager-next { grid-column: -2; text-align: end; }
+
+/* Home page */
+.docs-hero {
+    padding-block: var(--stil-space-6) var(--stil-space-5);
+}
+
+.docs-hero h1 { font-size: clamp(2rem, 6vw, 3.25rem); line-height: 1.15; }
+
+.docs-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--stil-space-4);
+    margin-block: var(--stil-space-5);
+}
+
+/* Theme builder */
+.docs-theme-builder {
+    display: grid;
+    gap: var(--stil-space-5);
+}
+
+@media (min-width: 1200px) {
+    .docs-theme-builder { grid-template-columns: 18rem minmax(0, 1fr); align-items: start; }
+
+    .docs-theme-controls { position: sticky; top: 5rem; }
+}
+
+.docs-color-input {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    gap: var(--stil-space-2);
+    align-items: end;
+}
+
+.docs-color-input input[type="color"] {
+    width: 3rem;
+    height: 2.6rem;
+    padding: 0.2rem;
+    border: 1px solid var(--stil-color-border-strong);
+    border-radius: var(--stil-radius-md);
+    background: var(--stil-color-surface);
+}
+
+.docs-preview-frame {
+    padding: var(--stil-space-4);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-lg);
+}

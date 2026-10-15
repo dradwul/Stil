@@ -1,8 +1,8 @@
 # Stil roadmap
 
 Goal: a themeable CSS class library that can replace Bootstrap or Tailwind,
-plus a Blazor component library built on it that can replace Radzen or
-Blazorise. Each phase ends with something usable.
+plus a complete Blazor component library built on it. Each phase ends with
+something usable.
 
 ## Overview
 
@@ -13,7 +13,7 @@ Blazorise. Each phase ends with something usable.
 | 2 | Stil CSS 1.0 (Bootstrap replacement) | ✅ Done |
 | 3 | Stil for Blazor core (forms, dialogs, toasts) | ✅ Done |
 | 4 | Stil for Blazor: a component for every Stil CSS component | ✅ Done |
-| 5 | Data components (Radzen replacement) | ✅ Done |
+| 5 | Data components | ✅ Done |
 | 6 | 1.0 release and ecosystem | Planned |
 
 A phase is done when every item in it is checked. Items that need the
@@ -49,8 +49,6 @@ end, so they never keep a phase open.
   - Theming with `AddStil()`, `StilTheme`, `StilHead` and
     `StilThemeProvider`.
   - 594 bUnit tests.
-  - A [Radzen mapping](src/Stil.Blazor/README.md#coming-from-radzen) for
-    migrating screen by screen.
 - **Samples:**
   - `samples/Stil.Html/index.html` shows every CSS class.
   - `samples/Stil.Html/admin.html` is a dashboard built only with Stil CSS.
@@ -174,8 +172,7 @@ narrow and wide.
 - It deletes through a confirm dialog.
 - It shows a toast after each action.
 
-All of this was tested in the browser, in light and dark mode. No Radzen was
-needed.
+All of this was tested in the browser, in light and dark mode.
 
 **Changes from the plan:**
 
@@ -280,7 +277,7 @@ users rarely need to write `stil-*` classes by hand.
   along with that set's license.
 - **Plain CSS:** the same SVGs are `stil-icon-*` CSS mask classes.
 
-## Phase 5: Data components (Radzen replacement) ✅ Done
+## Phase 5: Data components ✅ Done
 
 - [x] `StilDataGrid`, with `StilDataGridColumn` (bound to a property
   expression) and `StilDataGridTemplateColumn`:
@@ -315,12 +312,10 @@ users rarely need to write `stil-*` classes by hand.
   `stil-chip`, `stil-dropzone`, `stil-date-range`, `stil-stat`,
   `stil-tree`, `stil-nav-group`), shown in `samples/Stil.Html`, and the
   `file`, `folder` and `upload` icons.
-- [x] Docs: the Blazor and CSS READMEs, and a Radzen-to-Stil mapping table.
+- [x] Docs: the Blazor and CSS READMEs.
 
-**Done when:** an existing Radzen-based internal app can be migrated screen
-by screen. Every Radzen component in common use now has a counterpart (see
-the mapping table), and the demo's orders page is a typical Radzen screen
-built only with Stil. Trying it on a real app is an owner task below.
+**Done when:** a typical business app screen (the demo's orders page) can be
+built only with Stil.
 
 ## Phase 6: 1.0 release and ecosystem
 
@@ -328,20 +323,13 @@ built only with Stil. Trying it on a real app is an owner task below.
 - [ ] An interactive theme builder: edit tokens live, then copy the CSS or the
   C# `StilTheme`.
 - [ ] Playwright visual regression tests for the CSS and the components.
-- [ ] A `dotnet new stil-app` template, and a migration guide from
-  Blazorise (the Radzen mapping is in the Blazor README).
+- [ ] A `dotnet new stil-app` template.
 - [ ] `Stil.Charts`, a separate package: line, bar, area and donut charts as
   SVG, themed with the `--stil-*` tokens and readable by screen readers
   (a data table fallback).
-- [ ] Package publishing (deferred until this phase, decided 2026-10-15):
-  - Complete the NuGet metadata: Authors, RepositoryUrl, PackageProjectUrl,
-    a package icon, a symbols package (`.snupkg`) and SourceLink.
-  - A release workflow using NuGet Trusted Publishing (no long-lived API key)
-    and npm provenance, run on a version tag.
-  - Publish preview versions first (`0.x.0-preview.N`), because a published
-    version can only be unlisted, never deleted.
-- [ ] Semantic versioning with a changelog. `1.0` is published once the APIs
-  have stayed unchanged for one minor release.
+- [ ] Package metadata (authors, repository, icon, Source Link, symbols, XML
+  docs), one shared version in `Directory.Build.props`, and a changelog.
+  Publishing is not planned: nothing is pushed to NuGet or npm.
 
 ---
 
@@ -353,13 +341,6 @@ These need the repository or package owner.
   links in `src/Stil.Blazor/README.md` and `src/Stil.Css/package.json`.
 - [ ] Push and confirm that CI passes on GitHub. It has only been run
   locally so far.
-- [ ] Migrate one screen of a real Radzen-based internal app to Stil, and
-  note what was missing.
-- [ ] Later, when we publish in Phase 6 (not now):
-  - Create accounts on nuget.org and npmjs.com with two-factor sign-in.
-  - Set up Trusted Publishing for the repository.
-  - Publish `Stil` (NuGet) and `stil-css` (npm), which also puts the CSS on
-    jsDelivr. Publishing public packages is free.
 
 ## CSS backlog (no phase yet)
 

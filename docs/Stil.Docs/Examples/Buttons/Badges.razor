@@ -1,0 +1,15 @@
+<div class="stil-stack stil-gap-3">
+    <div class="stil-cluster">
+        @foreach (var variant in Enum.GetValues<StilVariant>())
+        {
+            <StilBadge Variant="variant">@variant</StilBadge>
+        }
+    </div>
+    <div class="stil-cluster">
+        <StilBadge Variant="StilVariant.Warning" Subtle>Pending</StilBadge>
+        <StilBadge Variant="StilVariant.Info" Subtle>Shipped</StilBadge>
+        <StilBadge Variant="StilVariant.Success" Subtle>Delivered</StilBadge>
+        <StilBadge Variant="StilVariant.Danger" Subtle>Cancelled</StilBadge>
+    </div>
+    <p class="stil-mb-0">Orders <StilBadge Variant="StilVariant.Secondary">12</StilBadge></p>
+</div>

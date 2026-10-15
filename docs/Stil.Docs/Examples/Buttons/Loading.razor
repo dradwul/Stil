@@ -1,0 +1,17 @@
+<div class="stil-cluster">
+    <StilButton Loading="_saving" OnClick="SaveAsync">@(_saving ? "Saving" : "Save")</StilButton>
+    <StilButton Appearance="StilButtonAppearance.Outline" Variant="StilVariant.Secondary"
+                Pressed="_bold" OnClick="() => _bold = !_bold">Bold</StilButton>
+</div>
+
+@code {
+    private bool _saving;
+    private bool _bold;
+
+    private async Task SaveAsync()
+    {
+        _saving = true;
+        await Task.Delay(1500);
+        _saving = false;
+    }
+}

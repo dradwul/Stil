@@ -11,6 +11,7 @@
     [CascadingParameter]
     private StilAccordion? Parent { get; set; }
 
+    /// <summary>The header text.</summary>
     [Parameter]
     public string? Title { get; set; }
 
@@ -22,9 +23,11 @@
     [Parameter]
     public bool Open { get; set; }
 
+    /// <summary>Raised when the item opens or closes.</summary>
     [Parameter]
     public EventCallback<bool> OpenChanged { get; set; }
 
+    /// <summary>The content shown while the item is open.</summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 

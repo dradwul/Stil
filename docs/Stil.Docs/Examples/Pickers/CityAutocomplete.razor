@@ -1,0 +1,9 @@
+<StilAutocomplete TItem="string" @bind-Value="_city" Items="_cities" Label="City" Placeholder="Start typing…"
+                  Hint="@($"Chosen: {_city ?? "nothing"}")" />
+
+@code {
+    private static readonly string[] _cities =
+        ["Aarhus", "Bergen", "Göteborg", "Helsinki", "København", "Malmö", "Oslo", "Reykjavík", "Stockholm", "Tampere", "Trondheim", "Turku"];
+
+    private string? _city = "Bergen";
+}

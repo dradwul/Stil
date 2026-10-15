@@ -13,9 +13,11 @@
     [Parameter]
     public string Type { get; set; } = "text";
 
+    /// <summary>Text shown while the control is empty.</summary>
     [Parameter]
     public string? Placeholder { get; set; }
 
+    /// <summary>Small, Medium (default) or Large.</summary>
     [Parameter]
     public StilSize Size { get; set; }
 

@@ -1,0 +1,103 @@
+@namespace Stil.Charts
+@typeparam TItem
+@inherits StilChartBase<TItem>
+
+@RenderChart
+
+@code {
+    /// <summary>A plot with categories along the bottom and values up the side, around <paramref name="marks"/>.</summary>
+    private protected RenderFragment VerticalFrame(RenderFragment marks) => __builder =>
+    {
+        var layout = Layout;
+        var count = Data.Categories.Count;
+        var labelWidth = Data.Categories.Select(c => ChartText.Width(AxisLabel(c, VerticalLabelChars))).DefaultIfEmpty(0).Max() + 10;
+        <div class="stil-chart-plot" style="@PlotStyle">
+            <svg class="stil-chart-svg" width="100%" height="@ChartText.N(layout.Height)" role="img"
+                 aria-labelledby="@SvgLabelledBy" aria-label="@SvgLabel" aria-describedby="@DescriptionId">
+                <desc id="@DescriptionId">@SummaryText</desc>
+                <g class="stil-chart-axes">
+                    @foreach (var tick in Scale.Ticks)
+                    {
+                        if (Gridlines && tick != Scale.Baseline)
+                        {
+                            <line class="stil-chart-gridline" x1="0" x2="100%" y1="@Crisp(layout.Y(Scale, tick))" y2="@Crisp(layout.Y(Scale, tick))" />
+                        }
+                    }
+                    <line class="stil-chart-baseline" x1="0" x2="100%" y1="@Crisp(layout.Y(Scale, Scale.Baseline))" y2="@Crisp(layout.Y(Scale, Scale.Baseline))" />
+                    @foreach (var tick in Scale.Ticks)
+                    {
+                        @SvgText(TickText(tick), ChartText.N(-ChartLayout.LabelGap), ChartText.N(layout.Y(Scale, tick)), "stil-chart-tick stil-chart-value-tick", "end", "0.32em")
+                    }
+                    @for (var i = 0; i < count; i++)
+                    {
+                        var category = Data.Categories[i];
+                        @SvgText(AxisLabel(category, VerticalLabelChars), ChartText.Pct(ChartLayout.BandCenter(i, count)), ChartText.N(layout.PlotBottom + 18),
+                            CssClass("stil-chart-tick stil-chart-category", layout.ThinningClass(i, count, labelWidth)), "middle", fullText: category)
+                    }
+                    @if (!string.IsNullOrWhiteSpace(CategoryAxisTitle))
+                    {
+                        @SvgText(CategoryAxisTitle, "50%", ChartText.N(layout.Height - 6), "stil-chart-axis-title", "middle")
+                    }
+                    @if (!string.IsNullOrWhiteSpace(ValueAxisTitle))
+                    {
+                        @SvgText(ValueAxisTitle, ChartText.N(-(layout.PlotTop + layout.PlotBottom) / 2), ChartText.N(-layout.Start + 12),
+                            "stil-chart-axis-title", "middle", transform: "rotate(-90)")
+                    }
+                </g>
+                @marks
+            </svg>
+        </div>
+    };
+
+    /// <summary>A plot with categories down the side and values along the bottom, around <paramref name="marks"/>.</summary>
+    private protected RenderFragment HorizontalFrame(RenderFragment marks) => __builder =>
+    {
+        var layout = Layout;
+        var count = Data.Categories.Count;
+        var band = BandHeight;
+        var tickWidth = Scale.Ticks.Select(t => ChartText.Width(TickText(t))).DefaultIfEmpty(0).Max() + 12;
+        <div class="stil-chart-plot" style="@PlotStyle">
+            <svg class="stil-chart-svg" width="100%" height="@ChartText.N(layout.Height)" role="img"
+                 aria-labelledby="@SvgLabelledBy" aria-label="@SvgLabel" aria-describedby="@DescriptionId">
+                <desc id="@DescriptionId">@SummaryText</desc>
+                <g class="stil-chart-axes">
+                    @for (var t = 0; t < Scale.Ticks.Count; t++)
+                    {
+                        var tick = Scale.Ticks[t];
+                        var x = ChartText.Pct(Scale.Fraction(tick));
+                        if (Gridlines && tick != Scale.Baseline)
+                        {
+                            <line class="stil-chart-gridline" x1="@x" x2="@x" y1="@ChartText.N(layout.PlotTop)" y2="@ChartText.N(layout.PlotBottom)" />
+                        }
+                        @SvgText(TickText(tick), x, ChartText.N(layout.PlotBottom + 18),
+                            CssClass("stil-chart-tick stil-chart-value-tick", layout.ThinningClass(t, Scale.Ticks.Count, tickWidth, includesEndLabels: false)), "middle")
+                    }
+                    <line class="stil-chart-baseline" x1="@ChartText.Pct(Scale.Fraction(Scale.Baseline))" x2="@ChartText.Pct(Scale.Fraction(Scale.Baseline))"
+                          y1="@ChartText.N(layout.PlotTop)" y2="@ChartText.N(layout.PlotBottom)" />
+                    @for (var i = 0; i < count; i++)
+                    {
+                        var category = Data.Categories[i];
+                        @SvgText(AxisLabel(category, HorizontalLabelChars), ChartText.N(-ChartLayout.LabelGap), ChartText.N(layout.PlotTop + band * (i + 0.5)),
+                            "stil-chart-tick stil-chart-category", "end", "0.32em", category)
+                    }
+                    @if (!string.IsNullOrWhiteSpace(ValueAxisTitle))
+                    {
+                        @SvgText(ValueAxisTitle, "50%", ChartText.N(layout.Height - 6), "stil-chart-axis-title", "middle")
+                    }
+                    @if (!string.IsNullOrWhiteSpace(CategoryAxisTitle))
+                    {
+                        @SvgText(CategoryAxisTitle, ChartText.N(-(layout.PlotTop + layout.PlotBottom) / 2), ChartText.N(-layout.Start + 12),
+                            "stil-chart-axis-title", "middle", transform: "rotate(-90)")
+                    }
+                </g>
+                @marks
+            </svg>
+        </div>
+    };
+
+    private string PlotStyle =>
+        $"--_start: {ChartText.N(Layout.Start)}px; --_end: {ChartText.N(Layout.End)}px; --_labels: {ChartText.N(Layout.EndLabels)}px";
+
+    private protected static string CssClass(string classes, string? extra) =>
+        string.IsNullOrEmpty(extra) ? classes : $"{classes} {extra}";
+}

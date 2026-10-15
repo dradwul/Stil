@@ -34,15 +34,19 @@ else
     [Parameter]
     public RenderFragment? EmptyContent { get; set; }
 
+    /// <summary>Shade every other row.</summary>
     [Parameter]
     public bool Striped { get; set; }
 
+    /// <summary>Highlight the row under the pointer.</summary>
     [Parameter]
     public bool Hover { get; set; }
 
+    /// <summary>Smaller cell padding.</summary>
     [Parameter]
     public bool Compact { get; set; }
 
+    /// <summary>Borders on every cell.</summary>
     [Parameter]
     public bool Bordered { get; set; }
 

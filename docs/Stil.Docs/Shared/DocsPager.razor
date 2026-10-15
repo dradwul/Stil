@@ -1,0 +1,48 @@
+@implements IDisposable
+@inject NavigationManager Navigation
+
+@* Previous and next links at the end of every page, in the order of DocsPages. *@
+@if (_previous is not null || _next is not null)
+{
+    <nav class="docs-pager" aria-label="Previous and next page">
+        @if (_previous is not null)
+        {
+            <a class="stil-card docs-pager-link" href="@_previous.Href">
+                <span class="stil-text-muted stil-fs-sm">Previous</span>
+                <span><StilIcon Name="@StilIcons.ArrowLeft" /> @_previous.Title</span>
+            </a>
+        }
+        @if (_next is not null)
+        {
+            <a class="stil-card docs-pager-link docs-pager-next" href="@_next.Href">
+                <span class="stil-text-muted stil-fs-sm">Next</span>
+                <span>@_next.Title <StilIcon Name="@StilIcons.ArrowRight" /></span>
+            </a>
+        }
+    </nav>
+}
+
+@code {
+    private DocsPage? _previous;
+    private DocsPage? _next;
+
+    protected override void OnInitialized()
+    {
+        Navigation.LocationChanged += OnLocationChanged;
+        Update();
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        Update();
+        StateHasChanged();
+    }
+
+    private void Update()
+    {
+        var path = Navigation.ToBaseRelativePath(Navigation.Uri).Split('?', '#')[0].TrimEnd('/');
+        (_previous, _next) = DocsPages.Around(path);
+    }
+
+    public void Dispose() => Navigation.LocationChanged -= OnLocationChanged;
+}

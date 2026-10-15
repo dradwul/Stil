@@ -1,0 +1,46 @@
+@page "/components/tables"
+@using Stil.Docs.Examples.Tables
+
+<DocsHeader Title="Tables" Eyebrow="Components">
+    <Lead>A lightweight table for showing rows: columns from a field or a template, formats, alignment and a few styles.</Lead>
+</DocsHeader>
+
+<p>
+    <code>StilTable</code> renders a plain <code>stil-table</code> and works in static server rendering. For sorting,
+    filtering, paging and selection, use the <a href="components/data-grid">data grid</a>.
+</p>
+
+<h2 id="basic">Columns</h2>
+<DocExample Type="typeof(BasicTable)">
+    <p>Each <code>StilColumn</code> shows a <code>Field</code>, formatted with <code>Format</code> in the current culture. Align numbers with <code>Align="StilTextAlign.End"</code>. The <code>Caption</code> is also the table's accessible name. The table scrolls sideways on narrow screens; set <code>Responsive="false"</code> to turn that off.</p>
+</DocExample>
+
+<h2 id="templates">Templates</h2>
+<DocExample Type="typeof(Templates)">
+    <p>A <code>Template</code> renders any content in the cell. <code>context</code> is the row.</p>
+</DocExample>
+
+<h2 id="styles">Styles</h2>
+<DocExample Type="typeof(Styles)">
+    <p><code>Striped</code>, <code>Hover</code>, <code>Compact</code> and <code>Bordered</code> can be combined.</p>
+</DocExample>
+
+<h2 id="row-click">Row clicks and paging</h2>
+<DocExample Type="typeof(RowClick)">
+    <p>
+        <code>OnRowClick</code> makes the rows clickable and adds the hover style. <code>RowClass</code> adds classes to a row;
+        do not use color alone to show a state, so this example also says it in a column. Table rows cannot be focused,
+        so give keyboard users another way to open a row, such as a link in a cell, or use the data grid, where Enter
+        opens a focused row. A <a href="components/navigation#pagination"><code>StilPagination</code></a> pages through
+        the rows. Row clicks and paging buttons need an interactive render mode.
+    </p>
+</DocExample>
+
+<h2 id="empty">Empty tables</h2>
+<DocExample Type="typeof(Empty)">
+    <p>With no items, the table shows a single row with "No items", or your <code>EmptyContent</code>.</p>
+</DocExample>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilTable<>)" />
+<ApiTable Type="typeof(StilColumn<>)" />

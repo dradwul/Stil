@@ -1,0 +1,32 @@
+@page "/components/lists"
+@using Stil.Docs.Examples.Lists
+
+<DocsHeader Title="Lists" Eyebrow="Components">
+    <Lead>Rows with a title, a description, a status badge and content at the start or end. A row can be a link or a button.</Lead>
+</DocsHeader>
+
+<h2 id="item">A single row</h2>
+<DocExample Type="typeof(SingleItem)">
+    <p>On its own, a <code>StilListItem</code> is a bordered box. <code>Badge</code> is a shortcut for a status badge at the end of the row; set its color with <code>BadgeVariant</code>.</p>
+</DocExample>
+
+<h2 id="list">A list of links</h2>
+<DocExample Type="typeof(OrderList)">
+    <p>Inside a <code>StilList</code> the rows are joined. A row with <code>Href</code> is a link, so the whole row can be clicked and opened in a new tab. Links work without interactivity.</p>
+</DocExample>
+
+<h2 id="start-end">Start and end content</h2>
+<DocExample Type="typeof(StartAndEnd)">
+    <p><code>Start</code> holds an avatar or an icon before the title. <code>End</code> holds buttons or a menu after the badge. Do not put buttons in a row that is itself a link or a button; nested controls are hard to use with a keyboard or screen reader.</p>
+</DocExample>
+
+<h2 id="selection">Clickable rows</h2>
+<DocExample Type="typeof(Selectable)">
+    <p>A row with <code>OnClick</code> is a <code>&lt;button&gt;</code>, so it can be focused and pressed with Enter or Space. <code>Selected</code> marks the current row with <code>aria-current</code>, and <code>Disabled</code> turns it off. Clicks need an interactive render mode.</p>
+</DocExample>
+
+<p>For a list inside a card, see <a href="components/cards#card-content">Lists and tables in a card</a>.</p>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilList)" />
+<ApiTable Type="typeof(StilListItem)" />

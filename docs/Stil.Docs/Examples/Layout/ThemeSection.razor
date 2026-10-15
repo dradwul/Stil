@@ -1,0 +1,14 @@
+<StilThemeProvider Mode="StilThemeMode.Dark" Theme="_theme" class="stil-p-4 stil-rounded-lg">
+    <StilStack Gap="3">
+        <p class="stil-mb-0">This part of the page is always dark and has its own primary color and radius.</p>
+        <StilCluster>
+            <StilButton>Book a ferry</StilButton>
+            <StilButton Appearance="StilButtonAppearance.Outline">Timetable</StilButton>
+            <StilBadge Variant="StilVariant.Success">On time</StilBadge>
+        </StilCluster>
+    </StilStack>
+</StilThemeProvider>
+
+@code {
+    private readonly StilTheme _theme = new() { Primary = "#2f9e44", Radius = "1rem" };
+}

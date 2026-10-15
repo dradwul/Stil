@@ -1,0 +1,21 @@
+<div class="stil-cluster">
+    <StilDropdown Text="@($"Sort: {_sort}")" Items="_items" @bind-Open="_open"
+                  Appearance="StilButtonAppearance.Outline" Variant="StilVariant.Secondary" />
+    <span class="stil-text-muted">The menu is @(_open ? "open" : "closed").</span>
+</div>
+
+@code {
+    private string _sort = "Newest";
+    private bool _open;
+    private StilMenuItem[] _items = [];
+
+    protected override void OnInitialized() => _items =
+    [
+        StilMenuItem.Header("Sort orders by"),
+        StilMenuItem.Action("Newest", () => _sort = "Newest"),
+        StilMenuItem.Action("Amount", () => _sort = "Amount"),
+        StilMenuItem.Action("Customer", () => _sort = "Customer"),
+        StilMenuItem.Divider,
+        StilMenuItem.Link("All orders", "components/data-grid"),
+    ];
+}

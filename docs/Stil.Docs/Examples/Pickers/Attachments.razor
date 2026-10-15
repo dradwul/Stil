@@ -1,0 +1,12 @@
+<StilFileUpload Label="Attachments" Multiple Accept=".pdf,image/*" MaxFileSize="5 * 1024 * 1024" MaxFiles="3"
+                Hint="PDF or images, at most 5 MB each and 3 files." OnChange="FilesChanged" />
+<p class="stil-text-muted stil-mt-2 stil-mb-0">
+    @(_files.Count == 0 ? "No files yet." : $"Ready to upload: {string.Join(", ", _files.Select(f => f.Name))}")
+</p>
+
+@code {
+    private IReadOnlyList<IBrowserFile> _files = [];
+
+    // Read the files with file.OpenReadStream(maxAllowedSize) and send them to your server or storage.
+    private void FilesChanged(IReadOnlyList<IBrowserFile> files) => _files = files;
+}
