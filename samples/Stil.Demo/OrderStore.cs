@@ -38,13 +38,34 @@ public sealed class Order
 public sealed class OrderStore
 {
     private readonly Lock _lock = new();
-    private readonly List<Order> _orders =
+    private readonly List<Order> _orders = Seed();
+
+    /// <summary>The customers that orders are generated for, also offered as suggestions.</summary>
+    public static readonly string[] Customers =
     [
-        new() { Id = 1042, Customer = "Fjällbacka Café", Email = "hej@fjallbacka.example", Amount = 1240m, Status = OrderStatus.Delivered, OrderDate = new(2026, 10, 2) },
-        new() { Id = 1043, Customer = "Berglund Outdoor", Email = "order@berglund.example", Amount = 2078.90m, Status = OrderStatus.Shipped, OrderDate = new(2026, 10, 7), Express = true },
-        new() { Id = 1044, Customer = "Kallio Design Oy", Email = "studio@kallio.example", Amount = 455.20m, Status = OrderStatus.Pending, OrderDate = new(2026, 10, 8) },
-        new() { Id = 1045, Customer = "Østerby Marine", Email = "info@osterby.example", Amount = 9120.75m, Status = OrderStatus.Cancelled, OrderDate = new(2026, 10, 9) },
+        "Fjällbacka Café", "Berglund Outdoor", "Kallio Design Oy", "Østerby Marine", "Norrsken AB",
+        "Solvik Bageri", "Ek & Lind Advokatbyrå", "Hvalsø Cykler", "Lappi Tours", "Visby Keramik",
     ];
+
+    private static List<Order> Seed()
+    {
+        var random = new Random(1042);
+        var statuses = Enum.GetValues<OrderStatus>();
+        return Enumerable.Range(0, 64).Select(i =>
+        {
+            var customer = Customers[random.Next(Customers.Length)];
+            return new Order
+            {
+                Id = 1001 + i,
+                Customer = customer,
+                Email = $"order@{customer.Split(' ')[0].ToLowerInvariant()}.example",
+                Amount = Math.Round((decimal)(random.NextDouble() * 9000 + 120), 2),
+                Status = i > 56 ? OrderStatus.Pending : statuses[random.Next(statuses.Length)],
+                OrderDate = new DateOnly(2026, 8, 1).AddDays(i + random.Next(3)),
+                Express = random.Next(4) == 0,
+            };
+        }).ToList();
+    }
 
     public IReadOnlyList<Order> All()
     {
@@ -68,6 +89,15 @@ public sealed class OrderStore
                 order.Id = _orders.Count == 0 ? 1001 : _orders.Max(o => o.Id) + 1;
                 _orders.Add(order.Clone());
             }
+        }
+    }
+
+    public void Delete(IEnumerable<int> ids)
+    {
+        var set = ids.ToHashSet();
+        lock (_lock)
+        {
+            _orders.RemoveAll(o => set.Contains(o.Id));
         }
     }
 

@@ -209,9 +209,15 @@ public abstract class StilInputBase<TValue> : ComponentBase, IDisposable
         }
     }
 
+    /// <summary>Releases resources of a derived field. Called by Dispose.</summary>
+    protected virtual void DisposeField()
+    {
+    }
+
     public void Dispose()
     {
         Unsubscribe();
+        DisposeField();
         GC.SuppressFinalize(this);
     }
 }

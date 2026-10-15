@@ -2,7 +2,7 @@
 
 Stil CSS is a themeable, framework-independent CSS class library. It is a
 Bootstrap replacement with dark mode and WCAG AA colors built in. It is a
-single stylesheet, about 13 kB minified and gzipped, with no JavaScript. It
+single stylesheet, about 14 kB minified and gzipped, with no JavaScript. It
 works with plain HTML, Razor, React, Vue, or any other front end.
 
 Every class starts with `stil-` and every token with `--stil-`, so Stil can
@@ -109,7 +109,14 @@ classes: `aria-current="page"`, `aria-selected="true"`,
 | Avatar | `stil-avatar` (`-sm`, `-lg`) holding initials or an `<img>` |
 | List | `stil-list` (`stil-list-flush`) > `stil-list-item` with `stil-list-item-start`, `stil-list-item-content` (`stil-list-item-title`, `stil-list-item-description`) and `stil-list-item-end`. A `stil-list-item` on its own is a single bordered row; `<a>` and `<button>` rows are interactive. |
 | Table | `stil-table` with `stil-table-striped`, `stil-table-hover`, `stil-table-compact`, `stil-table-bordered`. Wrap it in `stil-table-responsive` to scroll sideways. |
-| Nav | `stil-nav` > `stil-nav-link`, with `stil-nav-vertical` and `stil-nav-pills` |
+| Data grid | `stil-data-grid` around a table, with `stil-data-grid-toolbar`, `stil-data-grid-footer`, sort buttons `stil-data-grid-sort` in headers with `aria-sort`, a filter row `stil-data-grid-filters`, a checkbox column `stil-data-grid-select` and `stil-data-grid-message`. Selected rows have `aria-selected="true"`. Add `stil-data-grid-scroll` and a `max-height` to the `stil-table-responsive` wrapper for a sticky header. |
+| Combobox, multi-select | `stil-combobox` > `stil-input` (`role="combobox"`) + `stil-combobox-popup` > `stil-combobox-list` (`role="listbox"`) > `stil-combobox-option` (`stil-combobox-option-active`), and `stil-combobox-message`. A multi-select adds `stil-multi-select stil-input` to the combobox, `stil-chip` elements (`stil-chip-text`, `stil-chip-remove`) and a `stil-multi-select-input`. Opening the list and moving between options needs a script. |
+| Chip | `stil-chip` with `stil-chip-text` and an optional `stil-chip-remove` button, for tags |
+| Date range | `<fieldset class="stil-date-range">` with a legend and `stil-date-range-inputs` around two fields |
+| File upload | `stil-dropzone` (`data-dragover="true"` while dragging) > `stil-dropzone-input` (the file input, laid over the zone), `stil-dropzone-icon`, `stil-dropzone-text`, `stil-dropzone-button`; `stil-file-list` > `stil-file-list-item` with `stil-file-list-name` and `stil-file-list-size` |
+| Stat card | `stil-card stil-stat` with `stil-stat-header` (`stil-stat-label`, `stil-stat-icon`), `stil-stat-value`, and `stil-stat-footer` with a `stil-stat-trend` badge (`data-trend="up"` or `"down"`) and `stil-stat-description` |
+| Tree | `<ul class="stil-tree" role="tree">` > `stil-tree-item` (`role="treeitem"`, `aria-expanded`, `aria-selected`) > `stil-tree-row` (`stil-tree-toggle`, `stil-tree-label`) + `<ul class="stil-tree-group">`. Keyboard navigation needs a script. |
+| Nav | `stil-nav` > `stil-nav-link`, with `stil-nav-vertical` and `stil-nav-pills`. In a vertical nav, `<details class="stil-nav-group">` > `<summary class="stil-nav-group-header">` (`stil-nav-group-title`, `stil-nav-group-chevron`) + `stil-nav-group-body` groups links. |
 | Navbar | `stil-navbar` with `stil-navbar-brand`, a `stil-nav` and `stil-navbar-end`. To collapse on small screens, add `stil-navbar-expand-{sm,md,lg,xl}`, wrap the nav and end content in `stil-navbar-collapse`, and add a `stil-navbar-toggle` button (`aria-expanded`, `aria-controls`, `data-stil-toggle`). |
 | Breadcrumb | `<ol class="stil-breadcrumb">` |
 | Pagination | `stil-pagination` (`stil-pagination-sm`) > `li` > `stil-page-link`. Use `<span class="stil-page-link">` for an ellipsis. |
@@ -118,7 +125,7 @@ classes: `aria-current="page"`, `aria-selected="true"`,
 | Drawer | `<dialog class="stil-drawer">` (`stil-drawer-end` to slide in from the end) with the dialog parts. Width: `--stil-drawer-width`. |
 | Dropdown | `<details class="stil-dropdown">` > `<summary class="stil-btn">` + `stil-dropdown-menu` (`-end`, `-up`) > `stil-dropdown-item`, `stil-dropdown-header`, `stil-dropdown-divider`. There is no arrow on a `stil-btn-icon` summary. |
 | Accordion | `stil-accordion` (`-flush`) > `<details class="stil-accordion-item">` > `<summary class="stil-accordion-header">` + `stil-accordion-body`. Items that share a `name` attribute open one at a time. |
-| Icons | `<span class="stil-icon stil-icon-{name}" aria-hidden="true"></span>`: about 25 built-in icons (chevrons, arrows, close, menu, check, plus, minus, search, more, info, success, warning, danger, external, filter, home, sun, moon). They use the current text color and are 1em in size. The set is in [`src/icons.json`](src/icons.json). |
+| Icons | `<span class="stil-icon stil-icon-{name}" aria-hidden="true"></span>`: about 30 built-in icons (chevrons, arrows, close, menu, check, plus, minus, search, more, info, success, warning, danger, external, filter, home, sun, moon, file, folder, upload). They use the current text color and are 1em in size. The set is in [`src/icons.json`](src/icons.json). |
 | Tooltip | `data-stil-tooltip="Text"` on any element. Add `stil-tooltip-bottom` to show it below. |
 | Progress | `stil-progress` (`stil-progress-lg`) > `stil-progress-bar` with a width |
 | Spinner | `stil-spinner`, `stil-spinner-sm`. It uses the current text color. |
@@ -131,7 +138,7 @@ full page built only with Stil, open
 
 ## Optional JavaScript
 
-Stil works without JavaScript. The optional `dist/stil.js` module, 5 kB with
+Stil works without JavaScript. The optional `dist/stil.js` module, 6 kB with
 no dependencies, adds a few behaviours:
 
 ```html
@@ -148,6 +155,10 @@ no dependencies, adds a few behaviours:
   open a collapsed navbar. Escape collapses it again.
 - The arrow keys, Home and End move between dropdown items. ArrowDown on
   the toggle opens the menu.
+- Keys that a widget's own script handles do not also scroll the page,
+  submit a form or close a dialog: the arrow keys on `role="treeitem"`,
+  `role="tab"` and `role="combobox"`, and Enter and Escape in an open
+  combobox.
 
 Stil for Blazor loads it automatically.
 

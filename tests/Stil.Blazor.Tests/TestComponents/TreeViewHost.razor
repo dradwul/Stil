@@ -1,0 +1,14 @@
+@* A StilTreeView with two-way bound SelectedItem and ExpandedItems. *@
+<StilTreeView TItem="TreeNode" Items="Roots" ChildrenSelector="n => n.Children" ItemText="n => n.Name" ItemKey="n => n.Id"
+              Label="Files" @bind-SelectedItem="SelectedItem" @bind-ExpandedItems="ExpandedItems" />
+
+@code {
+    [Parameter]
+    public List<TreeNode> Roots { get; set; } = TreeNode.Sample();
+
+    [Parameter]
+    public TreeNode? SelectedItem { get; set; }
+
+    [Parameter]
+    public IReadOnlyCollection<TreeNode>? ExpandedItems { get; set; }
+}

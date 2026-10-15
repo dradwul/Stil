@@ -1,0 +1,85 @@
+@typeparam TItem
+@inherits StilComboboxBase<TItem, TItem>
+
+@* A text input that suggests options while typing (a WAI-ARIA combobox). Choosing an option sets
+   Value; typing something else clears it, and leaving the field shows the chosen option's text again. *@
+<StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
+    @WithAddons(Control)
+</StilField>
+
+@code {
+    private TItem? _shownValue;
+
+    private RenderFragment Control => @<div class="stil-combobox" @onfocusout="OnFocusOutAsync">
+        <input @attributes="ControlAttributes(InputCss)" type="text" role="combobox" autocomplete="off"
+               aria-autocomplete="list" aria-expanded="@(ListVisible ? "true" : "false")" aria-controls="@ListId"
+               aria-activedescendant="@ActiveDescendant" aria-invalid="@StilCssClasses.AriaBool(Messages.Count > 0)"
+               placeholder="@Placeholder" value="@Text"
+               @oninput="OnInputAsync" @onkeydown="OnKeyDownAsync" @onclick="OnInputClickAsync" />
+        <div class="stil-combobox-popup" hidden="@(!ListVisible)" @onmousedown:preventDefault="true">
+            <ul class="stil-combobox-list" id="@ListId" role="listbox" aria-label="@(Label ?? Placeholder)">
+                @for (var i = 0; i < Results.Count; i++)
+                {
+                    var index = i;
+                    var item = Results[i];
+                    <li id="@OptionId(index)" role="option" class="@OptionClass(index)"
+                        aria-selected="@(index == ActiveIndex ? "true" : "false")" @onclick="() => OnOptionClickAsync(item)">
+                        @if (ItemTemplate is not null)
+                        {
+                            @ItemTemplate(item)
+                        }
+                        else
+                        {
+                            @TextOf(item)
+                        }
+                    </li>
+                }
+            </ul>
+            @if (Results.Count == 0)
+            {
+                <div class="stil-combobox-message" role="status">@(Searching ? SearchingText : NoResultsText)</div>
+            }
+        </div>
+    </div>;
+
+    private bool ListVisible => IsOpen && (Results.Count > 0 || ShowMessage);
+
+    private string OptionClass(int index) =>
+        index == ActiveIndex ? "stil-combobox-option stil-combobox-option-active" : "stil-combobox-option";
+
+    // With an option chosen and its text unchanged, opening the list shows every option.
+    protected override string QueryText => Value is not null && Text == TextOf(Value) ? "" : Text;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (!SameItem(Value, _shownValue))
+        {
+            _shownValue = Value;
+            Text = TextOf(Value);
+        }
+    }
+
+    protected override async Task OnTextChangedAsync()
+    {
+        if (Value is not null && Text != TextOf(Value))
+        {
+            _shownValue = default;
+            await SetValueAsync(default);
+        }
+    }
+
+    protected override async Task ChooseAsync(TItem item)
+    {
+        Text = TextOf(item);
+        _shownValue = item;
+        Close();
+        await SetValueAsync(item);
+    }
+
+    protected override Task OnClosedByBlurAsync()
+    {
+        Text = TextOf(Value);
+        return Task.CompletedTask;
+    }
+}

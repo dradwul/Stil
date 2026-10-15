@@ -1,0 +1,83 @@
+@inherits StilComponentBase
+
+@* A collapsible group of StilNavLinks inside a vertical StilNav. It is a <details> element, so
+   it opens and closes without interactivity too; @bind-Expanded follows it through the
+   stiltoggle event.
+   A group opens by itself when one of its links is the current page. *@
+<details @attributes="DetailsAttributes" class="@Classes("stil-nav-group")" open="@Expanded">
+    <summary class="stil-nav-group-header">
+        @if (Icon is not null)
+        {
+            <StilIcon Name="@Icon" />
+        }
+        <span class="stil-nav-group-title">@Title</span>
+        <StilIcon Name="@StilIcons.ChevronRight" class="stil-nav-group-chevron" />
+    </summary>
+    <div class="stil-nav-group-body">
+        <CascadingValue Value="this" IsFixed="true">
+            @ChildContent
+        </CascadingValue>
+    </div>
+</details>
+
+@code {
+    /// <summary>The text on the group header.</summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>A built-in or provider icon name shown before the title.</summary>
+    [Parameter]
+    public string? Icon { get; set; }
+
+    /// <summary>Whether the group is open. Supports two-way binding (@bind-Expanded).</summary>
+    [Parameter]
+    public bool Expanded { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> ExpandedChanged { get; set; }
+
+    /// <summary>StilNavLink components.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    // Razor cannot bind @onstiltoggle inside the assembly that declares it, so the handler is
+    // added as an attribute.
+    private IReadOnlyDictionary<string, object> DetailsAttributes
+    {
+        get
+        {
+            var attributes = AdditionalAttributes is null
+                ? new Dictionary<string, object>()
+                : new Dictionary<string, object>(AdditionalAttributes);
+            attributes["onstiltoggle"] = EventCallback.Factory.Create<StilToggleEventArgs>(this, OnToggleAsync);
+            return attributes;
+        }
+    }
+
+    /// <summary>Called by a StilNavLink in the group when it is the current page.</summary>
+    internal void OpenForCurrentLink()
+    {
+        if (Expanded)
+        {
+            return;
+        }
+
+        Expanded = true;
+        _ = InvokeAsync(async () =>
+        {
+            StateHasChanged();
+            await ExpandedChanged.InvokeAsync(true);
+        });
+    }
+
+    private async Task OnToggleAsync(StilToggleEventArgs e)
+    {
+        if (e.Open == Expanded)
+        {
+            return;
+        }
+
+        Expanded = e.Open;
+        await ExpandedChanged.InvokeAsync(e.Open);
+    }
+}

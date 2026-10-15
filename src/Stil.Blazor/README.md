@@ -54,15 +54,16 @@ and theme both with the same `--stil-*` tokens.
    ```
 
 The library also ships a small script, `stil.js`, which Blazor loads
-automatically. It closes dropdowns on an outside click or Escape and handles
-dismissing alerts on statically rendered pages. You do not need to add a
+automatically. It closes dropdowns on an outside click or Escape, handles
+dismissing alerts on statically rendered pages, and stops the keys that trees,
+tabs and pickers handle from also scrolling the page or submitting a form. You do not need to add a
 `<script>` tag.
 
 ## Render modes
 
 | Works in static SSR | Needs an interactive render mode (Server, WebAssembly or Auto) |
 | --- | --- |
-| Button (links and submit), Badge, Card, Container, Heading, Icon, List, ListItem (as a link), Avatar, Table, Breadcrumbs, Pagination with `HrefTemplate`, Nav, NavLink, Navbar (the menu button works through stil.js), Accordion, the layout components, Progress, Spinner, Tooltip, ThemeProvider, Head, form fields inside an enhanced `EditForm`, Dropdown, dismissible Alert | Button `OnClick`, ListItem `OnClick`, Table `OnRowClick`, Pagination with buttons, Tabs switching, `@bind-Open` on Dropdown and AccordionItem, Dialog, Drawer, DialogService, ToastService |
+| Button (links and submit), Badge, Card, StatCard, Container, Heading, Icon, List, ListItem (as a link), Avatar, Table, DataGrid (first page, initial sort), TreeView (initial state), NavGroup, Breadcrumbs, Pagination with `HrefTemplate`, Nav, NavLink, Navbar (the menu button works through stil.js), Accordion, the layout components, Progress, Spinner, Tooltip, ThemeProvider, Head, form fields inside an enhanced `EditForm`, Dropdown, dismissible Alert | Button `OnClick`, ListItem `OnClick`, Table `OnRowClick`, Pagination with buttons, Tabs switching, `@bind-Open` on Dropdown and AccordionItem, Dialog, Drawer, DialogService, ToastService, DataGrid sorting, filters, paging and selection, Autocomplete, MultiSelect, TreeView keyboard and selection, FileUpload (the drag highlight and remove buttons) |
 
 ## Components
 
@@ -192,9 +193,67 @@ A row with `Href` becomes a link, and one with `OnClick` becomes a button.
 | `StilTable<TItem>` | `Items`, `Columns`, `Caption`, `EmptyContent`, `Striped`, `Hover`, `Compact`, `Bordered`, `Responsive` (default true), `OnRowClick`, `RowClass` |
 | `StilColumn<TItem>` | `Title`, `Field` (with `Format`) or `Template`, `Align`, `Class` |
 
-The table is a lightweight display component. Sorting, filtering and
-server-side data are planned for `StilDataGrid`. Combine it with
-`StilPagination` for paging.
+The table is a lightweight display component. For sorting, filtering,
+paging and selection, use `StilDataGrid`.
+
+### Data grid
+
+`StilDataGrid` is a `stil-table` with sortable headers, a filter row, paging,
+row selection and virtualization. Columns bind to a property, so the same
+expression shows, sorts and filters the column, also against an `IQueryable`
+such as an EF Core `DbSet`.
+
+```razor
+<StilDataGrid TItem="Order" Items="orders" Filterable PageSize="10" PageSizeOptions="[10, 25, 50]"
+              SelectionMode="StilSelectionMode.Multiple" @bind-SelectedItems="selected" ItemKey="o => o.Id">
+    <Toolbar><StilButton OnClick="Export">Export</StilButton></Toolbar>
+    <Columns>
+        <StilDataGridColumn Property="o => o.Id" Title="Order" InitialSort="StilSortDirection.Descending" />
+        <StilDataGridColumn Property="o => o.Customer" />
+        <StilDataGridColumn Property="o => o.Status">
+            <Template><StilBadge Variant="@VariantOf(context.Status)">@context.Status</StilBadge></Template>
+        </StilDataGridColumn>
+        <StilDataGridColumn Property="o => o.Amount" Format="N2" Align="StilTextAlign.End" />
+        <StilDataGridTemplateColumn Title="Actions">
+            <StilButton Size="StilSize.Small" OnClick="() => Edit(context)">Edit</StilButton>
+        </StilDataGridTemplateColumn>
+    </Columns>
+</StilDataGrid>
+```
+
+| Component | Parameters |
+| --- | --- |
+| `StilDataGrid<TItem>` | `Items` or `ItemsProvider`, `Columns`, `Toolbar`, `PageSize` (default 10; 0 shows every row), `PageSizeOptions`, `Filterable`, `SelectionMode` (None, Single, Multiple) with `@bind-SelectedItem` or `@bind-SelectedItems`, `ItemKey`, `OnRowClick`, `RowClass`, `Virtualize` with `Height` and `ItemSize`, `Caption`, `Striped`, `Compact`, `Bordered`, `EmptyContent`, and texts for translation (`EmptyText`, `LoadingText`, `SummaryFormat`, `FilterPlaceholder`, …). `RefreshAsync()` reloads the rows. |
+| `StilDataGridColumn<TItem, TValue>` | `Property`, `Title` (default: the property name), `Format`, `Template`, `Sortable` (default true), `Filterable` (default: the grid's), `InitialSort`, `Align`, `Width`, `Class`, `Key`, `TrueText`/`FalseText` |
+| `StilDataGridTemplateColumn<TItem>` | Custom content (`context` is the row), `Title`, `Align`, `Width`. Not sortable or filterable. |
+
+- **Sorting:** clicking a header sorts ascending, then descending, then not at
+  all. The header has `aria-sort`.
+- **Filters:** text columns get a case-insensitive "contains" filter that waits
+  for typing to pause. Enum and bool columns get a choice. Other types cannot be
+  filtered.
+- **Selection:** in Single mode a click (or Enter on a focused row) selects the
+  row. In Multiple mode a checkbox column appears, and the header checkbox
+  selects every row on the page. Set `ItemKey` when rows are new objects on
+  every load, so the selection is kept.
+- **Server-side data:** `ItemsProvider` receives a `StilDataGridRequest` with
+  `StartIndex`, `Count`, `SortBy`, `SortDirection`, `Filters` and a
+  `CancellationToken`. For an `IQueryable`, let the grid build the query:
+
+```csharp
+private async Task<StilDataGridResult<Order>> LoadOrders(StilDataGridRequest<Order> request)
+{
+    var query = request.ApplyFiltersAndSorting(db.Orders.AsNoTracking());
+    var total = await query.CountAsync(request.CancellationToken);
+    var items = await request.ApplyPaging(query).ToListAsync(request.CancellationToken);
+    return new(items, total);
+}
+```
+
+- **Virtualization:** `Virtualize` with a `Height` (for example `"28rem"`)
+  renders only the visible rows of a long list instead of pages. The header
+  stays visible while scrolling. Rows should all have the same height
+  (`ItemSize`, default 41 px).
 
 ### Forms
 
@@ -253,6 +312,40 @@ such as `placeholder`, `autocomplete` and `aria-label`, go on the control.
 `StilField` is the wrapper the fields use. Use it to give a custom control
 the same label, hint and error layout.
 
+### Pickers, date ranges and file upload
+
+```razor
+<StilAutocomplete TItem="Customer" @bind-Value="order.Customer" Search="FindCustomersAsync"
+                  ItemText="c => c.Name" ItemKey="c => c.Id" Label="Customer" />
+<StilMultiSelect TItem="string" @bind-Value="order.Tags" Items="allTags" Label="Tags" Placeholder="Add tags" />
+<StilDateRangePicker TValue="DateOnly?" @bind-Start="from" @bind-End="to" Label="Delivery window" />
+<StilFileUpload Label="Attachments" Multiple Accept=".pdf,image/*" MaxFileSize="5_000_000" OnChange="FilesChanged" />
+```
+
+| Component | Value | Parameters |
+| --- | --- | --- |
+| `StilAutocomplete<TItem>` | `TItem` | `Items` (searched in memory) or `Search` (`(text, cancellationToken) => Task<IEnumerable<TItem>>`), `ItemText`, `ItemTemplate`, `ItemKey`, `MinLength` (default 1 with Search, 0 with Items), `Debounce` (ms, default 250), `MaxResults` (default 50), `Placeholder`, `Size`, `NoResultsText`, `SearchingText` |
+| `StilMultiSelect<TItem>` | `IReadOnlyCollection<TItem>` | The same as `StilAutocomplete`, plus `RemoveLabelFormat`. The chosen options are chips; Backspace in the empty input removes the last one. |
+| `StilDateRangePicker<TValue>` | `@bind-Start`, `@bind-End` (`DateOnly`, `DateTime` or their nullables) | `Label` (a legend), `StartLabel`/`EndLabel`, `Min`/`Max`, `Hint`, `Size`, `RangeErrorText`. An end before the start is a validation error that blocks `OnValidSubmit`. |
+| `StilFileUpload` | `OnChange` (`IReadOnlyList<IBrowserFile>`) | `Multiple`, `Accept`, `MaxFileSize`, `MaxFiles`, `Icon`, `Text`, `ButtonText`, texts for errors. A drop zone around `InputFile`; rejected files are listed as errors. `Files` and `Clear()` are public. |
+
+The pickers follow the WAI-ARIA combobox pattern: the input keeps focus, the
+arrow keys move the active option, Enter chooses it and Escape closes the
+list. They are form fields, so labels, hints, validation and `class` on the
+wrapper work as for the other fields.
+
+### KPI cards
+
+```razor
+<StilStatCard Label="Revenue" Value="48,200 €" Trend="+12.4%" TrendDirection="StilTrendDirection.Up"
+              Description="vs last month" Icon="@StilIcons.Success" />
+```
+
+`StilStatCard`: `Label`, `Value`, `Icon`, `Trend`, `TrendDirection` (Neutral,
+Up, Down), `TrendVariant` (default Success for Up, Danger for Down), `TrendLabel`
+(what screen readers hear, by default for example "up 12.4%"), `Description`,
+`Href` (the whole card is a link), `ChildContent`.
+
 ### Navigation
 
 ```razor
@@ -268,6 +361,16 @@ the same label, hint and error layout.
 
 <StilBreadcrumbs Items="@([new("Home", "/"), new("Orders", "orders"), new("#1043")])" />
 <StilPagination @bind-Page="page" TotalItems="480" PageSize="20" />
+
+<StilNav Vertical Label="Sections">
+    <StilNavGroup Title="Sales" Icon="@StilIcons.Folder">
+        <StilNavLink Href="orders">Orders</StilNavLink>
+        <StilNavLink Href="invoices">Invoices</StilNavLink>
+    </StilNavGroup>
+</StilNav>
+
+<StilTreeView TItem="Folder" Items="roots" ChildrenSelector="f => f.Children" ItemText="f => f.Name"
+              @bind-SelectedItem="folder" Label="Folders" />
 ```
 
 | Component | Parameters |
@@ -277,6 +380,8 @@ the same label, hint and error layout.
 | `StilNavLink` | `Href`, `Match`, `Icon`, `Badge`/`BadgeVariant`. Wraps Blazor's `NavLink`, so `aria-current` follows the route. |
 | `StilBreadcrumbs` | `Items` (`StilLinkItem`: Text, Href) or `StilBreadcrumbItem` children (`Text`, `Href`, `Current`), `Label`. The last item is the current page. |
 | `StilPagination` | `@bind-Page` (1-based), `PageCount` or `TotalItems` + `PageSize`, `MaxVisiblePages` (default 7, with ellipses), `ShowFirstLast`, `HrefTemplate` (links, for example `"orders?page={0}"`), `Size`, `Label`, `PreviousText`/`NextText`/`FirstText`/`LastText` |
+| `StilNavGroup` | `Title`, `Icon`, `@bind-Expanded`, `StilNavLink` children. A collapsible group in a vertical `StilNav`; it opens by itself when one of its links is the current page. |
+| `StilTreeView<TItem>` | `Items`, `ChildrenSelector`, `ItemText` or `ItemTemplate`, `ItemIcon`, `@bind-SelectedItem`, `@bind-ExpandedItems`, `ExpandAll`, `ItemKey`, `Label`. The WAI-ARIA tree pattern: arrow keys, Home and End move, Right and Left expand and collapse. |
 | `StilDrawer` | Like `StilDialog` (`@bind-Open`, `Title`, `Footer`, …) plus `Position` (Start, End) and `Width`. A side panel for navigation, filters or details. |
 
 ### Tabs, dropdowns and tooltips
@@ -379,8 +484,14 @@ Warning toasts use `role="alert"`; the others use `"status"`.
 | `stil-badge`, `stil-avatar` | `StilBadge`, `StilAvatar` |
 | `stil-list`, `stil-list-item` | `StilList`, `StilListItem` |
 | `stil-table` | `StilTable` with `StilColumn` |
+| `stil-data-grid` | `StilDataGrid` with `StilDataGridColumn` and `StilDataGridTemplateColumn` |
+| `stil-combobox`, `stil-multi-select`, `stil-chip` | `StilAutocomplete`, `StilMultiSelect` |
+| `stil-date-range` | `StilDateRangePicker` |
+| `stil-dropzone`, `stil-file-list` | `StilFileUpload` |
+| `stil-stat` | `StilStatCard` |
+| `stil-tree` | `StilTreeView` |
 | `stil-accordion` | `StilAccordion` with `StilAccordionItem` |
-| `stil-nav`, `stil-navbar` | `StilNav`/`StilNavLink`, `StilNavbar` |
+| `stil-nav`, `stil-navbar`, `stil-nav-group` | `StilNav`/`StilNavLink`, `StilNavbar`, `StilNavGroup` |
 | `stil-breadcrumb`, `stil-pagination` | `StilBreadcrumbs`, `StilPagination` |
 | `stil-tabs` | `StilTabs` with `StilTab` |
 | `stil-dropdown` | `StilDropdown` with `StilDropdownItem`, `StilDropdownHeader` and `StilDropdownDivider`, or `Items` |
@@ -392,6 +503,39 @@ Warning toasts use `role="alert"`; the others use `"status"`.
 
 Utility classes (`stil-mt-4`, `stil-d-flex`, …) have no components. Use them
 as `class` on any component.
+
+## Coming from Radzen
+
+Most Radzen components have a Stil counterpart, so an app can move one
+screen at a time. Both libraries can run side by side while you migrate:
+Stil's classes are prefixed and its CSS is in cascade layers, so it does not
+restyle Radzen components.
+
+| Radzen | Stil for Blazor | Notes |
+| --- | --- | --- |
+| `RadzenDataGrid`, `RadzenDataGridColumn` | `StilDataGrid`, `StilDataGridColumn`, `StilDataGridTemplateColumn` | `Data` → `Items`, `LoadData` → `ItemsProvider` (with `ApplyFiltersAndSorting` for `IQueryable`), `AllowFiltering` → `Filterable`, `Property="Name"` → `Property="o => o.Name"`. Columns sort by default. |
+| `RadzenPager` | `StilPagination` | |
+| `RadzenTextBox`, `RadzenTextArea`, `RadzenNumeric`, `RadzenDatePicker` | `StilTextBox`, `StilTextArea`, `StilNumeric`, `StilDatePicker` | Label, hint and validation are parameters of the field; no separate `RadzenLabel` or validators. |
+| `RadzenDropDown` | `StilSelect`, or `StilAutocomplete` for long or searched lists | `Multiple` → `StilMultiSelect` |
+| `RadzenAutoComplete` | `StilAutocomplete` | `LoadData` → `Search` |
+| `RadzenDateRangePicker` (two pickers) | `StilDateRangePicker` | |
+| `RadzenCheckBox`, `RadzenSwitch`, `RadzenRadioButtonList` | `StilCheckbox`, `StilSwitch`, `StilRadioGroup` | |
+| `RadzenUpload`, `RadzenFileInput` | `StilFileUpload` | Stil gives you `IBrowserFile`s; upload them with your own code. |
+| `RadzenTemplateForm` + validators | `EditForm` + `DataAnnotationsValidator` | |
+| `RadzenButton`, `RadzenSplitButton` | `StilButton`, `StilDropdown` | |
+| `RadzenMenu`, `RadzenProfileMenu` | `StilDropdown` (with `Items`), `StilNavbar` | |
+| `RadzenPanelMenu` | A vertical `StilNav` with `StilNavGroup` | |
+| `RadzenTree` | `StilTreeView` | |
+| `RadzenTabs` | `StilTabs` | |
+| `RadzenAccordion` | `StilAccordion` | |
+| `RadzenBreadCrumb` | `StilBreadcrumbs` | |
+| `RadzenCard`, `RadzenAlert`, `RadzenBadge` | `StilCard`, `StilAlert`, `StilBadge` | |
+| `RadzenProgressBar`, `RadzenProgressBarCircular` | `StilProgress`, `StilSpinner` | |
+| `RadzenRow`/`RadzenColumn`, `RadzenStack` | `StilGrid`/`StilCol`, `StilStack`/`StilCluster` | |
+| `RadzenLayout`, `RadzenSidebar` | `StilSidebarLayout`, `StilDrawer` | |
+| `RadzenIcon` | `StilIcon` | Register `StilLigatureIconProvider("material-icons")` to keep using Material icon names. |
+| `DialogService`, `NotificationService` | `IStilDialogService`, `IStilToastService` | `Confirm` → `ConfirmAsync`, `OpenAsync<T>` → `OpenAsync<T>`, `Notify` → `Success`/`Error`/`Show` |
+| `RadzenChart` | Not yet | Planned as a separate package. Keep using a chart library meanwhile. |
 
 ## Theming
 

@@ -1,0 +1,676 @@
+@typeparam TItem
+@attribute [CascadingTypeParameter(nameof(TItem))]
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@inherits StilComponentBase
+@implements IDisposable
+
+<CascadingValue Value="this" IsFixed="true">
+    @Columns
+</CascadingValue>
+
+<div @attributes="AdditionalAttributes" class="@Classes("stil-data-grid")" aria-busy="@StilCssClasses.AriaBool(_loading)">
+    @if (Toolbar is not null)
+    {
+        <div class="stil-data-grid-toolbar">@Toolbar</div>
+    }
+
+    <div class="@ScrollClass" style="@ScrollStyle" tabindex="@(Height is null ? null : 0)"
+         role="@(Height is null ? null : "region")" aria-label="@(Height is null ? null : Caption ?? "Table")">
+        <table class="@TableClass">
+            @if (!string.IsNullOrWhiteSpace(Caption))
+            {
+                <caption>@Caption</caption>
+            }
+            <thead>
+                <tr>
+                    @if (SelectionMode == StilSelectionMode.Multiple)
+                    {
+                        <th scope="col" class="stil-data-grid-select">
+                            <input type="checkbox" class="stil-check-input" aria-label="@SelectAllLabel"
+                                   checked="@AllOnPageSelected" disabled="@(_page.Count == 0)" @onchange="ToggleAllOnPageAsync" />
+                        </th>
+                    }
+                    @foreach (var column in _columns)
+                    {
+                        <th scope="col" class="@column.AlignClass" style="@column.WidthStyle" aria-sort="@AriaSort(column)">
+                            @if (column.CanSort)
+                            {
+                                <button type="button" class="stil-data-grid-sort" @onclick="() => SortAsync(column)">
+                                    @column.DisplayTitle
+                                    <StilIcon Name="@SortIcon(column)" />
+                                </button>
+                            }
+                            else
+                            {
+                                @column.DisplayTitle
+                            }
+                        </th>
+                    }
+                </tr>
+                @if (_columns.Any(c => c.CanFilter))
+                {
+                    <tr class="stil-data-grid-filters">
+                        @if (SelectionMode == StilSelectionMode.Multiple)
+                        {
+                            <td></td>
+                        }
+                        @foreach (var column in _columns)
+                        {
+                            <td>
+                                @if (column.CanFilter)
+                                {
+                                    var label = string.Format(System.Globalization.CultureInfo.CurrentCulture, FilterLabelFormat, column.DisplayTitle);
+                                    if (column.FilterOptions is { } options)
+                                    {
+                                        <select class="stil-select stil-select-sm" aria-label="@label" value="@FilterValue(column)"
+                                                @onchange="e => FilterChangedAsync(column, e.Value?.ToString(), debounce: false)">
+                                            <option value="">@AllOptionText</option>
+                                            @foreach (var (value, text) in options)
+                                            {
+                                                <option value="@value">@text</option>
+                                            }
+                                        </select>
+                                    }
+                                    else
+                                    {
+                                        <input type="search" class="stil-input stil-input-sm" aria-label="@label" placeholder="@FilterPlaceholder"
+                                               value="@FilterValue(column)" @oninput="e => FilterChangedAsync(column, e.Value?.ToString(), debounce: true)" />
+                                    }
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </thead>
+            <tbody>
+                @if (Virtualize)
+                {
+                    <Virtualize @ref="_virtualize" TItem="TItem" ItemsProvider="ProvideVirtualizedAsync" ItemSize="ItemSize"
+                                SpacerElement="tr" OverscanCount="10" Context="item">
+                        <ItemContent>@Row(item)</ItemContent>
+                        <EmptyContent>@MessageRow(EmptyContent, EmptyText)</EmptyContent>
+                    </Virtualize>
+                }
+                else if (_page.Count == 0)
+                {
+                    @MessageRow(_loading ? null : EmptyContent, _loading ? LoadingText : EmptyText)
+                }
+                else
+                {
+                    @foreach (var item in _page)
+                    {
+                        @Row(item)
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Paged)
+    {
+        <div class="stil-data-grid-footer">
+            <span class="stil-text-muted stil-fs-sm" aria-live="polite">@Summary</span>
+            <div class="stil-cluster stil-gap-3">
+                @if (PageSizeOptions is { Length: > 0 })
+                {
+                    <select class="stil-select stil-select-sm stil-w-auto" aria-label="@RowsPerPageLabel" value="@_pageSize"
+                            @onchange="PageSizeChangedAsync">
+                        @foreach (var size in PageSizeOptions)
+                        {
+                            <option value="@size">@size</option>
+                        }
+                    </select>
+                }
+                <StilPagination Page="_pageNumber" PageChanged="GoToPageAsync" TotalItems="_total" PageSize="_pageSize"
+                                Size="StilSize.Small" Label="@PaginationLabel" />
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private readonly List<StilDataGridColumnBase<TItem>> _columns = [];
+    private readonly Dictionary<StilDataGridColumnBase<TItem>, string> _filters = [];
+    private List<TItem> _page = [];
+    private Virtualize<TItem>? _virtualize;
+    private StilDataGridColumnBase<TItem>? _sortColumn;
+    private StilSortDirection _sortDirection;
+    private int _pageNumber = 1;
+    private int _pageSize;
+    private int _total;
+    private bool _loading;
+    private bool _initialSortApplied;
+    private CancellationTokenSource? _loadCts;
+    private CancellationTokenSource? _debounceCts;
+    private object? _loadedItems;
+    private object? _loadedProvider;
+
+    /// <summary>
+    /// The rows, kept in memory. An IQueryable (for example an EF Core DbSet) is filtered, sorted
+    /// and paged by the query provider. For asynchronous queries, use ItemsProvider instead.
+    /// </summary>
+    [Parameter]
+    public IEnumerable<TItem>? Items { get; set; }
+
+    /// <summary>Loads rows on demand (server-side paging, sorting and filtering). Takes precedence over Items.</summary>
+    [Parameter]
+    public Func<StilDataGridRequest<TItem>, Task<StilDataGridResult<TItem>>>? ItemsProvider { get; set; }
+
+    /// <summary>StilDataGridColumn and StilDataGridTemplateColumn components.</summary>
+    [Parameter]
+    public RenderFragment? Columns { get; set; }
+
+    /// <summary>Content above the table, for example a search box or buttons.</summary>
+    [Parameter]
+    public RenderFragment? Toolbar { get; set; }
+
+    /// <summary>Rows per page. 0 shows all rows without a pager. The default is 10.</summary>
+    [Parameter]
+    public int PageSize { get; set; } = 10;
+
+    /// <summary>Choices for rows per page, for example [10, 25, 50]. Shows a select next to the pager.</summary>
+    [Parameter]
+    public int[]? PageSizeOptions { get; set; }
+
+    /// <summary>Show a filter row for every column that can be filtered (text, enum and bool columns).</summary>
+    [Parameter]
+    public bool Filterable { get; set; }
+
+    [Parameter]
+    public StilSelectionMode SelectionMode { get; set; }
+
+    /// <summary>The selected row in Single mode. Supports two-way binding.</summary>
+    [Parameter]
+    public TItem? SelectedItem { get; set; }
+
+    [Parameter]
+    public EventCallback<TItem?> SelectedItemChanged { get; set; }
+
+    /// <summary>The selected rows in Multiple mode. Supports two-way binding.</summary>
+    [Parameter]
+    public IReadOnlyCollection<TItem>? SelectedItems { get; set; }
+
+    [Parameter]
+    public EventCallback<IReadOnlyCollection<TItem>> SelectedItemsChanged { get; set; }
+
+    /// <summary>
+    /// Identifies a row, for selection and rendering, when rows are new objects on every load
+    /// (for example from a database). The default compares the items themselves.
+    /// </summary>
+    [Parameter]
+    public Func<TItem, object>? ItemKey { get; set; }
+
+    /// <summary>Raised when a row is clicked, or focused and Enter is pressed.</summary>
+    [Parameter]
+    public EventCallback<TItem> OnRowClick { get; set; }
+
+    /// <summary>Extra classes for a row.</summary>
+    [Parameter]
+    public Func<TItem, string?>? RowClass { get; set; }
+
+    /// <summary>
+    /// Render only the visible rows while scrolling, for very long lists. Needs Height; replaces
+    /// paging. Rows must all be ItemSize pixels high.
+    /// </summary>
+    [Parameter]
+    public bool Virtualize { get; set; }
+
+    /// <summary>The height of a row in pixels, for Virtualize. The default is 41.</summary>
+    [Parameter]
+    public float ItemSize { get; set; } = 41;
+
+    /// <summary>A CSS max-height for the scrolling table, for example "28rem". The header stays visible.</summary>
+    [Parameter]
+    public string? Height { get; set; }
+
+    [Parameter]
+    public string? Caption { get; set; }
+
+    [Parameter]
+    public bool Striped { get; set; }
+
+    [Parameter]
+    public bool Compact { get; set; }
+
+    [Parameter]
+    public bool Bordered { get; set; }
+
+    /// <summary>Shown when there are no rows. The default is EmptyText.</summary>
+    [Parameter]
+    public RenderFragment? EmptyContent { get; set; }
+
+    [Parameter]
+    public string EmptyText { get; set; } = "No items";
+
+    [Parameter]
+    public string LoadingText { get; set; } = "Loading…";
+
+    [Parameter]
+    public string FilterPlaceholder { get; set; } = "Filter";
+
+    /// <summary>The accessible name of a column filter; {0} is the column title.</summary>
+    [Parameter]
+    public string FilterLabelFormat { get; set; } = "Filter {0}";
+
+    [Parameter]
+    public string AllOptionText { get; set; } = "All";
+
+    /// <summary>The row range summary; {0} first row, {1} last row, {2} total.</summary>
+    [Parameter]
+    public string SummaryFormat { get; set; } = "{0}–{1} of {2}";
+
+    [Parameter]
+    public string RowsPerPageLabel { get; set; } = "Rows per page";
+
+    [Parameter]
+    public string PaginationLabel { get; set; } = "Table pages";
+
+    [Parameter]
+    public string SelectAllLabel { get; set; } = "Select all rows on this page";
+
+    [Parameter]
+    public string SelectRowLabel { get; set; } = "Select row";
+
+    /// <summary>The rows currently shown (the current page).</summary>
+    public IReadOnlyList<TItem> CurrentItems => _page;
+
+    /// <summary>The number of rows after filtering.</summary>
+    public int TotalCount => _total;
+
+    private bool Paged => !Virtualize && PageSize > 0;
+
+    private bool Interactive => SelectionMode == StilSelectionMode.Single || OnRowClick.HasDelegate;
+
+    private string TableClass => string.Join(' ', new[]
+    {
+        "stil-table",
+        Striped ? "stil-table-striped" : null,
+        Interactive ? "stil-table-hover" : null,
+        Compact ? "stil-table-compact" : null,
+        Bordered ? "stil-table-bordered" : null,
+    }.Where(c => c is not null));
+
+    private string ScrollClass => Height is null ? "stil-table-responsive" : "stil-table-responsive stil-data-grid-scroll";
+
+    private string? ScrollStyle => Height is null ? null : $"max-height: {Height}";
+
+    private string Summary
+    {
+        get
+        {
+            if (_total == 0)
+            {
+                return string.Format(System.Globalization.CultureInfo.CurrentCulture, SummaryFormat, 0, 0, 0);
+            }
+
+            var first = (_pageNumber - 1) * _pageSize + 1;
+            var last = Math.Min(_total, first + _page.Count - 1);
+            return string.Format(System.Globalization.CultureInfo.CurrentCulture, SummaryFormat, first, last, _total);
+        }
+    }
+
+    // ----- Columns -------------------------------------------------------------------------
+
+    internal void AddColumn(StilDataGridColumnBase<TItem> column)
+    {
+        if (_columns.Contains(column))
+        {
+            return;
+        }
+
+        _columns.Add(column);
+        if (!_initialSortApplied && _sortColumn is null && column.InitialSortDirection != StilSortDirection.None)
+        {
+            _initialSortApplied = true;
+            _sortColumn = column;
+            _sortDirection = column.InitialSortDirection;
+            _ = InvokeAsync(RefreshAsync);
+        }
+        else
+        {
+            StateHasChanged();
+        }
+    }
+
+    internal void RemoveColumn(StilDataGridColumnBase<TItem> column)
+    {
+        if (!_columns.Remove(column))
+        {
+            return;
+        }
+
+        _filters.Remove(column);
+        if (ReferenceEquals(_sortColumn, column))
+        {
+            _sortColumn = null;
+            _sortDirection = StilSortDirection.None;
+        }
+
+        StateHasChanged();
+    }
+
+    // ----- Loading -------------------------------------------------------------------------
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_pageSize == 0 || (PageSizeOptions is null && _pageSize != PageSize))
+        {
+            _pageSize = PageSize;
+        }
+
+        // Reload when the data source itself changes (a new list or provider), not on every render.
+        if (!ReferenceEquals(_loadedItems, Items) || !ReferenceEquals(_loadedProvider, ItemsProvider))
+        {
+            _loadedItems = Items;
+            _loadedProvider = ItemsProvider;
+            await RefreshAsync();
+        }
+    }
+
+    /// <summary>Loads the rows again, for example after the data has changed.</summary>
+    public async Task RefreshAsync()
+    {
+        if (Virtualize)
+        {
+            if (_virtualize is not null)
+            {
+                await _virtualize.RefreshDataAsync();
+            }
+
+            StateHasChanged();
+            return;
+        }
+
+        _loadCts?.Cancel();
+        var cts = _loadCts = new CancellationTokenSource();
+        _loading = true;
+        StateHasChanged();
+
+        try
+        {
+            var count = Paged ? _pageSize : (int?)null;
+            var result = await LoadAsync((_pageNumber - 1) * _pageSize, count, cts.Token);
+
+            // The page fell outside the data (for example after filtering): go to the last page.
+            if (Paged && result.Items.Count == 0 && result.TotalCount > 0 && _pageNumber > 1)
+            {
+                _pageNumber = (int)Math.Ceiling(result.TotalCount / (double)_pageSize);
+                result = await LoadAsync((_pageNumber - 1) * _pageSize, count, cts.Token);
+            }
+
+            if (cts.IsCancellationRequested)
+            {
+                return;
+            }
+
+            _page = result.Items.ToList();
+            _total = result.TotalCount;
+        }
+        catch (OperationCanceledException) when (cts.IsCancellationRequested)
+        {
+            return;
+        }
+        finally
+        {
+            if (ReferenceEquals(_loadCts, cts))
+            {
+                _loading = false;
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task<StilDataGridResult<TItem>> LoadAsync(int startIndex, int? count, CancellationToken cancellationToken)
+    {
+        var request = new StilDataGridRequest<TItem>(
+            startIndex,
+            count,
+            _sortColumn?.ColumnKey,
+            _sortColumn is null ? StilSortDirection.None : _sortDirection,
+            _filters.Where(f => !string.IsNullOrWhiteSpace(f.Value)).ToDictionary(f => f.Key.ColumnKey, f => f.Value),
+            ApplyFiltersAndSorting,
+            cancellationToken);
+
+        if (ItemsProvider is not null)
+        {
+            return await ItemsProvider(request);
+        }
+
+        if (Items is null)
+        {
+            return new StilDataGridResult<TItem>([], 0);
+        }
+
+        var query = ApplyFiltersAndSorting(Items.AsQueryable());
+        var total = query.Count();
+        return new StilDataGridResult<TItem>(request.ApplyPaging(query).ToList(), total);
+    }
+
+    private IQueryable<TItem> ApplyFiltersAndSorting(IQueryable<TItem> query)
+    {
+        foreach (var (column, value) in _filters)
+        {
+            query = column.ApplyFilter(query, value);
+        }
+
+        if (_sortColumn is not null && _sortDirection != StilSortDirection.None)
+        {
+            query = _sortColumn.ApplySort(query, _sortDirection == StilSortDirection.Descending);
+        }
+
+        return query;
+    }
+
+    private async ValueTask<ItemsProviderResult<TItem>> ProvideVirtualizedAsync(ItemsProviderRequest request)
+    {
+        var result = await LoadAsync(request.StartIndex, request.Count, request.CancellationToken);
+        if (_total != result.TotalCount)
+        {
+            _total = result.TotalCount;
+            _ = InvokeAsync(StateHasChanged);
+        }
+
+        return new ItemsProviderResult<TItem>(result.Items, result.TotalCount);
+    }
+
+    // ----- Sorting, filtering and paging ------------------------------------------------------
+
+    private async Task SortAsync(StilDataGridColumnBase<TItem> column)
+    {
+        // Ascending, then descending, then unsorted.
+        if (ReferenceEquals(_sortColumn, column))
+        {
+            _sortDirection = _sortDirection switch
+            {
+                StilSortDirection.Ascending => StilSortDirection.Descending,
+                StilSortDirection.Descending => StilSortDirection.None,
+                _ => StilSortDirection.Ascending
+            };
+            if (_sortDirection == StilSortDirection.None)
+            {
+                _sortColumn = null;
+            }
+        }
+        else
+        {
+            _sortColumn = column;
+            _sortDirection = StilSortDirection.Ascending;
+        }
+
+        _pageNumber = 1;
+        await RefreshAsync();
+    }
+
+    private string? AriaSort(StilDataGridColumnBase<TItem> column)
+    {
+        if (!column.CanSort)
+        {
+            return null;
+        }
+
+        return ReferenceEquals(_sortColumn, column) && _sortDirection != StilSortDirection.None
+            ? (_sortDirection == StilSortDirection.Ascending ? "ascending" : "descending")
+            : "none";
+    }
+
+    private string SortIcon(StilDataGridColumnBase<TItem> column) =>
+        ReferenceEquals(_sortColumn, column) && _sortDirection == StilSortDirection.Descending
+            ? StilIcons.ChevronDown
+            : StilIcons.ChevronUp;
+
+    private string FilterValue(StilDataGridColumnBase<TItem> column) =>
+        _filters.TryGetValue(column, out var value) ? value : "";
+
+    private async Task FilterChangedAsync(StilDataGridColumnBase<TItem> column, string? value, bool debounce)
+    {
+        _filters[column] = value ?? "";
+        _pageNumber = 1;
+
+        if (debounce)
+        {
+            _debounceCts?.Cancel();
+            var cts = _debounceCts = new CancellationTokenSource();
+            try
+            {
+                await Task.Delay(300, cts.Token);
+            }
+            catch (TaskCanceledException)
+            {
+                return;
+            }
+        }
+
+        await RefreshAsync();
+    }
+
+    private async Task GoToPageAsync(int page)
+    {
+        _pageNumber = page;
+        await RefreshAsync();
+    }
+
+    private async Task PageSizeChangedAsync(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var size) && size > 0)
+        {
+            _pageSize = size;
+            _pageNumber = 1;
+            await RefreshAsync();
+        }
+    }
+
+    // ----- Selection -----------------------------------------------------------------------
+
+    private object KeyOf(TItem item) => ItemKey?.Invoke(item) ?? (object?)item ?? "";
+
+    private bool IsSelected(TItem item) => SelectionMode switch
+    {
+        StilSelectionMode.Single => SelectedItem is not null && KeyOf(SelectedItem).Equals(KeyOf(item)),
+        StilSelectionMode.Multiple => SelectedItems?.Any(selected => KeyOf(selected).Equals(KeyOf(item))) == true,
+        _ => false
+    };
+
+    private bool AllOnPageSelected => _page.Count > 0 && _page.All(IsSelected);
+
+    private async Task ActivateRowAsync(TItem item)
+    {
+        if (SelectionMode == StilSelectionMode.Single && !IsSelected(item))
+        {
+            SelectedItem = item;
+            await SelectedItemChanged.InvokeAsync(item);
+        }
+
+        await OnRowClick.InvokeAsync(item);
+    }
+
+    private async Task OnRowClickedAsync(TItem item)
+    {
+        if (Interactive)
+        {
+            await ActivateRowAsync(item);
+        }
+    }
+
+    private async Task OnRowKeyDownAsync(KeyboardEventArgs e, TItem item)
+    {
+        if (Interactive && e.Key == "Enter")
+        {
+            await ActivateRowAsync(item);
+        }
+    }
+
+    private async Task ToggleRowAsync(TItem item)
+    {
+        var selected = (SelectedItems ?? []).ToList();
+        var index = selected.FindIndex(s => KeyOf(s).Equals(KeyOf(item)));
+        if (index >= 0)
+        {
+            selected.RemoveAt(index);
+        }
+        else
+        {
+            selected.Add(item);
+        }
+
+        SelectedItems = selected;
+        await SelectedItemsChanged.InvokeAsync(selected);
+    }
+
+    private async Task ToggleAllOnPageAsync()
+    {
+        var selected = (SelectedItems ?? []).ToList();
+        if (AllOnPageSelected)
+        {
+            selected.RemoveAll(s => _page.Any(item => KeyOf(item).Equals(KeyOf(s))));
+        }
+        else
+        {
+            selected.AddRange(_page.Where(item => !IsSelected(item)));
+        }
+
+        SelectedItems = selected;
+        await SelectedItemsChanged.InvokeAsync(selected);
+    }
+
+    // ----- Rendering -----------------------------------------------------------------------
+
+    private RenderFragment Row(TItem item) => @<tr @key="KeyOf(item)" class="@RowClass?.Invoke(item)"
+                                                    aria-selected="@(SelectionMode == StilSelectionMode.None ? null : (IsSelected(item) ? "true" : "false"))"
+                                                    tabindex="@(Interactive ? 0 : (int?)null)"
+                                                    @onclick="() => OnRowClickedAsync(item)"
+                                                    @onkeydown="e => OnRowKeyDownAsync(e, item)">
+        @if (SelectionMode == StilSelectionMode.Multiple)
+        {
+            <td class="stil-data-grid-select" @onclick:stopPropagation="true" @onkeydown:stopPropagation="true">
+                <input type="checkbox" class="stil-check-input" aria-label="@SelectRowLabel" checked="@IsSelected(item)"
+                       @onchange="() => ToggleRowAsync(item)" />
+            </td>
+        }
+        @foreach (var column in _columns)
+        {
+            <td class="@column.CellClass">@column.RenderCell(item)</td>
+        }
+    </tr>;
+
+    private RenderFragment MessageRow(RenderFragment? content, string text) => @<tr>
+        <td colspan="@Math.Max(1, _columns.Count + (SelectionMode == StilSelectionMode.Multiple ? 1 : 0))" class="stil-data-grid-message">
+            @if (content is not null)
+            {
+                @content
+            }
+            else
+            {
+                @text
+            }
+        </td>
+    </tr>;
+
+    public void Dispose()
+    {
+        _loadCts?.Cancel();
+        _debounceCts?.Cancel();
+        _loadCts?.Dispose();
+        _debounceCts?.Dispose();
+    }
+}

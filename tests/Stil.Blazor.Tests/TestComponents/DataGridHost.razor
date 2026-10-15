@@ -1,0 +1,54 @@
+@* A data grid of orders with every feature switchable from a test. *@
+<StilDataGrid @ref="Grid" TItem="GridOrder" Items="Items" ItemsProvider="ItemsProvider" PageSize="PageSize"
+              PageSizeOptions="PageSizeOptions" Filterable="Filterable" SelectionMode="SelectionMode"
+              @bind-SelectedItem="SelectedItem" @bind-SelectedItems="SelectedItems" ItemKey="ItemKey"
+              OnRowClick="OnRowClick" RowClass="RowClass" Caption="Orders">
+    <Columns>
+        <StilDataGridColumn Property="o => o.Id" Title="Order" Format="#0" InitialSort="InitialSort" />
+        <StilDataGridColumn Property="o => o.Customer" />
+        <StilDataGridColumn Property="o => o.Status" />
+        <StilDataGridColumn Property="o => o.Paid" />
+        <StilDataGridColumn Property="o => o.Amount" Align="StilTextAlign.End" Format="0.00" />
+        <StilDataGridTemplateColumn Title="Actions">
+            <button type="button">Edit @context.Id</button>
+        </StilDataGridTemplateColumn>
+    </Columns>
+</StilDataGrid>
+
+@code {
+    public StilDataGrid<GridOrder> Grid { get; private set; } = default!;
+
+    [Parameter]
+    public IEnumerable<GridOrder>? Items { get; set; }
+
+    [Parameter]
+    public Func<StilDataGridRequest<GridOrder>, Task<StilDataGridResult<GridOrder>>>? ItemsProvider { get; set; }
+
+    [Parameter]
+    public int PageSize { get; set; } = 10;
+
+    [Parameter]
+    public int[]? PageSizeOptions { get; set; }
+
+    [Parameter]
+    public bool Filterable { get; set; }
+
+    [Parameter]
+    public StilSelectionMode SelectionMode { get; set; }
+
+    [Parameter]
+    public StilSortDirection InitialSort { get; set; }
+
+    [Parameter]
+    public Func<GridOrder, object>? ItemKey { get; set; }
+
+    [Parameter]
+    public EventCallback<GridOrder> OnRowClick { get; set; }
+
+    [Parameter]
+    public Func<GridOrder, string?>? RowClass { get; set; }
+
+    public GridOrder? SelectedItem { get; set; }
+
+    public IReadOnlyCollection<GridOrder>? SelectedItems { get; set; }
+}

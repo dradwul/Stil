@@ -1,0 +1,152 @@
+/* Combobox, autocomplete and multi-select (layer stil.components), following the WAI-ARIA
+   combobox pattern. Showing the popup and moving the active option needs script (StilAutocomplete
+   and StilMultiSelect do it in Blazor).
+   <div class="stil-combobox">
+     <input class="stil-input" role="combobox" aria-expanded="true" aria-controls="list" aria-activedescendant="opt-1">
+     <div class="stil-combobox-popup">
+       <ul class="stil-combobox-list" id="list" role="listbox">
+         <li class="stil-combobox-option stil-combobox-option-active" id="opt-1" role="option" aria-selected="true">Oslo</li>
+       </ul>
+       <div class="stil-combobox-message" role="status">No results</div>
+     </div>
+   </div>
+   A multi-select puts stil-multi-select (with stil-input) on the stil-combobox, stil-chip elements
+   for the chosen options, and a stil-multi-select-input. */
+
+.stil-combobox { position: relative; }
+
+.stil-combobox-popup {
+    position: absolute;
+    z-index: var(--stil-z-dropdown);
+    top: calc(100% + var(--stil-space-1));
+    inset-inline: 0;
+    min-width: 12rem;
+    max-height: 18rem;
+    overflow-y: auto;
+    padding: var(--stil-space-1);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+    box-shadow: var(--stil-shadow-lg);
+    font-size: var(--stil-font-size-md);
+}
+
+.stil-combobox-popup[hidden] { display: none; }
+
+.stil-combobox-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stil-combobox-option {
+    display: flex;
+    align-items: center;
+    gap: var(--stil-space-2);
+    padding: var(--stil-space-2) var(--stil-space-3);
+    border-radius: var(--stil-radius-sm);
+    cursor: pointer;
+    user-select: none;
+}
+
+.stil-combobox-option:hover,
+.stil-combobox-option-active {
+    background-color: color-mix(in srgb, var(--stil-color-text) 8%, transparent);
+}
+
+/* The active option also gets an accent bar, so it is not shown by color alone. */
+.stil-combobox-option-active { box-shadow: inset 3px 0 0 var(--_accent); }
+
+/* In a multi-select a check marks the chosen options. */
+.stil-combobox-check {
+    flex: none;
+    visibility: hidden;
+    color: var(--_accent);
+}
+
+.stil-combobox-option[aria-selected="true"] > .stil-combobox-check { visibility: visible; }
+
+.stil-combobox-message {
+    padding: var(--stil-space-2) var(--stil-space-3);
+    color: var(--stil-color-text-muted);
+}
+
+/* A multi-select: a stil-input that holds the chips and a borderless text input. */
+.stil-multi-select {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--stil-space-1);
+    padding-block: calc(var(--stil-space-2) - 0.1875rem);
+    cursor: text;
+}
+
+.stil-multi-select:focus-within {
+    border-color: var(--_accent);
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: 0;
+}
+
+.stil-multi-select[data-disabled="true"] {
+    background-color: var(--stil-color-surface-muted);
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.stil-multi-select-input {
+    flex: 1 1 6rem;
+    min-width: 6rem;
+    padding: 0.1875rem 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+}
+
+.stil-multi-select-input::placeholder {
+    color: var(--stil-color-text-muted);
+    opacity: 1;
+}
+
+/* A chip: a chosen option, with an optional remove button. Also usable on its own for tags. */
+.stil-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--stil-space-1);
+    max-width: 100%;
+    padding: 0.125rem var(--stil-space-2);
+    border-radius: var(--stil-radius-pill);
+    background-color: color-mix(in srgb, var(--_accent) 14%, var(--stil-color-surface));
+    color: var(--stil-color-text);
+    font-size: var(--stil-font-size-sm);
+    line-height: var(--stil-line-height);
+}
+
+.stil-chip:has(> .stil-chip-remove) { padding-inline-end: 0.125rem; }
+
+.stil-chip-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.stil-chip-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.125rem;
+    border: 0;
+    border-radius: var(--stil-radius-pill);
+    background: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.stil-chip-remove:hover { background-color: color-mix(in srgb, currentColor 15%, transparent); }
+
+.stil-chip-remove:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: 0;
+}

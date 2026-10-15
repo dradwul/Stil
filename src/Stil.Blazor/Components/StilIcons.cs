@@ -20,7 +20,9 @@ public static class StilIcons
     public const string Close = "close";
     public const string Danger = "danger";
     public const string External = "external";
+    public const string File = "file";
     public const string Filter = "filter";
+    public const string Folder = "folder";
     public const string Home = "home";
     public const string Info = "info";
     public const string Menu = "menu";
@@ -31,6 +33,7 @@ public static class StilIcons
     public const string Search = "search";
     public const string Success = "success";
     public const string Sun = "sun";
+    public const string Upload = "upload";
     public const string Warning = "warning";
 
     private static readonly Lazy<IReadOnlyDictionary<string, string>> BuiltInIcons = new(Load);

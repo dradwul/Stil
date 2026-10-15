@@ -1,0 +1,304 @@
+@using System.Globalization
+
+@* A drop zone around Blazor's InputFile. The transparent file input covers the zone, so clicks,
+   drops and the keyboard all reach the real input. Chosen files are listed with their size and a
+   remove button; files that break Accept, MaxFileSize or MaxFiles are listed as errors. *@
+<StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@_rejections" Class="@FieldClass" Style="@FieldStyle">
+    <div class="stil-dropzone" data-dragover="@(_dragOver ? "true" : null)">
+        <InputFile OnChange="HandleChange" @attributes="ControlAttributes" />
+        @if (!string.IsNullOrWhiteSpace(Icon))
+        {
+            <StilIcon Name="@Icon" class="stil-dropzone-icon" />
+        }
+        @if (!string.IsNullOrWhiteSpace(Text))
+        {
+            <span class="stil-dropzone-text" aria-hidden="true">@Text</span>
+        }
+        @if (!string.IsNullOrWhiteSpace(ButtonText))
+        {
+            <span class="stil-dropzone-button" aria-hidden="true">@ButtonText</span>
+        }
+    </div>
+    @if (_files.Count > 0)
+    {
+        <ul class="stil-file-list" id="@ListId" aria-label="@ListLabel">
+            @foreach (var file in _files)
+            {
+                <li class="stil-file-list-item" @key="file">
+                    <span class="stil-file-list-name" title="@file.Name">@file.Name</span>
+                    <span class="stil-file-list-size">@FormatSize(file.Size)</span>
+                    @if (!Disabled)
+                    {
+                        <StilCloseButton Label="@string.Format(CultureInfo.CurrentCulture, RemoveText, file.Name)" OnClick="() => RemoveAsync(file)" />
+                    }
+                </li>
+            }
+        </ul>
+    }
+    <div class="stil-visually-hidden" role="status">@_status</div>
+</StilField>
+
+@code {
+    private readonly string _generatedId = StilIds.Next("file");
+    private readonly List<IBrowserFile> _files = [];
+    private List<string> _rejections = [];
+    private string? _status;
+    private bool _dragOver;
+
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>Help text under the drop zone, linked with aria-describedby.</summary>
+    [Parameter]
+    public string? Hint { get; set; }
+
+    /// <summary>The file input's id. A unique id is generated when it is not set.</summary>
+    [Parameter]
+    public string? Id { get; set; }
+
+    /// <summary>Allow more than one file. New selections are added to the list.</summary>
+    [Parameter]
+    public bool Multiple { get; set; }
+
+    /// <summary>
+    /// Accepted file types, as in the accept attribute: extensions and MIME types, for example
+    /// ".pdf,image/*". Dropped files are checked too, since browsers do not filter drops.
+    /// </summary>
+    [Parameter]
+    public string? Accept { get; set; }
+
+    /// <summary>The largest accepted file in bytes. Larger files are rejected with a message.</summary>
+    [Parameter]
+    public long? MaxFileSize { get; set; }
+
+    /// <summary>The most files the list can hold. Files beyond it are rejected with a message.</summary>
+    [Parameter]
+    public int? MaxFiles { get; set; }
+
+    /// <summary>Raised with the whole list of accepted files after files are added or removed.</summary>
+    [Parameter]
+    public EventCallback<IReadOnlyList<IBrowserFile>> OnChange { get; set; }
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>The text in the drop zone.</summary>
+    [Parameter]
+    public string? Text { get; set; } = "Drag files here or";
+
+    /// <summary>The text on the button look-alike in the drop zone.</summary>
+    [Parameter]
+    public string? ButtonText { get; set; } = "Browse";
+
+    /// <summary>An icon above the drop zone text (a <see cref="StilIcons"/> name). The default is Upload; null hides it.</summary>
+    [Parameter]
+    public string? Icon { get; set; } = StilIcons.Upload;
+
+    /// <summary>The remove button's accessible name. {0} is the file name.</summary>
+    [Parameter]
+    public string RemoveText { get; set; } = "Remove {0}";
+
+    /// <summary>The message for a file over MaxFileSize. {0} is the file name, {1} the limit.</summary>
+    [Parameter]
+    public string TooLargeText { get; set; } = "{0} is larger than {1}.";
+
+    /// <summary>The message for a file of a type Accept does not allow. {0} is the file name.</summary>
+    [Parameter]
+    public string WrongTypeText { get; set; } = "{0} is not an accepted file type.";
+
+    /// <summary>The message for a file over MaxFiles. {0} is the file name, {1} the limit.</summary>
+    [Parameter]
+    public string TooManyText { get; set; } = "{0} was not added. You can add up to {1} files.";
+
+    /// <summary>The announcement after files change. {0} is the number of files in the list.</summary>
+    [Parameter]
+    public string SelectedText { get; set; } = "{0} file(s) selected.";
+
+    /// <summary>The accessible name of the file list.</summary>
+    [Parameter]
+    public string ListLabel { get; set; } = "Selected files";
+
+    /// <summary>
+    /// Unmatched attributes. <c>class</c> and <c>style</c> go on the field wrapper; everything else
+    /// (aria-label, capture, …) goes on the file input.
+    /// </summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    /// <summary>The accepted files, in the order they were added.</summary>
+    public IReadOnlyList<IBrowserFile> Files => _files;
+
+    private string InputId => Id ?? _generatedId;
+
+    private string ListId => $"{InputId}-files";
+
+    private string? FieldClass => AdditionalAttributes?.TryGetValue("class", out var value) == true ? value?.ToString() : null;
+
+    private string? FieldStyle => AdditionalAttributes?.TryGetValue("style", out var value) == true ? value?.ToString() : null;
+
+    private Dictionary<string, object> ControlAttributes
+    {
+        get
+        {
+            var attributes = AdditionalAttributes is null
+                ? new Dictionary<string, object>()
+                : AdditionalAttributes.Where(a => a.Key is not ("class" or "style")).ToDictionary();
+
+            attributes["id"] = InputId;
+            attributes["class"] = "stil-dropzone-input";
+            attributes["ondragenter"] = EventCallback.Factory.Create<DragEventArgs>(this, () => SetDragOver(true));
+            attributes["ondragleave"] = EventCallback.Factory.Create<DragEventArgs>(this, () => SetDragOver(false));
+            attributes["ondrop"] = EventCallback.Factory.Create<DragEventArgs>(this, () => SetDragOver(false));
+
+            if (Multiple)
+            {
+                attributes["multiple"] = true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(Accept))
+            {
+                attributes["accept"] = Accept;
+            }
+
+            if (Disabled)
+            {
+                attributes["disabled"] = true;
+            }
+
+            if (string.IsNullOrWhiteSpace(Label) && !attributes.ContainsKey("aria-label") && !string.IsNullOrWhiteSpace(ButtonText))
+            {
+                attributes["aria-label"] = ButtonText;
+            }
+
+            var describedBy = new List<string>(2);
+            if (!string.IsNullOrWhiteSpace(Hint))
+            {
+                describedBy.Add($"{InputId}-hint");
+            }
+
+            if (_rejections.Count > 0)
+            {
+                describedBy.Add($"{InputId}-error");
+                attributes["aria-invalid"] = "true";
+            }
+
+            if (describedBy.Count > 0)
+            {
+                attributes["aria-describedby"] = string.Join(' ', describedBy);
+            }
+
+            return attributes;
+        }
+    }
+
+    private void SetDragOver(bool value) => _dragOver = value;
+
+    private async Task HandleChange(InputFileChangeEventArgs e)
+    {
+        _dragOver = false;
+        IReadOnlyList<IBrowserFile> chosen = e.FileCount == 0 ? [] : e.GetMultipleFiles(e.FileCount);
+        var rejections = new List<string>();
+
+        if (!Multiple)
+        {
+            _files.Clear();
+            chosen = chosen.Take(1).ToList();
+        }
+
+        foreach (var file in chosen)
+        {
+            if (!IsAccepted(file))
+            {
+                rejections.Add(Format(WrongTypeText, file.Name));
+            }
+            else if (MaxFileSize is { } maxSize && file.Size > maxSize)
+            {
+                rejections.Add(Format(TooLargeText, file.Name, FormatSize(maxSize)));
+            }
+            else if (MaxFiles is { } maxFiles && _files.Count >= maxFiles)
+            {
+                rejections.Add(Format(TooManyText, file.Name, maxFiles));
+            }
+            else
+            {
+                _files.Add(file);
+            }
+        }
+
+        _rejections = rejections;
+        await NotifyAsync();
+    }
+
+    private async Task RemoveAsync(IBrowserFile file)
+    {
+        _files.Remove(file);
+        _rejections = [];
+        await NotifyAsync();
+    }
+
+    private async Task NotifyAsync()
+    {
+        _status = string.Join(' ', new[] { Format(SelectedText, _files.Count) }.Concat(_rejections));
+        await OnChange.InvokeAsync(_files.ToList());
+    }
+
+    /// <summary>Removes every file from the list, without raising OnChange.</summary>
+    public void Clear()
+    {
+        _files.Clear();
+        _rejections = [];
+        _status = null;
+        StateHasChanged();
+    }
+
+    private bool IsAccepted(IBrowserFile file)
+    {
+        if (string.IsNullOrWhiteSpace(Accept))
+        {
+            return true;
+        }
+
+        var name = file.Name;
+        var type = file.ContentType ?? "";
+        foreach (var raw in Accept.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            if (raw.StartsWith('.'))
+            {
+                if (name.EndsWith(raw, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            else if (raw.EndsWith("/*", StringComparison.Ordinal))
+            {
+                if (type.StartsWith(raw[..^1], StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            else if (string.Equals(type, raw, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static string Format(string format, params object[] args) =>
+        string.Format(CultureInfo.CurrentCulture, format, args);
+
+    /// <summary>Formats a size in bytes as B, KB, MB or GB (1 KB = 1024 bytes) in the current culture.</summary>
+    public static string FormatSize(long bytes)
+    {
+        const double kb = 1024;
+        var culture = CultureInfo.CurrentCulture;
+        return bytes switch
+        {
+            < 1024 => $"{bytes.ToString(culture)} B",
+            < 1024 * 1024 => $"{(bytes / kb).ToString("0.#", culture)} KB",
+            < 1024L * 1024 * 1024 => $"{(bytes / (kb * kb)).ToString("0.#", culture)} MB",
+            _ => $"{(bytes / (kb * kb * kb)).ToString("0.#", culture)} GB"
+        };
+    }
+}

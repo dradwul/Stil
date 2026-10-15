@@ -110,7 +110,7 @@ else
                 {
                     <tr @key="item" class="@RowClass?.Invoke(item)"
                         style="@(OnRowClick.HasDelegate ? "cursor: pointer" : null)"
-                        @onclick="@(OnRowClick.HasDelegate ? () => OnRowClick.InvokeAsync(item) : null)">
+                        @onclick="() => OnRowClick.InvokeAsync(item)">
                         @foreach (var column in _columns)
                         {
                             <td class="@column.CellClass">@column.RenderCell(item)</td>

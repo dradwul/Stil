@@ -1,7 +1,10 @@
 @using Microsoft.AspNetCore.Components.Routing
 @inherits StilComponentBase
+@implements IDisposable
+@inject NavigationManager Navigation
 
-@* Wraps Blazor's NavLink, so aria-current="page" follows the current route. *@
+@* Wraps Blazor's NavLink, so aria-current="page" follows the current route. Inside a
+   StilNavGroup, the current link opens its group. *@
 <NavLink href="@Href" Match="Match" @attributes="AdditionalAttributes" class="@Classes("stil-nav-link")">
     @if (Icon is not null)
     {
@@ -35,4 +38,51 @@
 
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
+
+    [CascadingParameter]
+    private StilNavGroup? Group { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Group is not null)
+        {
+            Navigation.LocationChanged += OnLocationChanged;
+            OpenGroupIfCurrent();
+        }
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e) => OpenGroupIfCurrent();
+
+    private void OpenGroupIfCurrent()
+    {
+        if (Group is not null && IsCurrent(Navigation.Uri))
+        {
+            Group.OpenForCurrentLink();
+        }
+    }
+
+    // The same rule as NavLink: the query and fragment are ignored, and Prefix also matches sub-paths.
+    private bool IsCurrent(string uri)
+    {
+        static string Path(string value) => value.Split('?', '#')[0].TrimEnd('/');
+
+        var current = Path(uri);
+        var link = Path(Navigation.ToAbsoluteUri(Href).AbsoluteUri);
+        if (string.Equals(current, link, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return Match == NavLinkMatch.Prefix
+            && current.StartsWith(link + "/", StringComparison.OrdinalIgnoreCase)
+            && link.Length > Path(Navigation.BaseUri).Length;
+    }
+
+    public void Dispose()
+    {
+        if (Group is not null)
+        {
+            Navigation.LocationChanged -= OnLocationChanged;
+        }
+    }
 }

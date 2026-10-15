@@ -13,18 +13,18 @@ Blazorise. Each phase ends with something usable.
 | 2 | Stil CSS 1.0 (Bootstrap replacement) | ✅ Done |
 | 3 | Stil for Blazor core (forms, dialogs, toasts) | ✅ Done |
 | 4 | Stil for Blazor: a component for every Stil CSS component | ✅ Done |
-| 5 | Data components (Radzen replacement) | ⏸ On hold (since 2026-10-12) |
+| 5 | Data components (Radzen replacement) | ✅ Done |
 | 6 | 1.0 release and ecosystem | Planned |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
 end, so they never keep a phase open.
 
-## Where we are (0.1.0, Phases 0–4 done)
+## Where we are (0.1.0, Phases 0–5 done)
 
 - **Stil CSS:** an npm package (`stil-css`, not yet published). It is built
   with Lightning CSS from partials into `dist/stil.css` and `stil.min.css`
-  (about 13 kB gzipped), plus the optional 5 kB `stil.js`. It has:
+  (about 14 kB gzipped), plus the optional 6 kB `stil.js`. It has:
   - cascade layers;
   - a full `--stil-*` token set;
   - light and dark mode;
@@ -35,22 +35,27 @@ end, so they never keep a phase open.
   - about 900 utility classes;
   - a [Bootstrap migration guide](src/Stil.Css/MIGRATING-FROM-BOOTSTRAP.md).
 - **Stil for Blazor:**
-  - About 50 components, with a Blazor counterpart for every Stil CSS
+  - About 60 components, with a Blazor counterpart for every Stil CSS
     component:
     - Buttons, icons and badges.
     - Lists, tables, cards, alerts and accordions.
     - Form fields with EditForm validation and add-ons.
-    - Navigation: navbar, nav, breadcrumbs, pagination, tabs and dropdowns.
+    - Navigation: navbar, nav, nav groups, breadcrumbs, pagination, tabs and
+      dropdowns.
     - Layout, dialogs, drawers and toasts.
+    - Data: a data grid, autocomplete, multi-select, date range, file upload,
+      tree view and KPI cards.
   - `IStilDialogService` and `IStilToastService`.
   - Theming with `AddStil()`, `StilTheme`, `StilHead` and
     `StilThemeProvider`.
-  - 449 bUnit tests.
+  - 594 bUnit tests.
+  - A [Radzen mapping](src/Stil.Blazor/README.md#coming-from-radzen) for
+    migrating screen by screen.
 - **Samples:**
   - `samples/Stil.Html/index.html` shows every CSS class.
   - `samples/Stil.Html/admin.html` is a dashboard built only with Stil CSS.
   - `samples/Stil.Demo` is an interactive Blazor app with a component
-    gallery and an orders CRUD page.
+    gallery and an orders CRUD page built on `StilDataGrid`.
 - **Groundwork:** [CONTRIBUTING.md](CONTRIBUTING.md) holds the conventions.
   CI checks the CSS build and contrast, then builds, tests and packs.
 
@@ -275,20 +280,47 @@ users rarely need to write `stil-*` classes by hand.
   along with that set's license.
 - **Plain CSS:** the same SVGs are `stil-icon-*` CSS mask classes.
 
-## Phase 5: Data components (Radzen replacement) ⏸ On hold
+## Phase 5: Data components (Radzen replacement) ✅ Done
 
-Paused on 2026-10-12. Resumes after Phase 4.
-
-- [ ] `StilDataGrid`: column templates, sorting, paging, filtering,
-  selection, virtualization, and server-side data through an `ItemsProvider`.
-  It builds on `StilTable` and `StilPagination` from Phase 4.
-- [ ] Autocomplete, combo box, multi-select, date range and file upload.
-- [ ] Tree view and menu.
-- [ ] A KPI/stat card pattern.
-- [ ] Charts, possibly in a separate package.
+- [x] `StilDataGrid`, with `StilDataGridColumn` (bound to a property
+  expression) and `StilDataGridTemplateColumn`:
+  - [x] Column templates, formats, alignment and widths.
+  - [x] Sorting by clicking a header (ascending, descending, none), with
+    `aria-sort` and `InitialSort`.
+  - [x] Paging with `StilPagination`, a row summary and a page-size choice.
+  - [x] A filter row: "contains" for text (debounced), a choice for enums and
+    bools.
+  - [x] Single and multiple selection, with a select-all checkbox for the page
+    and `ItemKey` to keep the selection across reloads.
+  - [x] Virtualization with a sticky header.
+  - [x] Server-side data through `ItemsProvider`. `StilDataGridRequest`
+    can apply the grid's filters and sorting to an `IQueryable` (EF Core).
+  - [x] Toolbar, caption, empty and loading states, `OnRowClick`,
+    `RowClass` and `RefreshAsync()`.
+- [x] `StilAutocomplete` (combo box) and `StilMultiSelect`, following the
+  WAI-ARIA combobox pattern, with in-memory or debounced async search and
+  EditForm validation.
+- [x] `StilDateRangePicker`, which reports an end before the start as a
+  validation error.
+- [x] `StilFileUpload`: a drop zone with type, size and count checks.
+- [x] `StilTreeView` (the WAI-ARIA tree pattern) and `StilNavGroup` for
+  nested menus in a vertical nav. A group opens by itself when one of its
+  links is the current page.
+- [x] `StilStatCard`, a KPI card with a trend badge.
+- [x] `stil.js` stops the keys that trees, tabs and pickers handle from also
+  scrolling the page, submitting a form or closing a dialog.
+- [x] Charts: decided to build them as a separate package in Phase 6, so the
+  core stays small. Until then, use a chart library next to Stil.
+- [x] CSS for every new component (`stil-data-grid`, `stil-combobox`,
+  `stil-chip`, `stil-dropzone`, `stil-date-range`, `stil-stat`,
+  `stil-tree`, `stil-nav-group`), shown in `samples/Stil.Html`, and the
+  `file`, `folder` and `upload` icons.
+- [x] Docs: the Blazor and CSS READMEs, and a Radzen-to-Stil mapping table.
 
 **Done when:** an existing Radzen-based internal app can be migrated screen
-by screen.
+by screen. Every Radzen component in common use now has a counterpart (see
+the mapping table), and the demo's orders page is a typical Radzen screen
+built only with Stil. Trying it on a real app is an owner task below.
 
 ## Phase 6: 1.0 release and ecosystem
 
@@ -296,8 +328,11 @@ by screen.
 - [ ] An interactive theme builder: edit tokens live, then copy the CSS or the
   C# `StilTheme`.
 - [ ] Playwright visual regression tests for the CSS and the components.
-- [ ] A `dotnet new stil-app` template, and migration guides from Radzen and
-  Blazorise.
+- [ ] A `dotnet new stil-app` template, and a migration guide from
+  Blazorise (the Radzen mapping is in the Blazor README).
+- [ ] `Stil.Charts`, a separate package: line, bar, area and donut charts as
+  SVG, themed with the `--stil-*` tokens and readable by screen readers
+  (a data table fallback).
 - [ ] Package publishing (deferred until this phase, decided 2026-10-15):
   - Complete the NuGet metadata: Authors, RepositoryUrl, PackageProjectUrl,
     a package icon, a symbols package (`.snupkg`) and SourceLink.
@@ -318,6 +353,8 @@ These need the repository or package owner.
   links in `src/Stil.Blazor/README.md` and `src/Stil.Css/package.json`.
 - [ ] Push and confirm that CI passes on GitHub. It has only been run
   locally so far.
+- [ ] Migrate one screen of a real Radzen-based internal app to Stil, and
+  note what was missing.
 - [ ] Later, when we publish in Phase 6 (not now):
   - Create accounts on nuget.org and npmjs.com with two-factor sign-in.
   - Set up Trusted Publishing for the repository.

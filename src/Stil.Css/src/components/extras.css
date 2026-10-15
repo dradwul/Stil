@@ -1,0 +1,209 @@
+/* Extras: file upload drop zone, date range and stat card. */
+
+/* File upload: a drop zone with the native file input laid over it, so clicking, dropping and
+   the keyboard all reach the real input.
+   <div class="stil-dropzone">
+     <input type="file" class="stil-dropzone-input" id="files">
+     <span class="stil-dropzone-text">Drag files here or</span>
+     <span class="stil-dropzone-button">Browse</span>
+   </div>
+   Set data-dragover="true" on the zone while a file is dragged over it. */
+
+.stil-dropzone {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--stil-space-2);
+    padding: var(--stil-space-5) var(--stil-space-4);
+    border: 2px dashed var(--stil-color-border-strong);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text-muted);
+    text-align: center;
+    transition:
+        background-color var(--stil-duration-fast) var(--stil-easing),
+        border-color var(--stil-duration-fast) var(--stil-easing);
+}
+
+/* The input covers the whole zone but is transparent. It stays focusable and receives drops. */
+.stil-dropzone-input {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.stil-dropzone-icon { font-size: var(--stil-font-size-2xl); }
+
+/* Looks like an outline button; the input above it does the work. */
+.stil-dropzone-button {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--stil-space-1) var(--stil-space-3);
+    border: 1px solid var(--_accent);
+    border-radius: var(--stil-radius-md);
+    color: var(--_accent);
+    font-size: var(--stil-font-size-sm);
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-dropzone:hover,
+.stil-dropzone[data-dragover="true"] {
+    border-color: var(--_accent);
+    background-color: color-mix(in srgb, var(--_accent) 8%, var(--stil-color-surface));
+}
+
+.stil-dropzone[data-dragover="true"] { border-style: solid; }
+
+.stil-dropzone:has(.stil-dropzone-input:focus-visible) {
+    border-color: var(--_accent);
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+}
+
+.stil-dropzone:has(.stil-dropzone-input[aria-invalid="true"]) {
+    --_bg: var(--stil-color-danger);
+    border-color: var(--_ink);
+}
+
+.stil-dropzone:has(.stil-dropzone-input:disabled) {
+    background-color: var(--stil-color-surface-muted);
+    opacity: 0.55;
+}
+
+.stil-dropzone:has(.stil-dropzone-input:disabled) > .stil-dropzone-input { cursor: not-allowed; }
+
+/* The chosen files: name, size and a remove button. */
+.stil-file-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stil-space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stil-file-list-item {
+    display: flex;
+    align-items: center;
+    gap: var(--stil-space-2);
+    padding: var(--stil-space-1) var(--stil-space-1) var(--stil-space-1) var(--stil-space-3);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+}
+
+.stil-file-list-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.stil-file-list-size {
+    flex: none;
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Date range: two date fields side by side in a fieldset, stacking on narrow screens. */
+.stil-date-range {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.stil-date-range > legend {
+    margin-block-end: var(--stil-space-1);
+    padding: 0;
+}
+
+.stil-date-range-inputs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+    gap: var(--stil-space-3);
+}
+
+/* Stat card: a KPI with a label, a large value, a trend and a description.
+   <div class="stil-card stil-stat">
+     <div class="stil-stat-header"><span class="stil-stat-label">Revenue</span></div>
+     <div class="stil-stat-value">$48,200</div>
+     <div class="stil-stat-footer">
+       <span class="stil-badge stil-badge-subtle stil-badge-success stil-stat-trend" data-trend="up">…</span>
+       <span class="stil-stat-description">vs last month</span>
+     </div>
+   </div> */
+
+.stil-stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stil-space-2);
+}
+
+.stil-stat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--stil-space-2);
+}
+
+.stil-stat-label {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+}
+
+.stil-stat-icon {
+    flex: none;
+    color: var(--_accent);
+    font-size: var(--stil-font-size-lg);
+}
+
+.stil-stat-value {
+    color: var(--stil-color-text);
+    font-size: var(--stil-font-size-2xl);
+    font-weight: var(--stil-font-weight-bold);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--stil-letter-spacing);
+    line-height: 1.2;
+}
+
+.stil-stat-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--stil-space-2);
+}
+
+.stil-stat-description {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+}
+
+/* The arrow points right; turn it up or down with the trend. */
+.stil-stat-trend[data-trend="up"] > .stil-icon { rotate: -45deg; }
+.stil-stat-trend[data-trend="down"] > .stil-icon { rotate: 45deg; }
+
+/* A stat card as a link. */
+a.stil-stat {
+    color: inherit;
+    text-decoration: none;
+    transition: border-color var(--stil-duration-fast) var(--stil-easing);
+}
+
+a.stil-stat:hover { border-color: var(--_accent); }
+
+a.stil-stat:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+}

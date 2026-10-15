@@ -1,0 +1,25 @@
+@* An EditForm with a required autocomplete and a multi-select, for validation tests. *@
+<EditForm Model="Model" OnValidSubmit="() => Submitted = true">
+    <DataAnnotationsValidator />
+    <StilAutocomplete TItem="string" Label="City" Items="Cities" @bind-Value="Model.City" />
+    <StilMultiSelect TItem="string" Label="Tags" Items="Tags" @bind-Value="Model.Tags" />
+    <button type="submit">Save</button>
+</EditForm>
+
+@code {
+    public static readonly string[] Cities = ["Oslo", "Stockholm", "Göteborg", "Malmö", "Helsinki"];
+
+    public static readonly string[] Tags = ["Urgent", "Billing", "Bug", "Feature"];
+
+    public PickerModel Model { get; } = new();
+
+    public bool Submitted { get; private set; }
+
+    public sealed class PickerModel
+    {
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Choose a city.")]
+        public string? City { get; set; }
+
+        public IReadOnlyCollection<string>? Tags { get; set; }
+    }
+}

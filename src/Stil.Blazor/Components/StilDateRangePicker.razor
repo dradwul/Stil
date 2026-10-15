@@ -1,0 +1,232 @@
+@typeparam TValue
+@using System.Globalization
+@using System.Linq.Expressions
+@implements IDisposable
+
+@* Two date fields (start and end) in a fieldset. The end field's min follows the start and the
+   start field's max follows the end. An end before the start is reported as a validation message
+   on the end field: in the surrounding EditForm when there is one, otherwise in a private
+   EditContext, so it shows the same way (message, aria-invalid, aria-describedby) in both cases. *@
+<fieldset @attributes="FieldsetAttributes" class="@Classes" id="@RangeId" aria-describedby="@DescribedBy">
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <legend class="stil-label">@Label</legend>
+    }
+    <CascadingValue Value="Context" IsFixed="false">
+        <div class="stil-date-range-inputs">
+            <StilDatePicker TValue="TValue" Id="@StartId" Label="@StartLabel" Value="@Start" ValueChanged="OnStartChanged"
+                            ValueExpression="@StartFieldExpression" Min="@Min" Max="@StartMax" Disabled="@Disabled" Size="@Size" />
+            <StilDatePicker TValue="TValue" Id="@EndId" Label="@EndLabel" Value="@End" ValueChanged="OnEndChanged"
+                            ValueExpression="@EndFieldExpression" Min="@EndMin" Max="@Max" Disabled="@Disabled" Size="@Size" />
+        </div>
+    </CascadingValue>
+    @if (!string.IsNullOrWhiteSpace(Hint))
+    {
+        <div class="stil-field-hint" id="@HintId">@Hint</div>
+    }
+</fieldset>
+
+@code {
+    private readonly string _generatedId = StilIds.Next("range");
+    private EditContext? _ownContext;
+    private EditContext? _storeContext;
+    private ValidationMessageStore? _store;
+    private bool _hasRangeError;
+
+    [CascadingParameter]
+    private EditContext? CascadedEditContext { get; set; }
+
+    [Parameter]
+    public TValue? Start { get; set; }
+
+    [Parameter]
+    public EventCallback<TValue?> StartChanged { get; set; }
+
+    /// <summary>Set by @bind-Start. Links validation messages for the start field.</summary>
+    [Parameter]
+    public Expression<Func<TValue?>>? StartExpression { get; set; }
+
+    [Parameter]
+    public TValue? End { get; set; }
+
+    [Parameter]
+    public EventCallback<TValue?> EndChanged { get; set; }
+
+    /// <summary>Set by @bind-End. Links validation messages (and the range error) for the end field.</summary>
+    [Parameter]
+    public Expression<Func<TValue?>>? EndExpression { get; set; }
+
+    /// <summary>The legend of the fieldset.</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    [Parameter]
+    public string StartLabel { get; set; } = "From";
+
+    [Parameter]
+    public string EndLabel { get; set; } = "To";
+
+    /// <summary>The earliest date, as yyyy-MM-dd.</summary>
+    [Parameter]
+    public string? Min { get; set; }
+
+    /// <summary>The latest date, as yyyy-MM-dd.</summary>
+    [Parameter]
+    public string? Max { get; set; }
+
+    /// <summary>Help text under both fields, linked to the fieldset with aria-describedby.</summary>
+    [Parameter]
+    public string? Hint { get; set; }
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    [Parameter]
+    public StilSize Size { get; set; }
+
+    /// <summary>The fieldset's id. The inputs get "{Id}-start" and "{Id}-end". Generated when not set.</summary>
+    [Parameter]
+    public string? Id { get; set; }
+
+    /// <summary>The message when the end is before the start.</summary>
+    [Parameter]
+    public string RangeErrorText { get; set; } = "The end date must be on or after the start date.";
+
+    /// <summary>Unmatched attributes go on the fieldset; <c>class</c> is appended to its classes.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string RangeId => Id ?? _generatedId;
+
+    private string StartId => $"{RangeId}-start";
+
+    private string EndId => $"{RangeId}-end";
+
+    private string HintId => $"{RangeId}-hint";
+
+    private string? DescribedBy => string.IsNullOrWhiteSpace(Hint) ? null : HintId;
+
+    private string Classes => StilCssClasses.Merge(AdditionalAttributes, "stil-field", "stil-date-range");
+
+    private IReadOnlyDictionary<string, object>? FieldsetAttributes => AdditionalAttributes;
+
+    /// <summary>The surrounding EditForm's context, or a private one outside a form.</summary>
+    private EditContext Context => CascadedEditContext ?? (_ownContext ??= CreateOwnContext());
+
+    private EditContext CreateOwnContext()
+    {
+        var context = new EditContext(this);
+        // Outside a form, keep the inputs free of Blazor's valid/modified classes, like StilDatePicker.
+        context.SetFieldCssClassProvider(new NoFieldCssClassProvider());
+        return context;
+    }
+
+    private sealed class NoFieldCssClassProvider : FieldCssClassProvider
+    {
+        public override string GetFieldCssClass(EditContext editContext, in FieldIdentifier fieldIdentifier) => "";
+    }
+
+    private Expression<Func<TValue?>> StartFieldExpression => StartExpression ?? (() => Start);
+
+    private Expression<Func<TValue?>> EndFieldExpression => EndExpression ?? (() => End);
+
+    private FieldIdentifier EndField => FieldIdentifier.Create(EndFieldExpression);
+
+    private string? StartMax => Earliest(Max, Format(End));
+
+    private string? EndMin => Latest(Min, Format(Start));
+
+    /// <summary>True when both dates are set and the end is before the start.</summary>
+    public bool HasRangeError => _hasRangeError;
+
+    protected override void OnParametersSet()
+    {
+        var context = Context;
+        if (!ReferenceEquals(_storeContext, context))
+        {
+            DetachStore();
+            _storeContext = context;
+            _store = new ValidationMessageStore(context);
+            context.OnValidationRequested += OnValidationRequested;
+        }
+
+        UpdateRangeError();
+    }
+
+    private async Task OnStartChanged(TValue? value)
+    {
+        Start = value;
+        await StartChanged.InvokeAsync(value);
+        UpdateRangeError();
+    }
+
+    private async Task OnEndChanged(TValue? value)
+    {
+        End = value;
+        await EndChanged.InvokeAsync(value);
+        UpdateRangeError();
+    }
+
+    private void OnValidationRequested(object? sender, ValidationRequestedEventArgs e) => UpdateRangeError(force: true);
+
+    private void UpdateRangeError(bool force = false)
+    {
+        if (_store is null || _storeContext is null)
+        {
+            return;
+        }
+
+        var hasError = IsEndBeforeStart();
+        if (hasError == _hasRangeError && !force)
+        {
+            return;
+        }
+
+        _hasRangeError = hasError;
+        _store.Clear();
+        if (hasError)
+        {
+            _store.Add(EndField, RangeErrorText);
+        }
+
+        _storeContext.NotifyValidationStateChanged();
+    }
+
+    private bool IsEndBeforeStart() =>
+        Start is not null && End is not null && Comparer<TValue>.Default.Compare(Start, End) > 0;
+
+    private static string? Format(TValue? value) => value switch
+    {
+        DateOnly date => date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+        DateTime dateTime => dateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+        DateTimeOffset offset => offset.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+        _ => null
+    };
+
+    // yyyy-MM-dd strings sort the same as the dates they hold.
+    private static string? Latest(string? a, string? b) =>
+        a is null ? b : b is null ? a : string.CompareOrdinal(a, b) >= 0 ? a : b;
+
+    private static string? Earliest(string? a, string? b) =>
+        a is null ? b : b is null ? a : string.CompareOrdinal(a, b) <= 0 ? a : b;
+
+    private void DetachStore()
+    {
+        if (_storeContext is not null)
+        {
+            _storeContext.OnValidationRequested -= OnValidationRequested;
+            _store?.Clear();
+            _storeContext.NotifyValidationStateChanged();
+        }
+
+        _store = null;
+        _storeContext = null;
+        _hasRangeError = false;
+    }
+
+    public void Dispose()
+    {
+        DetachStore();
+        GC.SuppressFinalize(this);
+    }
+}

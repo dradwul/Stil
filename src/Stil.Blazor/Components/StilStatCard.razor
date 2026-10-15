@@ -1,0 +1,137 @@
+@inherits StilComponentBase
+
+@* A KPI card: a label, a large value, an optional trend badge with an arrow and a description.
+   The trend is read as, for example, "up 12.4%" through visually hidden text. *@
+@if (string.IsNullOrWhiteSpace(Href))
+{
+    <div @attributes="AdditionalAttributes" class="@CssClass">@Body</div>
+}
+else
+{
+    <a @attributes="AdditionalAttributes" class="@CssClass" href="@Href">@Body</a>
+}
+
+@code {
+    /// <summary>What the value measures, for example "Revenue".</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>The formatted value, for example "$48,200".</summary>
+    [Parameter]
+    public string? Value { get; set; }
+
+    /// <summary>A decorative icon next to the label (a <see cref="StilIcons"/> name).</summary>
+    [Parameter]
+    public string? Icon { get; set; }
+
+    /// <summary>The change, for example "+12.4%".</summary>
+    [Parameter]
+    public string? Trend { get; set; }
+
+    [Parameter]
+    public StilTrendDirection TrendDirection { get; set; }
+
+    /// <summary>The trend badge color. The default is Success for Up, Danger for Down and Secondary for Neutral.</summary>
+    [Parameter]
+    public StilVariant? TrendVariant { get; set; }
+
+    /// <summary>
+    /// What screen readers hear for the trend. The default is the direction word followed by the trend
+    /// without its sign, for example "up 12.4%".
+    /// </summary>
+    [Parameter]
+    public string? TrendLabel { get; set; }
+
+    /// <summary>Context for the trend, for example "vs last month".</summary>
+    [Parameter]
+    public string? Description { get; set; }
+
+    /// <summary>Makes the whole card a link. Do not put links or buttons in ChildContent then.</summary>
+    [Parameter]
+    public string? Href { get; set; }
+
+    /// <summary>The words for each direction in the default TrendLabel.</summary>
+    [Parameter]
+    public string UpText { get; set; } = "up";
+
+    [Parameter]
+    public string DownText { get; set; } = "down";
+
+    [Parameter]
+    public string NeutralText { get; set; } = "unchanged";
+
+    /// <summary>Extra content under the value, such as a sparkline.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string CssClass => Classes("stil-card", "stil-stat");
+
+    private StilVariant EffectiveVariant => TrendVariant ?? TrendDirection switch
+    {
+        StilTrendDirection.Up => StilVariant.Success,
+        StilTrendDirection.Down => StilVariant.Danger,
+        _ => StilVariant.Secondary
+    };
+
+    private string TrendData => TrendDirection switch
+    {
+        StilTrendDirection.Up => "up",
+        StilTrendDirection.Down => "down",
+        _ => "neutral"
+    };
+
+    private string SpokenTrend
+    {
+        get
+        {
+            if (!string.IsNullOrWhiteSpace(TrendLabel))
+            {
+                return TrendLabel;
+            }
+
+            var word = TrendDirection switch
+            {
+                StilTrendDirection.Up => UpText,
+                StilTrendDirection.Down => DownText,
+                _ => NeutralText
+            };
+            var amount = (Trend ?? "").Trim().TrimStart('+', '-', '−', '±').Trim();
+            return string.IsNullOrEmpty(amount) ? word : $"{word} {amount}";
+        }
+    }
+
+    private RenderFragment Body => @<text>
+        @if (!string.IsNullOrWhiteSpace(Label) || !string.IsNullOrWhiteSpace(Icon))
+        {
+            <div class="stil-stat-header">
+                <span class="stil-stat-label">@Label</span>
+                @if (!string.IsNullOrWhiteSpace(Icon))
+                {
+                    <StilIcon Name="@Icon" class="stil-stat-icon" />
+                }
+            </div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Value))
+        {
+            <div class="stil-stat-value">@Value</div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Trend) || !string.IsNullOrWhiteSpace(Description))
+        {
+            <div class="stil-stat-footer">
+                @if (!string.IsNullOrWhiteSpace(Trend))
+                {
+                    <StilBadge Variant="EffectiveVariant" Subtle="true" class="stil-stat-trend" data-trend="@TrendData">
+                        <StilIcon Name="@StilIcons.ArrowRight" />
+                        <span aria-hidden="true">@Trend</span>
+                        <span class="stil-visually-hidden">@SpokenTrend</span>
+                    </StilBadge>
+                }
+                @if (!string.IsNullOrWhiteSpace(Description))
+                {
+                    <span class="stil-stat-description">@Description</span>
+                }
+            </div>
+        }
+        @ChildContent
+    </text>;
+}

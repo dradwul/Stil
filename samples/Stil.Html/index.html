@@ -21,12 +21,16 @@
                 <a href="#icons">Icons</a>
                 <a href="#buttons">Buttons</a>
                 <a href="#forms">Forms</a>
+                <a href="#pickers">Pickers</a>
                 <a href="#cards">Cards</a>
+                <a href="#stats">Stat cards</a>
                 <a href="#alerts">Alerts</a>
                 <a href="#badges">Badges</a>
                 <a href="#lists">Lists</a>
                 <a href="#tables">Tables</a>
+                <a href="#data-grid">Data grid</a>
                 <a href="#accordion">Accordion</a>
+                <a href="#tree">Tree view</a>
                 <a href="#navigation">Navigation</a>
                 <a href="#navbar">Navbar</a>
                 <a href="#breadcrumb">Breadcrumb</a>
@@ -454,6 +458,89 @@
             </div>
         </section>
 
+        <section class="component-group" id="pickers">
+            <h1>Pickers and uploads</h1>
+            <p>An autocomplete is a <code>stil-input</code> with <code>role="combobox"</code> in a <code>stil-combobox</code>, controlling a listbox in a <code>stil-combobox-popup</code>. Opening the list and moving the active option need a script; <code>StilAutocomplete</code> and <code>StilMultiSelect</code> do it in Blazor. The lists below are shown open.</p>
+
+            <h2>Autocomplete</h2>
+            <div class="example" style="min-height: 14rem">
+                <div class="stil-field">
+                    <label class="stil-label" for="city">City</label>
+                    <div class="stil-combobox">
+                        <input class="stil-input" id="city" type="text" role="combobox" autocomplete="off" aria-autocomplete="list"
+                               aria-expanded="true" aria-controls="city-list" aria-activedescendant="city-1" value="ö">
+                        <div class="stil-combobox-popup">
+                            <ul class="stil-combobox-list" id="city-list" role="listbox" aria-label="City">
+                                <li class="stil-combobox-option" id="city-0" role="option" aria-selected="false">Göteborg</li>
+                                <li class="stil-combobox-option stil-combobox-option-active" id="city-1" role="option" aria-selected="true">Malmö</li>
+                                <li class="stil-combobox-option" id="city-2" role="option" aria-selected="false">Örebro</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2>Multi-select and chips</h2>
+            <div class="example" style="min-height: 15rem">
+                <div class="stil-field">
+                    <label class="stil-label" for="tags">Tags</label>
+                    <div class="stil-combobox stil-multi-select stil-input">
+                        <span class="stil-chip"><span class="stil-chip-text">Urgent</span><button type="button" class="stil-chip-remove" aria-label="Remove Urgent"><span class="stil-icon stil-icon-close" aria-hidden="true"></span></button></span>
+                        <span class="stil-chip"><span class="stil-chip-text">Billing</span><button type="button" class="stil-chip-remove" aria-label="Remove Billing"><span class="stil-icon stil-icon-close" aria-hidden="true"></span></button></span>
+                        <input class="stil-multi-select-input" id="tags" type="text" role="combobox" autocomplete="off" aria-autocomplete="list"
+                               aria-expanded="true" aria-controls="tag-list" aria-activedescendant="tag-2">
+                        <div class="stil-combobox-popup">
+                            <ul class="stil-combobox-list" id="tag-list" role="listbox" aria-multiselectable="true" aria-label="Tags">
+                                <li class="stil-combobox-option" id="tag-0" role="option" aria-selected="true"><span class="stil-icon stil-combobox-check stil-icon-check" aria-hidden="true"></span> Urgent</li>
+                                <li class="stil-combobox-option" id="tag-1" role="option" aria-selected="true"><span class="stil-icon stil-combobox-check stil-icon-check" aria-hidden="true"></span> Billing</li>
+                                <li class="stil-combobox-option stil-combobox-option-active" id="tag-2" role="option" aria-selected="false"><span class="stil-icon stil-combobox-check stil-icon-check" aria-hidden="true"></span> Bug</li>
+                                <li class="stil-combobox-option" id="tag-3" role="option" aria-selected="false"><span class="stil-icon stil-combobox-check stil-icon-check" aria-hidden="true"></span> Feature</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <p class="stil-mt-3 stil-mb-0">Chips also work on their own: <span class="stil-chip"><span class="stil-chip-text">Wholesale</span></span></p>
+            </div>
+
+            <h2>Date range</h2>
+            <div class="example">
+                <fieldset class="stil-date-range">
+                    <legend class="stil-label">Delivery window</legend>
+                    <div class="stil-date-range-inputs">
+                        <div class="stil-field">
+                            <label class="stil-label" for="range-start">From</label>
+                            <input class="stil-input" id="range-start" type="date" value="2026-10-20">
+                        </div>
+                        <div class="stil-field">
+                            <label class="stil-label" for="range-end">To</label>
+                            <input class="stil-input" id="range-end" type="date" min="2026-10-20" value="2026-10-24">
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <h2>File upload</h2>
+            <div class="example">
+                <div class="stil-field">
+                    <label class="stil-label" for="files">Attachments</label>
+                    <div class="stil-dropzone">
+                        <input class="stil-dropzone-input" id="files" type="file" multiple accept=".pdf,image/*" aria-describedby="files-hint">
+                        <span class="stil-icon stil-icon-upload stil-dropzone-icon" aria-hidden="true"></span>
+                        <span class="stil-dropzone-text" aria-hidden="true">Drag files here or</span>
+                        <span class="stil-dropzone-button" aria-hidden="true">Browse</span>
+                    </div>
+                    <div class="stil-field-hint" id="files-hint">PDF or images, at most 5 MB each.</div>
+                    <ul class="stil-file-list" aria-label="Chosen files">
+                        <li class="stil-file-list-item">
+                            <span class="stil-file-list-name">invoice-1043.pdf</span>
+                            <span class="stil-file-list-size">182 KB</span>
+                            <button type="button" class="stil-close" aria-label="Remove invoice-1043.pdf"></button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
         <section class="component-group" id="cards">
             <h1>Cards</h1>
             <p>A bordered surface that groups related content and actions. A card can have a header, a title and subtitle, body content and a footer.</p>
@@ -508,6 +595,37 @@
                         <div class="stil-card-footer">
                             <button type="button" class="stil-btn stil-btn-outline">Contact sales</button>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="component-group" id="stats">
+            <h1>Stat cards</h1>
+            <p>A KPI card: <code>stil-card stil-stat</code> with a label, a large value and a trend badge. <code>data-trend="up"</code> or <code>"down"</code> turns the arrow. Say the direction in words for screen readers.</p>
+
+            <div class="example">
+                <div class="stil-grid">
+                    <div class="stil-card stil-stat stil-col-md-4">
+                        <div class="stil-stat-header"><span class="stil-stat-label">Revenue</span></div>
+                        <div class="stil-stat-value">48,200 €</div>
+                        <div class="stil-stat-footer">
+                            <span class="stil-badge stil-badge-success stil-badge-subtle stil-stat-trend" data-trend="up"><span class="stil-icon stil-icon-arrow-right" aria-hidden="true"></span><span aria-hidden="true">+12.4%</span><span class="stil-visually-hidden">up 12.4%</span></span>
+                            <span class="stil-stat-description">vs last month</span>
+                        </div>
+                    </div>
+                    <div class="stil-card stil-stat stil-col-md-4">
+                        <div class="stil-stat-header"><span class="stil-stat-label">Open tickets</span></div>
+                        <div class="stil-stat-value">17</div>
+                        <div class="stil-stat-footer">
+                            <span class="stil-badge stil-badge-success stil-badge-subtle stil-stat-trend" data-trend="down"><span class="stil-icon stil-icon-arrow-right" aria-hidden="true"></span><span aria-hidden="true">-3</span><span class="stil-visually-hidden">down 3</span></span>
+                            <span class="stil-stat-description">since Monday</span>
+                        </div>
+                    </div>
+                    <div class="stil-card stil-stat stil-col-md-4">
+                        <div class="stil-stat-header"><span class="stil-stat-label">Orders</span></div>
+                        <div class="stil-stat-value">64</div>
+                        <div class="stil-stat-footer"><span class="stil-stat-description">this month</span></div>
                     </div>
                 </div>
             </div>
@@ -758,6 +876,70 @@
             </div>
         </section>
 
+        <section class="component-group" id="data-grid">
+            <h1>Data grid</h1>
+            <p>A <code>stil-data-grid</code> wraps a <code>stil-table</code> with sort buttons in the headers (<code>aria-sort</code> on the <code>th</code>), a filter row, a checkbox column and a footer with a summary and a pager. Selected rows have <code>aria-selected="true"</code>. The behaviour comes from <code>StilDataGrid</code> in Blazor, or your own script.</p>
+
+            <div class="example">
+                <div class="stil-data-grid">
+                    <div class="stil-data-grid-toolbar">
+                        <span class="stil-text-muted">1 selected</span>
+                        <button type="button" class="stil-btn stil-btn-danger stil-btn-outline stil-btn-sm">Delete selected</button>
+                    </div>
+                    <div class="stil-table-responsive stil-data-grid-scroll" style="max-height: 20rem" tabindex="0" role="region" aria-label="Orders">
+                        <table class="stil-table stil-table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="stil-data-grid-select"><input type="checkbox" class="stil-check-input" aria-label="Select all rows on this page"></th>
+                                    <th scope="col" aria-sort="descending"><button type="button" class="stil-data-grid-sort">Order <span class="stil-icon stil-icon-chevron-down" aria-hidden="true"></span></button></th>
+                                    <th scope="col" aria-sort="none"><button type="button" class="stil-data-grid-sort">Customer <span class="stil-icon stil-icon-chevron-up" aria-hidden="true"></span></button></th>
+                                    <th scope="col" aria-sort="none"><button type="button" class="stil-data-grid-sort">Status <span class="stil-icon stil-icon-chevron-up" aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="stil-text-end" aria-sort="none"><button type="button" class="stil-data-grid-sort">Amount <span class="stil-icon stil-icon-chevron-up" aria-hidden="true"></span></button></th>
+                                </tr>
+                                <tr class="stil-data-grid-filters">
+                                    <td></td>
+                                    <td></td>
+                                    <td><input type="search" class="stil-input stil-input-sm" placeholder="Filter" aria-label="Filter Customer"></td>
+                                    <td>
+                                        <select class="stil-select stil-select-sm" aria-label="Filter Status">
+                                            <option value="">All</option>
+                                            <option>Pending</option>
+                                            <option>Shipped</option>
+                                        </select>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr aria-selected="false">
+                                    <td class="stil-data-grid-select"><input type="checkbox" class="stil-check-input" aria-label="Select row"></td>
+                                    <td>#1045</td><td>Østerby Marine</td><td><span class="stil-badge stil-badge-danger stil-badge-subtle">Cancelled</span></td><td class="stil-text-end">9,120.75</td>
+                                </tr>
+                                <tr aria-selected="true">
+                                    <td class="stil-data-grid-select"><input type="checkbox" class="stil-check-input" aria-label="Select row" checked></td>
+                                    <td>#1044</td><td>Kallio Design Oy</td><td><span class="stil-badge stil-badge-warning stil-badge-subtle">Pending</span></td><td class="stil-text-end">455.20</td>
+                                </tr>
+                                <tr aria-selected="false">
+                                    <td class="stil-data-grid-select"><input type="checkbox" class="stil-check-input" aria-label="Select row"></td>
+                                    <td>#1043</td><td>Berglund Outdoor</td><td><span class="stil-badge stil-badge-info stil-badge-subtle">Shipped</span></td><td class="stil-text-end">2,078.90</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="stil-data-grid-footer">
+                        <span class="stil-text-muted stil-fs-sm">1–3 of 64</span>
+                        <nav aria-label="Table pages">
+                            <ul class="stil-pagination stil-pagination-sm">
+                                <li><a class="stil-page-link" href="#data-grid" aria-current="page">1</a></li>
+                                <li><a class="stil-page-link" href="#data-grid">2</a></li>
+                                <li><a class="stil-page-link" href="#data-grid">3</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section class="component-group" id="accordion">
             <h1>Accordion</h1>
             <p>Stacked sections that open and close. Items that share a <code>name</code> attribute open one at a time; without it several can be open. No JavaScript is needed.</p>
@@ -777,6 +959,19 @@
                         <div class="stil-accordion-body"><p>Within the EU, yes.</p></div>
                     </details>
                 </div>
+            </div>
+        </section>
+
+        <section class="component-group" id="tree">
+            <h1>Tree view</h1>
+            <p>A nested list following the WAI-ARIA tree pattern: <code>role="tree"</code>, <code>treeitem</code> with <code>aria-expanded</code>, <code>aria-selected</code> and <code>aria-level</code>, and <code>role="group"</code> for children. Expanding items and moving with the arrow keys need a script; <code>StilTreeView</code> does it in Blazor.</p>
+
+            <div class="example">
+                <ul class="stil-tree" role="tree" aria-label="Project files">
+                    <li role="treeitem" class="stil-tree-item" aria-level="1" aria-selected="false" tabindex="-1" aria-expanded="true"><div class="stil-tree-row"><span class="stil-tree-toggle" aria-hidden="true"><span class="stil-icon stil-icon-chevron-right" aria-hidden="true"></span></span><span class="stil-icon stil-icon-folder" aria-hidden="true"></span><span class="stil-tree-label">src</span></div><ul role="group" class="stil-tree-group"><li role="treeitem" class="stil-tree-item" aria-level="2" aria-selected="false" tabindex="-1" aria-expanded="true"><div class="stil-tree-row"><span class="stil-tree-toggle" aria-hidden="true"><span class="stil-icon stil-icon-chevron-right" aria-hidden="true"></span></span><span class="stil-icon stil-icon-folder" aria-hidden="true"></span><span class="stil-tree-label">Stil.Css</span></div><ul role="group" class="stil-tree-group"><li role="treeitem" class="stil-tree-item" aria-level="3" aria-selected="true" tabindex="0"><div class="stil-tree-row"><span class="stil-tree-toggle" aria-hidden="true"></span><span class="stil-icon stil-icon-file" aria-hidden="true"></span><span class="stil-tree-label">tokens.css</span></div></li><li role="treeitem" class="stil-tree-item" aria-level="3" aria-selected="false" tabindex="-1"><div class="stil-tree-row"><span class="stil-tree-toggle" aria-hidden="true"></span><span class="stil-icon stil-icon-file" aria-hidden="true"></span><span class="stil-tree-label">stil.js</span></div></li></ul></li><li role="treeitem" class="stil-tree-item" aria-level="2" aria-selected="false" tabindex="-1" aria-expanded="false"><div class="stil-tree-row"><span class="stil-tree-toggle" aria-hidden="true"><span class="stil-icon stil-icon-chevron-right" aria-hidden="true"></span></span><span class="stil-icon stil-icon-folder" aria-hidden="true"></span><span class="stil-tree-label">Stil.Blazor</span></div></li></ul></li>
+                    <li role="treeitem" class="stil-tree-item" aria-level="1" aria-selected="false" tabindex="-1" aria-expanded="false"><div class="stil-tree-row"><span class="stil-tree-toggle" aria-hidden="true"><span class="stil-icon stil-icon-chevron-right" aria-hidden="true"></span></span><span class="stil-icon stil-icon-folder" aria-hidden="true"></span><span class="stil-tree-label">samples</span></div></li>
+                    <li role="treeitem" class="stil-tree-item" aria-level="1" aria-selected="false" tabindex="-1"><div class="stil-tree-row"><span class="stil-tree-toggle" aria-hidden="true"></span><span class="stil-icon stil-icon-file" aria-hidden="true"></span><span class="stil-tree-label">README.md</span></div></li>
+                </ul>
             </div>
         </section>
 
@@ -802,6 +997,33 @@
                         <li><a class="stil-nav-link" href="#navigation">Profile</a></li>
                         <li><a class="stil-nav-link" href="#navigation" aria-current="page">Notifications</a></li>
                         <li><a class="stil-nav-link" href="#navigation">Integrations</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <h2>Vertical with groups</h2>
+            <div class="example">
+                <nav aria-label="Admin">
+                    <ul class="stil-nav stil-nav-vertical">
+                        <li><a class="stil-nav-link" href="#navigation">Dashboard</a></li>
+                        <li>
+                            <details class="stil-nav-group" open>
+                                <summary class="stil-nav-group-header"><span class="stil-icon stil-icon-folder" aria-hidden="true"></span><span class="stil-nav-group-title">Sales</span><span class="stil-icon stil-icon-chevron-right stil-nav-group-chevron" aria-hidden="true"></span></summary>
+                                <div class="stil-nav-group-body">
+                                    <a class="stil-nav-link" href="#navigation" aria-current="page">Orders</a>
+                                    <a class="stil-nav-link" href="#navigation">Invoices</a>
+                                </div>
+                            </details>
+                        </li>
+                        <li>
+                            <details class="stil-nav-group">
+                                <summary class="stil-nav-group-header"><span class="stil-icon stil-icon-menu" aria-hidden="true"></span><span class="stil-nav-group-title">Settings</span><span class="stil-icon stil-icon-chevron-right stil-nav-group-chevron" aria-hidden="true"></span></summary>
+                                <div class="stil-nav-group-body">
+                                    <a class="stil-nav-link" href="#navigation">Profile</a>
+                                    <a class="stil-nav-link" href="#navigation">Billing</a>
+                                </div>
+                            </details>
+                        </li>
                     </ul>
                 </nav>
             </div>

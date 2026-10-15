@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "stil-demo",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "samples/Stil.Demo", "--launch-profile", "http"],
+      "port": 5100
+    },
+    {
+      "name": "stil-html",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["C:/Users/LUDVIG~1.AND/AppData/Local/Temp/claude/C--Repos-Luddes-StilCSS/b865aa1c-be3c-4ddb-bd45-4cb4ee8a5baa/scratchpad/serve.mjs", "C:/Repos/Luddes/StilCSS"],
+      "port": 5199
+    }
+  ]
+}

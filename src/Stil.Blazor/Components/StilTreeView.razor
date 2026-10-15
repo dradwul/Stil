@@ -1,0 +1,345 @@
+@typeparam TItem
+@inherits StilComponentBase
+
+@* A tree view following the WAI-ARIA tree pattern. Only the focused item is in the tab order
+   (roving tabindex); the arrow keys, Home and End move between visible items. Without
+   interactivity it renders the initial state (ExpandAll, ExpandedItems, SelectedItem). *@
+@{
+    _visible = BuildVisible();
+    _tabStop = TabStop();
+}
+<ul role="tree" aria-label="@Label" @attributes="AdditionalAttributes" class="@Classes("stil-tree")">
+    @RenderItems(Items, 1)
+</ul>
+
+@code {
+    private readonly Dictionary<object, TItem> _expanded = [];
+    private readonly Dictionary<object, ElementReference> _elements = [];
+    private List<Node> _visible = [];
+    private object? _tabStop;
+    private object? _focusedKey;
+    private bool _focusPending;
+    private bool _initialized;
+    private IReadOnlyCollection<TItem>? _syncedExpandedItems;
+
+    /// <summary>The root items.</summary>
+    [Parameter, EditorRequired]
+    public IEnumerable<TItem>? Items { get; set; }
+
+    /// <summary>Returns an item's children, or null or an empty sequence for a leaf.</summary>
+    [Parameter]
+    public Func<TItem, IEnumerable<TItem>?>? ChildrenSelector { get; set; }
+
+    /// <summary>The text of an item. Without it (and without ItemTemplate) the item's ToString() is shown.</summary>
+    [Parameter]
+    public Func<TItem, string>? ItemText { get; set; }
+
+    /// <summary>Rich content for an item instead of ItemText.</summary>
+    [Parameter]
+    public RenderFragment<TItem>? ItemTemplate { get; set; }
+
+    /// <summary>A built-in or provider icon name for an item (see <see cref="StilIcons"/>), or null for none.</summary>
+    [Parameter]
+    public Func<TItem, string?>? ItemIcon { get; set; }
+
+    /// <summary>The selected item. Supports two-way binding (@bind-SelectedItem).</summary>
+    [Parameter]
+    public TItem? SelectedItem { get; set; }
+
+    [Parameter]
+    public EventCallback<TItem?> SelectedItemChanged { get; set; }
+
+    /// <summary>The expanded items. Supports two-way binding (@bind-ExpandedItems).</summary>
+    [Parameter]
+    public IReadOnlyCollection<TItem>? ExpandedItems { get; set; }
+
+    [Parameter]
+    public EventCallback<IReadOnlyCollection<TItem>> ExpandedItemsChanged { get; set; }
+
+    /// <summary>Expand every item that has children when the tree is first rendered.</summary>
+    [Parameter]
+    public bool ExpandAll { get; set; }
+
+    /// <summary>The accessible name of the tree (aria-label).</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>
+    /// Returns a key that identifies an item, for example its id. Items with equal keys are the
+    /// same item, so the selection and expanded state survive reloading the data. Without it
+    /// items are compared with Equals.
+    /// </summary>
+    [Parameter]
+    public Func<TItem, object>? ItemKey { get; set; }
+
+    /// <summary>A visible item, its level (1 for roots) and its parent.</summary>
+    private sealed record Node(TItem Item, object Key, int Level, Node? Parent, bool HasChildren, bool Expanded);
+
+    protected override void OnParametersSet()
+    {
+        if (!ReferenceEquals(ExpandedItems, _syncedExpandedItems))
+        {
+            _expanded.Clear();
+            foreach (var item in ExpandedItems ?? [])
+            {
+                _expanded[KeyOf(item)] = item;
+            }
+
+            _syncedExpandedItems = ExpandedItems;
+        }
+
+        if (!_initialized)
+        {
+            _initialized = true;
+            if (ExpandAll)
+            {
+                ExpandEverything(Items, []);
+            }
+        }
+    }
+
+    private void ExpandEverything(IEnumerable<TItem>? items, HashSet<object> seen)
+    {
+        foreach (var item in items ?? [])
+        {
+            var key = KeyOf(item);
+            var children = ChildrenOf(item);
+            if (children.Count > 0 && seen.Add(key))
+            {
+                _expanded[key] = item;
+                ExpandEverything(children, seen);
+            }
+        }
+    }
+
+    private object KeyOf(TItem item) => (ItemKey is null ? item : ItemKey(item)) ?? NullKey.Instance;
+
+    private bool IsSelected(object key) =>
+        SelectedItem is { } selected && Equals(KeyOf(selected), key);
+
+    private IReadOnlyList<TItem> ChildrenOf(TItem item) =>
+        ChildrenSelector?.Invoke(item)?.ToList() ?? (IReadOnlyList<TItem>)[];
+
+    private List<Node> BuildVisible()
+    {
+        var nodes = new List<Node>();
+        Add(Items, 1, null);
+        return nodes;
+
+        void Add(IEnumerable<TItem>? items, int level, Node? parent)
+        {
+            foreach (var item in items ?? [])
+            {
+                var key = KeyOf(item);
+                var children = ChildrenOf(item);
+                var expanded = children.Count > 0 && _expanded.ContainsKey(key);
+                var node = new Node(item, key, level, parent, children.Count > 0, expanded);
+                nodes.Add(node);
+
+                // The level check stops a cycle in the data from recursing forever.
+                if (expanded && level < 100)
+                {
+                    Add(children, level + 1, node);
+                }
+            }
+        }
+    }
+
+    // The item in the tab order: the focused one, else the selected one, else the first.
+    private object? TabStop()
+    {
+        if (_focusedKey is not null && _visible.Exists(n => Equals(n.Key, _focusedKey)))
+        {
+            return _focusedKey;
+        }
+
+        return _visible.Find(n => IsSelected(n.Key))?.Key ?? _visible.FirstOrDefault()?.Key;
+    }
+
+    private RenderFragment RenderItems(IEnumerable<TItem>? items, int level) => __builder =>
+    {
+        foreach (var item in items ?? [])
+        {
+            var key = KeyOf(item);
+            var children = ChildrenOf(item);
+            var hasChildren = children.Count > 0;
+            var expanded = hasChildren && _expanded.ContainsKey(key);
+            var icon = ItemIcon?.Invoke(item);
+            <li @key="key" role="treeitem" class="stil-tree-item"
+                aria-expanded="@(hasChildren ? (expanded ? "true" : "false") : null)"
+                aria-selected="@(IsSelected(key) ? "true" : "false")"
+                aria-level="@level"
+                tabindex="@(Equals(key, _tabStop) ? 0 : -1)"
+                @ref="_elements[key]"
+                @onkeydown="e => OnKeyDownAsync(e, key)" @onkeydown:stopPropagation="true"
+                @onfocus="() => _focusedKey = key">
+                <div class="stil-tree-row" @onclick="() => OnRowClickAsync(key)">
+                    @if (hasChildren)
+                    {
+                        <span class="stil-tree-toggle" aria-hidden="true"
+                              @onclick="() => ToggleAsync(key)" @onclick:stopPropagation="true">
+                            <StilIcon Name="@StilIcons.ChevronRight" />
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="stil-tree-toggle" aria-hidden="true"></span>
+                    }
+                    @if (icon is not null)
+                    {
+                        <StilIcon Name="@icon" />
+                    }
+                    <span class="stil-tree-label">
+                        @if (ItemTemplate is not null)
+                        {
+                            @ItemTemplate(item)
+                        }
+                        else
+                        {
+                            @(ItemText is null ? item?.ToString() : ItemText(item))
+                        }
+                    </span>
+                </div>
+                @if (expanded && level < 100)
+                {
+                    <ul role="group" class="stil-tree-group">
+                        @RenderItems(children, level + 1)
+                    </ul>
+                }
+            </li>
+        }
+    };
+
+    private Node? Find(object key) => _visible.Find(n => Equals(n.Key, key));
+
+    private async Task OnRowClickAsync(object key)
+    {
+        _focusedKey = key;
+        if (Find(key) is { } node)
+        {
+            await SelectAsync(node);
+        }
+    }
+
+    private async Task SelectAsync(Node node)
+    {
+        if (IsSelected(node.Key))
+        {
+            return;
+        }
+
+        SelectedItem = node.Item;
+        await SelectedItemChanged.InvokeAsync(node.Item);
+    }
+
+    private Task ToggleAsync(object key) =>
+        Find(key) is { HasChildren: true } node ? SetExpandedAsync(node, !node.Expanded) : Task.CompletedTask;
+
+    private async Task SetExpandedAsync(Node node, bool expanded)
+    {
+        if (expanded)
+        {
+            _expanded[node.Key] = node.Item;
+        }
+        else
+        {
+            _expanded.Remove(node.Key);
+
+            // Keep the tab stop visible when the focused item is hidden inside the collapsed one.
+            if (_focusedKey is not null && Find(_focusedKey) is { } focused && IsDescendant(focused, node))
+            {
+                _focusedKey = node.Key;
+            }
+        }
+
+        var items = _expanded.Values.ToList();
+        ExpandedItems = items;
+        _syncedExpandedItems = items;
+        await ExpandedItemsChanged.InvokeAsync(items);
+    }
+
+    private static bool IsDescendant(Node node, Node ancestor)
+    {
+        for (var parent = node.Parent; parent is not null; parent = parent.Parent)
+        {
+            if (Equals(parent.Key, ancestor.Key))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // The WAI-ARIA tree keyboard pattern.
+    private async Task OnKeyDownAsync(KeyboardEventArgs e, object key)
+    {
+        var index = _visible.FindIndex(n => Equals(n.Key, key));
+        if (index < 0)
+        {
+            return;
+        }
+
+        var node = _visible[index];
+        switch (e.Key)
+        {
+            case "ArrowDown":
+                MoveFocus(index + 1 < _visible.Count ? _visible[index + 1] : null);
+                break;
+            case "ArrowUp":
+                MoveFocus(index > 0 ? _visible[index - 1] : null);
+                break;
+            case "Home":
+                MoveFocus(_visible[0]);
+                break;
+            case "End":
+                MoveFocus(_visible[^1]);
+                break;
+            case "ArrowRight" when node.HasChildren && !node.Expanded:
+                await SetExpandedAsync(node, true);
+                break;
+            case "ArrowRight" when node.Expanded:
+                MoveFocus(index + 1 < _visible.Count ? _visible[index + 1] : null);
+                break;
+            case "ArrowLeft" when node.Expanded:
+                await SetExpandedAsync(node, false);
+                break;
+            case "ArrowLeft":
+                MoveFocus(node.Parent);
+                break;
+            case "Enter" or " " or "Spacebar":
+                _focusedKey = key;
+                await SelectAsync(node);
+                break;
+        }
+    }
+
+    private void MoveFocus(Node? target)
+    {
+        if (target is null)
+        {
+            return;
+        }
+
+        _focusedKey = target.Key;
+        _focusPending = true;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_focusPending)
+        {
+            _focusPending = false;
+            if (_focusedKey is not null && _elements.TryGetValue(_focusedKey, out var element))
+            {
+                await element.FocusAsync();
+            }
+        }
+    }
+
+    /// <summary>Stands in for a null key, which a dictionary cannot hold.</summary>
+    private sealed class NullKey
+    {
+        public static readonly NullKey Instance = new();
+    }
+}

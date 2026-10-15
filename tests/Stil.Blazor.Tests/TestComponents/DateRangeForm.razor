@@ -1,0 +1,23 @@
+@using System.ComponentModel.DataAnnotations
+@* An EditForm with DataAnnotationsValidator and a StilDateRangePicker, used by StilDateRangePickerTests. *@
+<EditForm Model="Model" OnValidSubmit="() => ValidSubmits++">
+    <DataAnnotationsValidator />
+    <StilDateRangePicker Id="stay" Label="Stay" @bind-Start="Model.CheckIn" @bind-End="Model.CheckOut" />
+    <button type="submit">Book</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public DateRangeModel Model { get; set; } = new();
+
+    public int ValidSubmits { get; private set; }
+
+    public sealed class DateRangeModel
+    {
+        [Required(ErrorMessage = "Check-in is required.")]
+        public DateOnly? CheckIn { get; set; }
+
+        [Required(ErrorMessage = "Check-out is required.")]
+        public DateOnly? CheckOut { get; set; }
+    }
+}

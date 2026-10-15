@@ -1,0 +1,137 @@
+@typeparam TItem
+@inherits StilComboboxBase<TItem, IReadOnlyCollection<TItem>>
+
+@* Chooses several options: the chosen ones are chips in the field, and typing filters the list.
+   Choosing an option toggles it and keeps the list open; Backspace in an empty input removes the
+   last chip. Bind Value to an IReadOnlyCollection<TItem>. *@
+<StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
+    <div class="@BoxCss" data-disabled="@StilCssClasses.AriaBool(Disabled)" @onfocusout="OnFocusOutAsync" @onclick="FocusInputAsync">
+        @foreach (var item in Chosen)
+        {
+            <span class="stil-chip" @key="KeyOf(item)">
+                <span class="stil-chip-text">@TextOf(item)</span>
+                @if (!Disabled)
+                {
+                    <button type="button" class="stil-chip-remove" aria-label="@string.Format(System.Globalization.CultureInfo.CurrentCulture, RemoveLabelFormat, TextOf(item))"
+                            @onclick="() => RemoveAsync(item)" @onclick:stopPropagation="true">
+                        <StilIcon Name="@StilIcons.Close" />
+                    </button>
+                }
+            </span>
+        }
+        <input @ref="_input" @attributes="ControlAttributes(InputCssClass)" type="text" role="combobox" autocomplete="off"
+               aria-autocomplete="list" aria-expanded="@(ListVisible ? "true" : "false")" aria-controls="@ListId"
+               aria-activedescendant="@ActiveDescendant" aria-invalid="@StilCssClasses.AriaBool(Messages.Count > 0)"
+               placeholder="@(Chosen.Count == 0 ? Placeholder : null)" value="@Text"
+               @oninput="OnInputAsync" @onkeydown="OnKeyDownAsync" @onclick="OnInputClickAsync" />
+        <div class="stil-combobox-popup" hidden="@(!ListVisible)" @onmousedown:preventDefault="true">
+            <ul class="stil-combobox-list" id="@ListId" role="listbox" aria-multiselectable="true" aria-label="@(Label ?? Placeholder)">
+                @for (var i = 0; i < Results.Count; i++)
+                {
+                    var index = i;
+                    var item = Results[i];
+                    <li id="@OptionId(index)" role="option" class="@OptionClass(index)"
+                        aria-selected="@(IsChosen(item) ? "true" : "false")" @onclick="() => OnOptionClickAsync(item)">
+                        <StilIcon Name="@StilIcons.Check" class="stil-combobox-check" />
+                        @if (ItemTemplate is not null)
+                        {
+                            @ItemTemplate(item)
+                        }
+                        else
+                        {
+                            @TextOf(item)
+                        }
+                    </li>
+                }
+            </ul>
+            @if (Results.Count == 0)
+            {
+                <div class="stil-combobox-message" role="status">@(Searching ? SearchingText : NoResultsText)</div>
+            }
+        </div>
+    </div>
+</StilField>
+
+@code {
+    private ElementReference _input;
+
+    /// <summary>The accessible name of a chip's remove button; {0} is the option text.</summary>
+    [Parameter]
+    public string RemoveLabelFormat { get; set; } = "Remove {0}";
+
+    private IReadOnlyCollection<TItem> Chosen => Value ?? [];
+
+    private bool ListVisible => IsOpen && (Results.Count > 0 || ShowMessage);
+
+    private string BoxCss => string.Join(' ', new[]
+    {
+        "stil-combobox",
+        "stil-multi-select",
+        InputCss,
+    });
+
+    private static string InputCssClass => "stil-multi-select-input";
+
+    private string OptionClass(int index) =>
+        index == ActiveIndex ? "stil-combobox-option stil-combobox-option-active" : "stil-combobox-option";
+
+    private bool IsChosen(TItem item) => Chosen.Any(chosen => SameItem(chosen, item));
+
+    protected override async Task ChooseAsync(TItem item)
+    {
+        var chosen = Chosen.ToList();
+        var index = chosen.FindIndex(c => SameItem(c, item));
+        if (index >= 0)
+        {
+            chosen.RemoveAt(index);
+        }
+        else
+        {
+            chosen.Add(item);
+        }
+
+        await SetValueAsync(chosen);
+
+        // Start a new search after choosing a typed match, so the next option can be typed.
+        if (Text.Length > 0)
+        {
+            Text = "";
+            await UpdateResultsAsync(debounce: false);
+        }
+    }
+
+    private async Task RemoveAsync(TItem item)
+    {
+        await SetValueAsync(Chosen.Where(c => !SameItem(c, item)).ToList());
+        await FocusInputAsync();
+    }
+
+    protected override async Task OnOtherKeyAsync(KeyboardEventArgs e)
+    {
+        if (e.Key == "Backspace" && Text.Length == 0 && Chosen.Count > 0)
+        {
+            await SetValueAsync(Chosen.Take(Chosen.Count - 1).ToList());
+        }
+    }
+
+    protected override Task OnClosedByBlurAsync()
+    {
+        Text = "";
+        return Task.CompletedTask;
+    }
+
+    private async Task FocusInputAsync()
+    {
+        if (!Disabled)
+        {
+            try
+            {
+                await _input.FocusAsync();
+            }
+            catch (InvalidOperationException)
+            {
+                // Not rendered interactively (prerendering or tests): nothing to focus.
+            }
+        }
+    }
+}

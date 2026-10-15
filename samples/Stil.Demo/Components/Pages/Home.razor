@@ -292,6 +292,69 @@
     </div>
 </section>
 
+<section class="demo-section" aria-labelledby="pickers">
+    <h2 id="pickers">Pickers, uploads and KPI cards</h2>
+    <div class="stil-grid stil-mb-4">
+        <StilStatCard Label="Revenue" Value="48,200 €" Icon="@StilIcons.Success" Trend="+12.4%" TrendDirection="StilTrendDirection.Up"
+                      Description="vs last month" class="stil-col-sm-6 stil-col-lg-4" />
+        <StilStatCard Label="Open tickets" Value="17" Trend="-3" TrendDirection="StilTrendDirection.Down" TrendVariant="StilVariant.Success"
+                      Description="since Monday" class="stil-col-sm-6 stil-col-lg-4" />
+        <StilStatCard Label="Orders" Value="64" Href="orders" Description="Open the orders page" class="stil-col-sm-6 stil-col-lg-4" />
+    </div>
+    <div class="stil-grid">
+        <StilAutocomplete TItem="string" @bind-Value="_city" Items="_cities" Label="City" Placeholder="Start typing…"
+                          Hint="@($"Chosen: {_city ?? "nothing"}")" class="stil-col-md-6" />
+        <StilAutocomplete TItem="string" @bind-Value="_country" Search="SearchCountriesAsync" Label="Country (searched on the server)"
+                          Placeholder="Type at least 1 letter" Hint="Simulates a 400 ms server call." class="stil-col-md-6" />
+        <StilMultiSelect TItem="string" @bind-Value="_tags" Items="_tagOptions" Label="Tags" Placeholder="Add tags"
+                         Hint="Backspace removes the last tag." class="stil-col-md-6" />
+        <StilDateRangePicker TValue="DateOnly?" @bind-Start="_from" @bind-End="_to" Label="Delivery window" class="stil-col-md-6" />
+        <StilFileUpload Label="Attachments" Multiple Accept=".pdf,image/*" MaxFileSize="5 * 1024 * 1024" MaxFiles="3"
+                        Hint="PDF or images, at most 5 MB each and 3 files." class="stil-col-12" />
+    </div>
+</section>
+
+<section class="demo-section" aria-labelledby="trees">
+    <h2 id="trees">Tree view and navigation groups</h2>
+    <div class="stil-grid">
+        <div class="stil-col-md-6">
+            <StilTreeView TItem="DemoNode" Items="_tree" ChildrenSelector="n => n.Children" ItemText="n => n.Name"
+                          ItemIcon="n => n.Children.Length > 0 ? StilIcons.Folder : StilIcons.File"
+                          @bind-SelectedItem="_node" @bind-ExpandedItems="_expanded" Label="Project files" />
+            <p class="stil-text-muted stil-fs-sm stil-mt-2">Selected: @(_node?.Name ?? "nothing"). Use the arrow keys, Home and End.</p>
+        </div>
+        <div class="stil-col-md-6">
+            <StilNav Vertical Label="Sections">
+                <StilNavLink Href="" Match="NavLinkMatch.All" Icon="@StilIcons.Home">Components</StilNavLink>
+                <StilNavGroup Title="Sales" Icon="@StilIcons.Folder">
+                    <StilNavLink Href="orders">Orders</StilNavLink>
+                    <StilNavLink Href="orders?view=invoices">Invoices</StilNavLink>
+                </StilNavGroup>
+                <StilNavGroup Title="Help" Icon="@StilIcons.Info" @bind-Expanded="_helpOpen">
+                    <StilNavLink Href="https://github.com/dradwul/StilCSS#readme" Icon="@StilIcons.External">Documentation</StilNavLink>
+                    <StilNavLink Href="https://github.com/dradwul/StilCSS/issues" Icon="@StilIcons.External">Report an issue</StilNavLink>
+                </StilNavGroup>
+            </StilNav>
+        </div>
+    </div>
+</section>
+
+<section class="demo-section" aria-labelledby="datagrid">
+    <h2 id="datagrid">Data grid</h2>
+    <p>
+        <code>StilDataGrid</code> with sorting, filters, paging and selection is on the <a href="orders">Orders</a> page.
+        This one renders 10,000 rows with <code>Virtualize</code>: only the visible rows are in the page.
+    </p>
+    <StilDataGrid TItem="DemoRow" Items="_rows" Virtualize Height="20rem" Compact Filterable Caption="Virtualized rows">
+        <Columns>
+            <StilDataGridColumn Property="r => r.Id" Title="#" Width="6rem" />
+            <StilDataGridColumn Property="r => r.Name" />
+            <StilDataGridColumn Property="r => r.Region" />
+            <StilDataGridColumn Property="r => r.Score" Align="StilTextAlign.End" Format="N1" />
+        </Columns>
+    </StilDataGrid>
+</section>
+
 <StilDialog @bind-Open="_dialogOpen" Title="Invite a team member">
     <ChildContent>
         <p>They will get an email with a link to join.</p>
@@ -304,6 +367,40 @@
 </StilDialog>
 
 @code {
+    private sealed record DemoNode(string Name, params DemoNode[] Children);
+
+    private sealed record DemoRow(int Id, string Name, string Region, double Score);
+
+    private static readonly string[] _cities = ["Oslo", "Stockholm", "Göteborg", "Malmö", "Helsinki", "Tampere", "København", "Aarhus", "Reykjavík"];
+    private static readonly string[] _countries = ["Denmark", "Estonia", "Finland", "Iceland", "Latvia", "Lithuania", "Norway", "Sweden"];
+    private static readonly string[] _tagOptions = ["Urgent", "Billing", "Bug", "Feature", "Question", "Wholesale"];
+    private static readonly DemoNode[] _tree =
+    [
+        new("src",
+            new("Stil.Css", new("tokens.css"), new("stil.js")),
+            new("Stil.Blazor", new("StilButton.razor"), new("StilDataGrid.razor"))),
+        new("samples", new("Stil.Demo"), new("Stil.Html")),
+        new("README.md"),
+    ];
+    private static readonly DemoRow[] _rows = Enumerable.Range(1, 10_000)
+        .Select(i => new DemoRow(i, $"Row {i}", _countries[i % _countries.Length], (i * 37 % 1000) / 10.0))
+        .ToArray();
+
+    private string? _city = "Stockholm";
+    private string? _country;
+    private IReadOnlyCollection<string> _tags = ["Urgent"];
+    private DateOnly? _from;
+    private DateOnly? _to;
+    private DemoNode? _node;
+    private IReadOnlyCollection<DemoNode> _expanded = [_tree[0]];
+    private bool _helpOpen;
+
+    private static async Task<IEnumerable<string>> SearchCountriesAsync(string text, CancellationToken cancellationToken)
+    {
+        await Task.Delay(400, cancellationToken);
+        return _countries.Where(c => c.Contains(text, StringComparison.OrdinalIgnoreCase));
+    }
+
     private bool _saving;
     private bool _bold;
     private int _tab;

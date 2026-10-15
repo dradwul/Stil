@@ -9,6 +9,8 @@
 //     closes the dialog it is in.
 //   - data-stil-toggle on a button flips its aria-expanded, which shows or hides what it controls
 //     (for example the stil-navbar-collapse next to a stil-navbar-toggle). Escape collapses it.
+//   - Keys that a widget handles itself (arrows in a tree, tab list or combobox; Enter and Escape
+//     in an open combobox) do not also scroll the page, submit the form or close a dialog.
 // Stil for Blazor loads this module automatically and also uses showDialog/closeDialog.
 
 const initialized = Symbol.for('stil.initialized');
@@ -57,6 +59,7 @@ function onClick(event) {
 }
 
 function onKeyDown(event) {
+    if (preventHandledKey(event)) return;
     if (moveInDropdown(event)) return;
     if (event.key !== 'Escape') return;
     for (const toggle of document.querySelectorAll('[data-stil-toggle][aria-expanded="true"]')) {
@@ -66,6 +69,25 @@ function onKeyDown(event) {
         dropdown.open = false;
         dropdown.querySelector('summary')?.focus();
     }
+}
+
+// Widgets whose keys are handled by their own script (in Stil for Blazor, by the component, since
+// Blazor cannot prevent the default action for some keys only).
+const handledKeys = [
+    ['[role="combobox"][aria-expanded="true"]', ['ArrowDown', 'ArrowUp', 'Enter', 'Escape']],
+    ['[role="combobox"]', ['ArrowDown', 'ArrowUp']],
+    ['[role="treeitem"]', ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Home', 'End', ' ']],
+    ['[role="tab"]', ['ArrowLeft', 'ArrowRight', 'Home', 'End']],
+];
+
+function preventHandledKey(event) {
+    const target = event.target instanceof Element ? event.target : null;
+    if (!target || event.altKey || event.ctrlKey || event.metaKey) return false;
+    if (handledKeys.some(([selector, keys]) => keys.includes(event.key) && target.matches(selector))) {
+        event.preventDefault();
+        return true;
+    }
+    return false;
 }
 
 // Arrow keys, Home and End move focus between the enabled items of the dropdown that has focus.

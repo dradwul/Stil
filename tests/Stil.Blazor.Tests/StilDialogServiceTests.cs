@@ -288,13 +288,13 @@ public class StilDialogServiceTests
     }
 
     [Fact]
-    public void HostUnsubscribesWhenDisposed()
+    public async Task HostUnsubscribesWhenDisposed()
     {
         using var context = CreateContext();
         var service = context.Services.GetRequiredService<IStilDialogService>();
         var host = context.Render<StilDialogHost>();
 
-        context.DisposeComponentsAsync().GetAwaiter().GetResult();
+        await context.DisposeComponentsAsync();
 
         // Would throw if the disposed host still tried to render.
         _ = service.ConfirmAsync("After", "dispose");
