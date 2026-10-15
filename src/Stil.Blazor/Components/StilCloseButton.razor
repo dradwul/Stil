@@ -1,0 +1,12 @@
+@inherits StilComponentBase
+
+<button type="button" aria-label="@Label" @attributes="AdditionalAttributes" class="@Classes("stil-close")" @onclick="OnClick"></button>
+
+@code {
+    /// <summary>The accessible name. The default is "Close".</summary>
+    [Parameter]
+    public string Label { get; set; } = "Close";
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+}

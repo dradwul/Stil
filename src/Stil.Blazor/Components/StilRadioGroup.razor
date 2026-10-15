@@ -6,7 +6,7 @@
     {
         <legend class="stil-label">@Label</legend>
     }
-    <InputRadioGroup TValue="TValue" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression" Name="@InputId">
+    <InputRadioGroup TValue="TValue" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@BoundExpression" Name="@InputId">
         <div class="@(Inline ? "stil-cluster stil-gap-4" : "stil-stack stil-gap-2")">
             @foreach (var item in OptionItems)
             {

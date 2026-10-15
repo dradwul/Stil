@@ -1,0 +1,38 @@
+@using Microsoft.AspNetCore.Components.Routing
+@inherits StilComponentBase
+
+@* Wraps Blazor's NavLink, so aria-current="page" follows the current route. *@
+<NavLink href="@Href" Match="Match" @attributes="AdditionalAttributes" class="@Classes("stil-nav-link")">
+    @if (Icon is not null)
+    {
+        <StilIcon Name="@Icon" />
+    }
+    @ChildContent
+    @if (!string.IsNullOrWhiteSpace(Badge))
+    {
+        <StilBadge Variant="BadgeVariant" Subtle class="stil-ms-auto">@Badge</StilBadge>
+    }
+</NavLink>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Href { get; set; } = "";
+
+    /// <summary>Prefix (default) marks the link current for sub-pages too; All only for the exact URL.</summary>
+    [Parameter]
+    public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
+
+    /// <summary>A built-in or provider icon name shown before the text.</summary>
+    [Parameter]
+    public string? Icon { get; set; }
+
+    /// <summary>A count or status at the end of the link, for example "12".</summary>
+    [Parameter]
+    public string? Badge { get; set; }
+
+    [Parameter]
+    public StilVariant BadgeVariant { get; set; } = StilVariant.Secondary;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

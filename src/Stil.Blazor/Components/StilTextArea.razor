@@ -1,7 +1,7 @@
 @inherits StilInputBase<string?>
 
 <StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
-    <InputTextArea Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression"
+    <InputTextArea Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@BoundExpression"
                    rows="@Rows" placeholder="@Placeholder"
                    @attributes="Attributes" />
 </StilField>

@@ -1,0 +1,22 @@
+@inherits StilComponentBase
+
+<div @attributes="AdditionalAttributes" class="@Classes("stil-cluster", StilCssClasses.Gap(Gap), StilCssClasses.Justify(Justify), StilCssClasses.Align(Align))">
+    @ChildContent
+</div>
+
+@code {
+    /// <summary>The gap between children, as a spacing step from 0 to 7. The default is 2 (0.5rem).</summary>
+    [Parameter]
+    public int? Gap { get; set; }
+
+    /// <summary>How children are distributed along the row, for example Between.</summary>
+    [Parameter]
+    public StilJustify? Justify { get; set; }
+
+    /// <summary>How children align vertically. The default is Center.</summary>
+    [Parameter]
+    public StilAlign? Align { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

@@ -4,7 +4,7 @@
 {
     <div role="tabpanel" id="@Parent.PanelId(index)" aria-labelledby="@Parent.TabId(index)" tabindex="0"
          hidden="@(!Parent.IsActive(this))">
-        @if (Parent.IsActive(this))
+        @if (Parent.IsActive(this) || Parent.KeepAlive)
         {
             @ChildContent
         }
@@ -22,7 +22,11 @@
     [Parameter]
     public bool Disabled { get; set; }
 
-    /// <summary>The panel content. It is only rendered while the tab is selected.</summary>
+    /// <summary>A key for StilTabs.ActiveId, for example "profile".</summary>
+    [Parameter]
+    public string? Id { get; set; }
+
+    /// <summary>The panel content. It is only rendered while the tab is selected, unless StilTabs.KeepAlive is set.</summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 

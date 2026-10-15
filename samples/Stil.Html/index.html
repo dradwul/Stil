@@ -18,18 +18,22 @@
                 <a href="#layout">Layout</a>
                 <a href="#typography">Typography</a>
                 <a href="#colors">Colors</a>
+                <a href="#icons">Icons</a>
                 <a href="#buttons">Buttons</a>
                 <a href="#forms">Forms</a>
                 <a href="#cards">Cards</a>
                 <a href="#alerts">Alerts</a>
                 <a href="#badges">Badges</a>
+                <a href="#lists">Lists</a>
                 <a href="#tables">Tables</a>
+                <a href="#accordion">Accordion</a>
                 <a href="#navigation">Navigation</a>
                 <a href="#navbar">Navbar</a>
                 <a href="#breadcrumb">Breadcrumb</a>
                 <a href="#pagination">Pagination</a>
                 <a href="#tabs">Tabs</a>
                 <a href="#dialog">Dialog</a>
+                <a href="#drawer">Drawer</a>
                 <a href="#dropdown">Dropdown</a>
                 <a href="#tooltip">Tooltip</a>
                 <a href="#progress">Progress</a>
@@ -173,6 +177,49 @@
                     <div class="stil-border stil-border-danger stil-rounded stil-p-2">Danger</div>
                     <div class="stil-border stil-border-warning stil-rounded stil-p-2">Warning</div>
                     <div class="stil-border stil-border-info stil-rounded stil-p-2">Info</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="component-group" id="icons">
+            <h1>Icons</h1>
+            <p>Stil's built-in icons, drawn on a 24px grid in the current text color. They are 1em in size, so set <code>font-size</code> to resize them. Add <code>aria-hidden="true"</code> when the icon sits next to text, or a label when it stands alone.</p>
+
+            <div class="example">
+                <div class="stil-cluster stil-gap-3 stil-fs-lg">
+                    <span class="stil-icon stil-icon-arrow-left" role="img" aria-label="arrow-left"></span>
+                    <span class="stil-icon stil-icon-arrow-right" role="img" aria-label="arrow-right"></span>
+                    <span class="stil-icon stil-icon-check" role="img" aria-label="check"></span>
+                    <span class="stil-icon stil-icon-chevron-down" role="img" aria-label="chevron-down"></span>
+                    <span class="stil-icon stil-icon-chevron-left" role="img" aria-label="chevron-left"></span>
+                    <span class="stil-icon stil-icon-chevron-right" role="img" aria-label="chevron-right"></span>
+                    <span class="stil-icon stil-icon-chevron-up" role="img" aria-label="chevron-up"></span>
+                    <span class="stil-icon stil-icon-chevrons-left" role="img" aria-label="chevrons-left"></span>
+                    <span class="stil-icon stil-icon-chevrons-right" role="img" aria-label="chevrons-right"></span>
+                    <span class="stil-icon stil-icon-close" role="img" aria-label="close"></span>
+                    <span class="stil-icon stil-icon-danger" role="img" aria-label="danger"></span>
+                    <span class="stil-icon stil-icon-external" role="img" aria-label="external"></span>
+                    <span class="stil-icon stil-icon-filter" role="img" aria-label="filter"></span>
+                    <span class="stil-icon stil-icon-home" role="img" aria-label="home"></span>
+                    <span class="stil-icon stil-icon-info" role="img" aria-label="info"></span>
+                    <span class="stil-icon stil-icon-menu" role="img" aria-label="menu"></span>
+                    <span class="stil-icon stil-icon-minus" role="img" aria-label="minus"></span>
+                    <span class="stil-icon stil-icon-moon" role="img" aria-label="moon"></span>
+                    <span class="stil-icon stil-icon-more" role="img" aria-label="more"></span>
+                    <span class="stil-icon stil-icon-plus" role="img" aria-label="plus"></span>
+                    <span class="stil-icon stil-icon-search" role="img" aria-label="search"></span>
+                    <span class="stil-icon stil-icon-success" role="img" aria-label="success"></span>
+                    <span class="stil-icon stil-icon-sun" role="img" aria-label="sun"></span>
+                    <span class="stil-icon stil-icon-warning" role="img" aria-label="warning"></span>
+                </div>
+            </div>
+
+            <h2>In buttons and text</h2>
+            <div class="example">
+                <div class="stil-cluster">
+                    <button type="button" class="stil-btn stil-btn-primary"><span class="stil-icon stil-icon-plus" aria-hidden="true"></span> New order</button>
+                    <button type="button" class="stil-btn stil-btn-icon stil-btn-ghost stil-btn-secondary" aria-label="Search"><span class="stil-icon stil-icon-search" aria-hidden="true"></span></button>
+                    <span class="stil-text-success"><span class="stil-icon stil-icon-success" aria-hidden="true"></span> Saved</span>
                 </div>
             </div>
         </section>
@@ -546,6 +593,42 @@
             </div>
         </section>
 
+        <section class="component-group" id="lists">
+            <h1>Lists</h1>
+            <p>Rows with a title, an optional description and content at the start or end, such as a status badge. On its own a <code>stil-list-item</code> is a bordered row; in a <code>stil-list</code> the rows are joined. Links and buttons as rows are interactive.</p>
+
+            <div class="example">
+                <div class="stil-list-item">
+                    <span class="stil-list-item-content"><span class="stil-list-item-title">Order #1042</span></span>
+                    <span class="stil-list-item-end"><span class="stil-badge stil-badge-success">Delivered</span></span>
+                </div>
+            </div>
+
+            <div class="example">
+                <div class="stil-list">
+                    <a class="stil-list-item" href="#lists">
+                        <span class="stil-list-item-start"><span class="stil-avatar stil-avatar-sm" aria-hidden="true">BO</span></span>
+                        <span class="stil-list-item-content">
+                            <span class="stil-list-item-title">Order #1043</span>
+                            <span class="stil-list-item-description">Berglund Outdoor · 7 Oct 2026</span>
+                        </span>
+                        <span class="stil-list-item-end"><span class="stil-badge stil-badge-info">Shipped</span></span>
+                    </a>
+                    <a class="stil-list-item" href="#lists" aria-current="true">
+                        <span class="stil-list-item-content">
+                            <span class="stil-list-item-title">Order #1044</span>
+                            <span class="stil-list-item-description">Kallio Design Oy · 8 Oct 2026</span>
+                        </span>
+                        <span class="stil-list-item-end"><span class="stil-badge stil-badge-warning stil-badge-subtle">Pending</span></span>
+                    </a>
+                    <div class="stil-list-item">
+                        <span class="stil-list-item-content"><span class="stil-list-item-title">Order #1045</span></span>
+                        <span class="stil-list-item-end"><span class="stil-badge stil-badge-danger">Cancelled</span></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section class="component-group" id="tables">
             <h1>Tables</h1>
             <p>Add <code>stil-table</code> to a <code>&lt;table&gt;</code>. Modifiers add stripes, a hover highlight, compact cells and borders. Wrap a wide table in <code>stil-table-responsive</code> to let it scroll sideways on small screens.</p>
@@ -675,6 +758,28 @@
             </div>
         </section>
 
+        <section class="component-group" id="accordion">
+            <h1>Accordion</h1>
+            <p>Stacked sections that open and close. Items that share a <code>name</code> attribute open one at a time; without it several can be open. No JavaScript is needed.</p>
+
+            <div class="example">
+                <div class="stil-accordion">
+                    <details class="stil-accordion-item" name="faq" open>
+                        <summary class="stil-accordion-header">How long does shipping take?</summary>
+                        <div class="stil-accordion-body"><p>Two to four working days within the Nordics.</p></div>
+                    </details>
+                    <details class="stil-accordion-item" name="faq">
+                        <summary class="stil-accordion-header">Can I return an order?</summary>
+                        <div class="stil-accordion-body"><p>Yes, within 30 days.</p></div>
+                    </details>
+                    <details class="stil-accordion-item" name="faq">
+                        <summary class="stil-accordion-header">Do you ship abroad?</summary>
+                        <div class="stil-accordion-body"><p>Within the EU, yes.</p></div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
         <section class="component-group" id="navigation">
             <h1>Navigation</h1>
             <p>A list of navigation links. Mark the current page with <code>aria-current="page"</code>; there are no "active" classes. Links use the current text color, so the nav also works on colored backgrounds.</p>
@@ -746,6 +851,28 @@
                     </div>
                 </nav>
             </div>
+
+            <h2>Collapsing on small screens</h2>
+            <p>With <code>stil-navbar-expand-md</code> (or <code>-sm</code>, <code>-lg</code>, <code>-xl</code>), the <code>stil-navbar-collapse</code> hides below that breakpoint behind a <code>stil-navbar-toggle</code> button. <code>stil.js</code> flips its <code>aria-expanded</code>. Make the window narrow to try it.</p>
+            <div class="example">
+                <header class="stil-navbar stil-navbar-expand-md">
+                    <a class="stil-navbar-brand" href="#navbar">Acme</a>
+                    <button type="button" class="stil-navbar-toggle" aria-controls="example-collapse" aria-expanded="false" data-stil-toggle>
+                        <span class="stil-icon stil-icon-menu" aria-hidden="true"></span>
+                        <span class="stil-visually-hidden">Menu</span>
+                    </button>
+                    <div class="stil-navbar-collapse" id="example-collapse">
+                        <nav class="stil-nav" aria-label="Example collapsing">
+                            <a class="stil-nav-link" href="#navbar" aria-current="page">Home</a>
+                            <a class="stil-nav-link" href="#navbar">Products</a>
+                            <a class="stil-nav-link" href="#navbar">Pricing</a>
+                        </nav>
+                        <div class="stil-navbar-end">
+                            <button type="button" class="stil-btn stil-btn-sm">Sign in</button>
+                        </div>
+                    </div>
+                </header>
+            </div>
         </section>
 
         <section class="component-group" id="breadcrumb">
@@ -800,6 +927,18 @@
                     <p>Only owners can change the project settings.</p>
                 </div>
             </div>
+
+            <h2>Pills</h2>
+            <div class="example">
+                <div class="stil-tabs stil-tabs-pills" role="tablist" aria-label="Report period">
+                    <button type="button" class="stil-tab" role="tab" id="tab-week" aria-selected="false" aria-controls="panel-week" tabindex="-1">Week</button>
+                    <button type="button" class="stil-tab" role="tab" id="tab-month" aria-selected="true" aria-controls="panel-month">Month</button>
+                    <button type="button" class="stil-tab" role="tab" id="tab-year" aria-selected="false" aria-controls="panel-year" tabindex="-1">Year</button>
+                </div>
+                <div role="tabpanel" id="panel-week" aria-labelledby="tab-week" tabindex="0" hidden><p>This week: 48 orders.</p></div>
+                <div role="tabpanel" id="panel-month" aria-labelledby="tab-month" tabindex="0"><p>This month: 1,326 orders.</p></div>
+                <div role="tabpanel" id="panel-year" aria-labelledby="tab-year" tabindex="0" hidden><p>This year: 14,980 orders.</p></div>
+            </div>
         </section>
 
         <section class="component-group" id="dialog">
@@ -847,6 +986,37 @@
             </div>
         </section>
 
+        <section class="component-group" id="drawer">
+            <h1>Drawer</h1>
+            <p>A panel that slides in from the side, for navigation on small screens, filters or details. It is a native <code>&lt;dialog class="stil-drawer"&gt;</code>, opened like a dialog; add <code>stil-drawer-end</code> to slide in from the end, and set <code>--stil-drawer-width</code> to change its width.</p>
+
+            <div class="example">
+                <div class="stil-cluster">
+                    <button type="button" class="stil-btn stil-btn-outline" data-stil-dialog-open="drawer-filters">Open filters</button>
+                    <button type="button" class="stil-btn stil-btn-outline" data-stil-dialog-open="drawer-details">Open details from the end</button>
+                </div>
+                <dialog class="stil-drawer" id="drawer-filters" aria-labelledby="drawer-filters-title">
+                    <div class="stil-dialog-header">
+                        <h2 class="stil-dialog-title" id="drawer-filters-title">Filters</h2>
+                        <button type="button" class="stil-close" aria-label="Close" data-stil-dialog-close></button>
+                    </div>
+                    <div class="stil-dialog-body">
+                        <label class="stil-check"><input type="checkbox" class="stil-check-input" checked> Express only</label>
+                    </div>
+                    <div class="stil-dialog-footer">
+                        <button type="button" class="stil-btn" data-stil-dialog-close>Apply</button>
+                    </div>
+                </dialog>
+                <dialog class="stil-drawer stil-drawer-end" id="drawer-details" aria-labelledby="drawer-details-title" style="--stil-drawer-width: 26rem">
+                    <div class="stil-dialog-header">
+                        <h2 class="stil-dialog-title" id="drawer-details-title">Order #1043</h2>
+                        <button type="button" class="stil-close" aria-label="Close" data-stil-dialog-close></button>
+                    </div>
+                    <div class="stil-dialog-body"><p>Berglund Outdoor · 2,078.90 €</p></div>
+                </dialog>
+            </div>
+        </section>
+
         <section class="component-group" id="dropdown">
             <h1>Dropdown</h1>
             <p>A menu of actions or links that opens from a button. It is built on <code>&lt;details&gt;</code>, so it works without JavaScript.</p>
@@ -878,6 +1048,19 @@
                         </div>
                     </details>
                 </div>
+            </div>
+
+            <h2>Opening upwards</h2>
+            <p><code>stil-dropdown-menu-up</code> opens the menu above the toggle, for toggles near the bottom of the screen. With <code>stil.js</code>, the arrow keys move between the items.</p>
+            <div class="example">
+                <details class="stil-dropdown">
+                    <summary class="stil-btn stil-btn-outline stil-btn-secondary">More</summary>
+                    <div class="stil-dropdown-menu stil-dropdown-menu-up">
+                        <div class="stil-dropdown-header">Order #1043</div>
+                        <button type="button" class="stil-dropdown-item">Edit</button>
+                        <button type="button" class="stil-dropdown-item">Duplicate</button>
+                    </div>
+                </details>
             </div>
         </section>
 
@@ -1054,6 +1237,7 @@
         </section>
     </div>
 
+    <script type="module" src="../../src/Stil.Css/dist/stil.js"></script>
     <script src="theme-picker.js"></script>
     <script src="examples.js"></script>
     <script>

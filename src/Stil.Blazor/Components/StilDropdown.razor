@@ -1,9 +1,11 @@
 @inherits StilComponentBase
 
 @* A <details> dropdown: it opens without JavaScript, and stil.js (loaded automatically by
-   Stil for Blazor) closes it on an outside click, on Escape and after choosing an item. *@
-<details @attributes="AdditionalAttributes" class="@Classes("stil-dropdown")">
-    <summary class="@SummaryClass" aria-label="@AriaLabel">
+   Stil for Blazor) closes it on an outside click, on Escape and after choosing an item, and
+   moves between items with the arrow keys. *@
+<details @attributes="DetailsAttributes" class="@Classes("stil-dropdown")" open="@(Open && !Disabled)">
+    <summary class="@SummaryClass" aria-label="@AriaLabel"
+             aria-disabled="@StilCssClasses.AriaBool(Disabled)" tabindex="@(Disabled ? -1 : (int?)null)">
         @if (Toggle is not null)
         {
             @Toggle
@@ -13,7 +15,29 @@
             @Text
         }
     </summary>
-    <div class="@(AlignEnd ? "stil-dropdown-menu stil-dropdown-menu-end" : "stil-dropdown-menu")">
+    <div class="@MenuClass">
+        @if (Items is not null)
+        {
+            @foreach (var item in Items)
+            {
+                if (item.IsDivider)
+                {
+                    <StilDropdownDivider />
+                }
+                else if (item.IsHeader)
+                {
+                    <StilDropdownHeader>@item.Text</StilDropdownHeader>
+                }
+                else if (item.Href is not null)
+                {
+                    <StilDropdownItem Href="@item.Href" Disabled="item.Disabled">@item.Text</StilDropdownItem>
+                }
+                else
+                {
+                    <StilDropdownItem Disabled="item.Disabled" OnClick="() => item.OnClick?.Invoke() ?? Task.CompletedTask">@item.Text</StilDropdownItem>
+                }
+            }
+        }
         @ChildContent
     </div>
 </details>
@@ -48,9 +72,35 @@
     [Parameter]
     public bool AlignEnd { get; set; }
 
+    /// <summary>Open the menu above the toggle, for toggles near the bottom of the screen.</summary>
+    [Parameter]
+    public bool DropUp { get; set; }
+
+    /// <summary>The toggle cannot be used and the menu stays closed.</summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>Whether the menu is open. Supports two-way binding (@bind-Open).</summary>
+    [Parameter]
+    public bool Open { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OpenChanged { get; set; }
+
+    /// <summary>The menu as data, as an alternative to child components. See StilMenuItem.</summary>
+    [Parameter]
+    public IEnumerable<StilMenuItem>? Items { get; set; }
+
     /// <summary>StilDropdownItem, StilDropdownHeader and StilDropdownDivider components.</summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
+
+    private string MenuClass => string.Join(' ', new[]
+    {
+        "stil-dropdown-menu",
+        AlignEnd ? "stil-dropdown-menu-end" : null,
+        DropUp ? "stil-dropdown-menu-up" : null,
+    }.Where(c => c is not null));
 
     private string SummaryClass => string.Join(' ', new[]
     {
@@ -65,4 +115,29 @@
         StilCssClasses.Size("stil-btn", Size),
         IconOnly ? "stil-btn-icon" : null,
     }.Where(c => c is not null));
+
+    // The consumer's attributes plus the stiltoggle handler. Razor cannot bind @onstiltoggle inside
+    // the assembly that declares it, so the handler is added as an attribute.
+    private IReadOnlyDictionary<string, object> DetailsAttributes
+    {
+        get
+        {
+            var attributes = AdditionalAttributes is null
+                ? new Dictionary<string, object>()
+                : new Dictionary<string, object>(AdditionalAttributes);
+            attributes["onstiltoggle"] = EventCallback.Factory.Create<StilToggleEventArgs>(this, OnToggleAsync);
+            return attributes;
+        }
+    }
+
+    private async Task OnToggleAsync(StilToggleEventArgs e)
+    {
+        if (e.Open == Open)
+        {
+            return;
+        }
+
+        Open = e.Open;
+        await OpenChanged.InvokeAsync(e.Open);
+    }
 }

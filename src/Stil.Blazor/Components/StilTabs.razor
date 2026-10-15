@@ -2,12 +2,12 @@
 
 <CascadingValue Value="this" IsFixed="true">
     <div @attributes="AdditionalAttributes" class="@Classes()">
-        <div role="tablist" aria-label="@Label" class="stil-tabs">
+        <div role="tablist" aria-label="@Label" class="@(Appearance == StilTabsAppearance.Pills ? "stil-tabs stil-tabs-pills" : "stil-tabs")">
             @for (var i = 0; i < _tabs.Count; i++)
             {
                 var index = i;
                 var tab = _tabs[index];
-                var selected = index == ActiveIndex;
+                var selected = index == SelectedIndex;
                 <button type="button" role="tab" class="stil-tab" id="@TabId(index)"
                         aria-selected="@(selected ? "true" : "false")" aria-controls="@PanelId(index)"
                         tabindex="@(selected ? 0 : -1)" disabled="@tab.Disabled"
@@ -33,6 +33,27 @@
     [Parameter]
     public EventCallback<int> ActiveIndexChanged { get; set; }
 
+    /// <summary>
+    /// The Id of the selected tab, as an alternative to ActiveIndex that does not change when tabs
+    /// are added or removed. Supports two-way binding (@bind-ActiveId). Set Id on each StilTab.
+    /// </summary>
+    [Parameter]
+    public string? ActiveId { get; set; }
+
+    [Parameter]
+    public EventCallback<string?> ActiveIdChanged { get; set; }
+
+    /// <summary>Underline (default) or Pills.</summary>
+    [Parameter]
+    public StilTabsAppearance Appearance { get; set; }
+
+    /// <summary>
+    /// Keep every panel's content rendered (hidden when not selected) instead of only the
+    /// selected one, so state such as form input survives switching tabs.
+    /// </summary>
+    [Parameter]
+    public bool KeepAlive { get; set; }
+
     /// <summary>The accessible name of the tab list.</summary>
     [Parameter]
     public string? Label { get; set; }
@@ -47,7 +68,11 @@
 
     internal int IndexOf(StilTab tab) => _tabs.IndexOf(tab);
 
-    internal bool IsActive(StilTab tab) => IndexOf(tab) == ActiveIndex;
+    internal bool IsActive(StilTab tab) => IndexOf(tab) == SelectedIndex;
+
+    // ActiveId wins when it matches a tab; otherwise ActiveIndex decides.
+    private int SelectedIndex =>
+        ActiveId is not null && _tabs.FindIndex(t => t.Id == ActiveId) is var byId and >= 0 ? byId : ActiveIndex;
 
     internal void Register(StilTab tab)
     {
@@ -80,13 +105,15 @@
 
     private async Task SelectAsync(int index)
     {
-        if (index == ActiveIndex || _tabs[index].Disabled)
+        if (index == SelectedIndex || _tabs[index].Disabled)
         {
             return;
         }
 
         ActiveIndex = index;
+        ActiveId = _tabs[index].Id;
         await ActiveIndexChanged.InvokeAsync(index);
+        await ActiveIdChanged.InvokeAsync(ActiveId);
     }
 
     // Arrow keys, Home and End move between tabs and select them (WAI-ARIA tabs pattern).
@@ -131,10 +158,10 @@
             return;
         }
 
-        if (_focusSelected && ActiveIndex >= 0 && ActiveIndex < _tabs.Count)
+        if (_focusSelected && SelectedIndex >= 0 && SelectedIndex < _tabs.Count)
         {
             _focusSelected = false;
-            await _tabs[ActiveIndex].Element.FocusAsync();
+            await _tabs[SelectedIndex].Element.FocusAsync();
         }
     }
 }

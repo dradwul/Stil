@@ -2,12 +2,14 @@
 @inherits StilInputBase<TValue>
 
 <StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
-    <InputDate TValue="TValue" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression"
-               Type="@Type" min="@Min" max="@Max"
-               @attributes="ControlAttributes(StilCss)" />
+    @WithAddons(Control)
 </StilField>
 
 @code {
+    private RenderFragment Control => @<InputDate TValue="TValue" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@BoundExpression"
+                                                 Type="@Type" min="@Min" max="@Max"
+                                                 @attributes="ControlAttributes(StilCss)" />;
+
     /// <summary>Date (default), DateTimeLocal, Month or Time.</summary>
     [Parameter]
     public InputDateType Type { get; set; } = InputDateType.Date;

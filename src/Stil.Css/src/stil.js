@@ -1,11 +1,14 @@
 // Optional behaviours for Stil CSS: an ES module with no dependencies.
 // <script type="module" src="stil.js"></script> turns on:
 //   - Dropdowns (<details class="stil-dropdown">): close on an outside click, on Escape and after
-//     choosing an item; opening one closes the others.
+//     choosing an item; opening one closes the others. Arrow keys move between the items, and
+//     ArrowDown on the toggle opens the menu.
 //   - data-stil-dismiss on a button removes the closest .stil-alert or .stil-toast, or the element
 //     matched by the attribute's value (a CSS selector).
 //   - data-stil-dialog-open="dialog-id" opens that <dialog> as a modal; data-stil-dialog-close
 //     closes the dialog it is in.
+//   - data-stil-toggle on a button flips its aria-expanded, which shows or hides what it controls
+//     (for example the stil-navbar-collapse next to a stil-navbar-toggle). Escape collapses it.
 // Stil for Blazor loads this module automatically and also uses showDialog/closeDialog.
 
 const initialized = Symbol.for('stil.initialized');
@@ -42,6 +45,11 @@ function onClick(event) {
         document.getElementById(opener.getAttribute('data-stil-dialog-open'))?.showModal();
     }
 
+    const toggle = target.closest('[data-stil-toggle]');
+    if (toggle) {
+        toggle.setAttribute('aria-expanded', String(toggle.getAttribute('aria-expanded') !== 'true'));
+    }
+
     const closer = target.closest('[data-stil-dialog-close]');
     if (closer) {
         closer.closest('dialog')?.close();
@@ -49,11 +57,40 @@ function onClick(event) {
 }
 
 function onKeyDown(event) {
+    if (moveInDropdown(event)) return;
     if (event.key !== 'Escape') return;
+    for (const toggle of document.querySelectorAll('[data-stil-toggle][aria-expanded="true"]')) {
+        toggle.setAttribute('aria-expanded', 'false');
+    }
     for (const dropdown of openDropdowns()) {
         dropdown.open = false;
         dropdown.querySelector('summary')?.focus();
     }
+}
+
+// Arrow keys, Home and End move focus between the enabled items of the dropdown that has focus.
+function moveInDropdown(event) {
+    if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return false;
+    const dropdown = event.target instanceof Element ? event.target.closest('details.stil-dropdown') : null;
+    if (!dropdown) return false;
+
+    const onToggle = event.target.matches('summary');
+    if (onToggle && event.key !== 'ArrowDown') return false;
+    if (onToggle && !dropdown.open) dropdown.open = true;
+
+    const items = [...dropdown.querySelectorAll('.stil-dropdown-item')]
+        .filter(item => !item.matches(':disabled, [aria-disabled="true"]'));
+    if (items.length === 0) return false;
+
+    const index = items.indexOf(document.activeElement);
+    const next = event.key === 'Home' || (onToggle && event.key === 'ArrowDown') ? 0
+        : event.key === 'End' ? items.length - 1
+        : event.key === 'ArrowDown' ? (index + 1) % items.length
+        : (index - 1 + items.length) % items.length;
+
+    event.preventDefault();
+    items[next].focus();
+    return true;
 }
 
 function onToggle(event) {

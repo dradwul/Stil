@@ -301,3 +301,58 @@
 }
 
 .stil-toast > .stil-close { margin: calc(-1 * var(--stil-space-1)) calc(-1 * var(--stil-space-2)) 0 0; }
+
+/* Drawer (offcanvas): a native <dialog class="stil-drawer"> that slides in from the start edge,
+   or the end edge with stil-drawer-end. Use the stil-dialog-header, -title, -body and -footer
+   parts inside it. Open it with showModal() or data-stil-dialog-open. */
+
+.stil-drawer {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inset-inline-end: auto;
+    width: min(var(--stil-drawer-width, 20rem), calc(100vw - 3rem));
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-inline-end: 1px solid var(--stil-color-border);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+    box-shadow: var(--stil-shadow-lg);
+}
+
+.stil-drawer-end {
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+    border-inline-end: 0;
+    border-inline-start: 1px solid var(--stil-color-border);
+}
+
+.stil-drawer[open] {
+    display: flex;
+    flex-direction: column;
+    animation: stil-slide-in-start var(--stil-duration-md) var(--stil-easing);
+}
+
+.stil-drawer-end[open] { animation-name: stil-slide-in-end; }
+
+.stil-drawer > .stil-dialog-body { flex: 1; }
+
+.stil-drawer::backdrop { background-color: var(--stil-backdrop, rgb(0 0 0 / 0.5)); }
+
+@keyframes stil-slide-in-start {
+    from { translate: -100% 0; }
+}
+
+@keyframes stil-slide-in-end {
+    from { translate: 100% 0; }
+}
+
+/* A dropdown menu that opens upwards, for toggles near the bottom of the screen. */
+.stil-dropdown > .stil-dropdown-menu-up {
+    top: auto;
+    bottom: calc(100% + var(--stil-space-1));
+}

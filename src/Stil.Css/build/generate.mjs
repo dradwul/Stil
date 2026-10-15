@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 // Generates the repetitive parts of Stil CSS: grid columns, variant classes and utilities.
 // Edit the tables below to add values; build.mjs places the output in the right layers.
 
@@ -168,4 +169,75 @@ function values(...names) {
 
 function indent(text) {
     return text.split('\n').map(line => (line ? '    ' + line : line)).join('\n');
+}
+
+// Icons: src/icons.json holds the inner SVG markup of Stil's built-in icons (24x24 grid,
+// 2px round strokes). The same file feeds Stil for Blazor's StilIcon component.
+export function generateIcons() {
+    const icons = JSON.parse(readFileSync(new URL('../src/icons.json', import.meta.url), 'utf8'));
+    const rules = Object.entries(icons).map(([name, body]) => {
+        const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' `
+            + `stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>${body}</svg>`;
+        const uri = svg.replace(/</g, '%3C').replace(/>/g, '%3E').replace(/#/g, '%23');
+        return `.stil-icon-${name} { --_icon: url("data:image/svg+xml,${uri}"); }`;
+    });
+    return [
+        '/* Icons (generated from src/icons.json): <span class="stil-icon stil-icon-check"></span>.',
+        '   Drawn in the current text color at 1em; size them with font-size. */',
+        `.stil-icon {
+    display: inline-block;
+    flex: none;
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.125em;
+    background-color: currentColor;
+    mask: var(--_icon) center / contain no-repeat;
+}`,
+        `/* Inline <svg class="stil-icon"> (as rendered by StilIcon) draws itself; no mask. */
+svg.stil-icon {
+    background-color: transparent;
+    mask: none;
+}`,
+        `/* An icon from another set (font or SVG), sized like the built-in ones. */
+.stil-icon-slot {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+    line-height: 1;
+    vertical-align: -0.125em;
+}
+
+.stil-icon-slot > * {
+    font-size: 1em;
+    max-width: 100%;
+    max-height: 100%;
+}`,
+        ...rules,
+    ].join('\n');
+}
+
+// Navbar: stil-navbar-expand-{bp} collapses the nav behind the toggle below that breakpoint.
+export function generateNavbarExpand() {
+    return ['/* Navbar collapse below a breakpoint (generated) */',
+        ...Object.entries(breakpoints).map(([bp, width]) => {
+            const below = `${parseFloat(width) - 0.02}px`;
+            const navbar = `.stil-navbar-expand-${bp}`;
+            return `@media (max-width: ${below}) {
+    ${navbar} > .stil-navbar-toggle { display: inline-flex; }
+
+    ${navbar} > .stil-navbar-collapse {
+        display: none;
+        flex-basis: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    ${navbar}:has(> .stil-navbar-toggle[aria-expanded="true"]) > .stil-navbar-collapse { display: flex; }
+    ${navbar} > .stil-navbar-collapse .stil-nav { flex-direction: column; }
+    ${navbar} > .stil-navbar-collapse > .stil-navbar-end { margin-inline-start: 0; }
+}`;
+        })].join('\n\n');
 }

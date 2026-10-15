@@ -1,0 +1,91 @@
+@inherits StilComponentBase
+@implements IDisposable
+@inject NavigationManager Navigation
+
+<header @attributes="AdditionalAttributes" class="@CssClass">
+    @if (Brand is not null || BrandText is not null)
+    {
+        <a class="stil-navbar-brand" href="@BrandHref">@(Brand ?? (RenderFragment)(b => b.AddContent(0, BrandText)))</a>
+    }
+    @if (CollapseBelow is not null)
+    {
+        @* In static rendering stil.js flips aria-expanded (data-stil-toggle); when interactive, Blazor does. *@
+        <button type="button" class="stil-navbar-toggle" aria-controls="@_collapseId" aria-expanded="@(_expanded ? "true" : "false")"
+                data-stil-toggle="@(RendererInfo.IsInteractive ? null : "")" @onclick="Toggle">
+            <StilIcon Name="@(_expanded ? StilIcons.Close : StilIcons.Menu)" />
+            <span class="stil-visually-hidden">@ToggleLabel</span>
+        </button>
+    }
+    <div class="stil-navbar-collapse" id="@_collapseId">
+        @ChildContent
+        @if (End is not null)
+        {
+            <div class="stil-navbar-end">@End</div>
+        }
+    </div>
+</header>
+
+@code {
+    private readonly string _collapseId = StilIds.Next("navbar");
+    private bool _expanded;
+
+    /// <summary>Brand content, for example a logo and the app name.</summary>
+    [Parameter]
+    public RenderFragment? Brand { get; set; }
+
+    /// <summary>Brand text, as an alternative to Brand.</summary>
+    [Parameter]
+    public string? BrandText { get; set; }
+
+    [Parameter]
+    public string BrandHref { get; set; } = "";
+
+    /// <summary>The main content, usually a StilNav.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Content at the end of the bar, for example search, a user menu or a theme switch.</summary>
+    [Parameter]
+    public RenderFragment? End { get; set; }
+
+    /// <summary>
+    /// Below this breakpoint the content collapses behind a menu button. Null (default) never
+    /// collapses; the bar wraps instead.
+    /// </summary>
+    [Parameter]
+    public StilBreakpoint? CollapseBelow { get; set; }
+
+    /// <summary>The accessible name of the menu button.</summary>
+    [Parameter]
+    public string ToggleLabel { get; set; } = "Menu";
+
+    /// <summary>Keep the bar at the top of the page while scrolling.</summary>
+    [Parameter]
+    public bool Sticky { get; set; }
+
+    /// <summary>Color the bar with a variant; text is readable automatically.</summary>
+    [Parameter]
+    public StilVariant? Variant { get; set; }
+
+    private string CssClass => Classes(
+        "stil-navbar",
+        CollapseBelow is { } breakpoint ? $"stil-navbar-expand-{StilCssClasses.Breakpoint(breakpoint)}" : null,
+        Sticky ? "stil-sticky-top" : null,
+        Variant is { } variant ? StilCssClasses.Variant("stil-bg", variant) : null);
+
+    private void Toggle() => _expanded = !_expanded;
+
+    protected override void OnInitialized() => Navigation.LocationChanged += OnLocationChanged;
+
+    // Close the mobile menu after navigating.
+    private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        if (_expanded)
+        {
+            _expanded = false;
+            _ = InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Dispose() => Navigation.LocationChanged -= OnLocationChanged;
+}

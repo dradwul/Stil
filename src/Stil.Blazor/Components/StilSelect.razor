@@ -2,8 +2,12 @@
 @inherits StilInputBase<TValue>
 
 <StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
-    <InputSelect TValue="TValue" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression"
-                 @attributes="ControlAttributes(StilCss)">
+    @WithAddons(Control)
+</StilField>
+
+@code {
+    private RenderFragment Control => @<InputSelect TValue="TValue" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@BoundExpression"
+                                                   @attributes="ControlAttributes(StilCss)">
         @if (Placeholder is not null)
         {
             <option value="">@Placeholder</option>
@@ -19,10 +23,8 @@
                 <option value="@FormatValue(item)">@Text(item)</option>
             }
         }
-    </InputSelect>
-</StilField>
+    </InputSelect>;
 
-@code {
     /// <summary>
     /// The options. When neither Items nor ChildContent is set and the value is an enum, every
     /// enum value becomes an option.

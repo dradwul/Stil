@@ -293,7 +293,76 @@
     min-width: 0;
 }
 
+.stil-list-item-title { overflow-wrap: anywhere; }
+
 .stil-list-item-description {
     color: var(--stil-color-text-muted);
     font-size: var(--stil-font-size-sm);
 }
+
+/* Accordion: <div class="stil-accordion"><details class="stil-accordion-item" name="faq">
+     <summary class="stil-accordion-header">Title</summary><div class="stil-accordion-body">…</div>
+   </details></div>. Items sharing a name attribute open one at a time, without JavaScript. */
+
+.stil-accordion {
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+}
+
+.stil-accordion-flush {
+    border-inline: 0;
+    border-radius: 0;
+}
+
+.stil-accordion-item + .stil-accordion-item { border-top: 1px solid var(--stil-color-border); }
+
+.stil-accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--stil-space-3);
+    padding: var(--stil-space-3) var(--stil-space-4);
+    font-weight: var(--stil-font-weight-bold);
+    list-style: none;
+    cursor: pointer;
+}
+
+.stil-accordion-header::-webkit-details-marker { display: none; }
+
+.stil-accordion-header::after {
+    content: "";
+    flex: none;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+    transition: rotate var(--stil-duration-fast) var(--stil-easing);
+}
+
+.stil-accordion-item[open] > .stil-accordion-header::after { rotate: 180deg; }
+
+.stil-accordion-header:hover { background-color: var(--stil-color-surface-muted); }
+
+.stil-accordion-header:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: -2px;
+}
+
+/* Round the hover background of the first and last header to match the accordion. */
+.stil-accordion > .stil-accordion-item:first-child,
+.stil-accordion > .stil-accordion-item:first-child > .stil-accordion-header {
+    border-start-start-radius: inherit;
+    border-start-end-radius: inherit;
+}
+
+.stil-accordion > .stil-accordion-item:last-child,
+.stil-accordion > .stil-accordion-item:last-child:not([open]) > .stil-accordion-header {
+    border-end-start-radius: inherit;
+    border-end-end-radius: inherit;
+}
+
+.stil-accordion-body { padding: 0 var(--stil-space-4) var(--stil-space-4); }
+
+.stil-accordion-body > :last-child { margin-block-end: 0; }

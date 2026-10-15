@@ -13,7 +13,7 @@
     scroll-margin-top: 4rem;
 }
 
-.demo-section + .demo-section {
+section.demo-section ~ section.demo-section {
     margin-top: var(--stil-space-6);
 }
 

@@ -1,0 +1,57 @@
+@inherits StilComponentBase
+
+<details @attributes="DetailsAttributes" class="@Classes("stil-accordion-item")" name="@Name" open="@Open">
+    <summary class="stil-accordion-header">@(Header ?? (RenderFragment)(b => b.AddContent(0, Title)))</summary>
+    <div class="stil-accordion-body">
+        @ChildContent
+    </div>
+</details>
+
+@code {
+    [CascadingParameter]
+    private StilAccordion? Parent { get; set; }
+
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>Rich header content instead of Title.</summary>
+    [Parameter]
+    public RenderFragment? Header { get; set; }
+
+    /// <summary>Whether the item is open. Supports two-way binding (@bind-Open).</summary>
+    [Parameter]
+    public bool Open { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OpenChanged { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string? Name => Parent is { Multiple: false } parent ? parent.GroupName : null;
+
+    // Razor cannot bind @onstiltoggle inside the assembly that declares it, so the handler is
+    // added as an attribute.
+    private IReadOnlyDictionary<string, object> DetailsAttributes
+    {
+        get
+        {
+            var attributes = AdditionalAttributes is null
+                ? new Dictionary<string, object>()
+                : new Dictionary<string, object>(AdditionalAttributes);
+            attributes["onstiltoggle"] = EventCallback.Factory.Create<StilToggleEventArgs>(this, OnToggleAsync);
+            return attributes;
+        }
+    }
+
+    private async Task OnToggleAsync(StilToggleEventArgs e)
+    {
+        if (e.Open == Open)
+        {
+            return;
+        }
+
+        Open = e.Open;
+        await OpenChanged.InvokeAsync(e.Open);
+    }
+}

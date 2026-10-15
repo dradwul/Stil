@@ -182,7 +182,7 @@ span.stil-page-link:hover { background-color: var(--stil-color-surface); }
     font-size: var(--stil-font-size-sm);
 }
 
-.stil-page-link[aria-disabled="true"] {
+.stil-page-link:is([aria-disabled="true"], :disabled) {
     color: var(--stil-color-text-muted);
     pointer-events: none;
 }
@@ -223,4 +223,57 @@ span.stil-page-link:hover { background-color: var(--stil-color-surface); }
 .stil-tab[aria-selected="true"] {
     border-bottom-color: currentColor;
     color: var(--_accent);
+}
+
+/* Navbar collapse: wrap the nav and end content in stil-navbar-collapse. With
+   stil-navbar-expand-{bp} on the navbar, the collapse hides below that breakpoint behind a
+   stil-navbar-toggle button; aria-expanded="true" on the button shows it (stil.js toggles it,
+   StilNavbar does it in Blazor). The expand classes are generated in build/generate.mjs. */
+
+.stil-navbar-collapse {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--stil-space-2) var(--stil-space-4);
+}
+
+.stil-navbar-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    margin-inline-start: auto;
+    padding: var(--stil-space-2);
+    border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+    border-radius: var(--stil-radius-md);
+    background-color: transparent;
+    color: inherit;
+    font-size: var(--stil-font-size-lg);
+    line-height: 1;
+    cursor: pointer;
+}
+
+.stil-navbar-toggle:hover { background-color: color-mix(in srgb, currentColor 10%, transparent); }
+
+.stil-navbar-toggle:focus-visible {
+    outline: var(--stil-focus-ring-width) solid currentColor;
+    outline-offset: var(--stil-focus-ring-offset);
+}
+
+/* Pill tabs: the selected tab is filled with the accent color. */
+.stil-tabs-pills { border-bottom: 0; }
+
+.stil-tabs-pills .stil-tab {
+    margin-block-end: 0;
+    border-bottom: 0;
+    border-radius: var(--stil-radius-md);
+}
+
+.stil-tabs-pills .stil-tab:hover { background-color: color-mix(in srgb, currentColor 10%, transparent); }
+
+.stil-tabs-pills .stil-tab[aria-selected="true"] {
+    --_bg: var(--_accent);
+    --_contrast: initial;
+    background-color: var(--_bg);
+    color: var(--_fg);
 }

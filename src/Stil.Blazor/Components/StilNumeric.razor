@@ -2,11 +2,13 @@
 @inherits StilInputBase<TValue>
 
 <StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
-    <InputNumber TValue="TValue" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression"
-                 @attributes="NumberAttributes" />
+    @WithAddons(Control)
 </StilField>
 
 @code {
+    private RenderFragment Control => @<InputNumber TValue="TValue" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@BoundExpression"
+                                                   @attributes="NumberAttributes" />;
+
     [Parameter]
     public string? Min { get; set; }
 

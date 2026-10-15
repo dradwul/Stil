@@ -8,7 +8,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import browserslist from 'browserslist';
 import { browserslistToTargets, transform } from 'lightningcss';
-import { generateGrid, generateUtilities, generateVariants } from './generate.mjs';
+import { generateGrid, generateIcons, generateNavbarExpand, generateUtilities, generateVariants } from './generate.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = join(root, 'src');
@@ -28,7 +28,9 @@ const layers = [
         'components/form.css',
         'components/content.css',
         'components/navigation.css',
+        generateNavbarExpand,
         'components/overlay.css',
+        generateIcons,
         generateVariants,
     ]],
     ['stil.utilities', ['utilities.css', generateUtilities]],

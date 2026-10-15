@@ -12,7 +12,7 @@ Blazorise. Each phase ends with something usable.
 | 1 | Tokens and theming engine | ✅ Done |
 | 2 | Stil CSS 1.0 (Bootstrap replacement) | ✅ Done |
 | 3 | Stil for Blazor core (forms, dialogs, toasts) | ✅ Done |
-| 4 | Stil for Blazor: a component for every Stil CSS component | ⏭ Next |
+| 4 | Stil for Blazor: a component for every Stil CSS component | ✅ Done |
 | 5 | Data components (Radzen replacement) | ⏸ On hold (since 2026-10-12) |
 | 6 | 1.0 release and ecosystem | Planned |
 
@@ -20,11 +20,11 @@ A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
 end, so they never keep a phase open.
 
-## Where we are (0.1.0)
+## Where we are (0.1.0, Phases 0–4 done)
 
 - **Stil CSS:** an npm package (`stil-css`, not yet published). It is built
   with Lightning CSS from partials into `dist/stil.css` and `stil.min.css`
-  (about 10 kB gzipped), plus the optional 3 kB `stil.js`. It has:
+  (about 13 kB gzipped), plus the optional 5 kB `stil.js`. It has:
   - cascade layers;
   - a full `--stil-*` token set;
   - light and dark mode;
@@ -35,13 +35,17 @@ end, so they never keep a phase open.
   - about 900 utility classes;
   - a [Bootstrap migration guide](src/Stil.Css/MIGRATING-FROM-BOOTSTRAP.md).
 - **Stil for Blazor:**
-  - About 40 components: buttons, badges, lists, cards, alerts, form fields
-    with EditForm validation, tabs, dropdowns, tooltips, progress, spinners,
-    dialogs and toasts.
+  - About 50 components, with a Blazor counterpart for every Stil CSS
+    component:
+    - Buttons, icons and badges.
+    - Lists, tables, cards, alerts and accordions.
+    - Form fields with EditForm validation and add-ons.
+    - Navigation: navbar, nav, breadcrumbs, pagination, tabs and dropdowns.
+    - Layout, dialogs, drawers and toasts.
   - `IStilDialogService` and `IStilToastService`.
   - Theming with `AddStil()`, `StilTheme`, `StilHead` and
     `StilThemeProvider`.
-  - 366 bUnit tests.
+  - 449 bUnit tests.
 - **Samples:**
   - `samples/Stil.Html/index.html` shows every CSS class.
   - `samples/Stil.Html/admin.html` is a dashboard built only with Stil CSS.
@@ -176,73 +180,100 @@ needed.
 
 ---
 
-## Phase 4: A Blazor component for every Stil CSS component ⏭ Next
+## Phase 4: A Blazor component for every Stil CSS component ✅ Done
 
 Goal: everything Stil CSS can render also has a Blazor component, so Blazor
-users rarely need to write `stil-*` classes by hand. The parameter names
-below are proposals and are settled when each component is built.
+users rarely need to write `stil-*` classes by hand.
 
-### Navigation
+- [x] **Icons:**
+  - About 25 built-in icons, drawn by Stil (see the icon strategy below), in
+    `src/Stil.Css/src/icons.json`. That file generates the `stil-icon-*` CSS
+    classes and is embedded in the Blazor assembly.
+  - `StilIcon` (`Name`, `Size`, `Label`, or child content) and
+    `StilIcons` name constants.
+  - `IStilIconProvider` for other icon sets, plus
+    `StilLigatureIconProvider` for fonts such as Material Symbols.
+- [x] **Navigation:**
+  - `StilBreadcrumbs` (`Items` or `StilBreadcrumbItem` children).
+  - `StilPagination` (`@bind-Page`, `PageCount` or `TotalItems`/`PageSize`,
+    ellipses, `ShowFirstLast`, `HrefTemplate` for links in static SSR).
+  - `StilNav`/`StilNavLink` (wraps `NavLink`; `Icon`, `Badge`).
+  - `StilNavbar` with a mobile menu (`CollapseBelow`; new
+    `stil-navbar-expand-*` CSS and `data-stil-toggle` in stil.js).
+- [x] **Tabs, extended:** `@bind-ActiveId` with `StilTab Id`,
+  `Appearance=Pills` (new `stil-tabs-pills` CSS), `KeepAlive`.
+- [x] **Dropdown, extended:**
+  - `@bind-Open`, which stays in sync when stil.js closes the menu, through
+    the new `onstiltoggle` event.
+  - `Items` with `StilMenuItem`.
+  - `Disabled` and `DropUp` (new `stil-dropdown-menu-up` CSS).
+  - Arrow keys, Home and End in the menu, from stil.js, so this also works in
+    plain HTML.
+- [x] **Content and layout:**
+  - `StilTable<TItem>` + `StilColumn` (`Field`/`Format` or `Template`, `Align`,
+    `Striped`, `Hover`, `Compact`, `Bordered`, `Responsive`, `Caption`,
+    `EmptyContent`, `OnRowClick`, `RowClass`).
+  - `StilAvatar`.
+  - `StilAccordion` + `StilAccordionItem` (new `stil-accordion` CSS, one open
+    at a time through `<details name>`, no JavaScript).
+  - `StilGrid`/`StilCol`, `StilStack`, `StilCluster`, `StilSidebarLayout`.
+- [x] **Forms and actions:**
+  - `Prepend`/`Append` and `PrependText`/`AppendText` on `StilTextBox`,
+    `StilNumeric`, `StilSelect` and `StilDatePicker`.
+  - Fields also work without `@bind-Value`.
+  - `StilButtonGroup` and `StilCloseButton`.
+- [x] **Drawer:** `StilDrawer` (new `stil-drawer` CSS; `Position`, `Width`).
+  It shares its modal logic with `StilDialog` through `StilModalBase`.
 
-| Component | Proposed parameters | Notes |
-| --- | --- | --- |
-| `StilBreadcrumbs` (+ `StilBreadcrumbItem`) | `Items` (Text, Href), or `<StilBreadcrumbItem Text Href />` as child content; `Label` (default "Breadcrumb") | The last item gets `aria-current="page"` and is not a link. |
-| `StilPagination` | `@bind-Page` (1-based); `PageCount`, or `TotalItems` + `PageSize`; `MaxVisiblePages` (ellipsis); `ShowFirstLast`; `PreviousText`/`NextText`; `Size`; `HrefTemplate` (for example `"orders?page={0}"`); `Label` | With `HrefTemplate` it renders links, which also work in static SSR. |
-| `StilNav` + `StilNavLink` | `Vertical`, `Pills`, `Label`; `StilNavLink`: `Href`, `Match`, `Badge` | `StilNavLink` wraps Blazor's `NavLink`, so `aria-current` follows the route. |
-| `StilNavbar` | `Brand` or `BrandText`/`BrandHref`, `ChildContent`, `End`, `Sticky`, `Variant`, `CollapseBelow` | Needs a navbar toggle in CSS and `stil.js` for mobile. |
-| `StilTabs`: extend | `@bind-ActiveId` (key instead of index), `Appearance` (Underline, Pills), `KeepAlive` (keep inactive panels in the DOM), `StilTab Href` (link tabs for routing) | The basic component exists from Phase 3. |
-| `StilDropdown`: extend | `@bind-Open`, `Items` (data-driven: Text, Href/OnClick, Disabled, divider), `Placement`, `Disabled`; arrow-key navigation in the menu (WAI-ARIA menu button) | The basic component exists from Phase 3. |
+**Done when:**
 
-### Content and layout
+- [x] Every component in Stil CSS has a Blazor counterpart. Utility classes
+  are the exception: they are meant to be used as `class` on any component.
+  The Blazor README has a table mapping each CSS class to its component.
+- [x] The demo gallery shows every component, and the HTML showcase shows
+  the new CSS (icons, lists, accordion, drawer, collapsing navbar, pill tabs,
+  drop-up menus).
+- [x] bUnit tests cover the parameters, ARIA and keyboard behaviour: 449
+  tests.
 
-| Component | Proposed parameters | Notes |
-| --- | --- | --- |
-| `StilTable<TItem>` + `StilColumn` | `Items`; `<StilColumn Title Field Template Align>`; `Striped`, `Hover`, `Compact`, `Bordered`, `Responsive`, `Caption`, `EmptyContent` | A lightweight table. Sorting, paging and filtering belong to `StilDataGrid` in Phase 5. |
-| `StilAvatar` | `Name` (initials are computed), `ImageSrc`, `Alt`, `Size` | |
-| `StilAccordion` + `StilAccordionItem` | `Title`, `@bind-Open`, `Multiple` (allow several open) | Built on `<details>`, so it works in static SSR. Needs `stil-accordion` CSS. |
-| `StilGrid` + `StilCol` | `Gap`; `StilCol`: `Span`, `SpanSm`, `SpanMd`, `SpanLg`, `SpanXl` | |
-| `StilStack`, `StilCluster` | `Gap`; `StilCluster`: `Justify`, `Align` | |
-| `StilSidebarLayout` | `Sidebar`, `ChildContent`, `SidebarWidth` | Renders `stil-with-sidebar`. |
+**Verified in the browser:**
 
-### Forms and actions
+- The mobile navbar opens and closes, and closes after navigating.
+- The drawer is modal, and Escape closes it.
+- Pagination updates its binding.
+- The dropdown's `@bind-Open` stays in sync when stil.js closes the menu on
+  an outside click or after an item is chosen.
+- The arrow keys move between the dropdown items and skip disabled ones.
+- Only one accordion item is open at a time.
+- The table pages and its rows are clickable.
+- Input add-ons render next to the control.
 
-| Component | Proposed parameters | Notes |
-| --- | --- | --- |
-| Input groups | `Prepend` and `Append` (text or `RenderFragment`) on `StilTextBox`, `StilNumeric` and `StilSelect` | Renders `stil-input-group` inside the field, with the label, hint and errors outside it. |
-| `StilButtonGroup` | `Label`, `Size` | `role="group"` |
-| `StilCloseButton` | `Label`, `OnClick` | |
+**Changes from the plan:**
 
-### Overlays and icons
-
-| Component | Proposed parameters | Notes |
-| --- | --- | --- |
-| `StilDrawer` (offcanvas) | `@bind-Open`, `Position` (Start, End), `Title`, `Footer` | A native `<dialog>`, like `StilDialog`. Needs `stil-drawer` CSS. It also solves the mobile sidebar. |
-| `StilIcon` | `Name`, `Size`, `Label` (otherwise `aria-hidden`) | Icon strategy (decided 2026-10-15): a built-in set below, plus any icon set the app plugs in. |
+- Link tabs (`StilTab Href`) were dropped. Tabs switch content within a page;
+  to navigate between pages, use `StilNav` (with `Pills`), which gives the
+  correct semantics (`aria-current`).
+- The dropdown has `AlignEnd` and `DropUp` instead of a `Placement` enum.
+- `StilAvatar` has no `Alt`. `Name` is the accessible name, and the image is
+  decorative.
+- `StilButtonGroup` has no `Size`. Set `Size` on its buttons.
+- The icon provider is `StilOptions.IconProvider`.
 
 ### Icon strategy (decided 2026-10-15)
 
-- **Built-in set:** about 20 icons drawn by Stil, MIT-licensed like the rest
+- **Built-in set:** about 25 icons drawn by Stil, MIT-licensed like the rest
   of the project.
   - Inline SVG on a 24 × 24 grid with a 2px round stroke in `currentColor`,
     so the icons follow themes and dark mode.
-  - Stil's own components use them (chevrons, close, menu, check,
-    plus/minus, search, more, info/success/warning/danger, external link).
   - No icon font, no external dependency, no third-party license to ship.
-- **Plug in any set:** `StilIcon` also renders icons from other sets, through
-  a registered `IStilIconProvider` (`AddStil(o => o.Icons = …)`) or a
-  `RenderFragment`. Material Symbols (Apache 2.0), Lucide (ISC), Bootstrap
-  Icons (MIT) and Heroicons (MIT) all allow commercial use. The app brings
-  the set it wants, along with that set's license.
-- **Plain CSS:** the same SVGs are available as `stil-icon-*` CSS mask
-  classes, so plain-HTML users get them too.
-
-### Done when
-
-- [ ] Every component in Stil CSS has a Blazor counterpart, or a documented
-  reason why not. The Blazor README has a table mapping each CSS class to its
-  component.
-- [ ] The demo gallery shows every component.
-- [ ] bUnit tests cover the parameters, ARIA and keyboard behaviour.
+  - To add an icon, add it to `src/Stil.Css/src/icons.json` and add a
+    constant to `StilIcons`. A test checks that the two match.
+- **Plug in any set:** register an `IStilIconProvider`
+  (`AddStil(o => o.IconProvider = …)`) or put markup inside `StilIcon`.
+  Material Symbols (Apache 2.0), Lucide (ISC), Bootstrap Icons (MIT) and
+  Heroicons (MIT) all allow commercial use. The app brings the set it wants,
+  along with that set's license.
+- **Plain CSS:** the same SVGs are `stil-icon-*` CSS mask classes.
 
 ## Phase 5: Data components (Radzen replacement) ⏸ On hold
 
@@ -267,6 +298,13 @@ by screen.
 - [ ] Playwright visual regression tests for the CSS and the components.
 - [ ] A `dotnet new stil-app` template, and migration guides from Radzen and
   Blazorise.
+- [ ] Package publishing (deferred until this phase, decided 2026-10-15):
+  - Complete the NuGet metadata: Authors, RepositoryUrl, PackageProjectUrl,
+    a package icon, a symbols package (`.snupkg`) and SourceLink.
+  - A release workflow using NuGet Trusted Publishing (no long-lived API key)
+    and npm provenance, run on a version tag.
+  - Publish preview versions first (`0.x.0-preview.N`), because a published
+    version can only be unlisted, never deleted.
 - [ ] Semantic versioning with a changelog. `1.0` is published once the APIs
   have stayed unchanged for one minor release.
 
@@ -280,10 +318,11 @@ These need the repository or package owner.
   links in `src/Stil.Blazor/README.md` and `src/Stil.Css/package.json`.
 - [ ] Push and confirm that CI passes on GitHub. It has only been run
   locally so far.
-- [ ] Publish `stil-css` to npm (`npm publish` in `src/Stil.Css`, or a release
-  workflow with an `NPM_TOKEN` secret). That also makes it available on
-  jsDelivr.
-- [ ] Reserve or publish the `Stil` package on NuGet.
+- [ ] Later, when we publish in Phase 6 (not now):
+  - Create accounts on nuget.org and npmjs.com with two-factor sign-in.
+  - Set up Trusted Publishing for the repository.
+  - Publish `Stil` (NuGet) and `stil-css` (npm), which also puts the CSS on
+    jsDelivr. Publishing public packages is free.
 
 ## CSS backlog (no phase yet)
 

@@ -1,0 +1,41 @@
+@inherits StilComponentBase
+
+<span role="img" aria-label="@Name" @attributes="AdditionalAttributes" class="@Classes("stil-avatar", StilCssClasses.Size("stil-avatar", Size))">
+    @if (ImageSrc is not null)
+    {
+        <img src="@ImageSrc" alt="" />
+    }
+    else
+    {
+        <span aria-hidden="true">@Initials</span>
+    }
+</span>
+
+@code {
+    /// <summary>The person's name: the accessible name, and the source of the initials.</summary>
+    [Parameter]
+    public string? Name { get; set; }
+
+    /// <summary>A photo. Without it the initials are shown.</summary>
+    [Parameter]
+    public string? ImageSrc { get; set; }
+
+    /// <summary>Small, Medium (default) or Large.</summary>
+    [Parameter]
+    public StilSize Size { get; set; }
+
+    /// <summary>The first letter of the first and last word, for example "Anna Berg" gives "AB".</summary>
+    internal string Initials
+    {
+        get
+        {
+            var words = (Name ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            return words.Length switch
+            {
+                0 => "",
+                1 => words[0][..1].ToUpperInvariant(),
+                _ => (words[0][..1] + words[^1][..1]).ToUpperInvariant()
+            };
+        }
+    }
+}

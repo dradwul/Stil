@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
+    <InternalsVisibleTo Include="Stil.Blazor.Tests" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +25,8 @@
 
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
+    <!-- The built-in icons; the same file generates the stil-icon-* CSS classes. -->
+    <EmbeddedResource Include="..\Stil.Css\src\icons.json" LogicalName="Stil.Blazor.icons.json" />
   </ItemGroup>
 
   <!--

@@ -143,6 +143,15 @@ showcases (each has a theme picker).
 - **JavaScript:** shared behaviour goes in `src/Stil.Css/src/stil.js`, so
   plain-HTML users get it too. `Stil.lib.module.js` loads it automatically.
   Components import it with `import("./_content/Stil/stil.js")` for interop.
+- **<details>-based components** (dropdown, accordion) keep `@bind-Open` in
+  sync through the `stiltoggle` event (registered in `Stil.lib.module.js`).
+  Razor cannot bind `@onstiltoggle` inside this assembly, so add the handler
+  as an attribute: `attributes["onstiltoggle"] = EventCallback.Factory.Create<StilToggleEventArgs>(this, …)`.
+  See `StilDropdown`.
+- **Icons:** add an icon to `src/Stil.Css/src/icons.json` (inner SVG markup
+  on a 24 × 24 grid, 2px round stroke). Add a matching constant to
+  `StilIcons`, and rebuild the CSS. A test fails if the constants and the JSON
+  differ.
 - **Tests:** every public parameter, ARIA attribute and keyboard path gets a
   bUnit test in `tests/Stil.Blazor.Tests`.
 

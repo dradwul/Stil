@@ -1,0 +1,153 @@
+@inherits StilComponentBase
+
+<nav aria-label="@Label" @attributes="AdditionalAttributes" class="@Classes()">
+    <ul class="@ListClass">
+        @if (ShowFirstLast)
+        {
+            <li>@PageLink(1, StilIcons.ChevronsLeft, FirstText, CurrentPage == 1, current: false)</li>
+        }
+        <li>@PageLink(CurrentPage - 1, StilIcons.ChevronLeft, PreviousText, CurrentPage == 1, current: false)</li>
+        @foreach (var item in GetPageItems(CurrentPage, TotalPages, Siblings))
+        {
+            if (item is { } page)
+            {
+                <li>@PageLink(page, null, null, disabled: false, current: page == CurrentPage)</li>
+            }
+            else
+            {
+                <li><span class="stil-page-link" aria-hidden="true">…</span></li>
+            }
+        }
+        <li>@PageLink(CurrentPage + 1, StilIcons.ChevronRight, NextText, CurrentPage == TotalPages, current: false)</li>
+        @if (ShowFirstLast)
+        {
+            <li>@PageLink(TotalPages, StilIcons.ChevronsRight, LastText, CurrentPage == TotalPages, current: false)</li>
+        }
+    </ul>
+</nav>
+
+@code {
+    /// <summary>The current page, starting at 1. Supports two-way binding (@bind-Page).</summary>
+    [Parameter]
+    public int Page { get; set; } = 1;
+
+    [Parameter]
+    public EventCallback<int> PageChanged { get; set; }
+
+    /// <summary>The number of pages. Alternatively set TotalItems and PageSize.</summary>
+    [Parameter]
+    public int? PageCount { get; set; }
+
+    [Parameter]
+    public int? TotalItems { get; set; }
+
+    [Parameter]
+    public int PageSize { get; set; } = 10;
+
+    /// <summary>The most page slots to show, including ellipses. At least 5; the default is 7.</summary>
+    [Parameter]
+    public int MaxVisiblePages { get; set; } = 7;
+
+    /// <summary>Shows buttons for the first and last page.</summary>
+    [Parameter]
+    public bool ShowFirstLast { get; set; }
+
+    /// <summary>
+    /// Renders links instead of buttons, for example "orders?page={0}". Links also work with
+    /// static rendering; PageChanged is not raised.
+    /// </summary>
+    [Parameter]
+    public string? HrefTemplate { get; set; }
+
+    /// <summary>Medium (default) or Small.</summary>
+    [Parameter]
+    public StilSize Size { get; set; }
+
+    /// <summary>The accessible name of the navigation landmark.</summary>
+    [Parameter]
+    public string Label { get; set; } = "Pagination";
+
+    [Parameter]
+    public string PreviousText { get; set; } = "Previous page";
+
+    [Parameter]
+    public string NextText { get; set; } = "Next page";
+
+    [Parameter]
+    public string FirstText { get; set; } = "First page";
+
+    [Parameter]
+    public string LastText { get; set; } = "Last page";
+
+    private int TotalPages => Math.Max(1, PageCount ?? (TotalItems is { } total ? (int)Math.Ceiling(total / (double)Math.Max(1, PageSize)) : 1));
+
+    private int CurrentPage => Math.Clamp(Page, 1, TotalPages);
+
+    private int Siblings => Math.Max(0, (Math.Max(5, MaxVisiblePages) - 5) / 2);
+
+    private string ListClass => Size == StilSize.Small ? "stil-pagination stil-pagination-sm" : "stil-pagination";
+
+    private RenderFragment PageLink(int page, string? icon, string? text, bool disabled, bool current) => @<text>
+        @if (HrefTemplate is not null)
+        {
+            <a class="stil-page-link" href="@(disabled ? null : string.Format(System.Globalization.CultureInfo.InvariantCulture, HrefTemplate, page))"
+               aria-disabled="@StilCssClasses.AriaBool(disabled)" aria-current="@(current ? "page" : null)">@LinkContent(page, icon, text)</a>
+        }
+        else
+        {
+            <button type="button" class="stil-page-link" disabled="@disabled" aria-current="@(current ? "page" : null)"
+                    @onclick="() => SelectAsync(page)">@LinkContent(page, icon, text)</button>
+        }
+    </text>;
+
+    private static RenderFragment LinkContent(int number, string? icon, string? text) => @<text>
+        @if (icon is not null)
+        {
+            <StilIcon Name="@icon" />
+            <span class="stil-visually-hidden">@text</span>
+        }
+        else
+        {
+            @number
+        }
+    </text>;
+
+    private async Task SelectAsync(int page)
+    {
+        page = Math.Clamp(page, 1, TotalPages);
+        if (page == CurrentPage)
+        {
+            return;
+        }
+
+        Page = page;
+        await PageChanged.InvokeAsync(page);
+    }
+
+    /// <summary>
+    /// The page numbers to show, with null for an ellipsis: the first and last page are always
+    /// shown, plus <paramref name="siblings"/> pages on each side of the current one.
+    /// </summary>
+    internal static IReadOnlyList<int?> GetPageItems(int page, int count, int siblings)
+    {
+        const int boundary = 1;
+        if (count <= 2 * boundary + 2 * siblings + 3)
+        {
+            return Enumerable.Range(1, count).Select(p => (int?)p).ToList();
+        }
+
+        var siblingsStart = Math.Max(Math.Min(page - siblings, count - boundary - 2 * siblings - 1), boundary + 2);
+        var siblingsEnd = Math.Min(Math.Max(page + siblings, boundary + 2 * siblings + 2), count - boundary - 1);
+
+        var items = new List<int?> { 1 };
+        items.Add(siblingsStart > boundary + 2 ? null : boundary + 1);
+        for (var p = siblingsStart; p <= siblingsEnd; p++)
+        {
+            items.Add(p);
+        }
+
+        items.Add(siblingsEnd < count - boundary - 1 ? null : count - boundary);
+        items.Add(count);
+        return items;
+    }
+}

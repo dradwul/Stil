@@ -2,7 +2,7 @@
 
 Stil CSS is a themeable, framework-independent CSS class library. It is a
 Bootstrap replacement with dark mode and WCAG AA colors built in. It is a
-single stylesheet, about 10 kB minified and gzipped, with no JavaScript. It
+single stylesheet, about 13 kB minified and gzipped, with no JavaScript. It
 works with plain HTML, Razor, React, Vue, or any other front end.
 
 Every class starts with `stil-` and every token with `--stil-`, so Stil can
@@ -110,12 +110,15 @@ classes: `aria-current="page"`, `aria-selected="true"`,
 | List | `stil-list` (`stil-list-flush`) > `stil-list-item` with `stil-list-item-start`, `stil-list-item-content` (`stil-list-item-title`, `stil-list-item-description`) and `stil-list-item-end`. A `stil-list-item` on its own is a single bordered row; `<a>` and `<button>` rows are interactive. |
 | Table | `stil-table` with `stil-table-striped`, `stil-table-hover`, `stil-table-compact`, `stil-table-bordered`. Wrap it in `stil-table-responsive` to scroll sideways. |
 | Nav | `stil-nav` > `stil-nav-link`, with `stil-nav-vertical` and `stil-nav-pills` |
-| Navbar | `stil-navbar` with `stil-navbar-brand`, a `stil-nav` and `stil-navbar-end` |
+| Navbar | `stil-navbar` with `stil-navbar-brand`, a `stil-nav` and `stil-navbar-end`. To collapse on small screens, add `stil-navbar-expand-{sm,md,lg,xl}`, wrap the nav and end content in `stil-navbar-collapse`, and add a `stil-navbar-toggle` button (`aria-expanded`, `aria-controls`, `data-stil-toggle`). |
 | Breadcrumb | `<ol class="stil-breadcrumb">` |
 | Pagination | `stil-pagination` (`stil-pagination-sm`) > `li` > `stil-page-link`. Use `<span class="stil-page-link">` for an ellipsis. |
-| Tabs | `stil-tabs` (`role="tablist"`) > `stil-tab` (`role="tab"`, `aria-selected`). Switching panels needs a script. |
+| Tabs | `stil-tabs` (`role="tablist"`, plus `stil-tabs-pills` for pills) > `stil-tab` (`role="tab"`, `aria-selected`). Switching panels needs a script. |
 | Dialog | `<dialog class="stil-dialog">` with `stil-dialog-header`, `stil-dialog-title`, `stil-dialog-body`, `stil-dialog-footer`. Sizes: `stil-dialog-sm`, `stil-dialog-lg`. |
-| Dropdown | `<details class="stil-dropdown">` > `<summary class="stil-btn">` + `stil-dropdown-menu` (`-end`) > `stil-dropdown-item`, `stil-dropdown-header`, `stil-dropdown-divider`. There is no arrow on a `stil-btn-icon` summary. |
+| Drawer | `<dialog class="stil-drawer">` (`stil-drawer-end` to slide in from the end) with the dialog parts. Width: `--stil-drawer-width`. |
+| Dropdown | `<details class="stil-dropdown">` > `<summary class="stil-btn">` + `stil-dropdown-menu` (`-end`, `-up`) > `stil-dropdown-item`, `stil-dropdown-header`, `stil-dropdown-divider`. There is no arrow on a `stil-btn-icon` summary. |
+| Accordion | `stil-accordion` (`-flush`) > `<details class="stil-accordion-item">` > `<summary class="stil-accordion-header">` + `stil-accordion-body`. Items that share a `name` attribute open one at a time. |
+| Icons | `<span class="stil-icon stil-icon-{name}" aria-hidden="true"></span>`: about 25 built-in icons (chevrons, arrows, close, menu, check, plus, minus, search, more, info, success, warning, danger, external, filter, home, sun, moon). They use the current text color and are 1em in size. The set is in [`src/icons.json`](src/icons.json). |
 | Tooltip | `data-stil-tooltip="Text"` on any element. Add `stil-tooltip-bottom` to show it below. |
 | Progress | `stil-progress` (`stil-progress-lg`) > `stil-progress-bar` with a width |
 | Spinner | `stil-spinner`, `stil-spinner-sm`. It uses the current text color. |
@@ -128,7 +131,7 @@ full page built only with Stil, open
 
 ## Optional JavaScript
 
-Stil works without JavaScript. The optional `dist/stil.js` module, 3 kB with
+Stil works without JavaScript. The optional `dist/stil.js` module, 5 kB with
 no dependencies, adds a few behaviours:
 
 ```html
@@ -139,8 +142,12 @@ no dependencies, adds a few behaviours:
   item. Opening one closes the others.
 - `data-stil-dismiss` on a button removes the closest alert or toast, or the
   element that matches the attribute's value (a CSS selector).
-- `data-stil-dialog-open="id"` opens that `<dialog>` as a modal.
-  `data-stil-dialog-close` closes the dialog the button is in.
+- `data-stil-dialog-open="id"` opens that `<dialog>` (dialog or drawer) as a
+  modal. `data-stil-dialog-close` closes the dialog the button is in.
+- `data-stil-toggle` on a button flips its `aria-expanded`, for example to
+  open a collapsed navbar. Escape collapses it again.
+- The arrow keys, Home and End move between dropdown items. ArrowDown on
+  the toggle opens the menu.
 
 Stil for Blazor loads it automatically.
 

@@ -1,12 +1,14 @@
 @inherits StilInputBase<string?>
 
 <StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
-    <InputText Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression"
-               type="@Type" placeholder="@Placeholder"
-               @attributes="ControlAttributes(StilCss)" />
+    @WithAddons(Control)
 </StilField>
 
 @code {
+    private RenderFragment Control => @<InputText Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@BoundExpression"
+                                                 type="@Type" placeholder="@Placeholder"
+                                                 @attributes="ControlAttributes(StilCss)" />;
+
     /// <summary>The input type: text (default), email, password, search, tel or url.</summary>
     [Parameter]
     public string Type { get; set; } = "text";

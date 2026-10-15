@@ -2,7 +2,7 @@
 
 <StilField Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
     <label class="stil-check">
-        <InputCheckbox Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression"
+        <InputCheckbox Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@BoundExpression"
                        @attributes="Attributes" />
         @if (ChildContent is not null)
         {

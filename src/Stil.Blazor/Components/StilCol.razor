@@ -1,0 +1,37 @@
+@inherits StilComponentBase
+
+<div @attributes="AdditionalAttributes" class="@CssClass">
+    @ChildContent
+</div>
+
+@code {
+    /// <summary>Columns spanned out of 12 at every width. Without any span the cell is full width.</summary>
+    [Parameter]
+    public int? Span { get; set; }
+
+    /// <summary>Columns spanned from the sm breakpoint (576px) up.</summary>
+    [Parameter]
+    public int? SpanSm { get; set; }
+
+    /// <summary>Columns spanned from the md breakpoint (768px) up.</summary>
+    [Parameter]
+    public int? SpanMd { get; set; }
+
+    /// <summary>Columns spanned from the lg breakpoint (992px) up.</summary>
+    [Parameter]
+    public int? SpanLg { get; set; }
+
+    /// <summary>Columns spanned from the xl breakpoint (1200px) up.</summary>
+    [Parameter]
+    public int? SpanXl { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string CssClass => Classes(
+        Column(null, Span), Column("sm", SpanSm), Column("md", SpanMd), Column("lg", SpanLg), Column("xl", SpanXl));
+
+    private static string? Column(string? breakpoint, int? span) => span is { } value
+        ? $"stil-col{(breakpoint is null ? "" : "-" + breakpoint)}-{Math.Clamp(value, 1, 12)}"
+        : null;
+}

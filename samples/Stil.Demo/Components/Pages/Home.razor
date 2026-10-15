@@ -44,7 +44,7 @@
             <StilListItem Title="Order #1045" Description="Østerby Marine · 9 Oct 2026" Badge="Cancelled" BadgeVariant="StilVariant.Danger"
                           OnClick="@(() => Toasts.Info("You clicked order #1045."))" />
             <StilListItem Title="Anna Berg" Description="Administrator">
-                <Start><span class="stil-avatar stil-avatar-sm">AB</span></Start>
+                <Start><StilAvatar Name="Anna Berg" Size="StilSize.Small" /></Start>
                 <End>
                     <StilBadge Variant="StilVariant.Secondary" Subtle>Owner</StilBadge>
                     <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Ghost">Edit</StilButton>
@@ -105,6 +105,13 @@
                 <StilDatePicker @bind-Value="_signup.StartDate" Label="Start date" class="stil-col-md-4" />
             </div>
             <StilRadioGroup @bind-Value="_signup.Billing" Label="Billing" Inline />
+            <StilGrid>
+                <StilTextBox @bind-Value="_signup.Website" Label="Website" PrependText="https://" class="stil-col-md-6" />
+                <StilNumeric @bind-Value="_signup.Budget" Label="Monthly budget" AppendText="€" class="stil-col-md-6" />
+            </StilGrid>
+            <StilTextBox @bind-Value="_search" Label="Search with a button" Type="search">
+                <Append><StilButton Appearance="StilButtonAppearance.Outline" OnClick="@(() => Toasts.Info($"Searching for {_search}"))"><StilIcon Name="@StilIcons.Search" /> Search</StilButton></Append>
+            </StilTextBox>
             <StilTextArea @bind-Value="_signup.Notes" Label="Notes" Rows="2" />
             <StilSwitch @bind-Value="_signup.Newsletter" Label="Send me product updates" />
             <StilCheckbox @bind-Value="_signup.AcceptTerms" Label="I accept the terms" />
@@ -118,6 +125,11 @@
 
 <section class="demo-section" aria-labelledby="tabs">
     <h2 id="tabs">Tabs</h2>
+    <StilTabs @bind-ActiveId="_pillTab" Appearance="StilTabsAppearance.Pills" KeepAlive Label="Report period" class="stil-mb-4">
+        <StilTab Id="week" Title="Week"><StilTextBox @bind-Value="_note" Label="Note (kept when switching tabs)" /></StilTab>
+        <StilTab Id="month" Title="Month"><p>Selected: @_pillTab</p></StilTab>
+        <StilTab Id="year" Title="Year"><p>Selected: @_pillTab</p></StilTab>
+    </StilTabs>
     <StilTabs @bind-ActiveIndex="_tab" Label="Account settings">
         <StilTab Title="Profile"><p>Profile settings. Use the arrow keys to move between tabs.</p></StilTab>
         <StilTab Title="Notifications"><p>Choose what we email you about.</p></StilTab>
@@ -125,6 +137,117 @@
         <StilTab Title="Security"><p>Two-factor authentication is on.</p></StilTab>
     </StilTabs>
 </section>
+
+<section class="demo-section" aria-labelledby="data">
+    <h2 id="data">Tables, accordions and layout</h2>
+    <StilStack Gap="5">
+        <StilCard Title="Recent orders" HeadingLevel="3">
+            <HeaderActions>
+                <StilButtonGroup Label="View">
+                    <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Outline" Variant="StilVariant.Secondary" Pressed="!_compact" OnClick="() => _compact = false">Comfortable</StilButton>
+                    <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Outline" Variant="StilVariant.Secondary" Pressed="_compact" OnClick="() => _compact = true">Compact</StilButton>
+                </StilButtonGroup>
+            </HeaderActions>
+            <ChildContent>
+                <div class="stil-card-flush">
+                    <StilTable TItem="DemoOrder" Items="PagedOrders" Hover Compact="_compact" Caption="Click a row to open it"
+                               OnRowClick="@(order => Toasts.Info($"Order #{order.Id}: {order.Customer}"))">
+                        <Columns>
+                            <StilColumn Title="Order" Field="@(o => $"#{o.Id}")" />
+                            <StilColumn Title="Customer">
+                                <Template><StilCluster><StilAvatar Name="@context.Customer" Size="StilSize.Small" />@context.Customer</StilCluster></Template>
+                            </StilColumn>
+                            <StilColumn Title="Amount" Field="@(o => o.Amount)" Format="N2" Align="StilTextAlign.End" />
+                            <StilColumn Title="Status">
+                                <Template><StilBadge Variant="@(context.Status == "Paid" ? StilVariant.Success : StilVariant.Warning)">@context.Status</StilBadge></Template>
+                            </StilColumn>
+                        </Columns>
+                    </StilTable>
+                </div>
+            </ChildContent>
+            <Footer>
+                <StilPagination @bind-Page="_tablePage" TotalItems="_tableOrders.Length" PageSize="3" Size="StilSize.Small" />
+            </Footer>
+        </StilCard>
+
+        <StilAccordion>
+            <StilAccordionItem Title="How long does shipping take?" Open>Two to four working days within the Nordics.</StilAccordionItem>
+            <StilAccordionItem Title="Can I return an order?">Yes, within 30 days. Opening another item closes this one.</StilAccordionItem>
+            <StilAccordionItem Title="Do you ship abroad?">Within the EU, yes.</StilAccordionItem>
+        </StilAccordion>
+
+        <StilSidebarLayout SidebarLabel="Example sidebar">
+            <Sidebar>
+                <StilNav Vertical Pills Label="Example sections">
+                    <StilNavLink Href="" Match="NavLinkMatch.All">Overview</StilNavLink>
+                    <StilNavLink Href="settings">Settings</StilNavLink>
+                </StilNav>
+            </Sidebar>
+            <ChildContent>
+                <StilGrid Gap="3">
+                    @foreach (var (label, value) in _stats)
+                    {
+                        <StilCol Span="12" SpanSm="6" SpanLg="3">
+                            <StilCard><p class="stil-text-muted stil-fs-sm stil-mb-1">@label</p><p class="stil-fs-xl stil-mb-0">@value</p></StilCard>
+                        </StilCol>
+                    }
+                </StilGrid>
+            </ChildContent>
+        </StilSidebarLayout>
+    </StilStack>
+</section>
+
+<section class="demo-section" aria-labelledby="navigation">
+    <h2 id="navigation">Icons and navigation</h2>
+    <div class="stil-stack">
+        <div class="stil-cluster stil-gap-3 stil-fs-lg">
+            @foreach (var name in StilIcons.BuiltIn.Keys)
+            {
+                <StilTooltip Text="@name"><StilIcon Name="@name" Label="@name" /></StilTooltip>
+            }
+        </div>
+        <StilBreadcrumbs Items="_crumbs" />
+        <div class="stil-cluster stil-gap-4">
+            <StilPagination @bind-Page="_page" TotalItems="480" PageSize="20" />
+            <span class="stil-text-muted">Page @_page of 24</span>
+        </div>
+        <StilPagination @bind-Page="_page" PageCount="24" ShowFirstLast Size="StilSize.Small" MaxVisiblePages="9" />
+        <StilNav Pills Label="Example">
+            <StilNavLink Href="" Match="NavLinkMatch.All" Icon="@StilIcons.Home">Overview</StilNavLink>
+            <StilNavLink Href="orders" Icon="@StilIcons.Filter" Badge="4">Orders</StilNavLink>
+            <StilNavLink Href="reports" Icon="@StilIcons.Info">Reports</StilNavLink>
+        </StilNav>
+        <div class="stil-cluster">
+            <StilButton Appearance="StilButtonAppearance.Outline" OnClick="() => _drawerOpen = true">
+                <StilIcon Name="@StilIcons.Filter" /> Open drawer
+            </StilButton>
+            <StilButton Appearance="StilButtonAppearance.Outline" OnClick="() => _drawerEndOpen = true">
+                Drawer from the end <StilIcon Name="@StilIcons.ArrowRight" />
+            </StilButton>
+        </div>
+    </div>
+</section>
+
+<StilDrawer @bind-Open="_drawerOpen" Title="Filters">
+    <ChildContent>
+        <div class="stil-form">
+            <StilSelect @bind-Value="_drawerStatus" Label="Status" Items="_statuses" />
+            <StilSwitch @bind-Value="_drawerExpress" Label="Express only" />
+        </div>
+    </ChildContent>
+    <Footer>
+        <StilButton Appearance="StilButtonAppearance.Ghost" Variant="StilVariant.Secondary" OnClick="() => _drawerOpen = false">Cancel</StilButton>
+        <StilButton OnClick="() => _drawerOpen = false">Apply</StilButton>
+    </Footer>
+</StilDrawer>
+
+<StilDrawer @bind-Open="_drawerEndOpen" Title="Order #1043" Position="StilDrawerPosition.End" Width="26rem">
+    <StilList Flush>
+        <StilListItem Title="Customer" Description="Berglund Outdoor" />
+        <StilListItem Title="Amount" Description="2,078.90 €" />
+        <StilListItem Title="Status" Badge="Shipped" BadgeVariant="StilVariant.Info" />
+    </StilList>
+</StilDrawer>
 
 <section class="demo-section" aria-labelledby="menus">
     <h2 id="menus">Dropdowns and tooltips</h2>
@@ -137,6 +260,10 @@
             <StilDropdownDivider />
             <StilDropdownItem class="stil-text-danger" OnClick="DeleteDemoAsync">Delete…</StilDropdownItem>
         </StilDropdown>
+        <StilDropdown Text="@(_menuOpen ? "Open" : "Closed")" @bind-Open="_menuOpen" Items="_menuItems"
+                      Appearance="StilButtonAppearance.Outline" Variant="StilVariant.Secondary" />
+        <StilDropdown Text="Disabled" Disabled Appearance="StilButtonAppearance.Outline" Variant="StilVariant.Secondary" />
+        <StilCloseButton Label="Close the example" OnClick="@(() => Toasts.Info("Close button clicked."))" />
         <StilTooltip Text="Saves without leaving the page">
             <StilButton Variant="StilVariant.Secondary">Hover me</StilButton>
         </StilTooltip>
@@ -180,10 +307,48 @@
     private bool _saving;
     private bool _bold;
     private int _tab;
+    private string? _pillTab = "month";
+    private string? _note;
+    private bool _menuOpen;
+    private StilMenuItem[] _menuItems = [];
+
+    protected override void OnInitialized() => _menuItems =
+    [
+        StilMenuItem.Header("Data-driven menu"),
+        StilMenuItem.Action("Show a toast", () => Toasts.Info("Chosen from a StilMenuItem.")),
+        StilMenuItem.Link("Go to orders", "orders"),
+        StilMenuItem.Divider,
+        StilMenuItem.Action("Not available", () => { }, disabled: true),
+    ];
     private double _progress = 40;
     private bool _dialogOpen;
+    private bool _drawerOpen;
+    private bool _drawerEndOpen;
+    private int _page = 3;
+    private string _drawerStatus = "All";
+    private bool _drawerExpress;
+    private static readonly string[] _statuses = ["All", "Pending", "Shipped", "Delivered"];
+    private static readonly StilLinkItem[] _crumbs = [new("Home", ""), new("Orders", "orders"), new("Order #1043")];
     private string? _inviteEmail;
     private SignUp _signup = new();
+    private string? _search;
+    private bool _compact;
+    private int _tablePage = 1;
+    private static readonly (string Label, string Value)[] _stats = [("Revenue", "€84,210"), ("Orders", "1,326"), ("Customers", "87"), ("Returns", "1.8%")];
+    private static readonly DemoOrder[] _tableOrders =
+    [
+        new(1048, "Fjällbacka Café", 1240m, "Paid"),
+        new(1047, "Hallberg & Söner AB", 3895.5m, "Pending"),
+        new(1046, "Lindqvist Bygg", 612m, "Paid"),
+        new(1045, "Østerby Marine", 9120.75m, "Paid"),
+        new(1044, "Kallio Design Oy", 455.2m, "Pending"),
+        new(1043, "Berglund Outdoor", 2078.9m, "Paid"),
+        new(1042, "Nordvik Supply", 1499.5m, "Pending"),
+    ];
+
+    private IEnumerable<DemoOrder> PagedOrders => _tableOrders.Skip((_tablePage - 1) * 3).Take(3);
+
+    private sealed record DemoOrder(int Id, string Customer, decimal Amount, string Status);
 
     private async Task SaveAsync()
     {
@@ -239,6 +404,10 @@
         public Billing Billing { get; set; }
 
         public string? Notes { get; set; }
+
+        public string? Website { get; set; }
+
+        public decimal? Budget { get; set; }
 
         public bool Newsletter { get; set; } = true;
 

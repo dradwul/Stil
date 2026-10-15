@@ -1,0 +1,37 @@
+@inherits StilModalBase<StilDrawer>
+
+@* A panel that slides in from the side (offcanvas), for navigation on small screens, filters
+   or details. It is a native modal <dialog>, like StilDialog. *@
+<dialog @ref="Element" @attributes="AdditionalAttributes" class="@CssClass" aria-labelledby="@TitleId" style="@WidthStyle">
+    @if (Open)
+    {
+        <div class="stil-dialog-header">
+            <h2 class="stil-dialog-title" id="@TitleId">@Title</h2>
+            @if (ShowClose)
+            {
+                <button type="button" class="stil-close" aria-label="@CloseLabel" @onclick="CloseAsync"></button>
+            }
+        </div>
+        <div class="stil-dialog-body">
+            @ChildContent
+        </div>
+        @if (Footer is not null)
+        {
+            <div class="stil-dialog-footer">@Footer</div>
+        }
+    }
+</dialog>
+
+@code {
+    /// <summary>The side it slides in from: Start (default, left in left-to-right languages) or End.</summary>
+    [Parameter]
+    public StilDrawerPosition Position { get; set; }
+
+    /// <summary>A CSS width, for example "24rem". The default is 20rem.</summary>
+    [Parameter]
+    public string? Width { get; set; }
+
+    private string CssClass => Classes("stil-drawer", Position == StilDrawerPosition.End ? "stil-drawer-end" : null);
+
+    private string? WidthStyle => Width is null ? null : $"--stil-drawer-width: {Width}";
+}

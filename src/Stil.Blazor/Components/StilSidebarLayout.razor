@@ -1,0 +1,26 @@
+@inherits StilComponentBase
+
+@* A sidebar next to the main content from the lg breakpoint; stacked above it on smaller screens. *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-with-sidebar")" style="@WidthStyle">
+    <aside aria-label="@SidebarLabel">@Sidebar</aside>
+    <div>@ChildContent</div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? Sidebar { get; set; }
+
+    /// <summary>The main content.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>A CSS width, for example "18rem". The default is 16rem.</summary>
+    [Parameter]
+    public string? SidebarWidth { get; set; }
+
+    /// <summary>The accessible name of the sidebar landmark.</summary>
+    [Parameter]
+    public string? SidebarLabel { get; set; }
+
+    private string? WidthStyle => SidebarWidth is null ? null : $"--stil-sidebar-width: {SidebarWidth}";
+}

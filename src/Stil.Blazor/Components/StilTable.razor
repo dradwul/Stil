@@ -1,0 +1,123 @@
+@typeparam TItem
+@attribute [CascadingTypeParameter(nameof(TItem))]
+@inherits StilComponentBase
+
+<CascadingValue Value="this" IsFixed="true">
+    @Columns
+</CascadingValue>
+
+@if (Responsive)
+{
+    <div class="stil-table-responsive">@TableMarkup</div>
+}
+else
+{
+    @TableMarkup
+}
+
+@code {
+    private readonly List<StilColumn<TItem>> _columns = [];
+
+    /// <summary>The rows.</summary>
+    [Parameter]
+    public IEnumerable<TItem>? Items { get; set; }
+
+    /// <summary>StilColumn components describing the columns.</summary>
+    [Parameter]
+    public RenderFragment? Columns { get; set; }
+
+    /// <summary>A caption shown under the table, also its accessible name.</summary>
+    [Parameter]
+    public string? Caption { get; set; }
+
+    /// <summary>Shown in a single row when there are no items. The default is "No items".</summary>
+    [Parameter]
+    public RenderFragment? EmptyContent { get; set; }
+
+    [Parameter]
+    public bool Striped { get; set; }
+
+    [Parameter]
+    public bool Hover { get; set; }
+
+    [Parameter]
+    public bool Compact { get; set; }
+
+    [Parameter]
+    public bool Bordered { get; set; }
+
+    /// <summary>Scroll sideways on small screens instead of overflowing.</summary>
+    [Parameter]
+    public bool Responsive { get; set; } = true;
+
+    /// <summary>Raised when a row is clicked. The rows also get the hover style.</summary>
+    [Parameter]
+    public EventCallback<TItem> OnRowClick { get; set; }
+
+    /// <summary>Extra classes for a row, for example to highlight it.</summary>
+    [Parameter]
+    public Func<TItem, string?>? RowClass { get; set; }
+
+    internal void AddColumn(StilColumn<TItem> column)
+    {
+        if (!_columns.Contains(column))
+        {
+            _columns.Add(column);
+            StateHasChanged();
+        }
+    }
+
+    internal void RemoveColumn(StilColumn<TItem> column)
+    {
+        if (_columns.Remove(column))
+        {
+            StateHasChanged();
+        }
+    }
+
+    private string CssClass => Classes(
+        "stil-table",
+        Striped ? "stil-table-striped" : null,
+        Hover || OnRowClick.HasDelegate ? "stil-table-hover" : null,
+        Compact ? "stil-table-compact" : null,
+        Bordered ? "stil-table-bordered" : null);
+
+    private RenderFragment TableMarkup => @<table @attributes="AdditionalAttributes" class="@CssClass">
+        @if (!string.IsNullOrWhiteSpace(Caption))
+        {
+            <caption>@Caption</caption>
+        }
+        <thead>
+            <tr>
+                @foreach (var column in _columns)
+                {
+                    <th scope="col" class="@column.AlignClass">@column.Title</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (Items is null || !Items.Any())
+            {
+                <tr>
+                    <td colspan="@Math.Max(1, _columns.Count)" class="stil-text-muted">
+                        @(EmptyContent ?? (RenderFragment)(b => b.AddContent(0, "No items")))
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var item in Items)
+                {
+                    <tr @key="item" class="@RowClass?.Invoke(item)"
+                        style="@(OnRowClick.HasDelegate ? "cursor: pointer" : null)"
+                        @onclick="@(OnRowClick.HasDelegate ? () => OnRowClick.InvokeAsync(item) : null)">
+                        @foreach (var column in _columns)
+                        {
+                            <td class="@column.CellClass">@column.RenderCell(item)</td>
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>;
+}

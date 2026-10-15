@@ -1,0 +1,26 @@
+@inherits StilComponentBase
+
+<CascadingValue Value="this" IsFixed="true">
+    <div @attributes="AdditionalAttributes" class="@Classes("stil-accordion", Flush ? "stil-accordion-flush" : null)">
+        @ChildContent
+    </div>
+</CascadingValue>
+
+@code {
+    /// <summary>
+    /// Allow several items to be open at once. By default opening one closes the others; the
+    /// browser does this through the details name attribute, so it also works without interactivity.
+    /// </summary>
+    [Parameter]
+    public bool Multiple { get; set; }
+
+    /// <summary>No outer border or radius, for an accordion inside a card.</summary>
+    [Parameter]
+    public bool Flush { get; set; }
+
+    /// <summary>StilAccordionItem components.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    internal string GroupName { get; } = StilIds.Next("accordion");
+}

@@ -2,8 +2,8 @@
 
 Stil for Blazor is a set of themeable Blazor components built on
 [Stil CSS](https://github.com/dradwul/StilCSS/tree/main/src/Stil.Css). It
-includes buttons, form fields with validation, lists, cards, alerts, tabs,
-dropdowns, dialogs and toasts. Every component renders plain HTML with
+includes buttons, icons, form fields with validation, lists, tables, cards,
+alerts, navigation, tabs, dropdowns, accordions, dialogs, drawers and toasts. Every component renders plain HTML with
 `stil-*` classes. You can mix the components with hand-written Stil markup,
 and theme both with the same `--stil-*` tokens.
 
@@ -62,7 +62,7 @@ dismissing alerts on statically rendered pages. You do not need to add a
 
 | Works in static SSR | Needs an interactive render mode (Server, WebAssembly or Auto) |
 | --- | --- |
-| Button (links and submit), Badge, Card, Container, Heading, List, ListItem (as a link), Progress, Spinner, Tooltip, ThemeProvider, Head, form fields inside an enhanced `EditForm`, Dropdown, dismissible Alert | Button `OnClick`, ListItem `OnClick`, Tabs switching, Dialog, DialogService, ToastService |
+| Button (links and submit), Badge, Card, Container, Heading, Icon, List, ListItem (as a link), Avatar, Table, Breadcrumbs, Pagination with `HrefTemplate`, Nav, NavLink, Navbar (the menu button works through stil.js), Accordion, the layout components, Progress, Spinner, Tooltip, ThemeProvider, Head, form fields inside an enhanced `EditForm`, Dropdown, dismissible Alert | Button `OnClick`, ListItem `OnClick`, Table `OnRowClick`, Pagination with buttons, Tabs switching, `@bind-Open` on Dropdown and AccordionItem, Dialog, Drawer, DialogService, ToastService |
 
 ## Components
 
@@ -71,6 +71,28 @@ The color components share the `StilVariant` enum: `Primary`, `Secondary`,
 `Small` and `Large`. Every component passes extra HTML attributes to its root
 element. A `class` you supply is added to the component's own classes and
 never replaces them.
+
+### Icons
+
+```razor
+<StilIcon Name="@StilIcons.Search" />                   @* decorative, aria-hidden *@
+<StilIcon Name="@StilIcons.Warning" Label="Warning" Size="24px" />
+<StilButton><StilIcon Name="@StilIcons.Plus" /> New order</StilButton>
+```
+
+`StilIcon` draws Stil's built-in icons as inline SVG in the current text
+color. They are 1em in size, so they follow the text unless `Size` is set.
+`StilIcons` lists the names. To use another icon set, register a provider;
+names it does not know fall back to the built-in icons:
+
+```csharp
+// Material Symbols (Apache 2.0): load its stylesheet in App.razor, then
+builder.Services.AddStil(o => o.IconProvider = new StilLigatureIconProvider("material-symbols-outlined"));
+// <StilIcon Name="shopping_cart" />
+```
+
+Implement `IStilIconProvider` for SVG sprites or other sets, or put any
+markup inside `<StilIcon>…</StilIcon>`.
 
 ### Buttons and badges
 
@@ -86,6 +108,8 @@ never replaces them.
 | --- | --- |
 | `StilButton` | `Variant`, `Appearance` (Solid, Outline, Ghost), `Size`, `Type` (default "button"), `Disabled`, `Loading` (spinner, ignores clicks), `Pressed` (toggle, aria-pressed), `IconOnly`, `Href`/`Target` (renders a link), `OnClick` |
 | `StilBadge` | `Variant`, `Subtle` |
+| `StilButtonGroup` | `Label`. Joins its buttons into one control (`role="group"`). |
+| `StilCloseButton` | `Label` (default "Close"), `OnClick` |
 
 ### Lists
 
@@ -129,6 +153,48 @@ A row with `Href` becomes a link, and one with `OnClick` becomes a button.
 | `StilAlert` | `Variant` (default Info), `Subtle`, `Title`, `Dismissible`, `OnDismiss`, `Role`. Danger and Warning use `role="alert"`; the others use `"status"`. |
 | `StilContainer` | `Fluid` |
 | `StilHeading` | `Level` (1–6) |
+| `StilAvatar` | `Name` (accessible name and initials), `ImageSrc`, `Size` |
+| `StilAccordion` | `Multiple` (allow several open; by default one at a time, without JavaScript), `Flush` |
+| `StilAccordionItem` | `Title` or `Header`, `@bind-Open` |
+| `StilGrid` / `StilCol` | `Gap` (0–7) / `Span`, `SpanSm`, `SpanMd`, `SpanLg`, `SpanXl` (1–12) |
+| `StilStack`, `StilCluster` | `Gap` (0–7), `Align`; `StilCluster` also `Justify` |
+| `StilSidebarLayout` | `Sidebar`, `SidebarWidth`, `SidebarLabel`. The sidebar sits beside the content from the lg breakpoint. |
+
+```razor
+<StilGrid>
+    <StilCol SpanMd="8">Main</StilCol>
+    <StilCol SpanMd="4">Aside</StilCol>
+</StilGrid>
+
+<StilAccordion>
+    <StilAccordionItem Title="How long does shipping take?" Open>Two to four days.</StilAccordionItem>
+    <StilAccordionItem Title="Can I return an order?">Within 30 days.</StilAccordionItem>
+</StilAccordion>
+```
+
+### Tables
+
+```razor
+<StilTable Items="orders" Hover Caption="Recent orders" OnRowClick="Open">
+    <Columns>
+        <StilColumn Title="Order" Field="@(o => $"#{o.Id}")" />
+        <StilColumn Title="Customer" Field="@(o => o.Customer)" />
+        <StilColumn Title="Amount" Field="@(o => o.Amount)" Format="N2" Align="StilTextAlign.End" />
+        <StilColumn Title="Status">
+            <Template><StilBadge Variant="StilVariant.Success">@context.Status</StilBadge></Template>
+        </StilColumn>
+    </Columns>
+</StilTable>
+```
+
+| Component | Parameters |
+| --- | --- |
+| `StilTable<TItem>` | `Items`, `Columns`, `Caption`, `EmptyContent`, `Striped`, `Hover`, `Compact`, `Bordered`, `Responsive` (default true), `OnRowClick`, `RowClass` |
+| `StilColumn<TItem>` | `Title`, `Field` (with `Format`) or `Template`, `Align`, `Class` |
+
+The table is a lightweight display component. Sorting, filtering and
+server-side data are planned for `StilDataGrid`. Combine it with
+`StilPagination` for paging.
 
 ### Forms
 
@@ -164,6 +230,19 @@ automatically; fields also work without one.
 | `StilRadioGroup<TValue>` | any | `Items`, `ItemText`, `Inline`. Enums need no items. |
 | `StilCheckbox`, `StilSwitch` | `bool` | Rich label as child content |
 
+`StilTextBox`, `StilNumeric`, `StilSelect` and `StilDatePicker` can have add-ons
+joined to the control: `PrependText`/`AppendText` for text such as
+`https://` or `€`, or `Prepend`/`Append` for content such as a button:
+
+```razor
+<StilNumeric @bind-Value="price" Label="Price" AppendText="€" />
+<StilTextBox @bind-Value="query" Label="Search">
+    <Append><StilButton OnClick="Search">Search</StilButton></Append>
+</StilTextBox>
+```
+
+Fields also work without `@bind-Value`, with `Value` plus `ValueChanged`.
+
 All fields share `Label`, `Hint`, `Id` (generated if not set), `Disabled` and
 `InputClass` (classes on the control).
 
@@ -173,6 +252,32 @@ such as `placeholder`, `autocomplete` and `aria-label`, go on the control.
 
 `StilField` is the wrapper the fields use. Use it to give a custom control
 the same label, hint and error layout.
+
+### Navigation
+
+```razor
+<StilNavbar Sticky CollapseBelow="StilBreakpoint.Medium" BrandText="Nordvik">
+    <ChildContent>
+        <StilNav Label="Main">
+            <StilNavLink Href="" Match="NavLinkMatch.All" Icon="@StilIcons.Home">Dashboard</StilNavLink>
+            <StilNavLink Href="orders" Badge="12">Orders</StilNavLink>
+        </StilNav>
+    </ChildContent>
+    <End><StilButton Size="StilSize.Small">Sign in</StilButton></End>
+</StilNavbar>
+
+<StilBreadcrumbs Items="@([new("Home", "/"), new("Orders", "orders"), new("#1043")])" />
+<StilPagination @bind-Page="page" TotalItems="480" PageSize="20" />
+```
+
+| Component | Parameters |
+| --- | --- |
+| `StilNavbar` | `Brand` or `BrandText`/`BrandHref`, `ChildContent`, `End`, `CollapseBelow` (a menu button below that breakpoint; it closes after navigating), `Sticky`, `Variant`, `ToggleLabel` |
+| `StilNav` | `Items` or `StilNavLink` children, `Vertical`, `Pills`, `Label` |
+| `StilNavLink` | `Href`, `Match`, `Icon`, `Badge`/`BadgeVariant`. Wraps Blazor's `NavLink`, so `aria-current` follows the route. |
+| `StilBreadcrumbs` | `Items` (`StilLinkItem`: Text, Href) or `StilBreadcrumbItem` children (`Text`, `Href`, `Current`), `Label`. The last item is the current page. |
+| `StilPagination` | `@bind-Page` (1-based), `PageCount` or `TotalItems` + `PageSize`, `MaxVisiblePages` (default 7, with ellipses), `ShowFirstLast`, `HrefTemplate` (links, for example `"orders?page={0}"`), `Size`, `Label`, `PreviousText`/`NextText`/`FirstText`/`LastText` |
+| `StilDrawer` | Like `StilDialog` (`@bind-Open`, `Title`, `Footer`, …) plus `Position` (Start, End) and `Width`. A side panel for navigation, filters or details. |
 
 ### Tabs, dropdowns and tooltips
 
@@ -194,9 +299,9 @@ the same label, hint and error layout.
 
 | Component | Parameters |
 | --- | --- |
-| `StilTabs` | `ActiveIndex` (two-way), `Label`. Arrow keys, Home and End move between tabs; disabled tabs are skipped. |
-| `StilTab` | `Title`, `Disabled`. Only the selected tab's content is rendered. |
-| `StilDropdown` | `Text` or `Toggle`, `AriaLabel`, `Variant`, `Appearance`, `Size`, `IconOnly`, `AlignEnd` |
+| `StilTabs` | `@bind-ActiveIndex`, or `@bind-ActiveId` with `Id` on each tab; `Appearance` (Underline, Pills); `KeepAlive` (keep inactive panels rendered); `Label`. Arrow keys, Home and End move between tabs; disabled tabs are skipped. |
+| `StilTab` | `Title`, `Id`, `Disabled`. Only the selected tab's content is rendered, unless `KeepAlive` is set. For navigation between pages, use `StilNav` instead of tabs. |
+| `StilDropdown` | `Text` or `Toggle`, `AriaLabel`, `Variant`, `Appearance`, `Size`, `IconOnly`, `AlignEnd`, `DropUp`, `Disabled`, `@bind-Open`, `Items` (`StilMenuItem.Action`, `.Link`, `.Header`, `.Divider`). The arrow keys move between items. |
 | `StilDropdownItem` | `Href` or `OnClick`, `Disabled` |
 | `StilTooltip` | `Text`, `Position` (Top, Bottom). Screen readers do not read it, so the wrapped element needs its own accessible name. |
 
@@ -260,6 +365,33 @@ Toasts.Show("Saved", duration: TimeSpan.Zero);   // stays until closed
 
 Toasts close after `StilOptions.DefaultToastDuration` (5 seconds). Danger and
 Warning toasts use `role="alert"`; the others use `"status"`.
+
+## Stil CSS and the matching components
+
+| Stil CSS | Blazor component |
+| --- | --- |
+| `stil-container`, `stil-grid`/`stil-col-*`, `stil-stack`, `stil-cluster`, `stil-with-sidebar` | `StilContainer`, `StilGrid`/`StilCol`, `StilStack`, `StilCluster`, `StilSidebarLayout` |
+| `stil-btn`, `stil-btn-group`, `stil-close` | `StilButton`, `StilButtonGroup`, `StilCloseButton` |
+| `stil-icon` | `StilIcon` |
+| `stil-form`, `stil-field`, `stil-input`, `stil-select`, `stil-check`, `stil-switch`, `stil-input-group` | An `EditForm` with `StilTextBox`, `StilTextArea`, `StilNumeric`, `StilDatePicker`, `StilSelect`, `StilCheckbox`, `StilSwitch`, `StilRadioGroup`, `StilField`, and `Prepend`/`Append` |
+| `stil-card` | `StilCard` |
+| `stil-alert` | `StilAlert` |
+| `stil-badge`, `stil-avatar` | `StilBadge`, `StilAvatar` |
+| `stil-list`, `stil-list-item` | `StilList`, `StilListItem` |
+| `stil-table` | `StilTable` with `StilColumn` |
+| `stil-accordion` | `StilAccordion` with `StilAccordionItem` |
+| `stil-nav`, `stil-navbar` | `StilNav`/`StilNavLink`, `StilNavbar` |
+| `stil-breadcrumb`, `stil-pagination` | `StilBreadcrumbs`, `StilPagination` |
+| `stil-tabs` | `StilTabs` with `StilTab` |
+| `stil-dropdown` | `StilDropdown` with `StilDropdownItem`, `StilDropdownHeader` and `StilDropdownDivider`, or `Items` |
+| `data-stil-tooltip` | `StilTooltip` |
+| `stil-dialog`, `stil-drawer` | `StilDialog` and `IStilDialogService`, `StilDrawer` |
+| `stil-toast` | `IStilToastService` with `StilToastHost` |
+| `stil-progress`, `stil-spinner` | `StilProgress`, `StilSpinner` |
+| `data-stil-theme`, `--stil-*` tokens | `StilThemeProvider`, `StilTheme`, `StilHead` |
+
+Utility classes (`stil-mt-4`, `stil-d-flex`, …) have no components. Use them
+as `class` on any component.
 
 ## Theming
 

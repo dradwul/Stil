@@ -3,20 +3,22 @@
 @* The whole app is themed with StilThemeProvider. The dialog and toast hosts are inside it, so
    dialogs and toasts follow the selected mode and palette. *@
 <StilThemeProvider Mode="_mode" Theme="Palettes[_palette]" class="demo-shell">
-    <header class="stil-navbar stil-sticky-top">
-        <a class="stil-navbar-brand" href="">
+    <StilNavbar Sticky CollapseBelow="StilBreakpoint.Medium">
+        <Brand>
             <img src="stil-logo.svg" alt="" width="64" height="31" />
             Stil for Blazor
-        </a>
-        <nav class="stil-nav" aria-label="Main">
-            <NavLink class="stil-nav-link" href="" Match="NavLinkMatch.All">Components</NavLink>
-            <NavLink class="stil-nav-link" href="orders">Orders (CRUD)</NavLink>
-        </nav>
-        <div class="stil-navbar-end">
+        </Brand>
+        <ChildContent>
+            <StilNav Label="Main">
+                <StilNavLink Href="" Match="NavLinkMatch.All" Icon="@StilIcons.Home">Components</StilNavLink>
+                <StilNavLink Href="orders" Badge="CRUD">Orders</StilNavLink>
+            </StilNav>
+        </ChildContent>
+        <End>
             <StilSelect @bind-Value="_mode" Size="StilSize.Small" aria-label="Color mode" />
             <StilSelect @bind-Value="_palette" Items="Palettes.Keys" Size="StilSize.Small" aria-label="Palette" />
-        </div>
-    </header>
+        </End>
+    </StilNavbar>
 
     <main class="stil-container stil-py-5">
         @Body

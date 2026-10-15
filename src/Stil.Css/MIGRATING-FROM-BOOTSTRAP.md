@@ -81,6 +81,11 @@ Breakpoints are the same as Bootstrap's: `sm` 576px, `md` 768px, `lg` 992px,
 | `nav-tabs` | `stil-tabs` with `stil-tab` (`role="tab"`, `aria-selected`) |
 | `navbar`, `navbar-brand`, `navbar-nav` | `stil-navbar`, `stil-navbar-brand`, `stil-nav` |
 | `ms-auto` group in a navbar | `stil-navbar-end` |
+| `navbar-expand-md`, `navbar-toggler`, `navbar-collapse` | `stil-navbar-expand-md`, `stil-navbar-toggle` (with `data-stil-toggle`), `stil-navbar-collapse` |
+| `offcanvas`, `offcanvas-end` | `<dialog class="stil-drawer">`, `stil-drawer-end` |
+| `accordion`, `accordion-item`, `accordion-button`, `accordion-body` | `stil-accordion`, `<details class="stil-accordion-item">`, `<summary class="stil-accordion-header">`, `stil-accordion-body` (`name` attribute instead of `data-bs-parent`) |
+| `nav-pills` on tabs | `stil-tabs-pills` |
+| `dropup` | `stil-dropdown-menu-up` |
 | `breadcrumb`, `breadcrumb-item`, `active` | `stil-breadcrumb`, a plain `<li>`, `aria-current="page"` |
 | `pagination`, `page-item`, `page-link` | `stil-pagination`, a plain `<li>`, `stil-page-link` |
 | `pagination-sm` | `stil-pagination-sm` |
@@ -136,8 +141,7 @@ Utilities keep Bootstrap's names, with responsive infixes in the same place:
 
 ## Not in Stil (yet)
 
-Carousel, accordion (a `<details>` element works in the meantime), offcanvas,
-collapse and the navbar toggler, placeholders, ratio helpers,
-floating labels, popovers and scrollspy. Bootstrap Icons can be used
-alongside Stil. Some of these are planned for the Blazor components. See the
+Carousel, a generic collapse, placeholders, ratio helpers,
+floating labels, popovers and scrollspy. Stil has about 25 built-in icons
+(`stil-icon-*`); Bootstrap Icons can be used alongside them. Some of these are planned for the Blazor components. See the
 [roadmap](../../ROADMAP.md).

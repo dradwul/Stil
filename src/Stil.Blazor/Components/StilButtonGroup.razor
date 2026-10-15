@@ -1,0 +1,15 @@
+@inherits StilComponentBase
+
+<div role="group" aria-label="@Label" @attributes="AdditionalAttributes" class="@Classes("stil-btn-group")">
+    @ChildContent
+</div>
+
+@code {
+    /// <summary>The accessible name of the group, for example "Text alignment".</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>StilButton components, joined into one control.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

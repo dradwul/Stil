@@ -43,6 +43,41 @@ internal static class StilCssClasses
         _ => null
     };
 
+    /// <summary>The breakpoint infix used in class names: sm, md, lg or xl.</summary>
+    public static string Breakpoint(StilBreakpoint breakpoint) => breakpoint switch
+    {
+        StilBreakpoint.Small => "sm",
+        StilBreakpoint.Medium => "md",
+        StilBreakpoint.ExtraLarge => "xl",
+        _ => "lg"
+    };
+
+    /// <summary>A stil-gap-{n} class for a spacing step from 0 to 7, or null.</summary>
+    public static string? Gap(int? gap) => gap is { } value
+        ? $"stil-gap-{Math.Clamp(value, 0, 7).ToString(System.Globalization.CultureInfo.InvariantCulture)}"
+        : null;
+
+    public static string? Justify(StilJustify? justify) => justify switch
+    {
+        null => null,
+        StilJustify.Between => "stil-justify-content-between",
+        StilJustify.Around => "stil-justify-content-around",
+        StilJustify.Evenly => "stil-justify-content-evenly",
+        StilJustify.Center => "stil-justify-content-center",
+        StilJustify.End => "stil-justify-content-end",
+        _ => "stil-justify-content-start"
+    };
+
+    public static string? Align(StilAlign? align) => align switch
+    {
+        null => null,
+        StilAlign.Center => "stil-align-items-center",
+        StilAlign.End => "stil-align-items-end",
+        StilAlign.Baseline => "stil-align-items-baseline",
+        StilAlign.Stretch => "stil-align-items-stretch",
+        _ => "stil-align-items-start"
+    };
+
     public static string ThemeMode(StilThemeMode mode) => mode switch
     {
         StilThemeMode.Dark => "dark",

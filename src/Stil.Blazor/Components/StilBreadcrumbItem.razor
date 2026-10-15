@@ -1,0 +1,31 @@
+@inherits StilComponentBase
+
+<li @attributes="AdditionalAttributes" class="@ClassValue">
+    @if (Current || Href is null)
+    {
+        <span aria-current="@(Current ? "page" : null)">@(ChildContent ?? (RenderFragment)(b => b.AddContent(0, Text)))</span>
+    }
+    else
+    {
+        <a href="@Href">@(ChildContent ?? (RenderFragment)(b => b.AddContent(0, Text)))</a>
+    }
+</li>
+
+@code {
+    [Parameter]
+    public string? Text { get; set; }
+
+    /// <summary>The link target. The current item is never a link.</summary>
+    [Parameter]
+    public string? Href { get; set; }
+
+    /// <summary>Marks the current page (aria-current="page"). Usually the last item.</summary>
+    [Parameter]
+    public bool Current { get; set; }
+
+    /// <summary>Rich content (for example an icon and text) instead of Text.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string? ClassValue => AdditionalAttributes?.TryGetValue("class", out var value) == true ? value?.ToString() : null;
+}

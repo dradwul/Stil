@@ -1,0 +1,36 @@
+@inherits StilComponentBase
+
+<nav aria-label="@Label" @attributes="AdditionalAttributes" class="@CssClass">
+    @if (Items is not null)
+    {
+        @foreach (var item in Items)
+        {
+            <StilNavLink Href="@(item.Href ?? "")">@item.Text</StilNavLink>
+        }
+    }
+    @ChildContent
+</nav>
+
+@code {
+    /// <summary>Links as data, as an alternative to StilNavLink components.</summary>
+    [Parameter]
+    public IEnumerable<StilLinkItem>? Items { get; set; }
+
+    /// <summary>StilNavLink components.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Stack the links in a column, for a sidebar.</summary>
+    [Parameter]
+    public bool Vertical { get; set; }
+
+    /// <summary>Fill the current link with the accent color.</summary>
+    [Parameter]
+    public bool Pills { get; set; }
+
+    /// <summary>The accessible name of the navigation landmark, for example "Main".</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    private string CssClass => Classes("stil-nav", Vertical ? "stil-nav-vertical" : null, Pills ? "stil-nav-pills" : null);
+}

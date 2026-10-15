@@ -1,0 +1,49 @@
+@inherits StilComponentBase
+@inject IServiceProvider Services
+
+@* Built-in icons render as inline SVG in the current text color, 1em in size. Icons from a
+   registered provider, or child content, render inside a span with the same sizing. *@
+@if (ChildContent is not null || ProviderIcon is not null)
+{
+    <span @attributes="AdditionalAttributes" class="@Classes("stil-icon-slot")" style="@SizeStyle"
+          role="@Role" aria-label="@Label" aria-hidden="@Hidden">@(ChildContent ?? ProviderIcon)</span>
+}
+else if (BuiltInMarkup is { } markup)
+{
+    <svg @attributes="AdditionalAttributes" class="@Classes("stil-icon")" style="@SizeStyle" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+         role="@Role" aria-label="@Label" aria-hidden="@Hidden" focusable="false">@((MarkupString)markup)</svg>
+}
+
+@code {
+    /// <summary>The icon name: a built-in one (see <see cref="StilIcons"/>) or one from the registered provider.</summary>
+    [Parameter]
+    public string? Name { get; set; }
+
+    /// <summary>A CSS length, for example "24px" or "1.5em". The default is 1em (the text size).</summary>
+    [Parameter]
+    public string? Size { get; set; }
+
+    /// <summary>
+    /// The accessible name. Without it the icon is decorative (aria-hidden), which is right when
+    /// it sits next to text or inside a button that has its own label.
+    /// </summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>Any icon markup (for example an SVG) instead of Name.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private RenderFragment? ProviderIcon =>
+        Name is not null && Services.GetService(typeof(StilOptions)) is StilOptions { IconProvider: { } provider } ? provider.GetIcon(Name) : null;
+
+    private string? BuiltInMarkup =>
+        Name is not null && StilIcons.BuiltIn.TryGetValue(Name, out var markup) ? markup : null;
+
+    private string? Role => Label is null ? null : "img";
+
+    private string? Hidden => Label is null ? "true" : null;
+
+    private string? SizeStyle => Size is null ? null : $"font-size: {Size}";
+}

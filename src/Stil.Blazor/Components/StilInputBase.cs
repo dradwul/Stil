@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Stil.Blazor.Components;
 
@@ -62,7 +63,66 @@ public abstract class StilInputBase<TValue> : ComponentBase, IDisposable
     /// <summary>The consumer's <c>style</c> attribute, applied to the field wrapper.</summary>
     protected string? FieldStyle => AdditionalAttributes?.TryGetValue("style", out var value) == true ? value?.ToString() : null;
 
+    /// <summary>Text joined to the start of the control, for example "https://" or a currency.</summary>
+    [Parameter]
+    public string? PrependText { get; set; }
+
+    /// <summary>Text joined to the end of the control, for example "kg" or "@example.com".</summary>
+    [Parameter]
+    public string? AppendText { get; set; }
+
+    /// <summary>Content joined to the start of the control, for example a StilButton.</summary>
+    [Parameter]
+    public RenderFragment? Prepend { get; set; }
+
+    /// <summary>Content joined to the end of the control, for example a search StilButton.</summary>
+    [Parameter]
+    public RenderFragment? Append { get; set; }
+
     protected EditContext? EditContext => CascadedEditContext;
+
+    /// <summary>
+    /// The expression passed to Blazor's inner input. Blazor's inputs require one, so without
+    /// @bind-Value (for example Value plus ValueChanged) an expression for this component's Value is used.
+    /// </summary>
+    protected Expression<Func<TValue?>> BoundExpression => ValueExpression ?? (() => Value);
+
+    /// <summary>
+    /// Wraps the control in a stil-input-group with the prepend and append content, or returns it
+    /// unchanged when there is none. Used by the text-like fields.
+    /// </summary>
+    protected RenderFragment WithAddons(RenderFragment control) => builder =>
+    {
+        var hasStart = Prepend is not null || !string.IsNullOrWhiteSpace(PrependText);
+        var hasEnd = Append is not null || !string.IsNullOrWhiteSpace(AppendText);
+        if (!hasStart && !hasEnd)
+        {
+            builder.AddContent(0, control);
+            return;
+        }
+
+        builder.OpenElement(1, "div");
+        builder.AddAttribute(2, "class", "stil-input-group");
+        AddAddon(builder, 3, Prepend, PrependText);
+        builder.AddContent(10, control);
+        AddAddon(builder, 11, Append, AppendText);
+        builder.CloseElement();
+    };
+
+    private static void AddAddon(RenderTreeBuilder builder, int sequence, RenderFragment? content, string? text)
+    {
+        if (content is not null)
+        {
+            builder.AddContent(sequence, content);
+        }
+        else if (!string.IsNullOrWhiteSpace(text))
+        {
+            builder.OpenElement(sequence + 1, "span");
+            builder.AddAttribute(sequence + 2, "class", "stil-input-group-text");
+            builder.AddContent(sequence + 3, text);
+            builder.CloseElement();
+        }
+    }
 
     protected string InputId => Id ?? _generatedId;
 
