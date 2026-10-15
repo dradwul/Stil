@@ -217,7 +217,24 @@ below are proposals and are settled when each component is built.
 | Component | Proposed parameters | Notes |
 | --- | --- | --- |
 | `StilDrawer` (offcanvas) | `@bind-Open`, `Position` (Start, End), `Title`, `Footer` | A native `<dialog>`, like `StilDialog`. Needs `stil-drawer` CSS. It also solves the mobile sidebar. |
-| `StilIcon` | `Name`, `Size`, `Label` (otherwise `aria-hidden`) | First decide the icon strategy: a small built-in SVG set for Stil's own needs, plus a way to plug in any icon set (sprite, font or `RenderFragment`). |
+| `StilIcon` | `Name`, `Size`, `Label` (otherwise `aria-hidden`) | Icon strategy (decided 2026-10-15): a built-in set below, plus any icon set the app plugs in. |
+
+### Icon strategy (decided 2026-10-15)
+
+- **Built-in set:** about 20 icons drawn by Stil, MIT-licensed like the rest
+  of the project.
+  - Inline SVG on a 24 × 24 grid with a 2px round stroke in `currentColor`,
+    so the icons follow themes and dark mode.
+  - Stil's own components use them (chevrons, close, menu, check,
+    plus/minus, search, more, info/success/warning/danger, external link).
+  - No icon font, no external dependency, no third-party license to ship.
+- **Plug in any set:** `StilIcon` also renders icons from other sets, through
+  a registered `IStilIconProvider` (`AddStil(o => o.Icons = …)`) or a
+  `RenderFragment`. Material Symbols (Apache 2.0), Lucide (ISC), Bootstrap
+  Icons (MIT) and Heroicons (MIT) all allow commercial use. The app brings
+  the set it wants, along with that set's license.
+- **Plain CSS:** the same SVGs are available as `stil-icon-*` CSS mask
+  classes, so plain-HTML users get them too.
 
 ### Done when
 
