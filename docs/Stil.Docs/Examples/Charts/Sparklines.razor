@@ -1,0 +1,20 @@
+<StilGrid Gap="3">
+    <StilCol Span="12" SpanMd="6">
+        <StilStatCard Label="Orders" Value="1,284" Trend="+3%" TrendDirection="StilTrendDirection.Up" Description="vs last month">
+            <StilSparkline Values="_orders" Label="Orders per week, last 12 weeks" Format="N0" class="stil-mt-3" />
+        </StilStatCard>
+    </StilCol>
+    <StilCol Span="12" SpanMd="6">
+        <StilStatCard Label="Response time" Value="212 ms" Trend="-8%" TrendDirection="StilTrendDirection.Down"
+                      TrendVariant="StilVariant.Success" Description="vs last week">
+            <StilSparkline Values="_latency" Area Color="var(--stil-color-success)" Height="40" class="stil-mt-3" />
+        </StilStatCard>
+    </StilCol>
+</StilGrid>
+
+@code {
+    private static readonly double[] _orders = [92, 104, 99, 118, 121, 109, 130, 127, 141, 138, 152, 160];
+
+    // Decorative: the card already says the value and the trend in words.
+    private static readonly double[] _latency = [260, 248, 251, 239, 244, 231, 226, 230, 219, 215, 214, 212];
+}

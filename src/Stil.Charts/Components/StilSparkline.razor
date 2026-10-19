@@ -84,6 +84,11 @@
                 return Label;
             }
 
+            if (_values.Count == 1)
+            {
+                return $"{Label}: {V(_values[0])}.";
+            }
+
             return $"{Label}: {_values.Count} values from {V(_values[0])} to {V(_values[^1])}, lowest {V(_values.Min())}, highest {V(_values.Max())}.";
         }
     }

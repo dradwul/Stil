@@ -55,8 +55,10 @@ public class StilDataGridTests
 
         var rows = cut.FindAll("tbody tr");
         Assert.Equal(10, rows.Count);
-        Assert.Equal(["1001", "Berglund Outdoor", "Shipped", "False", "100.00", "Edit 1001"],
+        // Bool cells use TrueText and FalseText, like the filter.
+        Assert.Equal(["1001", "Berglund Outdoor", "Shipped", "No", "100.00", "Edit 1001"],
             rows[0].QuerySelectorAll("td").Select(td => td.TextContent));
+        Assert.Equal("Yes", rows[1].QuerySelectorAll("td")[3].TextContent);
         Assert.Contains("stil-text-end", rows[0].QuerySelectorAll("td")[4].ClassList);
         Assert.Equal("1–10 of 25", cut.Find(".stil-data-grid-footer span").TextContent);
         Assert.Equal(3, cut.FindAll(".stil-pagination .stil-page-link").Count(link => int.TryParse(link.TextContent, out _)));
@@ -219,7 +221,7 @@ public class StilDataGridTests
 
         Assert.Equal(4, cut.Instance.Grid.TotalCount);
         Assert.All(Column(cut, 2), status => Assert.Equal("Shipped", status));
-        Assert.All(Column(cut, 3), paid => Assert.Equal("True", paid));
+        Assert.All(Column(cut, 3), paid => Assert.Equal("Yes", paid));
     }
 
     [Fact]

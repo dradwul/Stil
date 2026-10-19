@@ -7,15 +7,9 @@ a set of themeable Blazor components built on Stil CSS.
 | --- | --- | --- |
 | Stil for Blazor App | `stil-app` | A Blazor Web App with Stil set up: a navbar, a color-mode switch, a theme, dialogs and toasts, and optional sample pages. |
 
-> **Status:** early preview (`0.1.0`, not yet on NuGet). Requires the .NET 10 SDK.
+> **Status:** early preview (`0.1.0`, not on NuGet). Requires the .NET 10 SDK.
 
 ## Install
-
-From NuGet (once the package is published):
-
-```shell
-dotnet new install Stil.Templates
-```
 
 From a clone of the repository:
 
@@ -40,7 +34,7 @@ cd Contoso.Shop
 dotnet run
 ```
 
-The app references the `Stil` NuGet package. Until it is on NuGet, pack
+The app references the `Stil` package, which is not on nuget.org. Pack
 `src/Stil.Blazor` into a local folder and add that folder as a package source:
 
 ```shell

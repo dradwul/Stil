@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/template",
-  "author": "Stil contributors",
+  "author": "Ludvig Andersson",
   "classifications": [ "Web", "Blazor" ],
   "identity": "Stil.Templates.StilApp",
   "groupIdentity": "Stil.Templates.StilApp",

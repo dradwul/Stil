@@ -1,0 +1,22 @@
+@inject IStilDialogService Dialogs
+
+<StilCluster>
+    <span>Project: <strong>@_name</strong></span>
+    <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Outline" OnClick="RenameAsync">Rename</StilButton>
+</StilCluster>
+
+@code {
+    private string _name = "Spring catalogue";
+
+    private async Task RenameAsync()
+    {
+        var result = await Dialogs.OpenAsync<RenameDialog>("Rename project",
+            new Dictionary<string, object?> { [nameof(RenameDialog.Name)] = _name });
+
+        // null when the user cancelled or pressed Escape.
+        if (result is string name && name.Length > 0)
+        {
+            _name = name;
+        }
+    }
+}

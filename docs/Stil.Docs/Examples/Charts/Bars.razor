@@ -1,0 +1,23 @@
+<StilGrid Gap="5">
+    <StilCol Span="12" SpanLg="6">
+        <StilBarChart Items="_quarters" Category="q => q.Quarter" Title="Orders per quarter" Format="N0" Height="260">
+            <StilChartSeries Name="Web shop" Value="q => q.Web" />
+            <StilChartSeries Name="Stores" Value="q => q.Stores" />
+        </StilBarChart>
+    </StilCol>
+    <StilCol Span="12" SpanLg="6">
+        <StilBarChart Items="_quarters" Category="q => q.Quarter" Title="All orders" Format="N0" Height="260" Stacked ShowValues>
+            <StilChartSeries Name="Web shop" Value="q => q.Web" />
+            <StilChartSeries Name="Stores" Value="q => q.Stores" />
+        </StilBarChart>
+    </StilCol>
+</StilGrid>
+
+@code {
+    private static readonly Sales[] _quarters =
+    [
+        new("Q1", 1840, 2210), new("Q2", 2310, 2050), new("Q3", 2790, 1980), new("Q4", 3420, 2600),
+    ];
+
+    private sealed record Sales(string Quarter, int Web, int Stores);
+}

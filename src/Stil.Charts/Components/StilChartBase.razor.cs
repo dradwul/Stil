@@ -213,18 +213,18 @@ public abstract partial class StilChartBase<TItem> : StilComponentBase
         builder.AddAttribute(1, "class", cssClass);
         builder.AddAttribute(2, "x", x);
         builder.AddAttribute(3, "y", y);
-        builder.AddAttribute(4, "dy", dy);
-        builder.AddAttribute(10, "dx", dx);
-        builder.AddAttribute(5, "text-anchor", anchor);
-        builder.AddAttribute(6, "transform", transform);
+        builder.AddAttribute(4, "dx", dx);
+        builder.AddAttribute(5, "dy", dy);
+        builder.AddAttribute(6, "text-anchor", anchor);
+        builder.AddAttribute(7, "transform", transform);
         if (!string.IsNullOrEmpty(fullText) && fullText != text)
         {
-            builder.OpenElement(7, "title");
-            builder.AddContent(8, fullText);
+            builder.OpenElement(8, "title");
+            builder.AddContent(9, fullText);
             builder.CloseElement();
         }
 
-        builder.AddContent(9, text);
+        builder.AddContent(10, text);
         builder.CloseElement();
     };
 }

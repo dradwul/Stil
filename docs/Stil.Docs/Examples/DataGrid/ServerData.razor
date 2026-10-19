@@ -1,0 +1,31 @@
+<StilDataGrid TItem="Customer" ItemsProvider="LoadAsync" Filterable PageSize="5" Caption="Customers (loaded page by page)">
+    <Columns>
+        <StilDataGridColumn Property="c => c.Name" InitialSort="StilSortDirection.Ascending" />
+        <StilDataGridColumn Property="c => c.City" />
+        <StilDataGridColumn Property="c => c.Orders" Align="StilTextAlign.End" Filterable="false" />
+    </Columns>
+</StilDataGrid>
+
+@code {
+    private static readonly string[] _cities = ["Bergen", "Göteborg", "Helsinki", "København", "Oslo", "Reykjavík", "Stockholm", "Tampere"];
+    private static readonly string[] _names = ["Berg", "Dahl", "Ek", "Holm", "Lund", "Nyberg", "Sund", "Vik"];
+    private static readonly string[] _kinds = ["Bageri", "Bygg", "Café", "Design", "Marine", "Tryck"];
+
+    // Stands in for a database table, for example an EF Core DbSet.
+    private static readonly IQueryable<Customer> _table = Enumerable.Range(0, 48)
+        .Select(i => new Customer($"{_names[i % _names.Length]} {_kinds[i % _kinds.Length]}", _cities[i * 3 % _cities.Length], i * 7 % 40))
+        .AsQueryable();
+
+    private async Task<StilDataGridResult<Customer>> LoadAsync(StilDataGridRequest<Customer> request)
+    {
+        // The grid turns its filters and sorting into a query on the column properties.
+        var query = request.ApplyFiltersAndSorting(_table);
+        var total = query.Count();
+        var items = request.ApplyPaging(query).ToList();
+
+        await Task.Delay(300, request.CancellationToken); // A pretend network round trip.
+        return new(items, total);
+    }
+
+    private sealed record Customer(string Name, string City, int Orders);
+}

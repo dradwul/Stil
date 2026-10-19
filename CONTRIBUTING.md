@@ -187,6 +187,11 @@ first.
 | --- | --- | --- |
 | NuGet (Blazor + stylesheet) | `Stil` | Free on nuget.org. Not published yet. |
 | npm (CSS only) | `stil-css` | Free on npm. Prepared in `src/Stil.Css/package.json`. Not published yet. `stil` is taken by another package. |
+| NuGet (charts) | `Stil.Charts` | Packed by `src/Stil.Charts`. Not published. |
+| NuGet (`dotnet new` templates) | `Stil.Templates` | Packed by `templates/Stil.Templates`. Not published. |
+
+All packages share the version in `Directory.Build.props` and are listed in
+[CHANGELOG.md](CHANGELOG.md).
 
 ## Workflow
 
@@ -199,15 +204,27 @@ first.
    markup. Check it in light and dark mode. If a change matters for a typical
    app page, also check `samples/Stil.Html/admin.html`.
 3. Every Blazor component gets bUnit tests in `tests/Stil.Blazor.Tests`
-   and an example in `samples/Stil.Demo`.
+   (charts: `tests/Stil.Charts.Tests`), an example in `samples/Stil.Demo`
+   and a section on its page in the docs site. A docs example is a component
+   in `docs/Stil.Docs/Examples/{Page}/`, shown with
+   `<DocExample Type="typeof(…)">`, so the code on the page is the code that
+   runs. A new page goes in `DocsPages.cs`.
 4. Run `npm run check` (in `src/Stil.Css`), `dotnet build Stil.sln` and
    `dotnet test Stil.sln` before pushing. CI (`.github/workflows/ci.yml`)
    runs the same checks plus pack on every push to `main` and on every pull
    request. It fails if `dist/` is stale, if a token pair drops below WCAG
-   AA, or if the package is missing the stylesheet.
-5. When you change a color formula in `src/derived.css`, update the mirror
+   AA, or if a package is missing its stylesheet. It also runs
+   `node templates/test-templates.mjs` and the axe checks of
+   `tests/Stil.Visual`.
+5. For a visual change, run the Playwright tests in `tests/Stil.Visual`
+   (`npm test`). Look at the differences in the report, update the
+   baselines with `npm run test:update` and commit them with the change.
+   Only the axe checks run in CI, because the baselines are made on Windows.
+6. Nothing is published: no NuGet or npm releases and no deploy of the docs
+   site. CI only builds, tests and packs.
+7. When you change a color formula in `src/derived.css`, update the mirror
    of it in `tools/check-contrast.mjs`. The script fails if the two drift
    apart.
-6. Commit messages follow
+8. Commit messages follow
    [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`,
    `fix:`, `docs:`, `test:`, `chore:`).

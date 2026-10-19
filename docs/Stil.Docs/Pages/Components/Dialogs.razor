@@ -1,0 +1,86 @@
+@page "/components/dialogs"
+@using Stil.Docs.Examples.Dialogs
+
+<DocsHeader Title="Dialogs, drawers and toasts" Eyebrow="Components">
+    <Lead>Modal dialogs in markup or from code, confirmations, side drawers and toast notifications.</Lead>
+</DocsHeader>
+
+<p>
+    Dialogs and drawers are a native modal <code>&lt;dialog&gt;</code>: focus moves into it and stays there, Escape
+    closes it, the page behind it is inert, and focus returns to the button that opened it. All of this page needs an
+    interactive render mode.
+</p>
+
+<h2 id="dialog">Dialog</h2>
+<DocExample Type="typeof(DialogInMarkup)">
+    <p>
+        Bind <code>@@bind-Open</code> to a field. <code>Title</code> is the heading and the dialog's accessible name.
+        Put the actions in <code>Footer</code>, the main action last. The close button in the header is there unless
+        <code>ShowClose="false"</code>; its name is <code>CloseLabel</code>. <code>OnClose</code> runs however the
+        dialog was closed.
+    </p>
+</DocExample>
+
+<h2 id="sizes">Sizes</h2>
+<DocExample Type="typeof(Sizes)">
+    <p><code>Size</code> is <code>Small</code>, <code>Medium</code> (the default) or <code>Large</code>.</p>
+</DocExample>
+
+<h2 id="confirm">Confirmations</h2>
+<DocExample Type="typeof(Confirm)">
+    <p>
+        <code>IStilDialogService.ConfirmAsync</code> asks a question and returns <code>true</code> when the user confirms.
+        Name the action in <code>ConfirmText</code> ("Delete", not "OK"). With <code>ConfirmVariant="Danger"</code>, focus
+        starts on Cancel, so pressing Enter by mistake does not delete anything. The service needs
+        <code>&lt;StilDialogHost /&gt;</code> once in an interactive layout.
+    </p>
+</DocExample>
+
+<h2 id="from-code">A component in a dialog</h2>
+<DocExample Type="typeof(OpenFromCode)">
+    <p>
+        <code>OpenAsync&lt;TComponent&gt;</code> shows any component in a dialog and passes it parameters. The component
+        gets a cascading <code>StilDialogReference</code>; <code>Close(result)</code> closes the dialog and returns the
+        result to the code that opened it. Dismissing the dialog returns <code>null</code>. The component in this
+        example:
+    </p>
+</DocExample>
+<CodeBlock Code="@ExampleSource.Get(typeof(RenameDialog))" />
+
+<h2 id="drawer">Drawer</h2>
+<DocExample Type="typeof(FilterDrawer)">
+    <p>
+        <code>StilDrawer</code> is a dialog that slides in from the side, for filters, details or navigation on small
+        screens. It has the same parameters as <code>StilDialog</code>, plus <code>Position</code> (<code>Start</code>,
+        the default, or <code>End</code>) and <code>Width</code>.
+    </p>
+</DocExample>
+
+<h2 id="toasts">Toasts</h2>
+<DocExample Type="typeof(ToastVariants)">
+    <p>
+        <code>IStilToastService</code> shows short messages in a corner of the screen: <code>Success</code>,
+        <code>Info</code>, <code>Warning</code>, <code>Error</code>, or <code>Show</code> with a variant and a
+        duration. They close after <code>StilOptions.DefaultToastDuration</code> (5 seconds);
+        <code>TimeSpan.Zero</code> keeps a toast until the user closes it. Error and warning toasts are announced at
+        once (<code>role="alert"</code>), the others politely (<code>role="status"</code>). Do not put the only copy of
+        important information or an action in a toast: it disappears. Add <code>&lt;StilToastHost /&gt;</code> once to
+        an interactive layout.
+    </p>
+</DocExample>
+
+<h2 id="setup">Setup</h2>
+<p>Add the hosts once, for example at the end of <code>MainLayout.razor</code>:</p>
+<CodeBlock Code="@Hosts" />
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilDialog)" />
+<ApiTable Type="typeof(StilDrawer)" />
+<ApiTable Type="typeof(StilToastHost)" />
+
+@code {
+    private const string Hosts = """
+        <StilDialogHost />
+        <StilToastHost />
+        """;
+}

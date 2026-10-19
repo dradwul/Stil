@@ -1,0 +1,24 @@
+<StilStack>
+    <div>
+        <p class="stil-fs-sm stil-mb-1">Uploading photos: @_uploaded of 12</p>
+        <StilProgress Value="_uploaded" Max="12" Label="Uploading photos" />
+    </div>
+    <div>
+        <p class="stil-fs-sm stil-mb-1">Storage: 36 of 50 GB used</p>
+        <StilProgress Value="72" Label="Storage used" ShowValue Variant="StilVariant.Warning" Size="StilSize.Large" />
+    </div>
+    <div>
+        <p class="stil-fs-sm stil-mb-1">Backup complete</p>
+        <StilProgress Value="100" Label="Backup" Variant="StilVariant.Success" />
+    </div>
+    <StilCluster>
+        <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Outline" Disabled="_uploaded >= 12"
+                    OnClick="() => _uploaded++">Upload one more</StilButton>
+        <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Ghost" Variant="StilVariant.Secondary"
+                    OnClick="() => _uploaded = 0">Reset</StilButton>
+    </StilCluster>
+</StilStack>
+
+@code {
+    private double _uploaded = 5;
+}

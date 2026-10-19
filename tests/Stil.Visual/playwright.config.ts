@@ -4,7 +4,7 @@ import { DEMO_URL, STATIC_ORIGIN, STATIC_PORT } from './tests/helpers';
 const isCI = !!process.env.CI;
 
 // Locally the installed Microsoft Edge is used, so no browser download is needed. CI uses
-// Playwright's bundled Chromium (installed in the official Playwright Docker image).
+// Playwright's bundled Chromium (installed with `npx playwright install` in the workflow).
 const browser = isCI ? { browserName: 'chromium' as const } : { browserName: 'chromium' as const, channel: 'msedge' };
 
 export default defineConfig({

@@ -1,0 +1,41 @@
+@page "/components/tree-view"
+@using Stil.Docs.Examples.TreeView
+
+<DocsHeader Title="Tree view" Eyebrow="Data">
+    <Lead>Folders, categories and org charts: nested items that open and close, with keyboard support.</Lead>
+</DocsHeader>
+
+<p>
+    <code>StilTreeView</code> follows the WAI-ARIA tree pattern. The tree is one tab stop; the arrow keys move between
+    items, Right opens an item or moves to its first child, Left closes it or moves to its parent, and Home and End
+    jump to the first and last visible item. Enter or Space selects. For links in a side menu, use
+    <a href="components/navigation#nav-groups">nav groups</a> instead.
+</p>
+
+<h2 id="basic">Items, icons and selection</h2>
+<DocExample Type="typeof(ProjectFiles)">
+    <p>
+        <code>Items</code> are the top level and <code>ChildrenSelector</code> returns an item's children.
+        <code>ItemText</code> is the text and <code>ItemIcon</code> a <a href="components/icons">Stil icon</a> name.
+        Bind <code>@@bind-SelectedItem</code> to know which item is chosen, and <code>@@bind-ExpandedItems</code> to
+        choose or save which items are open. Give the tree a <code>Label</code>.
+    </p>
+</DocExample>
+
+<h2 id="template">Templates</h2>
+<DocExample Type="typeof(Departments)">
+    <p>
+        <code>ItemTemplate</code> renders any content in a row; <code>context</code> is the item. <code>ExpandAll</code>
+        opens every item at the start. Set <code>ItemKey</code> when the items are new objects after every load, so the
+        selection and the open items are kept.
+    </p>
+</DocExample>
+
+<h2 id="render-modes">Render modes</h2>
+<p>
+    In static server rendering the tree shows its first state (<code>ExpandedItems</code> or <code>ExpandAll</code>).
+    Opening, closing, the keyboard and selection need an interactive render mode.
+</p>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilTreeView<>)" />

@@ -1,0 +1,16 @@
+@inject IStilDialogService Dialogs
+
+<StilButton Variant="StilVariant.Danger" Appearance="StilButtonAppearance.Outline" OnClick="DeleteAsync">Delete order #1043</StilButton>
+<p class="stil-text-muted stil-mt-2 stil-mb-0">@_result</p>
+
+@code {
+    private string _result = "The order is still here.";
+
+    private async Task DeleteAsync()
+    {
+        var confirmed = await Dialogs.ConfirmAsync("Delete order #1043?", "The order and its invoice are deleted. This cannot be undone.",
+            new StilConfirmOptions { ConfirmText = "Delete", ConfirmVariant = StilVariant.Danger });
+
+        _result = confirmed ? "Order #1043 was deleted." : "Nothing was deleted.";
+    }
+}

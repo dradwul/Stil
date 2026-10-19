@@ -7,11 +7,12 @@
     <PackageId>Stil.Charts</PackageId>
     <AssemblyName>Stil.Charts</AssemblyName>
     <RootNamespace>Stil.Charts</RootNamespace>
-    <Version>0.1.0</Version>
     <Description>Themeable SVG charts for Stil for Blazor: line, area, bar, donut and sparkline charts that render on the server, work in static SSR and follow the Stil tokens and dark mode.</Description>
-    <PackageTags>Blazor;charts;SVG;CSS;Stil</PackageTags>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>blazor;charts;svg;theme;dark-mode;accessibility;stil</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- XML docs for IntelliSense and the API tables on the docs site. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

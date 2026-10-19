@@ -19,3 +19,9 @@ textarea,
 #blazor-error-ui {
     display: none !important;
 }
+
+/* A sticky navbar would be stitched into the middle of element screenshots taller than the
+   viewport (long sections on a phone), so it stays at the top of the page instead. */
+.stil-sticky-top {
+    position: static !important;
+}

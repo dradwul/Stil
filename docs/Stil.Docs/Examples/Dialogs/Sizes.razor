@@ -1,0 +1,23 @@
+<div class="stil-cluster">
+    <StilButton Appearance="StilButtonAppearance.Outline" OnClick="() => Show(StilSize.Small)">Small</StilButton>
+    <StilButton Appearance="StilButtonAppearance.Outline" OnClick="() => Show(StilSize.Medium)">Medium</StilButton>
+    <StilButton Appearance="StilButtonAppearance.Outline" OnClick="() => Show(StilSize.Large)">Large</StilButton>
+</div>
+
+<StilDialog @bind-Open="_open" Title="@($"{_size} dialog")" Size="_size">
+    <p class="stil-mb-0">
+        Small suits a question or a short message, Medium a form, and Large a table or a longer text.
+        On a phone every size fills the width.
+    </p>
+</StilDialog>
+
+@code {
+    private bool _open;
+    private StilSize _size;
+
+    private void Show(StilSize size)
+    {
+        _size = size;
+        _open = true;
+    }
+}

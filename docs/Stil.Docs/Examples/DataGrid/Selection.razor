@@ -1,0 +1,37 @@
+@inject IStilToastService Toasts
+
+<StilDataGrid Items="_orders" PageSize="5" Caption="Select orders to ship"
+              SelectionMode="StilSelectionMode.Multiple" @bind-SelectedItems="_selected" ItemKey="o => o.Id">
+    <Toolbar>
+        <span class="stil-text-muted stil-fs-sm">@_selected.Count selected</span>
+        <StilButton Size="StilSize.Small" Disabled="_selected.Count == 0" OnClick="Ship">Ship selected</StilButton>
+    </Toolbar>
+    <Columns>
+        <StilDataGridColumn Property="o => o.Id" Title="Order" Width="7rem" />
+        <StilDataGridColumn Property="o => o.Customer" />
+        <StilDataGridColumn Property="o => o.Amount" Title="Amount (€)" Format="N2" Align="StilTextAlign.End" />
+        <StilDataGridTemplateColumn Title="Actions" Align="StilTextAlign.End">
+            <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Ghost"
+                        OnClick="@(() => Toasts.Info($"Opened order #{context.Id}."))" aria-label="@($"Open order {context.Id}")">Open</StilButton>
+        </StilDataGridTemplateColumn>
+    </Columns>
+</StilDataGrid>
+
+@code {
+    private static readonly string[] _customers =
+        ["Fjällbacka Café", "Hallberg & Söner AB", "Lindqvist Bygg", "Østerby Marine", "Kallio Design Oy", "Visby Keramik"];
+
+    private readonly Order[] _orders = Enumerable.Range(1, 12)
+        .Select(i => new Order(1000 + i, _customers[i % _customers.Length], i * 211.25m % 1500 + 120))
+        .ToArray();
+
+    private IReadOnlyCollection<Order> _selected = [];
+
+    private void Ship()
+    {
+        Toasts.Success($"{_selected.Count} orders are on their way.", "Shipped");
+        _selected = [];
+    }
+
+    private sealed record Order(int Id, string Customer, decimal Amount);
+}

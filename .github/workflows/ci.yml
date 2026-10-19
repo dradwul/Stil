@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -33,22 +36,89 @@ jobs:
       - name: Restore
         run: dotnet restore Stil.sln
 
+      # Builds the libraries, the demo, the docs site, the template package and the tests.
       - name: Build
         run: dotnet build Stil.sln --configuration Release --no-restore
 
       - name: Test
         run: dotnet test Stil.sln --configuration Release --no-build
 
+      # The packages are built and checked, never pushed to a feed.
       - name: Pack
-        run: dotnet pack src/Stil.Blazor --configuration Release --no-build --output artifacts
-
-      - name: Verify the package ships the stylesheet and README
         run: |
-          unzip -l artifacts/Stil.*.nupkg | tee package-contents.txt
-          grep -q 'staticwebassets/stil.css' package-contents.txt
-          grep -q 'README.md' package-contents.txt
+          dotnet pack src/Stil.Blazor --configuration Release --no-build --output artifacts
+          dotnet pack src/Stil.Charts --configuration Release --no-build --output artifacts
+          dotnet pack templates/Stil.Templates --configuration Release --no-build --output artifacts
+
+      - name: Verify the package contents
+        run: |
+          unzip -l "$(ls artifacts/Stil.0*.nupkg)" | tee stil.txt
+          grep -q 'staticwebassets/stil.css' stil.txt
+          grep -q 'README.md' stil.txt
+          unzip -l "$(ls artifacts/Stil.Charts.0*.nupkg)" | tee charts.txt
+          grep -q 'staticwebassets/stil-charts.css' charts.txt
+          grep -q 'Stil.Charts.xml' charts.txt
+          grep -q 'README.md' charts.txt
+          unzip -l "$(ls artifacts/Stil.Templates.0*.nupkg)" | tee templates.txt
+          grep -q 'content/StilApp/.template.config/template.json' templates.txt
+          grep -q 'content/StilApp/.gitignore' templates.txt
 
       - uses: actions/upload-artifact@v4
         with:
-          name: nuget-package
-          path: artifacts/*.nupkg
+          name: packages
+          path: |
+            artifacts/*.nupkg
+            artifacts/*.snupkg
+
+  templates:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Installs the template package into an isolated template hive and builds an app for
+      # each option combination.
+      - name: Test dotnet new stil-app
+        run: node templates/test-templates.mjs
+
+  accessibility:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tests/Stil.Visual/package-lock.json
+
+      - name: Install Playwright
+        working-directory: tests/Stil.Visual
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      # The axe checks only. The screenshot baselines are made on Windows (see
+      # tests/Stil.Visual/README.md), so the visual tests run locally.
+      - name: Run the axe checks on the samples and the demo
+        working-directory: tests/Stil.Visual
+        run: npx playwright test --grep @a11y
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: tests/Stil.Visual/playwright-report

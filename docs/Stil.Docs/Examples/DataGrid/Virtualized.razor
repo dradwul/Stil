@@ -1,0 +1,17 @@
+<StilDataGrid Items="_rows" Virtualize Height="18rem" Compact Filterable Caption="10,000 sensor readings">
+    <Columns>
+        <StilDataGridColumn Property="r => r.Id" Title="#" Width="6rem" />
+        <StilDataGridColumn Property="r => r.Sensor" />
+        <StilDataGridColumn Property="r => r.Celsius" Title="Temperature (°C)" Format="N1" Align="StilTextAlign.End" />
+    </Columns>
+</StilDataGrid>
+
+@code {
+    private static readonly string[] _sensors = ["Cold room", "Freezer", "Greenhouse", "Server room", "Warehouse"];
+
+    private static readonly Reading[] _rows = Enumerable.Range(1, 10_000)
+        .Select(i => new Reading(i, _sensors[i % _sensors.Length], (i * 37 % 400 - 100) / 10.0))
+        .ToArray();
+
+    private sealed record Reading(int Id, string Sensor, double Celsius);
+}

@@ -1,0 +1,43 @@
+@page "/components/progress"
+@using Stil.Docs.Examples.Progress
+
+<DocsHeader Title="Progress and spinners" Eyebrow="Components">
+    <Lead>Show how far a task has come, or that something is loading.</Lead>
+</DocsHeader>
+
+<p>
+    Use a progress bar when you know how much is left, and a spinner when you do not. Both render in static server
+    rendering.
+</p>
+
+<h2 id="progress">Progress bars</h2>
+<DocExample Type="typeof(ProgressBars)">
+    <p>
+        <code>StilProgress</code> is a <code>progressbar</code> from <code>Value</code> and <code>Max</code> (100 by
+        default). <code>Label</code> is its accessible name; it is not shown, so say the same in the text around it.
+        <code>Variant</code> colors the bar and <code>Size="Large"</code> makes it thicker, with room for
+        <code>ShowValue</code>, which writes the percentage in the bar.
+    </p>
+</DocExample>
+
+<h2 id="spinners">Spinners</h2>
+<DocExample Type="typeof(Spinners)">
+    <p>
+        <code>StilSpinner</code> has <code>role="status"</code>. Screen readers hear its <code>Label</code> ("Loading…"
+        by default); say what is loading when you can. It spins more slowly for people who prefer reduced motion.
+        <code>Size</code> is <code>Small</code> or <code>Medium</code>.
+    </p>
+</DocExample>
+
+<h2 id="loading">Loading states</h2>
+<DocExample Type="typeof(LoadingCard)">
+    <p>
+        For a button that starts the work, use <code>Loading</code> on the <a href="components/buttons#states">button</a>.
+        For the area that is being loaded, show a spinner with a short text, and mark the area with
+        <code>aria-busy</code>.
+    </p>
+</DocExample>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilProgress)" />
+<ApiTable Type="typeof(StilSpinner)" />

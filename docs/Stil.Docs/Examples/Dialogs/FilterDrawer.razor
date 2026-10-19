@@ -1,0 +1,37 @@
+<StilButton Appearance="StilButtonAppearance.Outline" OnClick="() => _open = true">
+    <StilIcon Name="@StilIcons.Menu" /> Filters
+</StilButton>
+<p class="stil-text-muted stil-mt-2 stil-mb-0">
+    Showing @(_status ?? "every status") in @(_region ?? "every region").
+</p>
+
+<StilDrawer @bind-Open="_open" Title="Filters" Position="StilDrawerPosition.End" Width="22rem">
+    <ChildContent>
+        <StilStack>
+            <StilSelect @bind-Value="_status" Label="Status">
+                <option value="">Any status</option>
+                <option>Paid</option>
+                <option>Pending</option>
+                <option>Shipped</option>
+            </StilSelect>
+            <StilRadioGroup @bind-Value="_region" Label="Region" Items="_regions" />
+        </StilStack>
+    </ChildContent>
+    <Footer>
+        <StilButton Appearance="StilButtonAppearance.Ghost" Variant="StilVariant.Secondary" OnClick="Clear">Clear</StilButton>
+        <StilButton OnClick="() => _open = false">Show results</StilButton>
+    </Footer>
+</StilDrawer>
+
+@code {
+    private static readonly string[] _regions = ["Denmark", "Finland", "Norway", "Sweden"];
+    private bool _open;
+    private string? _status;
+    private string? _region;
+
+    private void Clear()
+    {
+        _status = null;
+        _region = null;
+    }
+}

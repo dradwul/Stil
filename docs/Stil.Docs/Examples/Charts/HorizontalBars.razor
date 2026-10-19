@@ -1,0 +1,15 @@
+<StilBarChart Items="_reasons" Category="r => r.Reason" Orientation="StilChartOrientation.Horizontal" ShowValues
+              Title="Why customers returned an order" Description="Share of 412 returns, September" Format="0'%'">
+    <StilChartSeries Name="Share" Value="r => r.Percent" Color="light-dark(#6741d9, #9775fa)" />
+</StilBarChart>
+
+@code {
+    // Sorted from the largest, so the chart reads from the top.
+    private static readonly ReturnReason[] _reasons =
+    [
+        new("Wrong size", 38), new("Not as pictured", 21), new("Arrived damaged", 14),
+        new("Changed my mind", 12), new("Arrived too late", 9), new("Other", 6),
+    ];
+
+    private sealed record ReturnReason(string Reason, int Percent);
+}

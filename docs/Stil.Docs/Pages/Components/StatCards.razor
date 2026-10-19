@@ -1,0 +1,33 @@
+@page "/components/stat-cards"
+@using Stil.Docs.Examples.StatCards
+
+<DocsHeader Title="Stat cards" Eyebrow="Data">
+    <Lead>KPI cards for dashboards: a label, a large value, a trend and a short description.</Lead>
+</DocsHeader>
+
+<p>
+    <code>StilStatCard</code> is a <a href="components/cards">card</a> with a fixed layout, so a row of them lines up.
+    It renders in static server rendering. Format the value yourself, in the user's culture.
+</p>
+
+<h2 id="kpis">Values and trends</h2>
+<DocExample Type="typeof(Kpis)">
+    <p>
+        <code>Trend</code> is shown in a badge with an arrow for <code>TrendDirection</code>: green for
+        <code>Up</code>, red for <code>Down</code> and gray for <code>Neutral</code>. When up is bad (returns,
+        errors, costs), set <code>TrendVariant</code>. Screen readers hear the direction in words, for example
+        "up 12.4%"; <code>TrendLabel</code> replaces that text, and <code>UpText</code>, <code>DownText</code> and
+        <code>NeutralText</code> translate it. <code>Icon</code> is decorative.
+    </p>
+</DocExample>
+
+<h2 id="links">Links and extra content</h2>
+<DocExample Type="typeof(LinksAndContent)">
+    <p>
+        With <code>Href</code> the whole card is a link to the details. Child content goes under the value, for
+        example a progress bar or a <a href="components/charts#sparklines">sparkline</a>.
+    </p>
+</DocExample>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilStatCard)" />

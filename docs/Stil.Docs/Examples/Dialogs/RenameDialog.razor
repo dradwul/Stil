@@ -1,0 +1,25 @@
+@* The content of a dialog opened with IStilDialogService.OpenAsync. *@
+<EditForm Model="this" OnValidSubmit="Save">
+    <StilTextBox @bind-Value="_name" Label="Project name" required />
+    <div class="stil-cluster stil-justify-content-end stil-mt-4">
+        <StilButton Appearance="StilButtonAppearance.Ghost" Variant="StilVariant.Secondary" OnClick="() => Dialog.Close()">Cancel</StilButton>
+        <StilButton Type="submit">Rename</StilButton>
+    </div>
+</EditForm>
+
+@code {
+    private string? _name;
+
+    /// <summary>The dialog this component is shown in.</summary>
+    [CascadingParameter]
+    public StilDialogReference Dialog { get; set; } = default!;
+
+    /// <summary>The current name, passed by the code that opens the dialog.</summary>
+    [Parameter]
+    public string? Name { get; set; }
+
+    protected override void OnInitialized() => _name = Name;
+
+    // The value passed to Close is what OpenAsync returns.
+    private void Save() => Dialog.Close(_name?.Trim());
+}

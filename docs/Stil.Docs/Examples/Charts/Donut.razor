@@ -1,0 +1,13 @@
+<StilDonutChart Items="_channels" Category="c => c.Channel" Title="Revenue by channel" Description="September, in euros" Format="N0">
+    <StilChartSeries Name="Revenue" Value="c => c.Revenue" />
+</StilDonutChart>
+
+@code {
+    private static readonly ChannelRevenue[] _channels =
+    [
+        new("Web shop", 118_400), new("Stores", 96_200), new("Wholesale", 54_900),
+        new("Marketplaces", 21_300), new("Phone", 6_800), new("Events", 4_100), new("Gift cards", 1_900),
+    ];
+
+    private sealed record ChannelRevenue(string Channel, decimal Revenue);
+}

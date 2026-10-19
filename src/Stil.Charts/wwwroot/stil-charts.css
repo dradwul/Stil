@@ -286,7 +286,8 @@
         margin-block-end: 0;
     }
 
-    .stil-chart-num {
+    /* Beats .stil-table :is(th, td) { text-align: start }. */
+    .stil-chart-data .stil-chart-num {
         text-align: end;
         font-variant-numeric: tabular-nums;
     }

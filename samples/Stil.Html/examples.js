@@ -13,6 +13,8 @@
     document.querySelectorAll('.example').forEach(example => {
         const pre = document.createElement('pre');
         pre.className = 'example-code';
+        // Long lines scroll sideways, so keyboard users must be able to focus the block.
+        pre.tabIndex = 0;
         const markup = dedent(example.innerHTML).replace(/=""/g, '');
         pre.innerHTML = `<code>${escape(markup)}</code>`;
         example.before(pre);

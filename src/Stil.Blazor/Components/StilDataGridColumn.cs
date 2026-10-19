@@ -41,11 +41,11 @@ public sealed class StilDataGridColumn<TItem, TValue> : StilDataGridColumnBase<T
     [Parameter]
     public StilSortDirection InitialSort { get; set; }
 
-    /// <summary>The text for true and false in a bool filter.</summary>
+    /// <summary>The text for true in the cells and the filter of a bool column.</summary>
     [Parameter]
     public string TrueText { get; set; } = "Yes";
 
-    /// <summary>The text for false in a bool filter.</summary>
+    /// <summary>The text for false in the cells and the filter of a bool column.</summary>
     [Parameter]
     public string FalseText { get; set; } = "No";
 
@@ -99,9 +99,12 @@ public sealed class StilDataGridColumn<TItem, TValue> : StilDataGridColumnBase<T
         }
 
         var value = _getter!(item);
-        return builder => builder.AddContent(0, value is IFormattable formattable && Format is not null
-            ? formattable.ToString(Format, CultureInfo.CurrentCulture)
-            : value?.ToString());
+        return builder => builder.AddContent(0, value switch
+        {
+            bool flag => flag ? TrueText : FalseText,
+            IFormattable formattable when Format is not null => formattable.ToString(Format, CultureInfo.CurrentCulture),
+            _ => value?.ToString()
+        });
     }
 
     internal override IQueryable<TItem> ApplySort(IQueryable<TItem> query, bool descending) =>

@@ -1,0 +1,17 @@
+<StilLineChart Items="_months" Category="m => m.Month" Title="Revenue" Description="Thousands of euros per month"
+               Format="N0" CategoryAxisTitle="Month">
+    <StilChartSeries Name="2025" Value="m => m.LastYear" />
+    <StilChartSeries Name="2026" Value="m => m.ThisYear" />
+</StilLineChart>
+
+@code {
+    // The months of 2026 that have not happened yet have no value, so the line stops.
+    private static readonly MonthlyRevenue[] _months =
+    [
+        new("Jan", 182, 204), new("Feb", 175, 211), new("Mar", 198, 236), new("Apr", 210, 249),
+        new("May", 236, 268), new("Jun", 251, 290), new("Jul", 229, 284), new("Aug", 240, 301),
+        new("Sep", 262, 318), new("Oct", 270, null), new("Nov", 288, null), new("Dec", 320, null),
+    ];
+
+    private sealed record MonthlyRevenue(string Month, int LastYear, int? ThisYear);
+}

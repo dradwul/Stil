@@ -1,0 +1,33 @@
+<StilDataGrid Items="_orders" Filterable Compact Caption="Orders by status" PageSize="6">
+    <Columns>
+        <StilDataGridColumn Property="o => o.Id" Title="Order" Filterable="false" Width="7rem" />
+        <StilDataGridColumn Property="o => o.Customer" />
+        <StilDataGridColumn Property="o => o.Status">
+            <Template>
+                <StilBadge Subtle Variant="@VariantOf(context.Status)">@context.Status</StilBadge>
+            </Template>
+        </StilDataGridColumn>
+        <StilDataGridColumn Property="o => o.Express" TrueText="Express" FalseText="Standard" Title="Delivery" />
+    </Columns>
+</StilDataGrid>
+
+@code {
+    private enum OrderStatus { Pending, Paid, Shipped, Cancelled }
+
+    private static readonly string[] _customers =
+        ["Fjällbacka Café", "Hallberg & Söner AB", "Lindqvist Bygg", "Østerby Marine", "Kallio Design Oy", "Visby Keramik"];
+
+    private static readonly Order[] _orders = Enumerable.Range(1, 18)
+        .Select(i => new Order(1000 + i, _customers[i * 5 % _customers.Length], (OrderStatus)(i * 3 % 4), i % 3 == 0))
+        .ToArray();
+
+    private static StilVariant VariantOf(OrderStatus status) => status switch
+    {
+        OrderStatus.Paid => StilVariant.Success,
+        OrderStatus.Shipped => StilVariant.Info,
+        OrderStatus.Cancelled => StilVariant.Danger,
+        _ => StilVariant.Warning,
+    };
+
+    private sealed record Order(int Id, string Customer, OrderStatus Status, bool Express);
+}

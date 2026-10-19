@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Stil.Blazor\Stil.Blazor.csproj" />
+    <ProjectReference Include="..\..\src\Stil.Charts\Stil.Charts.csproj" />
   </ItemGroup>
 
 </Project>

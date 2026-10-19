@@ -1,0 +1,119 @@
+@page "/components/charts"
+@using Stil.Docs.Examples.Charts
+
+<DocsHeader Title="Charts" Eyebrow="Data">
+    <Lead>Line, area, bar, donut and sparkline charts as plain SVG, themed with the Stil tokens and readable by screen readers.</Lead>
+</DocsHeader>
+
+<p>
+    The charts are in a separate package, <code>Stil.Charts</code>, so apps that do not draw charts stay small. They
+    render on the server and need no JavaScript, so they also work in static server rendering. Hover effects and
+    tooltips are CSS and native SVG titles.
+</p>
+
+<h2 id="setup">Setup</h2>
+<p>Reference <code>Stil.Charts</code> next to <code>Stil</code>, link its stylesheet after <code>&lt;StilHead /&gt;</code> and add the namespace to <code>_Imports.razor</code>:</p>
+<CodeBlock Code="@Setup" />
+
+<h2 id="line">Line charts</h2>
+<DocExample Type="typeof(Revenue)">
+    <p>
+        <code>Items</code> holds one item per category and <code>Category</code> names it. Each
+        <code>StilChartSeries</code> reads one number from every item; it can be any number type, and nullable. A
+        <code>null</code> leaves a gap. <code>Format</code> formats the values in the current culture. With two to four
+        series, each line is named at its end when there is room; the legend always names them.
+    </p>
+</DocExample>
+
+<h2 id="area">Area charts</h2>
+<DocExample Type="typeof(Area)">
+    <p>
+        <code>Area</code> fills under the line, and <code>ShowMarkers</code> marks every point (by default only the last
+        one is marked). <code>CategoryFormat</code> formats dates and numbers on the category axis. A line chart starts
+        its axis at zero; set <code>BeginAtZero="false"</code> to zoom in on small changes. <code>Summary</code> tells
+        screen readers what the chart shows in your words.
+    </p>
+</DocExample>
+
+<h2 id="bars">Bar charts</h2>
+<DocExample Type="typeof(Bars)">
+    <p>
+        Series are drawn side by side, or on top of each other with <code>Stacked</code>; stacked bars add a total to the
+        tooltips and the data table. <code>ShowValues</code> writes the value (or the stack's total) at the end of each bar.
+    </p>
+</DocExample>
+
+<h2 id="horizontal">Horizontal bars</h2>
+<DocExample Type="typeof(HorizontalBars)">
+    <p>
+        <code>Orientation="Horizontal"</code> suits long category names and ranked lists. A series can have its own
+        <code>Color</code>, any CSS color or token.
+    </p>
+</DocExample>
+
+<h2 id="donut">Donut charts</h2>
+<DocExample Type="typeof(Donut)">
+    <p>
+        <code>StilDonutChart</code> shows the parts of a whole from the first series, with the total in the middle and a
+        legend that lists each part's value and share. Parts beyond <code>MaxSlices</code> (6, the number of chart colors)
+        are combined into "Other". Use it for a few parts; for many, or to compare sizes, use a bar chart.
+    </p>
+</DocExample>
+
+<h2 id="sparklines">Sparklines</h2>
+<DocExample Type="typeof(Sparklines)">
+    <p>
+        <code>StilSparkline</code> is a small line without axes that fills its container's width, for example in a
+        <a href="components/stat-cards">stat card</a>. With a <code>Label</code>, screen readers hear it with the first,
+        last, lowest and highest value. Without one it is decorative and hidden, so only leave it out when the numbers
+        are already in the text.
+    </p>
+</DocExample>
+
+<h2 id="accessibility">Accessibility</h2>
+<DocExample Type="typeof(DataTables)">
+    <p>
+        Every chart is a <code>&lt;figure&gt;</code> whose drawing is an <code>&lt;svg role="img"&gt;</code>, named by the
+        <code>Title</code> and described by a generated summary of the data. <code>DataTable</code> offers the numbers as
+        a real table: a "Show data" toggle (the default), a table only screen readers find (<code>Hidden</code>), or
+        <code>None</code> when the same numbers are elsewhere on the page. Series are told apart by the legend, labels and
+        table, not by color alone, and in Windows high-contrast mode the text and axes use system colors. The texts
+        (<code>ShowDataText</code>, <code>EmptyText</code>, <code>CategoryText</code>, <code>MissingText</code>, …) can be
+        translated.
+    </p>
+</DocExample>
+
+<h2 id="theming">Theming</h2>
+<p>
+    The series colors are the tokens <code>--stil-chart-1</code> to <code>--stil-chart-6</code>, a palette with separate
+    light and dark steps, used in the order the series are declared. Override them like any <code>--stil-*</code> token,
+    on <code>:root</code> or on a wrapper. <code>--stil-chart-surface</code> is the color of the gaps between touching
+    marks; set it to the page background when a chart is not on a card.
+</p>
+<CodeBlock Code="@Tokens" Language="css" />
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilLineChart<>)" />
+<ApiTable Type="typeof(StilBarChart<>)" />
+<ApiTable Type="typeof(StilDonutChart<>)" />
+<ApiTable Type="typeof(StilChartSeries<,>)" />
+<ApiTable Type="typeof(StilSparkline)" />
+
+@code {
+    private const string Setup = """
+        @* Components/App.razor *@
+        <StilHead />
+        <link rel="stylesheet" href="@Assets["_content/Stil.Charts/stil-charts.css"]" />
+
+        @* _Imports.razor *@
+        @using Stil.Charts
+        """;
+
+    private const string Tokens = """
+        :root {
+            --stil-chart-1: #6741d9;
+            --stil-chart-2: light-dark(#e8590c, #ff922b);
+            --stil-chart-surface: var(--stil-color-body-bg);
+        }
+        """;
+}

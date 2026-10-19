@@ -14,13 +14,13 @@ something usable.
 | 3 | Stil for Blazor core (forms, dialogs, toasts) | ✅ Done |
 | 4 | Stil for Blazor: a component for every Stil CSS component | ✅ Done |
 | 5 | Data components | ✅ Done |
-| 6 | 1.0 release and ecosystem | Planned |
+| 6 | 1.0 release and ecosystem | ✅ Done |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
 end, so they never keep a phase open.
 
-## Where we are (0.1.0, Phases 0–5 done)
+## Where we are (0.1.0, Phases 0–6 done)
 
 - **Stil CSS:** an npm package (`stil-css`, not yet published). It is built
   with Lightning CSS from partials into `dist/stil.css` and `stil.min.css`
@@ -49,13 +49,20 @@ end, so they never keep a phase open.
   - Theming with `AddStil()`, `StilTheme`, `StilHead` and
     `StilThemeProvider`.
   - 594 bUnit tests.
+- **Stil.Charts:** SVG line, area, bar, donut and sparkline charts that
+  follow the theme, with 67 bUnit tests.
+- **Stil.Templates:** `dotnet new stil-app`.
+- **Docs:** `docs/Stil.Docs`, a documentation site with live examples, API
+  tables and a theme builder.
 - **Samples:**
   - `samples/Stil.Html/index.html` shows every CSS class.
   - `samples/Stil.Html/admin.html` is a dashboard built only with Stil CSS.
   - `samples/Stil.Demo` is an interactive Blazor app with a component
     gallery and an orders CRUD page built on `StilDataGrid`.
 - **Groundwork:** [CONTRIBUTING.md](CONTRIBUTING.md) holds the conventions.
-  CI checks the CSS build and contrast, then builds, tests and packs.
+  CI checks the CSS build and contrast, then builds, tests and packs. It also
+  tests the template and runs the axe checks. Playwright screenshot tests run
+  locally. [CHANGELOG.md](CHANGELOG.md) lists the changes in every package.
 
 ### Known issues found in the first review
 
@@ -317,19 +324,56 @@ users rarely need to write `stil-*` classes by hand.
 **Done when:** a typical business app screen (the demo's orders page) can be
 built only with Stil.
 
-## Phase 6: 1.0 release and ecosystem
+## Phase 6: 1.0 release and ecosystem ✅ Done
 
-- [ ] A documentation site built from the Blazor demo.
-- [ ] An interactive theme builder: edit tokens live, then copy the CSS or the
+- [x] A documentation site, `docs/Stil.Docs` (Blazor WebAssembly):
+  - A page for every component group, each with live examples whose code is
+    the exact source that runs, and API tables generated from the XML docs.
+  - Get started, theming and render-mode guidance.
+  - `docs.yml` builds and publishes the site to a folder in CI. It is not
+    deployed anywhere.
+- [x] An interactive theme builder: edit tokens live, then copy the CSS or the
   C# `StilTheme`.
-- [ ] Playwright visual regression tests for the CSS and the components.
-- [ ] A `dotnet new stil-app` template.
-- [ ] `Stil.Charts`, a separate package: line, bar, area and donut charts as
-  SVG, themed with the `--stil-*` tokens and readable by screen readers
-  (a data table fallback).
-- [ ] Package metadata (authors, repository, icon, Source Link, symbols, XML
+- [x] Playwright tests in `tests/Stil.Visual`, run with the installed Edge:
+  - Screenshots of every showcase section, the admin page, every demo gallery
+    section, the orders page and open dialogs, menus and listboxes, in light
+    and dark mode, on desktop and phone viewports.
+  - axe-core checks (WCAG 2.1 AA) of the samples and the demo in both modes.
+    They run in CI; the screenshot baselines are made on Windows.
+- [x] A `dotnet new stil-app` template (`Stil.Templates`) with `Primary`,
+  `ColorMode`, `Interactivity` (Server or None) and `IncludeSampleContent`.
+  `templates/test-templates.mjs` builds five option combinations with
+  `-warnaserror` from an isolated template hive, also in CI.
+- [x] `Stil.Charts`, a separate package: line, area, bar (grouped, stacked,
+  horizontal), donut and sparkline charts as SVG.
+  - They render in static SSR and follow the `--stil-chart-*` tokens and dark
+    mode.
+  - Each chart is a `<figure>` with an `<svg role="img">`, a generated
+    summary, a data table and native tooltips.
+  - 67 bUnit tests.
+- [x] Package metadata (authors, repository, icon, Source Link, symbols, XML
   docs), one shared version in `Directory.Build.props`, and a changelog.
   Publishing is not planned: nothing is pushed to NuGet or npm.
+
+**Verified in the browser,** in light and dark mode:
+
+- The new docs pages: dialogs, drawer, toasts, progress, data grid
+  (filters, selection, server-side data, virtualization), tree view keyboard,
+  stat cards and charts.
+- The charts on a phone: crowded labels are thinned and there is no sideways
+  scrolling.
+- The demo's new charts section.
+- Apps generated with `dotnet new stil-app` were built (five option
+  combinations) but not run in a browser.
+
+**Changes from the plan:**
+
+- The docs site is its own WebAssembly app instead of being built from the
+  demo. The demo stays the place for the visual tests.
+- Bool columns in `StilDataGrid` now show `TrueText` and `FalseText` in their
+  cells too, not only in the filter.
+- The showcase's code blocks can be focused, so keyboard users can scroll
+  them. This was the one axe finding.
 
 ---
 

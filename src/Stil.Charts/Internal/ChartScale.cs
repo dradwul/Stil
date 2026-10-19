@@ -44,6 +44,9 @@ internal sealed class ChartScale
     /// Builds a scale that covers <paramref name="dataMin"/> to <paramref name="dataMax"/> with at
     /// most about <paramref name="maxTicks"/> intervals.
     /// </summary>
+    /// <param name="dataMin">The smallest value to show.</param>
+    /// <param name="dataMax">The largest value to show.</param>
+    /// <param name="maxTicks">The most intervals between ticks.</param>
     /// <param name="includeZero">Extends the axis to zero (bar charts and areas need this).</param>
     /// <param name="fixedMin">An exact lower end set by the app.</param>
     /// <param name="fixedMax">An exact upper end set by the app.</param>

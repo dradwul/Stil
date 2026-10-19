@@ -44,8 +44,9 @@ Nothing has been published.
   - `StilIcon` with built-in icons, and `IStilIconProvider` for other icon
     sets.
   - XML documentation for IntelliSense, Source Link and symbol packages.
-- **Stil.Charts**: SVG line, bar, donut and sparkline charts that follow the
-  theme.
+- **Stil.Charts**: SVG line, area, bar (grouped, stacked or horizontal), donut
+  and sparkline charts that follow the theme and dark mode and render in static
+  SSR. Each chart has a generated summary and a data table for screen readers.
 - **Stil.Templates**: `dotnet new stil-app`.
 - A documentation site with live examples, API tables and a theme builder.
 - A guide for migrating from Bootstrap.

@@ -1,0 +1,13 @@
+<StilBarChart Items="_regions" Category="r => r.Region" Title="New customers per region" Format="N0" Height="220"
+              DataTable="StilChartDataTable.Toggle" ShowDataText="Show the numbers" CategoryText="Region">
+    <StilChartSeries Name="New customers" Value="r => r.Customers" />
+</StilBarChart>
+
+@code {
+    private static readonly RegionCount[] _regions =
+    [
+        new("Denmark", 312), new("Finland", 268), new("Iceland", 41), new("Norway", 297), new("Sweden", 455),
+    ];
+
+    private sealed record RegionCount(string Region, int Customers);
+}

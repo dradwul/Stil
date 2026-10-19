@@ -1,0 +1,19 @@
+<StilDataGrid Items="_orders" Caption="Orders" PageSize="5" PageSizeOptions="[5, 10, 25]">
+    <Columns>
+        <StilDataGridColumn Property="o => o.Id" Title="Order" InitialSort="StilSortDirection.Descending" Width="7rem" />
+        <StilDataGridColumn Property="o => o.Customer" />
+        <StilDataGridColumn Property="o => o.Date" Format="d MMM yyyy" />
+        <StilDataGridColumn Property="o => o.Amount" Title="Amount (€)" Format="N2" Align="StilTextAlign.End" />
+    </Columns>
+</StilDataGrid>
+
+@code {
+    private static readonly string[] _customers =
+        ["Fjällbacka Café", "Hallberg & Söner AB", "Lindqvist Bygg", "Østerby Marine", "Kallio Design Oy", "Visby Keramik"];
+
+    private static readonly Order[] _orders = Enumerable.Range(1, 23)
+        .Select(i => new Order(1000 + i, _customers[i * 7 % _customers.Length], new DateOnly(2026, 9, 1).AddDays(i * 2), i * 173.5m % 2000 + 95))
+        .ToArray();
+
+    private sealed record Order(int Id, string Customer, DateOnly Date, decimal Amount);
+}

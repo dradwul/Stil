@@ -1,0 +1,14 @@
+@inject IStilToastService Toasts
+
+<div class="stil-cluster">
+    <StilButton Variant="StilVariant.Success" Appearance="StilButtonAppearance.Outline"
+                OnClick="@(() => Toasts.Success("Order #1043 shipped.", "Shipped"))">Success</StilButton>
+    <StilButton Variant="StilVariant.Info" Appearance="StilButtonAppearance.Outline"
+                OnClick="@(() => Toasts.Info("A new version of the price list is available."))">Info</StilButton>
+    <StilButton Variant="StilVariant.Warning" Appearance="StilButtonAppearance.Outline"
+                OnClick="@(() => Toasts.Warning("Your session ends in 5 minutes."))">Warning</StilButton>
+    <StilButton Variant="StilVariant.Danger" Appearance="StilButtonAppearance.Outline"
+                OnClick="@(() => Toasts.Error("The payment provider did not respond.", "Payment failed"))">Error</StilButton>
+    <StilButton Appearance="StilButtonAppearance.Ghost" Variant="StilVariant.Secondary"
+                OnClick="@(() => Toasts.Show("This one stays until you close it.", duration: TimeSpan.Zero))">Stays open</StilButton>
+</div>

@@ -1,0 +1,31 @@
+<StilCard Title="Latest invoices" HeadingLevel="3" aria-busy="@(_loading ? "true" : "false")">
+    <HeaderActions>
+        <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Outline" Loading="_loading" OnClick="LoadAsync">Refresh</StilButton>
+    </HeaderActions>
+    <ChildContent>
+        @if (_loading)
+        {
+            <StilCluster>
+                <StilSpinner Size="StilSize.Small" Label="Loading invoices…" />
+                <span class="stil-text-muted">Loading invoices…</span>
+            </StilCluster>
+        }
+        else
+        {
+            <p class="stil-mb-0">3 invoices are waiting for payment. Updated @_updated.ToString("t").</p>
+        }
+    </ChildContent>
+</StilCard>
+
+@code {
+    private bool _loading;
+    private DateTime _updated = DateTime.Now;
+
+    private async Task LoadAsync()
+    {
+        _loading = true;
+        await Task.Delay(1200);
+        _updated = DateTime.Now;
+        _loading = false;
+    }
+}

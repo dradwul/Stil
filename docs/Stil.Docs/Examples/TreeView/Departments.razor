@@ -1,0 +1,29 @@
+<StilTreeView TItem="Department" Items="_departments" ChildrenSelector="d => d.Teams" ItemKey="d => d.Id"
+              ExpandAll Label="Departments" @bind-SelectedItem="_selected">
+    <ItemTemplate>
+        <span>@context.Name</span>
+        <StilBadge Subtle Variant="StilVariant.Secondary">@context.People</StilBadge>
+    </ItemTemplate>
+</StilTreeView>
+<p class="stil-text-muted stil-fs-sm stil-mt-2 stil-mb-0">
+    @(_selected is null ? "Choose a department." : $"{_selected.Name}: {_selected.People} people.")
+</p>
+
+@code {
+    private sealed record Department(int Id, string Name, int People, params Department[] Teams);
+
+    private static readonly Department[] _departments =
+    [
+        new(1, "Sales", 24,
+            new(2, "Nordics", 14),
+            new(3, "Baltics", 10)),
+        new(4, "Product", 31,
+            new(5, "Design", 8),
+            new(6, "Engineering", 23,
+                new(7, "Web", 12),
+                new(8, "Mobile", 11))),
+        new(9, "Support", 9),
+    ];
+
+    private Department? _selected;
+}

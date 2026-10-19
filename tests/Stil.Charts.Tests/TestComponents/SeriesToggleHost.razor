@@ -1,0 +1,13 @@
+@* A line chart whose second series can be removed, to test that the chart redraws. *@
+<StilLineChart Items="TestData.Sales()" Category="s => s.Month">
+    <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+    @if (ShowSecond)
+    {
+        <StilChartSeries Name="This year" Value="s => s.ThisYear" />
+    }
+</StilLineChart>
+
+@code {
+    [Parameter]
+    public bool ShowSecond { get; set; } = true;
+}

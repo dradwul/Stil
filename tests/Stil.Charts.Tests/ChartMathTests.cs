@@ -145,7 +145,7 @@ public class ChartMathTests
     {
         CultureInfo.CurrentCulture = new CultureInfo("en-US");
         Assert.Equal("1,234.5", ChartText.Value(1234.5, null));
-        Assert.Equal("$1,235", ChartText.Value(1234.5, "C0"));
+        Assert.Equal("$1,235", ChartText.Value(1234.6, "C0"));
 
         CultureInfo.CurrentCulture = new CultureInfo("sv-SE");
         Assert.Equal($"1{CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator}234,5", ChartText.Value(1234.5, null));

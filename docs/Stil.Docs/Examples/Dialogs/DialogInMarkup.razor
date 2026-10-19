@@ -1,0 +1,25 @@
+<StilButton OnClick="() => _open = true">Invite a member</StilButton>
+<p class="stil-text-muted stil-mt-2 stil-mb-0">@_status</p>
+
+<StilDialog @bind-Open="_open" Title="Invite a member">
+    <ChildContent>
+        <p>They get an email with a link to join the team.</p>
+        <StilTextBox @bind-Value="_email" Label="Email" Type="email" />
+    </ChildContent>
+    <Footer>
+        <StilButton Appearance="StilButtonAppearance.Ghost" Variant="StilVariant.Secondary" OnClick="() => _open = false">Cancel</StilButton>
+        <StilButton OnClick="Invite">Send invite</StilButton>
+    </Footer>
+</StilDialog>
+
+@code {
+    private bool _open;
+    private string? _email;
+    private string _status = "No invitation sent.";
+
+    private void Invite()
+    {
+        _status = $"Invitation sent to {(string.IsNullOrWhiteSpace(_email) ? "nobody" : _email)}.";
+        _open = false;
+    }
+}

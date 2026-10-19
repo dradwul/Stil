@@ -1,0 +1,15 @@
+<StilLineChart Items="_days" Category="d => d.Day" CategoryFormat="d MMM" Title="Visitors" Area ShowMarkers
+               Height="240" Summary="Visitors rose from 1,200 to 2,050 a day over the week, with a dip on Saturday.">
+    <StilChartSeries Name="Visitors" Value="d => d.Visitors" />
+</StilLineChart>
+
+@code {
+    private static readonly Visits[] _days =
+    [
+        new(new(2026, 10, 12), 1200), new(new(2026, 10, 13), 1430), new(new(2026, 10, 14), 1610),
+        new(new(2026, 10, 15), 1580), new(new(2026, 10, 16), 1890), new(new(2026, 10, 17), 1320),
+        new(new(2026, 10, 18), 2050),
+    ];
+
+    private sealed record Visits(DateOnly Day, int Visitors);
+}

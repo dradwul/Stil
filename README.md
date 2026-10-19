@@ -11,6 +11,12 @@ Stil is a themeable UI toolkit in two parts:
 | **Stil CSS** | A framework-independent CSS class library: layout, components and utilities, about 14 kB gzipped. Works with plain HTML or any framework. | [`src/Stil.Css`](src/Stil.Css/README.md) |
 | **Stil for Blazor** | A Blazor component library built on Stil CSS: forms with validation, a data grid, pickers, tree view, tabs, dropdowns, dialogs and toasts. Shipped as the `Stil` NuGet package. | [`src/Stil.Blazor`](src/Stil.Blazor/README.md) |
 
+Around them: `Stil.Charts`, themeable SVG charts for Blazor
+([`src/Stil.Charts`](src/Stil.Charts/README.md)); `dotnet new stil-app`, a
+project template ([`templates/Stil.Templates`](templates/Stil.Templates/README.md));
+and a documentation site with live examples and a theme builder
+([`docs/Stil.Docs`](docs/Stil.Docs)).
+
 The Blazor components render ordinary HTML with Stil CSS classes, so a page
 can mix components and hand-written markup. Every class starts with `stil-`
 and every token with `--stil-`, so Stil can sit next to Bootstrap or your own
@@ -76,17 +82,22 @@ Coming from Bootstrap? See the
 ## Repository layout
 
 ```text
-.github/workflows/   CI: check, build, test and pack on every push and pull request
+.github/workflows/   CI: check, build, test, pack, template and axe tests; a docs build
 assets/              Logo and other shared brand files
 src/Stil.Css/        Stil CSS: sources (src/), build scripts (build/), output (dist/), npm package
 src/Stil.Blazor/     Stil for Blazor: Razor class library, packed as NuGet "Stil"
+src/Stil.Charts/     SVG charts for Blazor, packed as NuGet "Stil.Charts"
+templates/           dotnet new stil-app (Stil.Templates) and its test script
+docs/Stil.Docs/      Documentation site (Blazor WebAssembly) with a theme builder
 samples/Stil.Html/   Plain-HTML showcase of every CSS class, plus an admin page built with Stil
 samples/Stil.Demo/   Blazor web app: component gallery and an orders CRUD page
-tests/               bUnit/xUnit tests for the Blazor components
+tests/               bUnit tests (Stil.Blazor.Tests, Stil.Charts.Tests) and Playwright tests (Stil.Visual)
 tools/               check-contrast.mjs: WCAG contrast check run by CI
+CHANGELOG.md         Changes in every package
 CONTRIBUTING.md      Naming rules, scope model, browser support, workflow
 ROADMAP.md           Phase plan
-Stil.sln             Solution with library, demo and tests
+Stil.sln             Solution with the libraries, docs, demo, templates and tests
+Directory.Build.props  The shared version and package metadata
 ```
 
 The Blazor project does not keep its own copy of the stylesheet. It serves
@@ -122,10 +133,34 @@ To see the plain CSS showcase, open `samples/Stil.Html/index.html` in a
 browser. It needs no server. `samples/Stil.Html/admin.html` is a complete
 admin dashboard built only with Stil CSS.
 
-Build a local NuGet package:
+Run the documentation site and open <http://localhost:5193>:
+
+```shell
+dotnet run --project docs/Stil.Docs --launch-profile http
+```
+
+Test the `dotnet new stil-app` template. The script installs it into a
+temporary template hive, never into your own template list:
+
+```shell
+node templates/test-templates.mjs
+```
+
+Run the screenshot and accessibility tests (Playwright with your installed
+Edge; see [`tests/Stil.Visual`](tests/Stil.Visual/README.md)):
+
+```shell
+cd tests/Stil.Visual
+npm ci
+npm test
+```
+
+Build local NuGet packages. Nothing is published to NuGet or npm:
 
 ```shell
 dotnet pack src/Stil.Blazor -o artifacts
+dotnet pack src/Stil.Charts -o artifacts
+dotnet pack templates/Stil.Templates -o artifacts
 ```
 
 ## Contributing

@@ -339,6 +339,37 @@
     </div>
 </section>
 
+<section class="demo-section" aria-labelledby="charts">
+    <h2 id="charts">Charts</h2>
+    <p>From the separate <code>Stil.Charts</code> package: SVG charts that follow the theme and dark mode.</p>
+    <div class="stil-grid">
+        <div class="stil-col-lg-7">
+            <StilLineChart Items="_revenue" Category="m => m.Month" Title="Revenue" Description="Thousands of euros" Format="N0" Height="260">
+                <StilChartSeries Name="2025" Value="m => m.LastYear" />
+                <StilChartSeries Name="2026" Value="m => m.ThisYear" />
+            </StilLineChart>
+        </div>
+        <div class="stil-col-lg-5">
+            <StilDonutChart Items="_channels" Category="c => c.Name" Title="Orders by channel" Format="N0" Height="180">
+                <StilChartSeries Name="Orders" Value="c => c.Orders" />
+            </StilDonutChart>
+        </div>
+        <div class="stil-col-lg-7">
+            <StilBarChart Items="_revenue" Category="m => m.Month" Title="Revenue, stacked" Format="N0" Height="220" Stacked>
+                <StilChartSeries Name="2025" Value="m => m.LastYear" />
+                <StilChartSeries Name="2026" Value="m => m.ThisYear" />
+            </StilBarChart>
+        </div>
+        <div class="stil-col-lg-5">
+            <StilBarChart Items="_channels" Category="c => c.Name" Title="Orders by channel" Format="N0"
+                          Orientation="StilChartOrientation.Horizontal" ShowValues>
+                <StilChartSeries Name="Orders" Value="c => c.Orders" />
+            </StilBarChart>
+            <StilSparkline Values="_weekly" Label="Orders per week, last 10 weeks" Area class="stil-mt-4" />
+        </div>
+    </div>
+</section>
+
 <section class="demo-section" aria-labelledby="datagrid">
     <h2 id="datagrid">Data grid</h2>
     <p>
@@ -368,6 +399,20 @@
 
 @code {
     private sealed record DemoNode(string Name, params DemoNode[] Children);
+
+    private sealed record MonthlyRevenue(string Month, int LastYear, int? ThisYear);
+
+    private sealed record Channel(string Name, int Orders);
+
+    private static readonly MonthlyRevenue[] _revenue =
+    [
+        new("Jan", 182, 204), new("Feb", 175, 211), new("Mar", 198, 236), new("Apr", 210, 249),
+        new("May", 236, 268), new("Jun", 251, 290), new("Jul", 229, null), new("Aug", 240, null),
+    ];
+
+    private static readonly Channel[] _channels = [new("Web shop", 642), new("Stores", 418), new("Wholesale", 196), new("Phone", 57)];
+
+    private static readonly double[] _weekly = [92, 104, 99, 118, 121, 109, 130, 127, 141, 152];
 
     private sealed record DemoRow(int Id, string Name, string Region, double Score);
 

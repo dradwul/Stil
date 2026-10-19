@@ -1,18 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- A dotnet new template package. It has no code; the templates are in content/. -->
+  <!-- A dotnet new template package. It has no code; the templates are in content/. The version
+       and the shared package metadata come from Directory.Build.props. -->
   <PropertyGroup>
     <PackageType>Template</PackageType>
     <PackageId>Stil.Templates</PackageId>
-    <Version>0.1.0</Version>
     <Title>Stil for Blazor templates</Title>
-    <Authors>Stil contributors</Authors>
     <Description>dotnet new templates for Stil for Blazor: stil-app creates a Blazor Web App with Stil's themeable components, a navbar, a color-mode switch and optional sample pages.</Description>
     <PackageTags>dotnet-new;templates;Blazor;CSS;components;Stil</PackageTags>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageProjectUrl>https://github.com/dradwul/StilCSS</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/dradwul/StilCSS</RepositoryUrl>
 
     <TargetFramework>net10.0</TargetFramework>
     <IncludeContentInPack>true</IncludeContentInPack>

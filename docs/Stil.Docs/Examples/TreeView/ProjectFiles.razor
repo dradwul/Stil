@@ -1,0 +1,22 @@
+<StilTreeView TItem="Node" Items="_tree" ChildrenSelector="n => n.Children" ItemText="n => n.Name"
+              ItemIcon="n => n.Children.Length > 0 ? StilIcons.Folder : StilIcons.File"
+              @bind-SelectedItem="_selected" @bind-ExpandedItems="_expanded" Label="Project files" />
+<p class="stil-text-muted stil-fs-sm stil-mt-2 stil-mb-0">
+    Selected: @(_selected?.Name ?? "nothing"). Open folders: @_expanded.Count.
+</p>
+
+@code {
+    private sealed record Node(string Name, params Node[] Children);
+
+    private static readonly Node[] _tree =
+    [
+        new("src",
+            new("Stil.Css", new("tokens.css"), new("components.css"), new("stil.js")),
+            new("Stil.Blazor", new("StilButton.razor"), new("StilTreeView.razor"))),
+        new("docs", new("index.md"), new("theming.md")),
+        new("README.md"),
+    ];
+
+    private Node? _selected;
+    private IReadOnlyCollection<Node> _expanded = [_tree[0]];
+}

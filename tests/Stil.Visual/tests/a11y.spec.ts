@@ -42,19 +42,7 @@ interface KnownIssue {
  * Each one also has a tracking test below, marked test.fail(): once the issue is fixed, that
  * test passes unexpectedly and fails the run, as a reminder to delete the entry here.
  */
-const knownIssues: KnownIssue[] = [
-    {
-        // The showcase's own code blocks (pre.example-code, created by samples/Stil.Html/examples.js
-        // and styled with overflow-x: auto in showcase.css) scroll horizontally when a line is
-        // long, but cannot be focused, so keyboard users cannot scroll them. Not a Stil CSS
-        // problem. Fix: give the <pre> tabindex="0" (plus role="region" and an aria-label) in
-        // examples.js.
-        target: 'showcase index.html',
-        rule: 'scrollable-region-focusable',
-        selector: /\.example-code/,
-        reason: 'showcase code blocks scroll but are not focusable',
-    },
-];
+const knownIssues: KnownIssue[] = [];
 
 function isKnown(target: string, rule: string, selector: string): boolean {
     return knownIssues.some(issue => issue.target === target && issue.rule === rule && issue.selector.test(selector));

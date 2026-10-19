@@ -10,7 +10,7 @@
     {
       "name": "stil-html",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["C:/Users/LUDVIG~1.AND/AppData/Local/Temp/claude/C--Repos-Luddes-StilCSS/b865aa1c-be3c-4ddb-bd45-4cb4ee8a5baa/scratchpad/serve.mjs", "C:/Repos/Luddes/StilCSS"],
+      "runtimeArgs": ["tests/Stil.Visual/static-server.mjs", "5199"],
       "port": 5199
     },
     {

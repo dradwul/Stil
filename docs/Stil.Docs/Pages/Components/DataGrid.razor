@@ -1,0 +1,83 @@
+@page "/components/data-grid"
+@using Stil.Docs.Examples.DataGrid
+
+<DocsHeader Title="Data grid" Eyebrow="Data">
+    <Lead>A table for business data: sorting, filters, paging, selection, virtualization and server-side data.</Lead>
+</DocsHeader>
+
+<p>
+    <code>StilDataGrid</code> renders a <code>stil-table</code>. Each <code>StilDataGridColumn</code> binds to a property,
+    and the same expression shows, sorts and filters the column, also in a database query. For a simple list of rows,
+    the lighter <a href="components/tables">table</a> is enough.
+</p>
+
+<h2 id="sorting">Sorting and paging</h2>
+<DocExample Type="typeof(SortingAndPaging)">
+    <p>
+        Clicking a header sorts ascending, then descending, then not at all; the header has <code>aria-sort</code>.
+        <code>InitialSort</code> sorts when the grid first shows. <code>Title</code> defaults to the property name,
+        <code>Format</code> formats the value in the current culture, and <code>Width</code> fixes a column's width.
+        <code>PageSize</code> is 10 by default (0 shows every row), and <code>PageSizeOptions</code> lets the user choose.
+    </p>
+</DocExample>
+
+<h2 id="filtering">Filters and templates</h2>
+<DocExample Type="typeof(Filtering)">
+    <p>
+        <code>Filterable</code> adds a filter row. Text columns get a case-insensitive "contains" filter that waits for
+        typing to pause; enum and bool columns get a choice; <code>Filterable="false"</code> leaves a column out. A
+        <code>Template</code> changes how a cell looks without changing what it sorts and filters on.
+        <code>TrueText</code> and <code>FalseText</code> name the values of a bool column.
+    </p>
+</DocExample>
+
+<h2 id="selection">Selection and the toolbar</h2>
+<DocExample Type="typeof(Selection)">
+    <p>
+        With <code>SelectionMode="Multiple"</code> a checkbox column appears, and the header checkbox selects every row
+        on the page. Bind <code>@@bind-SelectedItems</code>. Set <code>ItemKey</code> when the rows are new objects on
+        every load, so the selection is kept. <code>Toolbar</code> holds actions above the grid. A
+        <code>StilDataGridTemplateColumn</code> holds anything, such as buttons; it cannot be sorted or filtered.
+    </p>
+</DocExample>
+
+<h2 id="single">Single selection and row styles</h2>
+<DocExample Type="typeof(RowClicks)">
+    <p>
+        <code>SelectionMode="Single"</code> selects a row on a click, or with Enter when the row has focus; bind
+        <code>@@bind-SelectedItem</code>. Use <code>OnRowClick</code> to open a row instead. <code>RowClass</code> adds
+        classes to a row; do not use a style alone to show a state, so this grid also says it in a column.
+        <code>EmptyContent</code> replaces the "No items" row.
+    </p>
+</DocExample>
+
+<h2 id="server-data">Server-side data</h2>
+<DocExample Type="typeof(ServerData)">
+    <p>
+        With <code>ItemsProvider</code> the grid asks for one page at a time. The request has <code>StartIndex</code>,
+        <code>Count</code>, <code>SortBy</code>, <code>SortDirection</code>, <code>Filters</code> and a
+        <code>CancellationToken</code> that is cancelled when the grid asks again. For an <code>IQueryable</code> such as
+        an EF Core <code>DbSet</code>, <code>ApplyFiltersAndSorting</code> and <code>ApplyPaging</code> build the query
+        from the columns. Call <code>RefreshAsync()</code> through <code>@@ref</code> to reload.
+    </p>
+</DocExample>
+
+<h2 id="virtualization">Virtualization</h2>
+<DocExample Type="typeof(Virtualized)">
+    <p>
+        <code>Virtualize</code> with a <code>Height</code> renders only the visible rows of a long list instead of pages.
+        The header stays visible while you scroll. Every row should have the same height (<code>ItemSize</code>, 41 px by
+        default).
+    </p>
+</DocExample>
+
+<h2 id="render-modes">Render modes</h2>
+<p>
+    In static server rendering the grid shows its first page, sorted by <code>InitialSort</code>. Sorting, filters,
+    paging and selection need an interactive render mode.
+</p>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilDataGrid<>)" />
+<ApiTable Type="typeof(StilDataGridColumn<,>)" />
+<ApiTable Type="typeof(StilDataGridTemplateColumn<>)" />

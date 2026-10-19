@@ -1,0 +1,509 @@
+@inherits BunitContext
+
+@code {
+    public ChartComponentTests()
+    {
+        // Values and categories are formatted in the current culture.
+        CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
+    }
+
+    private readonly List<Sale> _sales = TestData.Sales();
+
+    private readonly List<Share> _shares =
+    [
+        new("Rent", 500),
+        new("Food", 300),
+        new("Travel", 150),
+        new("Fun", 50)
+    ];
+
+    // Shared
+
+    [Fact]
+    public void ChartIsAFigureWithTheTitleAsTheDrawingsName()
+    {
+        var cut = Render(@<StilLineChart Items="_sales" Category="s => s.Month" Title="Revenue" Description="Jan–May"
+                                        class="my-chart" data-test="x">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+        </StilLineChart>);
+
+        var figure = cut.Find("figure");
+        Assert.Equal(["stil-chart", "stil-chart-line", "my-chart"], figure.ClassList);
+        Assert.Equal("x", figure.GetAttribute("data-test"));
+
+        var title = cut.Find("figcaption.stil-chart-header > .stil-chart-title");
+        Assert.Equal("Revenue", title.TextContent);
+        Assert.Equal("Jan–May", cut.Find("figcaption > .stil-chart-description").TextContent);
+
+        var svg = cut.Find("svg.stil-chart-svg");
+        Assert.Equal("img", svg.GetAttribute("role"));
+        Assert.Equal(title.Id, svg.GetAttribute("aria-labelledby"));
+        Assert.Null(svg.GetAttribute("aria-label"));
+        var desc = svg.QuerySelector("desc")!;
+        Assert.Equal(desc.Id, svg.GetAttribute("aria-describedby"));
+    }
+
+    [Fact]
+    public void ChartWithoutATitleIsNamedByItsType()
+    {
+        var cut = Render(@<StilBarChart Items="_sales" Category="s => s.Month">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+        </StilBarChart>);
+
+        Assert.Empty(cut.FindAll("figcaption"));
+        var svg = cut.Find("svg.stil-chart-svg");
+        Assert.Null(svg.GetAttribute("aria-labelledby"));
+        Assert.Equal("Bar chart", svg.GetAttribute("aria-label"));
+    }
+
+    [Fact]
+    public void SummaryDescribesTheRangeOfEachSeries()
+    {
+        var cut = Render(@<StilLineChart Items="_sales" Category="s => s.Month" Title="Revenue" Format="N0">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+            <StilChartSeries Name="This year" Value="s => s.ThisYear" />
+        </StilLineChart>);
+
+        Assert.Equal(
+            "Line chart with 2 series (Last year and This year), 5 categories, from Jan to May. " +
+            "Last year: lowest 900 (Feb), highest 3,000 (May). This year: lowest 1,500 (Jan), highest 4,300 (May).",
+            cut.Find("svg.stil-chart-svg > desc").TextContent);
+    }
+
+    [Fact]
+    public void SummaryCanBeSet()
+    {
+        var cut = Render(@<StilLineChart Items="_sales" Category="s => s.Month" Summary="Revenue doubled.">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+        </StilLineChart>);
+
+        Assert.Equal("Revenue doubled.", cut.Find("desc").TextContent);
+    }
+
+    [Fact]
+    public void DataTableIsAShowDataToggleByDefault()
+    {
+        var cut = Render(@<StilLineChart Items="_sales" Category="s => s.Month" Title="Revenue" Format="N0" CategoryAxisTitle="Month">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+            <StilChartSeries Name="This year" Value="s => s.ThisYear" />
+        </StilLineChart>);
+
+        var details = cut.Find("details.stil-chart-data");
+        Assert.Null(details.GetAttribute("open"));
+        Assert.Equal("Show data", details.QuerySelector("summary")!.TextContent);
+
+        var table = details.QuerySelector("table.stil-table")!;
+        Assert.Equal("Revenue", table.QuerySelector("caption")!.TextContent);
+        Assert.Equal(["Month", "Last year", "This year"], table.QuerySelectorAll("thead th").Select(th => th.TextContent));
+        Assert.All(table.QuerySelectorAll("thead th"), th => Assert.Equal("col", th.GetAttribute("scope")));
+
+        var rows = table.QuerySelectorAll("tbody tr");
+        Assert.Equal(5, rows.Length);
+        Assert.Equal("row", rows[0].QuerySelector("th")!.GetAttribute("scope"));
+        Assert.Equal(["Apr", "2,500", "–"], rows[3].Children.Select(c => c.TextContent));
+    }
+
+    [Fact]
+    public void DataTableCanBeHiddenOrLeftOut()
+    {
+        var hidden = Render(@<StilLineChart Items="_sales" Category="s => s.Month" DataTable="StilChartDataTable.Hidden" ShowDataText="Data" MissingText="n/a">
+            <StilChartSeries Name="This year" Value="s => s.ThisYear" />
+        </StilLineChart>);
+
+        Assert.Empty(hidden.FindAll("details"));
+        var table = hidden.Find("div.stil-chart-data.stil-visually-hidden > .stil-table-responsive > table");
+        Assert.Contains("n/a", table.QuerySelectorAll("td").Select(td => td.TextContent));
+
+        var none = Render(@<StilLineChart Items="_sales" Category="s => s.Month" DataTable="StilChartDataTable.None">
+            <StilChartSeries Name="This year" Value="s => s.ThisYear" />
+        </StilLineChart>);
+
+        Assert.Empty(none.FindAll("table"));
+    }
+
+    [Fact]
+    public void LegendShowsForTwoOrMoreSeries()
+    {
+        var one = Render(@<StilLineChart Items="_sales" Category="s => s.Month">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+        </StilLineChart>);
+        Assert.Empty(one.FindAll(".stil-chart-legend"));
+
+        var forced = Render(@<StilLineChart Items="_sales" Category="s => s.Month" ShowLegend="true">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+        </StilLineChart>);
+        Assert.Single(forced.FindAll(".stil-chart-legend-item"));
+
+        var two = Render(@<StilLineChart Items="_sales" Category="s => s.Month">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+            <StilChartSeries Name="This year" Value="s => s.ThisYear" Color="var(--stil-color-danger)" />
+        </StilLineChart>);
+
+        var items = two.FindAll(".stil-chart-legend > .stil-chart-legend-item");
+        Assert.Equal(["Last year", "This year"], items.Select(i => i.TextContent.Trim()));
+        Assert.Equal("--_color: var(--stil-chart-1)", items[0].GetAttribute("style"));
+        Assert.Equal("--_color: var(--stil-color-danger)", items[1].GetAttribute("style"));
+        Assert.Equal("true", items[0].QuerySelector(".stil-chart-key")!.GetAttribute("aria-hidden"));
+        Assert.Contains("stil-chart-key-line", items[0].QuerySelector(".stil-chart-key")!.ClassList);
+    }
+
+    [Fact]
+    public void SeriesAfterTheSixthUseTheOtherColor()
+    {
+        Assert.Equal("var(--stil-chart-6)", StilChartBase<Sale>.SeriesColor(5, null));
+        Assert.Equal("var(--stil-chart-other, var(--stil-color-border-strong))", StilChartBase<Sale>.SeriesColor(6, null));
+        Assert.Equal("#123456", StilChartBase<Sale>.SeriesColor(6, "#123456"));
+    }
+
+    [Fact]
+    public void SeriesWithoutANameAreNumbered()
+    {
+        var cut = Render(@<StilLineChart Items="_sales" Category="s => s.Month">
+            <StilChartSeries Value="s => s.LastYear" />
+            <StilChartSeries Value="s => s.ThisYear" />
+        </StilLineChart>);
+
+        Assert.Equal(["Series 1", "Series 2"], cut.FindAll(".stil-chart-legend-item").Select(i => i.TextContent.Trim()));
+    }
+
+    [Fact]
+    public void CategoriesDefaultToThePositionAndUseTheirFormat()
+    {
+        var dates = new[] { (Day: new DateOnly(2026, 1, 1), Value: 1), (Day: new DateOnly(2026, 2, 1), Value: 2) };
+
+        var formatted = Render(@<StilBarChart Items="dates" Category="d => d.Day" CategoryFormat="MMM">
+            <StilChartSeries Name="Count" Value="d => d.Value" />
+        </StilBarChart>);
+        Assert.Equal(["Jan", "Feb"], formatted.FindAll("tbody th").Select(th => th.TextContent));
+
+        var numbered = Render(@<StilBarChart Items="dates">
+            <StilChartSeries Name="Count" Value="d => d.Value" />
+        </StilBarChart>);
+        Assert.Equal(["1", "2"], numbered.FindAll("tbody th").Select(th => th.TextContent));
+    }
+
+    [Fact]
+    public void EmptyChartShowsTheEmptyText()
+    {
+        var cut = Render(@<StilLineChart Items="new List<Sale>()" Title="Revenue" EmptyText="Nothing yet." Height="200">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+        </StilLineChart>);
+
+        Assert.Equal("Nothing yet.", cut.Find(".stil-chart-empty").TextContent);
+        Assert.Equal("min-height: 200px", cut.Find(".stil-chart-empty").GetAttribute("style"));
+        Assert.Equal("Revenue", cut.Find(".stil-chart-title").TextContent);
+        Assert.Empty(cut.FindAll("svg"));
+        Assert.Empty(cut.FindAll("table"));
+    }
+
+    [Fact]
+    public void SeriesOutsideAChartThrows()
+    {
+        var error = Assert.Throws<InvalidOperationException>(() =>
+            Render(@<StilChartSeries TItem="Sale" TValue="decimal" Name="Lost" Value="s => s.LastYear" />));
+
+        Assert.Contains("inside a Stil chart", error.Message);
+    }
+
+    [Fact]
+    public void ChartRedrawsWhenSeriesAreRemovedOrAdded()
+    {
+        var cut = Render<SeriesToggleHost>();
+        Assert.Equal(2, cut.FindAll(".stil-chart-legend-item").Count);
+
+        cut.Render(parameters => parameters.Add(host => host.ShowSecond, false));
+        Assert.Empty(cut.FindAll(".stil-chart-legend"));
+        Assert.Equal(["Category", "Last year"], cut.FindAll("thead th").Select(th => th.TextContent));
+
+        cut.Render(parameters => parameters.Add(host => host.ShowSecond, true));
+        Assert.Equal(["Category", "Last year", "This year"], cut.FindAll("thead th").Select(th => th.TextContent));
+    }
+
+    // Line chart
+
+    [Fact]
+    public void MissingValuesBreakTheLine()
+    {
+        var cut = Render(@<StilLineChart Items="_sales" Category="s => s.Month">
+            <StilChartSeries Name="This year" Value="s => s.ThisYear" />
+        </StilLineChart>);
+
+        // Jan–Mar is one line; May stands alone and gets a marker.
+        var paths = cut.FindAll(".stil-chart-series > path.stil-chart-line-path");
+        Assert.Single(paths);
+        Assert.Equal("non-scaling-stroke", paths[0].GetAttribute("vector-effect"));
+        Assert.Equal(3, paths[0].GetAttribute("d")!.Split('L').Length);
+        Assert.Single(cut.FindAll(".stil-chart-markers circle.stil-chart-marker"));
+
+        // Every category has a hover band with a tooltip; Apr has no point to show.
+        var bands = cut.FindAll("g.stil-chart-band");
+        Assert.Equal(5, bands.Count);
+        Assert.Equal("Apr\nThis year: –", bands[3].QuerySelector("title")!.TextContent);
+        Assert.Empty(bands[3].QuerySelectorAll(".stil-chart-hover-marker"));
+    }
+
+    [Fact]
+    public void LineMarkersShowTheLastPointOrEveryPoint()
+    {
+        var last = Render(@<StilLineChart Items="_sales" Category="s => s.Month">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+        </StilLineChart>);
+        Assert.Single(last.FindAll(".stil-chart-markers circle"));
+
+        var all = Render(@<StilLineChart Items="_sales" Category="s => s.Month" ShowMarkers="true">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+        </StilLineChart>);
+        Assert.Equal(5, all.FindAll(".stil-chart-markers circle").Count);
+    }
+
+    [Fact]
+    public void AreaChartFillsUnderTheLine()
+    {
+        var cut = Render(@<StilLineChart Items="_sales" Category="s => s.Month" Area="true" Title="Revenue">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+        </StilLineChart>);
+
+        Assert.Equal(["stil-chart", "stil-chart-line", "stil-chart-line-area"], cut.Find("figure").ClassList);
+        Assert.Single(cut.FindAll("path.stil-chart-area"));
+        Assert.StartsWith("Area chart of Last year", cut.Find("desc").TextContent);
+    }
+
+    [Fact]
+    public void DirectLabelsNameLinesThatEndApart()
+    {
+        var cut = Render(@<StilLineChart Items="_sales" Category="s => s.Month">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+            <StilChartSeries Name="This year" Value="s => s.ThisYear" />
+        </StilLineChart>);
+
+        var labels = cut.FindAll(".stil-chart-end-labels > text");
+        Assert.Equal(["This year", "Last year"], labels.Select(l => l.TextContent));
+        Assert.Contains("--_labels: ", cut.Find(".stil-chart-plot").GetAttribute("style"));
+
+        var off = Render(@<StilLineChart Items="_sales" Category="s => s.Month" DirectLabels="false">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+            <StilChartSeries Name="This year" Value="s => s.ThisYear" />
+        </StilLineChart>);
+        Assert.Empty(off.FindAll(".stil-chart-end-labels"));
+    }
+
+    [Fact]
+    public void AxisTitlesAndTickFormat()
+    {
+        var cut = Render(@<StilLineChart Items="_sales" Category="s => s.Month" CategoryAxisTitle="Month" ValueAxisTitle="Revenue (kr)"
+                                        TickFormat="0'k'" Min="0" Max="5000">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+        </StilLineChart>);
+
+        Assert.Equal(["Month", "Revenue (kr)"], cut.FindAll("text.stil-chart-axis-title").Select(t => t.TextContent));
+        var ticks = cut.FindAll("text.stil-chart-value-tick").Select(t => t.TextContent).ToList();
+        Assert.Equal("0k", ticks[0]);
+        Assert.Equal("5000k", ticks[^1]);
+    }
+
+    [Fact]
+    public void GridlinesCanBeTurnedOff()
+    {
+        var cut = Render(@<StilLineChart Items="_sales" Category="s => s.Month" Gridlines="false">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+        </StilLineChart>);
+
+        Assert.Empty(cut.FindAll(".stil-chart-gridline"));
+        Assert.Single(cut.FindAll(".stil-chart-baseline"));
+    }
+
+    // Bar chart
+
+    [Fact]
+    public void GroupedBarsHaveOneMarkPerValueWithATooltip()
+    {
+        var cut = Render(@<StilBarChart Items="_sales" Category="s => s.Month" Format="N0">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+            <StilChartSeries Name="This year" Value="s => s.ThisYear" />
+        </StilBarChart>);
+
+        // 5 + 4 values (Apr is missing this year).
+        var items = cut.FindAll("g.stil-chart-bar-item");
+        Assert.Equal(9, items.Count);
+        Assert.Equal("Jan\nLast year: 1,200", items[0].QuerySelector("title")!.TextContent);
+        Assert.Contains("--_color: var(--stil-chart-2)", items[1].GetAttribute("style"));
+        Assert.Contains("--_m: 2", items[1].GetAttribute("style"));
+        Assert.Contains("--_j: 1", items[1].GetAttribute("style"));
+        Assert.Equal("4", items[0].QuerySelector("rect.stil-chart-bar-mark")!.GetAttribute("rx"));
+    }
+
+    [Fact]
+    public void StackedBarsShowTotals()
+    {
+        var cut = Render(@<StilBarChart Items="_sales" Category="s => s.Month" Format="N0" Stacked="true" TotalText="Sum" ShowValues="true">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+            <StilChartSeries Name="This year" Value="s => s.ThisYear" />
+        </StilBarChart>);
+
+        Assert.Equal(["Category", "Last year", "This year", "Sum"], cut.FindAll("thead th").Select(th => th.TextContent));
+        Assert.Equal(["Jan", "1,200", "1,500", "2,700"], cut.FindAll("tbody tr")[0].Children.Select(c => c.TextContent));
+
+        var desc = cut.Find("desc").TextContent;
+        Assert.StartsWith("Stacked bar chart with 2 series", desc);
+        Assert.EndsWith("Sums range from 2,500 (Apr) to 7,300 (May).", desc);
+
+        Assert.Equal("Jan\nLast year: 1,200\nSum: 2,700", cut.FindAll("g.stil-chart-bar-item")[0].QuerySelector("title")!.TextContent);
+        Assert.Equal(["2,700", "2,600", "4,700", "2,500", "7,300"], cut.FindAll("text.stil-chart-value").Select(t => t.TextContent));
+    }
+
+    [Fact]
+    public void HorizontalBarsShowTheirValues()
+    {
+        var cut = Render(@<StilBarChart Items="_shares" Category="s => s.Name" Orientation="StilChartOrientation.Horizontal" ShowValues="true">
+            <StilChartSeries Name="Amount" Value="s => s.Amount" />
+        </StilBarChart>);
+
+        Assert.Equal(["stil-chart", "stil-chart-bar", "stil-chart-bar-horizontal"], cut.Find("figure").ClassList);
+        Assert.Equal(["Rent", "Food", "Travel", "Fun"], cut.FindAll("text.stil-chart-category").Select(t => t.TextContent));
+        Assert.Equal(["500", "300", "150", "50"], cut.FindAll("text.stil-chart-value").Select(t => t.TextContent));
+        Assert.Equal(4, cut.FindAll("rect.stil-chart-hit").Count);
+    }
+
+    [Fact]
+    public void NegativeBarsGrowDownFromZero()
+    {
+        var items = new[] { (Name: "A", Value: 10), (Name: "B", Value: -5) };
+        var cut = Render(@<StilBarChart Items="items" Category="i => i.Name">
+            <StilChartSeries Name="Change" Value="i => i.Value" />
+        </StilBarChart>);
+
+        var ticks = cut.FindAll("text.stil-chart-value-tick").Select(t => t.TextContent).ToList();
+        Assert.Contains("0", ticks);
+        Assert.StartsWith("-", ticks[0]);
+    }
+
+    [Fact]
+    public void LongCategoriesAreShortenedWithTheFullNameAsATooltip()
+    {
+        var items = new[] { (Name: "A very long product category name", Value: 3) };
+        var cut = Render(@<StilBarChart Items="items" Category="i => i.Name" Orientation="StilChartOrientation.Horizontal">
+            <StilChartSeries Name="Sold" Value="i => i.Value" />
+        </StilBarChart>);
+
+        var label = cut.Find("text.stil-chart-category");
+        Assert.Equal("A very long product category name", label.QuerySelector("title")!.TextContent);
+        Assert.EndsWith("…", label.LastChild!.TextContent);
+    }
+
+    // Donut chart
+
+    [Fact]
+    public void DonutDrawsASliceForEachPartWithTheTotalInTheMiddle()
+    {
+        var cut = Render(@<StilDonutChart Items="_shares" Category="s => s.Name" Title="Budget" Format="C0">
+            <StilChartSeries Name="Amount" Value="s => s.Amount" />
+        </StilDonutChart>);
+
+        Assert.Equal(["stil-chart", "stil-chart-donut"], cut.Find("figure").ClassList);
+        var svg = cut.Find("svg.stil-chart-donut-svg");
+        Assert.Equal("img", svg.GetAttribute("role"));
+        Assert.Equal(4, svg.QuerySelectorAll("g.stil-chart-slice > path").Length);
+        Assert.Equal("Rent: $500 (50%)", svg.QuerySelector("g.stil-chart-slice > title")!.TextContent);
+        Assert.Equal("$1,000", cut.Find("text.stil-chart-donut-total").TextContent);
+        Assert.Equal("Total", cut.Find("text.stil-chart-donut-label").TextContent);
+
+        var legend = cut.FindAll(".stil-chart-donut-legend > .stil-chart-legend-item");
+        Assert.Equal(["Rent", "$500", "50%"], legend[0].QuerySelectorAll("span:not(.stil-chart-key)").Select(s => s.TextContent));
+        Assert.Equal("Fun", legend[3].QuerySelector(".stil-chart-legend-name")!.TextContent);
+        Assert.Equal("5%", legend[3].QuerySelector(".stil-chart-legend-share")!.TextContent);
+
+        // The donut has its own legend, never the shared one.
+        Assert.Empty(cut.FindAll(".stil-chart-legend"));
+
+        Assert.Equal(
+            "Donut chart of Amount: 4 parts totalling $1,000. Largest: Rent, 50%. Rent $500 (50%), Food $300 (30%), Travel $150 (15%), Fun $50 (5%).",
+            cut.Find("desc").TextContent);
+    }
+
+    [Fact]
+    public void DonutTableHasSharesAndATotalRow()
+    {
+        var cut = Render(@<StilDonutChart Items="_shares" Category="s => s.Name">
+            <StilChartSeries Name="Amount" Value="s => s.Amount" />
+        </StilDonutChart>);
+
+        Assert.Equal(["Category", "Amount", "Share"], cut.FindAll("thead th").Select(th => th.TextContent));
+        var rows = cut.FindAll("tbody tr");
+        Assert.Equal(5, rows.Count);
+        Assert.Equal(["Food", "300", "30%"], rows[1].Children.Select(c => c.TextContent));
+        Assert.Equal(["Total", "1,000", "100%"], rows[4].Children.Select(c => c.TextContent));
+    }
+
+    [Fact]
+    public void DonutCombinesTheSmallestPartsIntoOther()
+    {
+        var cut = Render(@<StilDonutChart Items="_shares" Category="s => s.Name" MaxSlices="3" OtherText="Rest" ShowTotal="false"
+                                         Colors="@(["#111111"])">
+            <StilChartSeries Name="Amount" Value="s => s.Amount" />
+        </StilDonutChart>);
+
+        var names = cut.FindAll(".stil-chart-legend-name").Select(n => n.TextContent).ToList();
+        Assert.Equal(["Rent", "Food", "Rest"], names);
+        var items = cut.FindAll(".stil-chart-donut-legend > .stil-chart-legend-item");
+        Assert.Equal("--_color: #111111", items[0].GetAttribute("style"));
+        Assert.Equal("--_color: var(--stil-chart-2)", items[1].GetAttribute("style"));
+        Assert.Equal("--_color: var(--stil-chart-other, var(--stil-color-border-strong))", items[2].GetAttribute("style"));
+        Assert.Equal("20%", items[2].QuerySelector(".stil-chart-legend-share")!.TextContent);
+        Assert.Empty(cut.FindAll(".stil-chart-donut-center"));
+    }
+
+    [Fact]
+    public void DonutWithNothingPositiveShowsTheEmptyText()
+    {
+        var items = new[] { (Name: "A", Value: 0) };
+        var cut = Render(@<StilDonutChart Items="items" Category="i => i.Name">
+            <StilChartSeries Name="Count" Value="i => i.Value" />
+        </StilDonutChart>);
+
+        Assert.Equal("No data to show.", cut.Find(".stil-chart-empty").TextContent);
+        Assert.Empty(cut.FindAll("svg"));
+    }
+
+    // Sparkline
+
+    [Fact]
+    public void SparklineWithALabelIsAnImageThatReadsTheRange()
+    {
+        var cut = Render(@<StilSparkline Values="[12, 8, 15, 21]" Label="Orders, last 4 weeks" class="mine" />);
+
+        var root = cut.Find("span");
+        Assert.Equal(["stil-chart-sparkline", "mine"], root.ClassList);
+        var svg = cut.Find("svg.stil-chart-sparkline-svg");
+        Assert.Equal("img", svg.GetAttribute("role"));
+        Assert.Null(svg.GetAttribute("aria-hidden"));
+        Assert.Equal("Orders, last 4 weeks: 4 values from 12 to 21, lowest 8, highest 21.", svg.GetAttribute("aria-label"));
+        Assert.Equal("32", svg.GetAttribute("height"));
+        Assert.Single(cut.FindAll("path.stil-chart-sparkline-line"));
+        Assert.Single(cut.FindAll("circle.stil-chart-sparkline-dot"));
+    }
+
+    [Fact]
+    public void SparklineWithoutALabelIsDecorative()
+    {
+        var cut = Render(@<StilSparkline Values="[1, 2]" Area="true" ShowEndDot="false" Color="var(--stil-color-success)" Height="40" />);
+
+        var svg = cut.Find("svg.stil-chart-sparkline-svg");
+        Assert.Null(svg.GetAttribute("role"));
+        Assert.Null(svg.GetAttribute("aria-label"));
+        Assert.Equal("true", svg.GetAttribute("aria-hidden"));
+        Assert.Equal("40", svg.GetAttribute("height"));
+        Assert.Equal("--_line: var(--stil-color-success); --_dot: var(--stil-color-success)", cut.Find("span").GetAttribute("style"));
+        Assert.Single(cut.FindAll("path.stil-chart-sparkline-area"));
+        Assert.Empty(cut.FindAll("circle"));
+    }
+
+    [Fact]
+    public void SparklineSkipsValuesThatAreNotFinite()
+    {
+        var cut = Render(@<StilSparkline Values="[double.NaN, 5, double.PositiveInfinity]" Label="Load" Format="0.0" />);
+
+        Assert.Equal("Load: 5.0.", cut.Find("svg").GetAttribute("aria-label"));
+        Assert.Empty(cut.FindAll("path"));
+        Assert.Single(cut.FindAll("circle.stil-chart-sparkline-dot"));
+    }
+}

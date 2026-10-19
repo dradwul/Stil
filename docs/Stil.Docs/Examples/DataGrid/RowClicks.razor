@@ -1,0 +1,24 @@
+<StilDataGrid TItem="Invoice" Items="_orders" PageSize="0" SelectionMode="StilSelectionMode.Single" @bind-SelectedItem="_order"
+              RowClass="@(o => o.Overdue ? "stil-fw-bold" : null)" Caption="Invoices">
+    <Columns>
+        <StilDataGridColumn Property="o => o.Id" Title="Invoice" Width="7rem" />
+        <StilDataGridColumn Property="o => o.Customer" />
+        <StilDataGridColumn Property="o => o.Overdue" TrueText="Overdue" FalseText="On time" Title="Status" />
+    </Columns>
+    <EmptyContent>No invoices this month.</EmptyContent>
+</StilDataGrid>
+<p class="stil-text-muted stil-mt-2 stil-mb-0">@(_order is null ? "Click a row, or focus it and press Enter." : $"Invoice {_order.Id} for {_order.Customer}.")</p>
+
+@code {
+    private static readonly Invoice[] _orders =
+    [
+        new(5521, "Fjällbacka Café", false),
+        new(5522, "Lindqvist Bygg", true),
+        new(5523, "Østerby Marine", false),
+        new(5524, "Kallio Design Oy", false),
+    ];
+
+    private Invoice? _order;
+
+    private sealed record Invoice(int Id, string Customer, bool Overdue);
+}
