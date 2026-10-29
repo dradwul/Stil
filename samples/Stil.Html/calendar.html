@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-theme-target data-stil-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planning · Nordvik Supply</title>
+    <link rel="stylesheet" href="../../src/Stil.Css/dist/stil.css">
+    <!-- Phase 7 prototype: the calendar styles live here until they move into Stil CSS. -->
+    <link rel="stylesheet" href="calendar.css">
+
+    <!-- Optional showcase font -->
+    <link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap" rel="stylesheet">
+</head>
+<body class="stil-scope stil-m-0">
+    <a class="stil-visually-hidden-focusable stil-btn stil-m-2" href="#main">Skip to main content</a>
+
+    <header class="stil-navbar">
+        <a class="stil-navbar-brand" href="admin.html">
+            <img src="../../assets/stil-logo.svg" alt="" width="57" height="28">
+            Nordvik Supply
+        </a>
+        <div class="stil-navbar-end">
+            <div class="stil-cluster">
+                <select class="stil-select stil-select-sm stil-w-auto" data-theme-mode aria-label="Color mode">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                    <option value="auto">Auto (OS)</option>
+                </select>
+                <select class="stil-select stil-select-sm stil-w-auto" data-theme-palette aria-label="Palette">
+                    <option value="teal">Teal (default)</option>
+                    <option value="purple">Purple</option>
+                    <option value="forest">Forest</option>
+                    <option value="sunset">Sunset</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <main id="main" class="stil-container stil-py-5">
+        <div class="stil-d-flex stil-flex-wrap stil-align-items-end stil-justify-content-between stil-gap-3 stil-mb-4">
+            <div>
+                <p class="stil-text-muted stil-fs-sm stil-mb-1">Phase 7 prototype</p>
+                <h1 class="stil-mb-0">Planning</h1>
+            </div>
+            <div class="stil-tabs stil-tabs-pills" role="tablist" aria-label="Calendar view">
+                <button type="button" class="stil-tab" role="tab" id="tab-month" aria-controls="view-month" aria-selected="false" data-view="month">Month</button>
+                <button type="button" class="stil-tab" role="tab" id="tab-week" aria-controls="view-week" aria-selected="true" data-view="week">Week</button>
+                <button type="button" class="stil-tab" role="tab" id="tab-agenda" aria-controls="view-agenda" aria-selected="false" data-view="agenda">Agenda</button>
+            </div>
+        </div>
+
+        <div class="stil-planner">
+            <aside class="stil-planner-side" aria-label="Overview">
+                <section class="stil-card stil-p-3">
+                    <div class="stil-calendar stil-calendar-mini" data-mini-month></div>
+                    <div class="stil-calendar-legend" aria-hidden="true">
+                        <span>Free</span>
+                        <span class="stil-calendar-legend-scale"></span>
+                        <span>Full</span>
+                    </div>
+                </section>
+
+                <section class="stil-card stil-p-3">
+                    <h2 class="stil-fs-md stil-mb-2">Free time this week</h2>
+                    <ul class="stil-planner-free" data-free-list></ul>
+                </section>
+
+                <section class="stil-card stil-p-3">
+                    <h2 class="stil-fs-md stil-mb-2">Calendars</h2>
+                    <div class="stil-stack stil-gap-2" data-calendar-filters></div>
+                </section>
+            </aside>
+
+            <div class="stil-planner-main">
+                <section id="view-month" role="tabpanel" aria-labelledby="tab-month" hidden>
+                    <div class="stil-calendar" data-month></div>
+                </section>
+                <section id="view-week" role="tabpanel" aria-labelledby="tab-week">
+                    <div class="stil-week" data-week></div>
+                </section>
+                <section id="view-agenda" role="tabpanel" aria-labelledby="tab-agenda" hidden>
+                    <div class="stil-agenda" data-agenda></div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <div class="stil-toast-container" aria-live="polite" data-toasts></div>
+
+    <script src="theme-picker.js"></script>
+    <script src="calendar.js"></script>
+</body>
+</html>

@@ -15,6 +15,7 @@ something usable.
 | 4 | Stil for Blazor: a component for every Stil CSS component | ✅ Done |
 | 5 | Data components | ✅ Done |
 | 6 | 1.0 release and ecosystem | ✅ Done |
+| 7 | Time and planning: calendar, week planner, agenda | In progress |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -374,6 +375,48 @@ built only with Stil.
   cells too, not only in the filter.
 - The showcase's code blocks can be focused, so keyboard users can scroll
   them. This was the one axe finding.
+
+## Phase 7: Time and planning
+
+Goal: a calendar, a week planner and an agenda that are easy to understand,
+calm to use and look like the rest of Stil. What makes them stand out is
+showing at a glance how busy a period is and where the free time is.
+
+**Ideas that set it apart:**
+
+- **Load at a glance:** every day in the month view gets a light tint by how
+  full it is (the same tokens as Stil.Charts). Free and fully booked days show
+  without a click.
+- **Free time visible:** the week view shows a "now" line in the accent color
+  and marks free blocks quietly. Clicking a free block creates an event there.
+- **Calm density:** overlapping events sit side by side up to a limit, then
+  collapse into "+3" with a popup. A full day becomes dots in the month view.
+- **Nordic defaults that follow the culture:** the first day of the week, ISO
+  week numbers and the 24-hour clock come from `CultureInfo`.
+
+**Plan:**
+
+- [ ] An HTML prototype in `samples/Stil.Html/calendar.html` (month, week and
+  agenda) to settle the look before the API is fixed. Its CSS is
+  sample-only until it moves into Stil CSS.
+- [ ] Stil CSS: `stil-calendar`, `stil-week` and `stil-agenda`, with
+  `--stil-calendar-*` tokens, variants for event colors, light and dark mode.
+  `stil.js` adds keyboard navigation (the WAI-ARIA grid pattern), so plain
+  HTML users get it too.
+- [ ] `StilCalendar`: a month view that picks dates and shows events as chips,
+  or dots when a day is full. Changing months works with links in static SSR
+  (like `StilPagination`'s `HrefTemplate`).
+- [ ] `StilWeekPlanner`: day, week and work-week views on a time grid, a
+  layout for overlapping events, and drag to create, move and resize
+  (interactive render modes).
+- [ ] `StilAgenda`: events grouped by day. It is the small-screen view and the
+  text alternative for screen readers, like the data table of a chart.
+- [ ] One data model for all three, like the data grid: `Items`, plus
+  `Start`, `End`, `Title` and `Variant` selectors. No event class of its own.
+- [ ] bUnit tests, a docs page, demo sections and Playwright baselines.
+
+**Not in the first version:** recurring events (the app expands them into
+occurrences) and time zone conversion (the calendar shows the times it gets).
 
 ---
 

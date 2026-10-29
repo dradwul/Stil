@@ -1,0 +1,622 @@
+/*
+ * Phase 7 prototype: calendar, week planner and agenda.
+ *
+ * Sample-only for now. Once the look is settled, these rules move into src/Stil.Css as
+ * components (and the variant rules into generate.mjs). They follow the Stil conventions
+ * already: stil- classes, --stil-* tokens, derived colors (--_bg, --_ink, --_accent) and the
+ * stil.components layer, so app CSS still wins.
+ *
+ * Planned tokens:
+ *   --stil-calendar-load      The color of the busy tint. Default: the accent.
+ *   --stil-calendar-hour      The height of one hour in the week view. Default: 3rem.
+ */
+
+@layer stil.tokens, stil.reset, stil.base, stil.components, stil.utilities;
+
+@layer stil.components {
+
+    /* ---------- Page layout: an overview column next to the view ---------- */
+
+    .stil-planner {
+        display: grid;
+        gap: var(--stil-space-4);
+        align-items: start;
+    }
+
+    @media (min-width: 992px) {
+        .stil-planner { grid-template-columns: 17rem minmax(0, 1fr); }
+    }
+
+    .stil-planner-side {
+        display: grid;
+        gap: var(--stil-space-4);
+    }
+
+    @media (min-width: 576px) and (max-width: 991.98px) {
+        .stil-planner-side { grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+    }
+
+    .stil-planner-main { min-width: 0; }
+
+    /* On smaller screens the view comes first and the overview follows it. */
+    @media (max-width: 991.98px) {
+        .stil-planner-main { order: -1; }
+    }
+
+    .stil-planner-free {
+        display: grid;
+        gap: var(--stil-space-1);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        font-size: var(--stil-font-size-sm);
+    }
+
+    .stil-planner-free button {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--stil-space-2);
+        width: 100%;
+        padding: var(--stil-space-1) var(--stil-space-2);
+        border: 0;
+        border-radius: var(--stil-radius-sm);
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: start;
+        cursor: pointer;
+    }
+
+    .stil-planner-free button:hover { background-color: var(--stil-color-surface-muted); }
+
+    .stil-planner-free button:focus-visible {
+        outline: var(--stil-focus-ring-width) solid var(--_accent);
+        outline-offset: -2px;
+    }
+
+    .stil-planner-free .stil-planner-free-length { color: var(--stil-color-text-muted); }
+
+    /* A colored checkbox per calendar. */
+    .stil-calendar-filter {
+        display: flex;
+        align-items: center;
+        gap: var(--stil-space-2);
+        font-size: var(--stil-font-size-sm);
+        cursor: pointer;
+    }
+
+    .stil-calendar-filter input {
+        width: 1rem;
+        height: 1rem;
+        margin: 0;
+        accent-color: var(--_bg);
+    }
+
+    /* ---------- Events: a light tint of their color with a solid edge ---------- */
+
+    .stil-event {
+        --_bg: var(--stil-color-primary);
+        --_tint: color-mix(in srgb, var(--_bg) 16%, var(--stil-color-surface));
+        /* A column flex box, so a button keeps its text at the top instead of centering it. */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        min-width: 0;
+        padding: 0.125rem var(--stil-space-2);
+        border: 0;
+        border-inline-start: 3px solid var(--_bg);
+        border-radius: var(--stil-radius-sm);
+        background-color: var(--_tint);
+        color: var(--stil-color-text);
+        font: inherit;
+        font-size: var(--stil-font-size-xs);
+        line-height: 1.35;
+        text-align: start;
+        text-decoration: none;
+        overflow: hidden;
+        cursor: pointer;
+        transition: background-color var(--stil-duration-fast) var(--stil-easing);
+    }
+
+    .stil-event:hover { --_tint: color-mix(in srgb, var(--_bg) 26%, var(--stil-color-surface)); }
+
+    .stil-event:focus-visible {
+        outline: var(--stil-focus-ring-width) solid var(--_ink);
+        outline-offset: 1px;
+    }
+
+    .stil-event-title {
+        display: block;
+        overflow: hidden;
+        font-weight: var(--stil-font-weight-bold);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .stil-event-time {
+        margin-inline-end: 0.25rem;
+        color: var(--stil-color-text-muted);
+        font-weight: var(--stil-font-weight-normal);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .stil-event-meta {
+        display: block;
+        overflow: hidden;
+        color: var(--stil-color-text-muted);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .stil-event-primary { --_bg: var(--stil-color-primary); }
+    .stil-event-secondary { --_bg: var(--stil-color-secondary); }
+    .stil-event-success { --_bg: var(--stil-color-success); }
+    .stil-event-danger { --_bg: var(--stil-color-danger); }
+    .stil-event-warning { --_bg: var(--stil-color-warning); }
+    .stil-event-info { --_bg: var(--stil-color-info); }
+
+    /* A new event that is not saved yet. */
+    .stil-event-draft {
+        border: 2px dashed var(--_ink);
+        border-inline-start-width: 3px;
+        border-inline-start-style: solid;
+    }
+
+    /* ---------- Shared calendar header: title and navigation ---------- */
+
+    .stil-calendar-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--stil-space-2);
+        margin-block-end: var(--stil-space-3);
+    }
+
+    .stil-calendar-title {
+        margin: 0;
+        font-size: var(--stil-font-size-lg);
+        font-weight: var(--stil-font-weight-bold);
+    }
+
+    .stil-calendar-title small {
+        margin-inline-start: var(--stil-space-2);
+        color: var(--stil-color-text-muted);
+        font-size: var(--stil-font-size-sm);
+        font-weight: var(--stil-font-weight-normal);
+    }
+
+    /* ---------- Month view ---------- */
+
+    .stil-calendar {
+        --_load-color: var(--stil-calendar-load, var(--_accent));
+        container: stil-calendar / inline-size;
+    }
+
+    .stil-calendar-grid {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        table-layout: fixed;
+    }
+
+    .stil-calendar-grid th {
+        padding: 0 0 var(--stil-space-2);
+        color: var(--stil-color-text-muted);
+        font-size: var(--stil-font-size-xs);
+        font-weight: var(--stil-font-weight-normal);
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .stil-calendar-grid abbr { text-decoration: none; }
+
+    .stil-calendar-grid th.stil-calendar-week,
+    .stil-calendar-grid td.stil-calendar-week { width: 2.25rem; }
+
+    .stil-calendar-grid td.stil-calendar-week {
+        padding-top: var(--stil-space-2);
+        color: var(--stil-color-text-muted);
+        font-size: var(--stil-font-size-xs);
+        text-align: center;
+        vertical-align: top;
+    }
+
+    /* A day. Its background is tinted by --load (0 = free, 1 = fully booked). */
+    .stil-calendar-day {
+        --load: 0;
+        height: 7rem;
+        padding: var(--stil-space-1);
+        border-block-start: 1px solid var(--stil-color-border);
+        border-inline-start: 1px solid var(--stil-color-border);
+        background-color: color-mix(in srgb, var(--_load-color) calc(var(--load) * 20%), var(--stil-color-surface));
+        vertical-align: top;
+        cursor: pointer;
+        transition: background-color var(--stil-duration-fast) var(--stil-easing);
+    }
+
+    .stil-calendar-grid tr > .stil-calendar-day:last-child { border-inline-end: 1px solid var(--stil-color-border); }
+    .stil-calendar-grid tbody tr:last-child > .stil-calendar-day { border-block-end: 1px solid var(--stil-color-border); }
+    .stil-calendar-grid tbody tr:first-child > .stil-calendar-day:nth-child(2) { border-start-start-radius: var(--stil-radius-md); }
+    .stil-calendar-grid tbody tr:first-child > .stil-calendar-day:last-child { border-start-end-radius: var(--stil-radius-md); }
+    .stil-calendar-grid tbody tr:last-child > .stil-calendar-day:nth-child(2) { border-end-start-radius: var(--stil-radius-md); }
+    .stil-calendar-grid tbody tr:last-child > .stil-calendar-day:last-child { border-end-end-radius: var(--stil-radius-md); }
+
+    .stil-calendar-day:hover { background-color: color-mix(in srgb, var(--_load-color) calc(var(--load) * 20% + 6%), var(--stil-color-surface)); }
+
+    .stil-calendar-day:focus-visible {
+        outline: var(--stil-focus-ring-width) solid var(--_accent);
+        outline-offset: -2px;
+    }
+
+    .stil-calendar-day[aria-selected="true"] { box-shadow: inset 0 0 0 2px var(--_accent); }
+
+    /* Days of the previous and next month. */
+    .stil-calendar-day.stil-calendar-outside { color: var(--stil-color-text-muted); }
+    .stil-calendar-day.stil-calendar-outside .stil-calendar-events { opacity: 0.6; }
+
+    .stil-calendar-date {
+        display: inline-grid;
+        place-items: center;
+        min-width: 1.75rem;
+        height: 1.75rem;
+        margin-block-end: var(--stil-space-1);
+        padding-inline: 0.25rem;
+        border-radius: var(--stil-radius-pill);
+        font-size: var(--stil-font-size-sm);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .stil-calendar-day[aria-current="date"] .stil-calendar-date {
+        --_bg: var(--stil-color-primary);
+        background-color: var(--_bg);
+        color: var(--_fg);
+        font-weight: var(--stil-font-weight-bold);
+    }
+
+    .stil-calendar-events {
+        display: grid;
+        gap: 2px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .stil-calendar-more {
+        padding: 0 var(--stil-space-2);
+        border: 0;
+        background: none;
+        color: var(--stil-color-text-muted);
+        font: inherit;
+        font-size: var(--stil-font-size-xs);
+        text-align: start;
+        cursor: pointer;
+    }
+
+    .stil-calendar-more:hover { color: var(--stil-color-text); text-decoration: underline; }
+
+    /* Dots stand in for events when there is no room for chips. */
+    .stil-calendar-dots {
+        display: none;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 3px;
+    }
+
+    .stil-calendar-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: var(--_bg);
+    }
+
+    @container stil-calendar (width < 40rem) {
+        .stil-calendar-day { height: 4rem; text-align: center; }
+        .stil-calendar-events,
+        .stil-calendar-more { display: none; }
+        .stil-calendar-dots { display: flex; }
+        .stil-calendar-grid th.stil-calendar-week,
+        .stil-calendar-grid td.stil-calendar-week { width: 1.75rem; }
+    }
+
+    /* The mini month: dates only, the tint shows the load. */
+    .stil-calendar-mini .stil-calendar-header { margin-block-end: var(--stil-space-2); }
+    .stil-calendar-mini .stil-calendar-title { font-size: var(--stil-font-size-md); }
+
+    .stil-calendar-mini .stil-calendar-day {
+        height: auto;
+        padding: 2px;
+        border: 0;
+        border-radius: var(--stil-radius-sm);
+        background-color: color-mix(in srgb, var(--_load-color) calc(var(--load) * 45%), transparent);
+        text-align: center;
+    }
+
+    .stil-calendar-mini .stil-calendar-grid { border-spacing: 2px; }
+    .stil-calendar-mini .stil-calendar-date { margin: 0; font-size: var(--stil-font-size-xs); }
+    .stil-calendar-mini .stil-calendar-events,
+    .stil-calendar-mini .stil-calendar-dots { display: none; }
+    .stil-calendar-mini .stil-calendar-day[data-in-week] { box-shadow: inset 0 0 0 1px var(--_accent); }
+
+    .stil-calendar-legend {
+        display: flex;
+        align-items: center;
+        gap: var(--stil-space-2);
+        margin-block-start: var(--stil-space-2);
+        color: var(--stil-color-text-muted);
+        font-size: var(--stil-font-size-xs);
+    }
+
+    .stil-calendar-legend-scale {
+        flex: 1;
+        height: 0.5rem;
+        border-radius: var(--stil-radius-pill);
+        background: linear-gradient(to right, transparent, color-mix(in srgb, var(--_accent) 45%, transparent));
+        box-shadow: inset 0 0 0 1px var(--stil-color-border);
+    }
+
+    /* ---------- Week view: a time grid ---------- */
+
+    .stil-week {
+        --_hour: var(--stil-calendar-hour, 3rem);
+        container: stil-week / inline-size;
+        --_from: 7;
+        --_hours: 12;
+        --_days: 7;
+    }
+
+    .stil-week-scroll {
+        overflow-x: auto;
+        border: 1px solid var(--stil-color-border);
+        border-radius: var(--stil-radius-md);
+        background-color: var(--stil-color-surface);
+    }
+
+    .stil-week-grid {
+        display: grid;
+        grid-template-columns: 3.5rem repeat(var(--_days), minmax(7.5rem, 1fr));
+        min-width: max-content;
+    }
+
+    /* Wide screens fit the whole week; narrow ones scroll sideways. */
+    @container stil-week (width >= 44rem) {
+        .stil-week-grid {
+            grid-template-columns: 3.5rem repeat(var(--_days), minmax(0, 1fr));
+            min-width: 0;
+        }
+    }
+
+    .stil-week-corner,
+    .stil-week-day-head {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        padding: var(--stil-space-2);
+        border-block-end: 1px solid var(--stil-color-border);
+        background-color: var(--stil-color-surface);
+    }
+
+    .stil-week-corner {
+        color: var(--stil-color-text-muted);
+        font-size: var(--stil-font-size-xs);
+        text-align: center;
+    }
+
+    .stil-week-day-head {
+        display: grid;
+        gap: 0.125rem;
+        border-inline-start: 1px solid var(--stil-color-border);
+        font-size: var(--stil-font-size-sm);
+    }
+
+    .stil-week-day-name {
+        color: var(--stil-color-text-muted);
+        font-size: var(--stil-font-size-xs);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .stil-week-day-head[aria-current="date"] .stil-week-day-name { color: var(--_accent); font-weight: var(--stil-font-weight-bold); }
+    .stil-week-day-head[aria-current="date"] .stil-calendar-date { --_bg: var(--stil-color-primary); background-color: var(--_bg); color: var(--_fg); font-weight: var(--stil-font-weight-bold); }
+
+    .stil-week-day-head .stil-calendar-date {
+        justify-self: start;
+        margin: 0;
+        margin-inline-start: -0.25rem;
+        font-size: var(--stil-font-size-md);
+    }
+
+    /* The day's load as a thin bar, with the booked hours in text. */
+    .stil-week-load {
+        display: flex;
+        align-items: center;
+        gap: var(--stil-space-2);
+        color: var(--stil-color-text-muted);
+        font-size: var(--stil-font-size-xs);
+    }
+
+    .stil-week-load-bar {
+        --load: 0;
+        flex: 1;
+        height: 4px;
+        border-radius: var(--stil-radius-pill);
+        background: linear-gradient(to right, var(--_accent) calc(var(--load) * 100%), var(--stil-color-surface-muted) 0);
+    }
+
+    .stil-week-times {
+        position: relative;
+        height: calc(var(--_hours) * var(--_hour));
+    }
+
+    .stil-week-time {
+        position: absolute;
+        inset-inline: 0;
+        top: calc(var(--h) * var(--_hour));
+        padding-inline-end: var(--stil-space-2);
+        color: var(--stil-color-text-muted);
+        font-size: var(--stil-font-size-xs);
+        font-variant-numeric: tabular-nums;
+        text-align: end;
+        translate: 0 -50%;
+    }
+
+    .stil-week-time:first-child { translate: 0 0.125rem; }
+
+    /* A day column: hour lines, free blocks, events and the now line. */
+    .stil-week-col {
+        position: relative;
+        height: calc(var(--_hours) * var(--_hour));
+        border-inline-start: 1px solid var(--stil-color-border);
+        background-image: repeating-linear-gradient(to bottom,
+            transparent 0, transparent calc(var(--_hour) - 1px),
+            color-mix(in srgb, var(--stil-color-border) 70%, transparent) calc(var(--_hour) - 1px), color-mix(in srgb, var(--stil-color-border) 70%, transparent) var(--_hour));
+    }
+
+    .stil-week-col[data-weekend] { background-color: color-mix(in srgb, var(--stil-color-surface-muted) 60%, transparent); }
+
+    .stil-week-col > * {
+        --_top: calc((var(--start) / 60 - var(--_from)) * var(--_hour));
+        --_height: calc(var(--length) / 60 * var(--_hour));
+        position: absolute;
+        top: var(--_top);
+        height: var(--_height);
+    }
+
+    .stil-week-col > .stil-event {
+        --col: 0;
+        --cols: 1;
+        /* Overlapping events cascade: each one starts further in and runs to the right edge,
+           on top of the earlier ones, so every title stays readable at its start. */
+        left: calc(var(--col) / var(--cols) * (100% - 6px) + 3px);
+        width: calc((100% - 6px) * (1 - var(--col) / var(--cols)));
+        padding-block: 0.25rem;
+        box-shadow: 0 0 0 1px var(--stil-color-surface);
+        z-index: calc(1 + var(--col));
+    }
+
+    /* A free block in the working day: quiet until hovered or focused. */
+    .stil-week-free {
+        inset-inline: 3px;
+        display: flex;
+        align-items: flex-start;
+        padding: 0.25rem var(--stil-space-2);
+        border: 1px dashed color-mix(in srgb, var(--_accent) 55%, transparent);
+        border-radius: var(--stil-radius-sm);
+        background-color: color-mix(in srgb, var(--_accent) 4%, transparent);
+        color: var(--stil-color-text-muted);
+        font: inherit;
+        font-size: var(--stil-font-size-xs);
+        text-align: start;
+        cursor: copy;
+        opacity: 0.85;
+        transition: opacity var(--stil-duration-fast) var(--stil-easing), background-color var(--stil-duration-fast) var(--stil-easing);
+    }
+
+    .stil-week-free:hover,
+    .stil-week-free:focus-visible {
+        background-color: color-mix(in srgb, var(--_accent) 8%, transparent);
+        color: var(--stil-color-text);
+        opacity: 1;
+    }
+
+    .stil-week-free:focus-visible { outline: var(--stil-focus-ring-width) solid var(--_accent); outline-offset: 1px; }
+
+    /* Now: a line in the accent color with a dot at the start. */
+    .stil-week-now {
+        --length: 0;
+        inset-inline: 0;
+        z-index: 9;
+        height: 0;
+        border-block-start: 2px solid var(--_accent);
+        pointer-events: none;
+    }
+
+    .stil-week-now::before {
+        content: "";
+        position: absolute;
+        inset-inline-start: -5px;
+        top: -6px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: var(--_accent);
+    }
+
+    /* ---------- Agenda: events grouped by day ---------- */
+
+    .stil-agenda-day {
+        display: grid;
+        gap: var(--stil-space-2);
+        margin-block-end: var(--stil-space-4);
+    }
+
+    .stil-agenda-day-title {
+        display: flex;
+        align-items: baseline;
+        gap: var(--stil-space-2);
+        margin: 0;
+        padding-block-end: var(--stil-space-1);
+        border-block-end: 1px solid var(--stil-color-border);
+        font-size: var(--stil-font-size-md);
+    }
+
+    .stil-agenda-day-title small {
+        color: var(--stil-color-text-muted);
+        font-size: var(--stil-font-size-sm);
+        font-weight: var(--stil-font-weight-normal);
+    }
+
+    .stil-agenda-list {
+        display: grid;
+        gap: var(--stil-space-2);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .stil-agenda-item {
+        display: grid;
+        grid-template-columns: 6.5rem minmax(0, 1fr);
+        align-items: center;
+        gap: var(--stil-space-3);
+    }
+
+    .stil-agenda-time {
+        color: var(--stil-color-text-muted);
+        font-size: var(--stil-font-size-sm);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .stil-agenda-item .stil-event {
+        padding: var(--stil-space-2) var(--stil-space-3);
+        font-size: var(--stil-font-size-sm);
+    }
+
+    .stil-agenda-free {
+        color: var(--stil-color-text-muted);
+        font-size: var(--stil-font-size-sm);
+    }
+
+    .stil-agenda-free .stil-agenda-free-line {
+        display: flex;
+        align-items: center;
+        gap: var(--stil-space-2);
+    }
+
+    .stil-agenda-free .stil-agenda-free-line::after {
+        content: "";
+        flex: 1;
+        border-block-start: 1px dashed color-mix(in srgb, var(--_accent) 40%, transparent);
+    }
+
+    @media (max-width: 575.98px) {
+        .stil-agenda-item { grid-template-columns: 1fr; gap: var(--stil-space-1); }
+    }
+
+    @media (forced-colors: active) {
+        .stil-event { border: 1px solid CanvasText; border-inline-start-width: 4px; }
+        .stil-calendar-day[aria-current="date"] .stil-calendar-date { outline: 2px solid Highlight; }
+        .stil-week-now { border-color: Highlight; }
+    }
+}
