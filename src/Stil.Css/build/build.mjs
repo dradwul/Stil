@@ -33,6 +33,7 @@ const layers = [
         'components/data.css',
         'components/pickers.css',
         'components/tree.css',
+        'components/calendar.css',
         'components/extras.css',
         generateIcons,
         generateVariants,

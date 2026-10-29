@@ -10,6 +10,10 @@
 //     closes the dialog it is in.
 //   - data-stil-toggle on a button flips its aria-expanded, which shows or hides what it controls
 //     (for example the stil-navbar-collapse next to a stil-navbar-toggle). Escape collapses it.
+//   - Calendar grids (table.stil-calendar-grid with role="grid"): the arrow keys move between the
+//     days, Home and End go to the start and end of the week, and Enter or Space clicks the day.
+//     Moving past the first or last day fires a bubbling stilcalendaredge event (detail: the key
+//     and the day cell), so the page can show the previous or next month.
 //   - Keys that a widget handles itself (arrows in a tree, tab list or combobox; Enter and Escape
 //     in an open combobox) do not also scroll the page, submit the form or close a dialog.
 // Stil for Blazor loads this module automatically and also uses showDialog/closeDialog.
@@ -62,6 +66,7 @@ function onClick(event) {
 function onKeyDown(event) {
     if (preventHandledKey(event)) return;
     if (moveInDropdown(event)) return;
+    if (moveInCalendar(event)) return;
     if (event.key !== 'Escape') return;
     for (const toggle of document.querySelectorAll('[data-stil-toggle][aria-expanded="true"]')) {
         toggle.setAttribute('aria-expanded', 'false');
@@ -113,6 +118,48 @@ function moveInDropdown(event) {
 
     event.preventDefault();
     items[next].focus();
+    return true;
+}
+
+// The WAI-ARIA grid pattern for a month: one day is in the tab order (tabindex="0"), the
+// arrow keys move it. Day cells are the td elements with role="gridcell".
+const calendarKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'Enter', ' '];
+
+function moveInCalendar(event) {
+    if (!calendarKeys.includes(event.key) || event.altKey || event.ctrlKey || event.metaKey) return false;
+    const cell = event.target instanceof Element ? event.target.closest('.stil-calendar-grid td[role="gridcell"]') : null;
+    if (!cell || event.target !== cell) return false;
+    event.preventDefault();
+
+    if (event.key === 'Enter' || event.key === ' ') {
+        cell.click();
+        return true;
+    }
+
+    const row = cell.parentElement;
+    const days = [...row.querySelectorAll(':scope > td[role="gridcell"]')];
+    const rows = [...cell.closest('table').querySelectorAll(':scope > tbody > tr')];
+    const column = days.indexOf(cell);
+    const rowIndex = rows.indexOf(row);
+    const dayIn = r => rows[r]?.querySelectorAll(':scope > td[role="gridcell"]')[column];
+
+    const next = {
+        ArrowLeft: days[column - 1] ?? rows[rowIndex - 1]?.querySelector(':scope > td[role="gridcell"]:last-child'),
+        ArrowRight: days[column + 1] ?? rows[rowIndex + 1]?.querySelector(':scope > td[role="gridcell"]'),
+        ArrowUp: dayIn(rowIndex - 1),
+        ArrowDown: dayIn(rowIndex + 1),
+        Home: days[0],
+        End: days[days.length - 1],
+    }[event.key];
+
+    if (!next) {
+        cell.dispatchEvent(new CustomEvent('stilcalendaredge', { bubbles: true, detail: { key: event.key, cell } }));
+        return true;
+    }
+
+    cell.tabIndex = -1;
+    next.tabIndex = 0;
+    next.focus();
     return true;
 }
 

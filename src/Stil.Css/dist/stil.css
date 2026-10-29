@@ -37,6 +37,7 @@
     --stil-space-7: 3rem;
     --stil-container-max: 1200px;
     --stil-sidebar-width: 16rem;
+    --stil-calendar-hour: 3rem;
     --stil-radius-sm: .125rem;
     --stil-radius-md: .25rem;
     --stil-radius-lg: .5rem;
@@ -2517,6 +2518,606 @@
     display: flex;
   }
 
+  .stil-event, .stil-calendar-dot {
+    --_bg: var(--stil-event-color, var(--stil-color-primary));
+  }
+
+  .stil-event {
+    --_tint: color-mix(in srgb, var(--_bg) 16%, var(--stil-color-surface));
+    min-width: 0;
+    padding: .125rem var(--stil-space-2);
+    border: 0;
+    border-inline-start: 3px solid var(--_bg);
+    border-radius: var(--stil-radius-sm);
+    background-color: var(--_tint);
+    color: var(--stil-color-text);
+    font: inherit;
+    font-size: var(--stil-font-size-xs);
+    text-align: start;
+    cursor: pointer;
+    transition: background-color var(--stil-duration-fast) var(--stil-easing);
+    flex-direction: column;
+    justify-content: flex-start;
+    line-height: 1.35;
+    text-decoration: none;
+    display: flex;
+    overflow: hidden;
+  }
+
+  .stil-event:hover {
+    --_tint: color-mix(in srgb, var(--_bg) 26%, var(--stil-color-surface));
+  }
+
+  .stil-event:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_ink);
+    outline-offset: 1px;
+  }
+
+  .stil-event-title {
+    font-weight: var(--stil-font-weight-bold);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    overflow: hidden;
+  }
+
+  .stil-event-time {
+    color: var(--stil-color-text-muted);
+    font-weight: var(--stil-font-weight-normal);
+    font-variant-numeric: tabular-nums;
+    margin-inline-end: .25rem;
+  }
+
+  .stil-event-meta {
+    color: var(--stil-color-text-muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    overflow: hidden;
+  }
+
+  .stil-event-draft {
+    border: 2px dashed var(--_ink);
+    border-inline-start: 3px solid var(--_bg);
+  }
+
+  .stil-calendar-filter {
+    --_bg: var(--stil-event-color, var(--stil-color-primary));
+    align-items: center;
+    gap: var(--stil-space-2);
+    font-size: var(--stil-font-size-sm);
+    cursor: pointer;
+    display: flex;
+  }
+
+  .stil-calendar-filter input {
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--_bg);
+    margin: 0;
+  }
+
+  .stil-calendar-header {
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--stil-space-2);
+    flex-wrap: wrap;
+    margin-block-end: var(--stil-space-3);
+    display: flex;
+  }
+
+  .stil-calendar-title {
+    font-size: var(--stil-font-size-lg);
+    font-weight: var(--stil-font-weight-bold);
+    margin: 0;
+  }
+
+  .stil-calendar-title small {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+    font-weight: var(--stil-font-weight-normal);
+    margin-inline-start: var(--stil-space-2);
+  }
+
+  .stil-calendar {
+    --_load-color: var(--stil-calendar-load, var(--_accent));
+    container: stil-calendar / inline-size;
+  }
+
+  .stil-calendar-grid {
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  .stil-calendar-grid th {
+    padding: 0 0 var(--stil-space-2);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-xs);
+    font-weight: var(--stil-font-weight-normal);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+
+  .stil-calendar-grid abbr {
+    text-decoration: none;
+  }
+
+  .stil-calendar-grid .stil-calendar-week {
+    width: 2.25rem;
+  }
+
+  .stil-calendar-grid td.stil-calendar-week {
+    padding-top: var(--stil-space-2);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-xs);
+    text-align: center;
+    vertical-align: top;
+  }
+
+  .stil-calendar-day {
+    --_load: var(--stil-load, 0);
+    height: 7rem;
+    padding: var(--stil-space-1);
+    border-block-start: 1px solid var(--stil-color-border);
+    border-inline-start: 1px solid var(--stil-color-border);
+    background-color: color-mix(in srgb, var(--_load-color) calc(var(--_load) * 20%), var(--stil-color-surface));
+    vertical-align: top;
+    cursor: pointer;
+    transition: background-color var(--stil-duration-fast) var(--stil-easing);
+  }
+
+  .stil-calendar-day:last-child {
+    border-inline-end: 1px solid var(--stil-color-border);
+  }
+
+  .stil-calendar-grid tbody tr:last-child > .stil-calendar-day {
+    border-block-end: 1px solid var(--stil-color-border);
+  }
+
+  .stil-calendar-grid tbody tr:first-child > .stil-calendar-day:is(:first-child, .stil-calendar-week + *) {
+    border-start-start-radius: var(--stil-radius-md);
+  }
+
+  .stil-calendar-grid tbody tr:first-child > .stil-calendar-day:last-child {
+    border-start-end-radius: var(--stil-radius-md);
+  }
+
+  .stil-calendar-grid tbody tr:last-child > .stil-calendar-day:is(:first-child, .stil-calendar-week + *) {
+    border-end-start-radius: var(--stil-radius-md);
+  }
+
+  .stil-calendar-grid tbody tr:last-child > .stil-calendar-day:last-child {
+    border-end-end-radius: var(--stil-radius-md);
+  }
+
+  .stil-calendar-day:hover {
+    background-color: color-mix(in srgb, var(--_load-color) calc(var(--_load) * 20% + 6%), var(--stil-color-surface));
+  }
+
+  .stil-calendar-day:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: -2px;
+  }
+
+  .stil-calendar-day[aria-selected="true"] {
+    box-shadow: inset 0 0 0 2px var(--_accent);
+  }
+
+  .stil-calendar-outside {
+    color: var(--stil-color-text-muted);
+  }
+
+  .stil-calendar-outside .stil-calendar-events {
+    opacity: .6;
+  }
+
+  .stil-calendar-date {
+    min-width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--stil-radius-pill);
+    font-size: var(--stil-font-size-sm);
+    font-variant-numeric: tabular-nums;
+    place-items: center;
+    margin-block-end: var(--stil-space-1);
+    padding-inline: .25rem;
+    display: inline-grid;
+  }
+
+  :is(.stil-calendar-day, .stil-week-day-head)[aria-current="date"] .stil-calendar-date {
+    --_bg: var(--stil-color-primary);
+    --_contrast: var(--stil-color-primary-contrast);
+    background-color: var(--_bg);
+    color: var(--_fg);
+    font-weight: var(--stil-font-weight-bold);
+  }
+
+  .stil-calendar-events {
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+  }
+
+  .stil-calendar-more {
+    padding: 0 var(--stil-space-2);
+    color: var(--stil-color-text-muted);
+    font: inherit;
+    font-size: var(--stil-font-size-xs);
+    text-align: start;
+    cursor: pointer;
+    background: none;
+    border: 0;
+  }
+
+  .stil-calendar-more:hover {
+    color: var(--stil-color-text);
+    text-decoration: underline;
+  }
+
+  .stil-calendar-dots {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 3px;
+    display: none;
+  }
+
+  .stil-calendar-dot {
+    background-color: var(--_bg);
+    border-radius: 50%;
+    width: 6px;
+    height: 6px;
+  }
+
+  @container stil-calendar (width < 40rem) {
+    .stil-calendar-day {
+      text-align: center;
+      height: 4rem;
+    }
+
+    .stil-calendar-events, .stil-calendar-more {
+      display: none;
+    }
+
+    .stil-calendar-dots {
+      display: flex;
+    }
+
+    .stil-calendar-grid .stil-calendar-week {
+      width: 1.75rem;
+    }
+  }
+
+  .stil-calendar-mini .stil-calendar-header {
+    margin-block-end: var(--stil-space-2);
+  }
+
+  .stil-calendar-mini .stil-calendar-title {
+    font-size: var(--stil-font-size-md);
+  }
+
+  .stil-calendar-mini .stil-calendar-grid {
+    border-spacing: 2px;
+  }
+
+  .stil-calendar-mini .stil-calendar-day {
+    border-radius: var(--stil-radius-sm);
+    background-color: color-mix(in srgb, var(--_load-color) calc(var(--_load) * 45%), transparent);
+    text-align: center;
+    border: 0;
+    height: auto;
+    padding: 2px;
+  }
+
+  .stil-calendar-mini .stil-calendar-date {
+    font-size: var(--stil-font-size-xs);
+    margin: 0;
+  }
+
+  .stil-calendar-mini :is(.stil-calendar-events, .stil-calendar-more, .stil-calendar-dots) {
+    display: none;
+  }
+
+  .stil-calendar-range {
+    box-shadow: inset 0 0 0 1px var(--_accent);
+  }
+
+  .stil-calendar-legend {
+    align-items: center;
+    gap: var(--stil-space-2);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-xs);
+    margin-block-start: var(--stil-space-2);
+    display: flex;
+  }
+
+  .stil-calendar-legend-scale {
+    border-radius: var(--stil-radius-pill);
+    background: linear-gradient(to right, transparent, color-mix(in srgb, var(--stil-calendar-load, var(--_accent)) 45%, transparent));
+    height: .5rem;
+    box-shadow: inset 0 0 0 1px var(--stil-color-border);
+    flex: 1;
+  }
+
+  .stil-week {
+    --_hour: var(--stil-calendar-hour);
+    --_days: var(--stil-week-days, 7);
+    --_from: var(--stil-week-first-hour, 7);
+    --_hours: var(--stil-week-hours, 12);
+    container: stil-week / inline-size;
+  }
+
+  .stil-week-scroll {
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface);
+    overflow-x: auto;
+  }
+
+  .stil-week-grid {
+    grid-template-columns: 3.5rem repeat(var(--_days), minmax(7.5rem, 1fr));
+    min-width: max-content;
+    display: grid;
+  }
+
+  @container stil-week (width >= 44rem) {
+    .stil-week-grid {
+      grid-template-columns: 3.5rem repeat(var(--_days), minmax(0, 1fr));
+      min-width: 0;
+    }
+  }
+
+  .stil-week-corner, .stil-week-day-head {
+    z-index: 2;
+    padding: var(--stil-space-2);
+    border-block-end: 1px solid var(--stil-color-border);
+    background-color: var(--stil-color-surface);
+    position: sticky;
+    top: 0;
+  }
+
+  .stil-week-corner {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-xs);
+    text-align: center;
+  }
+
+  .stil-week-day-head {
+    border-inline-start: 1px solid var(--stil-color-border);
+    font-size: var(--stil-font-size-sm);
+    gap: .125rem;
+    display: grid;
+  }
+
+  .stil-week-day-name {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+
+  .stil-week-day-head[aria-current="date"] .stil-week-day-name {
+    color: var(--_accent);
+    font-weight: var(--stil-font-weight-bold);
+  }
+
+  .stil-week-day-head .stil-calendar-date {
+    font-size: var(--stil-font-size-md);
+    justify-self: start;
+    margin: 0;
+    margin-inline-start: -.25rem;
+  }
+
+  .stil-week-load {
+    align-items: center;
+    gap: var(--stil-space-2);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-xs);
+    display: flex;
+  }
+
+  .stil-week-load-bar {
+    border-radius: var(--stil-radius-pill);
+    background: linear-gradient(to right,
+        var(--stil-calendar-load, var(--_accent)) calc(var(--stil-load, 0) * 100%),
+        var(--stil-color-surface-muted) 0);
+    flex: 1;
+    height: 4px;
+  }
+
+  :is(.stil-week-times, .stil-week-col) > * {
+    --_top: calc((var(--stil-start, 0) / 60 - var(--_from)) * var(--_hour));
+    top: var(--_top);
+    position: absolute;
+  }
+
+  .stil-week-times {
+    height: calc(var(--_hours) * var(--_hour));
+    position: relative;
+  }
+
+  .stil-week-time {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-xs);
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+    padding-inline-end: var(--stil-space-2);
+    inset-inline: 0;
+    translate: 0 -50%;
+  }
+
+  .stil-week-time:first-child {
+    translate: 0 .125rem;
+  }
+
+  .stil-week-col {
+    height: calc(var(--_hours) * var(--_hour));
+    border-inline-start: 1px solid var(--stil-color-border);
+    background-image: repeating-linear-gradient(to bottom,
+        transparent 0, transparent calc(var(--_hour) - 1px),
+        color-mix(in srgb, var(--stil-color-border) 70%, transparent) calc(var(--_hour) - 1px),
+        color-mix(in srgb, var(--stil-color-border) 70%, transparent) var(--_hour));
+    position: relative;
+  }
+
+  .stil-week-col-muted {
+    background-color: color-mix(in srgb, var(--stil-color-surface-muted) 60%, transparent);
+  }
+
+  .stil-week-col > :is(.stil-event, .stil-week-free) {
+    height: calc(var(--stil-length, 60) / 60 * var(--_hour));
+  }
+
+  .stil-week-col > .stil-event {
+    width: calc((100% - 6px) * (1 - var(--stil-col, 0) / var(--stil-cols, 1)));
+    box-shadow: 0 0 0 1px var(--stil-color-surface);
+    z-index: calc(1 + var(--stil-col, 0));
+    padding-block: .25rem;
+    inset-inline-start: calc(var(--stil-col, 0) / var(--stil-cols, 1) * (100% - 6px) + 3px);
+  }
+
+  .stil-week-free {
+    padding: .25rem var(--stil-space-2);
+    border: 1px dashed color-mix(in srgb, var(--_accent) 55%, transparent);
+    border-radius: var(--stil-radius-sm);
+    background-color: color-mix(in srgb, var(--_accent) 4%, transparent);
+    color: var(--stil-color-text-muted);
+    font: inherit;
+    font-size: var(--stil-font-size-xs);
+    text-align: start;
+    cursor: copy;
+    opacity: .85;
+    transition: opacity var(--stil-duration-fast) var(--stil-easing), background-color var(--stil-duration-fast) var(--stil-easing);
+    align-items: flex-start;
+    display: flex;
+    inset-inline: 3px;
+  }
+
+  .stil-week-free:hover, .stil-week-free:focus-visible {
+    background-color: color-mix(in srgb, var(--_accent) 8%, transparent);
+    color: var(--stil-color-text);
+    opacity: 1;
+  }
+
+  .stil-week-free:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: 1px;
+  }
+
+  .stil-week-now {
+    z-index: 9;
+    border-block-start: 2px solid var(--_accent);
+    pointer-events: none;
+    height: 0;
+    inset-inline: 0;
+  }
+
+  .stil-week-now:before {
+    content: "";
+    inset-inline-start: -5px;
+    background-color: var(--_accent);
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    top: -6px;
+  }
+
+  .stil-agenda {
+    container: stil-agenda / inline-size;
+  }
+
+  .stil-agenda-day {
+    gap: var(--stil-space-2);
+    margin-block-end: var(--stil-space-4);
+    display: grid;
+  }
+
+  .stil-agenda-day-title {
+    align-items: baseline;
+    gap: var(--stil-space-2);
+    border-block-end: 1px solid var(--stil-color-border);
+    font-size: var(--stil-font-size-md);
+    margin: 0;
+    padding-block-end: var(--stil-space-1);
+    display: flex;
+  }
+
+  .stil-agenda-day-title small {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+    font-weight: var(--stil-font-weight-normal);
+  }
+
+  .stil-agenda-list {
+    gap: var(--stil-space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+  }
+
+  .stil-agenda-item {
+    align-items: center;
+    gap: var(--stil-space-3);
+    grid-template-columns: 6.5rem minmax(0, 1fr);
+    display: grid;
+  }
+
+  .stil-agenda-time {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stil-agenda-item > .stil-event {
+    padding: var(--stil-space-2) var(--stil-space-3);
+    font-size: var(--stil-font-size-sm);
+  }
+
+  .stil-agenda-free {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+  }
+
+  .stil-agenda-free-line {
+    align-items: center;
+    gap: var(--stil-space-2);
+    display: flex;
+  }
+
+  .stil-agenda-free-line:after {
+    content: "";
+    border-block-start: 1px dashed color-mix(in srgb, var(--_accent) 40%, transparent);
+    flex: 1;
+  }
+
+  @container stil-agenda (width < 30rem) {
+    .stil-agenda-item {
+      gap: var(--stil-space-1);
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .stil-event {
+      border: 1px solid canvastext;
+      border-inline-start-width: 4px;
+    }
+
+    :is(.stil-calendar-day, .stil-week-day-head)[aria-current="date"] .stil-calendar-date {
+      outline: 2px solid highlight;
+    }
+
+    .stil-week-now, .stil-week-now:before {
+      background-color: highlight;
+      border-color: highlight;
+    }
+  }
+
   .stil-dropzone {
     justify-content: center;
     align-items: center;
@@ -2851,32 +3452,32 @@
     --_icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.5L21.5 20h-19z'/%3E%3Cpath d='M12 10v4M12 17h.01'/%3E%3C/svg%3E");
   }
 
-  .stil-btn-primary, .stil-alert-primary, .stil-badge-primary, .stil-toast-primary {
+  .stil-btn-primary, .stil-alert-primary, .stil-badge-primary, .stil-toast-primary, .stil-event-primary {
     --_bg: var(--stil-color-primary);
     --_contrast: var(--stil-color-primary-contrast);
   }
 
-  .stil-btn-secondary, .stil-alert-secondary, .stil-badge-secondary, .stil-toast-secondary {
+  .stil-btn-secondary, .stil-alert-secondary, .stil-badge-secondary, .stil-toast-secondary, .stil-event-secondary {
     --_bg: var(--stil-color-secondary);
     --_contrast: var(--stil-color-secondary-contrast);
   }
 
-  .stil-btn-success, .stil-alert-success, .stil-badge-success, .stil-toast-success {
+  .stil-btn-success, .stil-alert-success, .stil-badge-success, .stil-toast-success, .stil-event-success {
     --_bg: var(--stil-color-success);
     --_contrast: var(--stil-color-success-contrast);
   }
 
-  .stil-btn-danger, .stil-alert-danger, .stil-badge-danger, .stil-toast-danger {
+  .stil-btn-danger, .stil-alert-danger, .stil-badge-danger, .stil-toast-danger, .stil-event-danger {
     --_bg: var(--stil-color-danger);
     --_contrast: var(--stil-color-danger-contrast);
   }
 
-  .stil-btn-warning, .stil-alert-warning, .stil-badge-warning, .stil-toast-warning {
+  .stil-btn-warning, .stil-alert-warning, .stil-badge-warning, .stil-toast-warning, .stil-event-warning {
     --_bg: var(--stil-color-warning);
     --_contrast: var(--stil-color-warning-contrast);
   }
 
-  .stil-btn-info, .stil-alert-info, .stil-badge-info, .stil-toast-info {
+  .stil-btn-info, .stil-alert-info, .stil-badge-info, .stil-toast-info, .stil-event-info {
     --_bg: var(--stil-color-info);
     --_contrast: var(--stil-color-info-contrast);
   }

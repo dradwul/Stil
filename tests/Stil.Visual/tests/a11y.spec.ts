@@ -17,6 +17,7 @@ interface Target {
 const targets: Target[] = [
     { name: 'showcase index.html', open: (page, mode) => openShowcase(page, 'index.html', mode) },
     { name: 'showcase admin.html', open: (page, mode) => openShowcase(page, 'admin.html', mode) },
+    { name: 'showcase calendar.html', open: (page, mode) => openShowcase(page, 'calendar.html', mode) },
     { name: 'demo gallery', open: (page, mode) => openDemo(page, '/', mode) },
     { name: 'demo orders', open: (page, mode) => openDemo(page, '/orders', mode) },
     {

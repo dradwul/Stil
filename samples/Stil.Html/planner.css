@@ -1,0 +1,70 @@
+/*
+ * Page layout of calendar.html: an overview column next to the calendar view, and the list of
+ * free blocks. The calendar itself is Stil CSS (stil-calendar, stil-week, stil-agenda).
+ */
+
+@layer stil.tokens, stil.reset, stil.base, stil.components, stil.utilities;
+
+@layer stil.components {
+
+    /* ---------- Page layout: an overview column next to the view ---------- */
+
+    .planner {
+        display: grid;
+        gap: var(--stil-space-4);
+        align-items: start;
+    }
+
+    @media (min-width: 992px) {
+        .planner { grid-template-columns: 17rem minmax(0, 1fr); }
+    }
+
+    .planner-side {
+        display: grid;
+        gap: var(--stil-space-4);
+    }
+
+    @media (min-width: 576px) and (max-width: 991.98px) {
+        .planner-side { grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+    }
+
+    .planner-main { min-width: 0; }
+
+    /* On smaller screens the view comes first and the overview follows it. */
+    @media (max-width: 991.98px) {
+        .planner-main { order: -1; }
+    }
+
+    .planner-free {
+        display: grid;
+        gap: var(--stil-space-1);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        font-size: var(--stil-font-size-sm);
+    }
+
+    .planner-free button {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--stil-space-2);
+        width: 100%;
+        padding: var(--stil-space-1) var(--stil-space-2);
+        border: 0;
+        border-radius: var(--stil-radius-sm);
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: start;
+        cursor: pointer;
+    }
+
+    .planner-free button:hover { background-color: var(--stil-color-surface-muted); }
+
+    .planner-free button:focus-visible {
+        outline: var(--stil-focus-ring-width) solid var(--_accent);
+        outline-offset: -2px;
+    }
+
+    .planner-free .planner-free-length { color: var(--stil-color-text-muted); }
+}

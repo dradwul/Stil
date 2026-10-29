@@ -25,7 +25,7 @@ end, so they never keep a phase open.
 
 - **Stil CSS:** an npm package (`stil-css`, not yet published). It is built
   with Lightning CSS from partials into `dist/stil.css` and `stil.min.css`
-  (about 14 kB gzipped), plus the optional 6 kB `stil.js`. It has:
+  (about 16 kB gzipped), plus the optional 8 kB `stil.js`. It has:
   - cascade layers;
   - a full `--stil-*` token set;
   - light and dark mode;
@@ -396,13 +396,21 @@ showing at a glance how busy a period is and where the free time is.
 
 **Plan:**
 
-- [ ] An HTML prototype in `samples/Stil.Html/calendar.html` (month, week and
-  agenda) to settle the look before the API is fixed. Its CSS is
-  sample-only until it moves into Stil CSS.
-- [ ] Stil CSS: `stil-calendar`, `stil-week` and `stil-agenda`, with
-  `--stil-calendar-*` tokens, variants for event colors, light and dark mode.
-  `stil.js` adds keyboard navigation (the WAI-ARIA grid pattern), so plain
-  HTML users get it too.
+- [x] An HTML example, `samples/Stil.Html/calendar.html`: a planner with a
+  month, week and agenda view, a mini month, free time and calendar filters.
+  On a phone it opens in the agenda; the chosen view is remembered.
+- [x] Stil CSS: `stil-event`, `stil-calendar`, `stil-week` and `stil-agenda`.
+  - Event colors are variants (`stil-event-{variant}`) or an own color
+    (`--stil-event-color`).
+  - The week shows any number of days and hours (`--stil-week-days`,
+    `--stil-week-first-hour`, `--stil-week-hours`); the working day for load
+    and free time is set by the page (08–17 in the example).
+  - Tokens: `--stil-calendar-hour`, and `--stil-calendar-load` to override
+    the busy tint.
+  - `stil.js` adds the WAI-ARIA grid keyboard pattern to the month and fires
+    `stilcalendaredge` at the edges.
+  - A showcase section, Playwright baselines and axe checks of
+    `calendar.html`.
 - [ ] `StilCalendar`: a month view that picks dates and shows events as chips,
   or dots when a day is full. Changing months works with links in static SSR
   (like `StilPagination`'s `HrefTemplate`).
@@ -410,7 +418,8 @@ showing at a glance how busy a period is and where the free time is.
   layout for overlapping events, and drag to create, move and resize
   (interactive render modes).
 - [ ] `StilAgenda`: events grouped by day. It is the small-screen view and the
-  text alternative for screen readers, like the data table of a chart.
+  text alternative for screen readers, like the data table of a chart. A
+  planner opens in the agenda on a phone, and the user can switch view.
 - [ ] One data model for all three, like the data grid: `Items`, plus
   `Start`, `End`, `Title` and `Variant` selectors. No event class of its own.
 - [ ] bUnit tests, a docs page, demo sections and Playwright baselines.

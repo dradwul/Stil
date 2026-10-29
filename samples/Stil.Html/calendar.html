@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planning · Nordvik Supply</title>
     <link rel="stylesheet" href="../../src/Stil.Css/dist/stil.css">
-    <!-- Phase 7 prototype: the calendar styles live here until they move into Stil CSS. -->
-    <link rel="stylesheet" href="calendar.css">
+    <!-- The page layout around the calendar. The calendar itself is Stil CSS. -->
+    <link rel="stylesheet" href="planner.css">
 
     <!-- Optional showcase font -->
     <link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap" rel="stylesheet">
@@ -39,7 +39,7 @@
     <main id="main" class="stil-container stil-py-5">
         <div class="stil-d-flex stil-flex-wrap stil-align-items-end stil-justify-content-between stil-gap-3 stil-mb-4">
             <div>
-                <p class="stil-text-muted stil-fs-sm stil-mb-1">Phase 7 prototype</p>
+                <p class="stil-text-muted stil-fs-sm stil-mb-1">Calendar, week planner and agenda</p>
                 <h1 class="stil-mb-0">Planning</h1>
             </div>
             <div class="stil-tabs stil-tabs-pills" role="tablist" aria-label="Calendar view">
@@ -49,8 +49,8 @@
             </div>
         </div>
 
-        <div class="stil-planner">
-            <aside class="stil-planner-side" aria-label="Overview">
+        <div class="planner">
+            <aside class="planner-side" aria-label="Overview">
                 <section class="stil-card stil-p-3">
                     <div class="stil-calendar stil-calendar-mini" data-mini-month></div>
                     <div class="stil-calendar-legend" aria-hidden="true">
@@ -62,7 +62,7 @@
 
                 <section class="stil-card stil-p-3">
                     <h2 class="stil-fs-md stil-mb-2">Free time this week</h2>
-                    <ul class="stil-planner-free" data-free-list></ul>
+                    <ul class="planner-free" data-free-list></ul>
                 </section>
 
                 <section class="stil-card stil-p-3">
@@ -71,7 +71,7 @@
                 </section>
             </aside>
 
-            <div class="stil-planner-main">
+            <div class="planner-main">
                 <section id="view-month" role="tabpanel" aria-labelledby="tab-month" hidden>
                     <div class="stil-calendar" data-month></div>
                 </section>
@@ -87,6 +87,7 @@
 
     <div class="stil-toast-container" aria-live="polite" data-toasts></div>
 
+    <script type="module" src="../../src/Stil.Css/dist/stil.js"></script>
     <script src="theme-picker.js"></script>
     <script src="calendar.js"></script>
 </body>

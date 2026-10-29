@@ -2,7 +2,7 @@
 
 Stil CSS is a themeable, framework-independent CSS class library. It is a
 Bootstrap replacement with dark mode and WCAG AA colors built in. It is a
-single stylesheet, about 14 kB minified and gzipped, with no JavaScript. It
+single stylesheet, about 16 kB minified and gzipped, with no JavaScript. It
 works with plain HTML, Razor, React, Vue, or any other front end.
 
 Every class starts with `stil-` and every token with `--stil-`, so Stil can
@@ -130,6 +130,10 @@ classes: `aria-current="page"`, `aria-selected="true"`,
 | Progress | `stil-progress` (`stil-progress-lg`) > `stil-progress-bar` with a width |
 | Spinner | `stil-spinner`, `stil-spinner-sm`. It uses the current text color. |
 | Toast | `stil-toast-container` > `stil-toast` + `stil-toast-{variant}` > `stil-toast-body` (`stil-toast-title`) + `stil-close` |
+| Event | `stil-event` + `stil-event-{variant}`, or `--stil-event-color` for your own color, with `stil-event-title` (`stil-event-time`) and `stil-event-meta`. `stil-event-draft` marks an unsaved event. |
+| Calendar (month) | `stil-calendar` (`stil-calendar-mini` for a small month) > `stil-calendar-header` (`stil-calendar-title`) + `<table class="stil-calendar-grid" role="grid">`. Days are `<td role="gridcell" class="stil-calendar-day">` with `--stil-load` (0–1, tints the day), `aria-current="date"`, `aria-selected`, `stil-calendar-outside` and `stil-calendar-range`. Inside: `stil-calendar-date`, `stil-calendar-events` (event chips), `stil-calendar-more` and `stil-calendar-dots` (`stil-calendar-dot`, shown instead of chips on a narrow calendar). An optional week number column: `stil-calendar-week`. Key: `stil-calendar-legend` with `stil-calendar-legend-scale`. Filters: `stil-calendar-filter` with a variant class. |
+| Week | `stil-week` (`--stil-week-days`, `--stil-week-first-hour`, `--stil-week-hours`) > `stil-week-scroll` > `stil-week-grid` > `stil-week-corner`, `stil-week-day-head` (`stil-week-day-name`, `stil-calendar-date`, `stil-week-load` with `stil-week-load-bar`), `stil-week-times` (`stil-week-time`) and a `stil-week-col` per day (`stil-week-col-muted` for weekends). In a column, `stil-event`, `stil-week-free` and `stil-week-now` are placed by `--stil-start` and `--stil-length` (minutes from midnight); overlapping events get `--stil-col` and `--stil-cols`. |
+| Agenda | `stil-agenda` > `stil-agenda-day` (`stil-agenda-day-title`) > `stil-agenda-list` > `stil-agenda-item` (`stil-agenda-time` + a `stil-event`). A free gap: `stil-agenda-item stil-agenda-free` with `stil-agenda-free-line`. |
 
 To see every class with its markup, open
 [`samples/Stil.Html/index.html`](../../samples/Stil.Html/index.html). For a
@@ -138,7 +142,7 @@ full page built only with Stil, open
 
 ## Optional JavaScript
 
-Stil works without JavaScript. The optional `dist/stil.js` module, 6 kB with
+Stil works without JavaScript. The optional `dist/stil.js` module, 8 kB with
 no dependencies, adds a few behaviours:
 
 ```html
@@ -155,6 +159,11 @@ no dependencies, adds a few behaviours:
   open a collapsed navbar. Escape collapses it again.
 - The arrow keys, Home and End move between dropdown items. ArrowDown on
   the toggle opens the menu.
+- In a calendar month (`table.stil-calendar-grid` with `role="grid"`), the
+  arrow keys move between the days, Home and End go to the start and end of
+  the week, and Enter or Space clicks the day. Moving past the first or last
+  day fires a bubbling `stilcalendaredge` event (`detail.key`, `detail.cell`),
+  so your script can show the previous or next month.
 - Keys that a widget's own script handles do not also scroll the page,
   submit a form or close a dialog: the arrow keys on `role="treeitem"`,
   `role="tab"` and `role="combobox"`, and Enter and Escape in an open
@@ -262,11 +271,11 @@ same form when you override them, or the override applies to both modes:
 | Group | Tokens |
 | --- | --- |
 | Brand and semantic colors | `--stil-color-primary`, `-secondary`, `-success`, `-danger`, `-warning`, `-info` |
-| Optional overrides | `--stil-color-{variant}-contrast` (text on the color), `--stil-color-accent` (links, focus) |
+| Optional overrides | `--stil-color-{variant}-contrast` (text on the color), `--stil-color-accent` (links, focus), `--stil-calendar-load` (the busy tint of calendar days) |
 | Neutrals | `--stil-color-body-bg`, `-surface`, `-surface-muted`, `-text`, `-text-muted`, `-border`, `-border-strong` |
 | Typography | `--stil-font-family`, `--stil-font-family-mono`, `--stil-font-size-xs` … `-xl`, `--stil-font-weight-normal`, `-bold`, `--stil-line-height`, `--stil-letter-spacing`, `--stil-heading-margin` |
 | Spacing | `--stil-space-1` (0.25rem) … `--stil-space-7` (3rem) |
-| Layout | `--stil-container-max`, `--stil-sidebar-width` |
+| Layout | `--stil-container-max`, `--stil-sidebar-width`, `--stil-calendar-hour` (the height of an hour in `stil-week`) |
 | Shape | `--stil-radius-sm`, `-md`, `-lg`, `-pill`, `--stil-shadow-sm`, `-md`, `-lg`, `--stil-backdrop` |
 | Focus | `--stil-focus-ring-width`, `--stil-focus-ring-offset` |
 | Layering | `--stil-z-dropdown`, `-sticky`, `-overlay`, `-modal`, `-popover`, `-toast` |

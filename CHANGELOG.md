@@ -28,8 +28,11 @@ Nothing has been published.
     range, file drop zone, stat cards, tree, accordion, nav and nav groups,
     navbar, breadcrumbs, pagination, tabs, dropdowns, dialogs, drawers,
     tooltips, progress, spinners and toasts.
+  - Calendar components: events with variants or an own color, a month grid
+    tinted by how busy each day is, a week time grid with free blocks and a now
+    line, and an agenda. `stil.js` adds keyboard navigation in the month grid.
   - About 900 utility classes and about 30 built-in icons (`stil-icon-*`).
-  - `stil.js`, an optional 6 kB module for dropdowns, dismissing, dialogs,
+  - `stil.js`, an optional 8 kB module for dropdowns, dismissing, dialogs,
     toggles and keyboard handling.
 - **Stil for Blazor** (`Stil`):
   - About 60 components, with one for every Stil CSS component, including

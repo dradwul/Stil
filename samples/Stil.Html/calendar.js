@@ -1,5 +1,6 @@
-// Phase 7 prototype: renders a month view, a week planner and an agenda from one list of
-// events, to settle the look and the behaviour before the Blazor API is fixed. Sample-only.
+// Renders a month view, a week planner and an agenda (Stil CSS: stil-calendar, stil-week,
+// stil-agenda) from one list of events. stil.js adds the keyboard navigation in the month grids.
+// This script is sample-only; StilCalendar, StilWeekPlanner and StilAgenda will do this in Blazor.
 //
 // The data model is the one planned for the components: an event has a start, an end, a
 // title and a calendar (which gives it a variant). Everything else is derived: the load of a
@@ -10,7 +11,8 @@
         { id: 'customers', name: 'Customer meetings', variant: 'info' },
         { id: 'team', name: 'Team', variant: 'success' },
         { id: 'deadlines', name: 'Deadlines', variant: 'danger' },
-        { id: 'personal', name: 'Personal', variant: 'warning' },
+        // A calendar can also have its own color instead of a variant.
+        { id: 'personal', name: 'Personal', color: 'light-dark(#9c36b5, #da77f2)' },
     ];
     const calendarById = Object.fromEntries(calendars.map(c => [c.id, c]));
 
@@ -139,8 +141,13 @@
 
     // ---------- State ----------
 
+    // On a phone the agenda is the default view; a view the user chose is remembered.
+    const readView = () => { try { return localStorage.getItem('planner-view'); } catch { return null; } };
+    const saveView = view => { try { localStorage.setItem('planner-view', view); } catch { } };
+    const phone = window.matchMedia('(max-width: 575.98px)').matches;
+
     const state = {
-        view: 'week',
+        view: readView() ?? (phone ? 'agenda' : 'week'),
         month: new Date(today.getFullYear(), today.getMonth(), 1),
         week: thisMonday,
         selected: today,
@@ -213,13 +220,18 @@
 
     const html = (strings, ...values) => strings.reduce((out, s, i) => out + s + (i < values.length ? values[i] : ''), '');
     const esc = text => String(text).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-    const variantOf = e => calendarById[e.calendar]?.variant ?? 'primary';
+    // The class and style that color an event, a dot or a filter: a variant class, or its own color.
+    const colorOf = calendar => calendar?.color
+        ? { cls: '', style: `--stil-event-color: ${calendar.color}` }
+        : { cls: ` stil-event-${calendar?.variant ?? 'primary'}`, style: '' };
+    const styleAttr = (...styles) => (styles.some(Boolean) ? ` style="${styles.filter(Boolean).join('; ')}"` : '');
     const describe = e => `${e.title}, ${span(minutesOf(e.start), minutesOf(e.end))}, ${calendarById[e.calendar]?.name ?? ''}`;
 
-    function eventButton(e, { meta = true, tabbable = true, startTime = false, metaTime = true } = {}) {
+    function eventButton(e, { meta = true, tabbable = true, startTime = false, metaTime = true, style = '' } = {}) {
         const draft = e.draft ? ' stil-event-draft' : '';
         const extra = [calendarById[e.calendar]?.name, e.location].filter(Boolean).join(' · ');
-        return html`<button type="button" class="stil-event stil-event-${variantOf(e)}${draft}" data-event="${e.id}"
+        const color = colorOf(calendarById[e.calendar]);
+        return html`<button type="button" class="stil-event${color.cls}${draft}"${styleAttr(color.style, style)} data-event="${e.id}"
             aria-label="${esc(describe(e))}"${tabbable ? '' : ' tabindex="-1"'}>
             <span class="stil-event-title">${startTime ? `<span class="stil-event-time">${time(minutesOf(e.start))}</span>` : ''}${esc(e.title)}</span>
             ${meta ? html`<span class="stil-event-meta">${[metaTime ? span(minutesOf(e.start), minutesOf(e.end)) : '', esc(extra)].filter(Boolean).join(' · ')}</span>` : ''}
@@ -264,10 +276,10 @@
                 const more = events.length > 3
                     ? `<button type="button" class="stil-calendar-more" tabindex="-1" data-more="${key(date)}">+${events.length - 2} more</button>`
                     : '';
-                const dots = events.slice(0, 5).map(e => `<span class="stil-calendar-dot stil-event-${variantOf(e)}"></span>`).join('');
-                cells += html`<td role="gridcell" class="stil-calendar-day${outside ? ' stil-calendar-outside' : ''}"
-                    style="--load: ${l.toFixed(2)}" data-date="${key(date)}" tabindex="${selected ? 0 : -1}"
-                    aria-selected="${selected}" aria-label="${label}"${isToday ? ' aria-current="date"' : ''}${inWeek ? ' data-in-week' : ''}>
+                const dots = events.slice(0, 5).map(e => { const c = colorOf(calendarById[e.calendar]); return `<span class="stil-calendar-dot${c.cls}"${styleAttr(c.style)}></span>`; }).join('');
+                cells += html`<td role="gridcell" class="stil-calendar-day${outside ? ' stil-calendar-outside' : ''}${inWeek ? ' stil-calendar-range' : ''}"
+                    style="--stil-load: ${l.toFixed(2)}" data-date="${key(date)}" tabindex="${selected ? 0 : -1}"
+                    aria-selected="${selected}" aria-label="${label}"${isToday ? ' aria-current="date"' : ''}>
                     <span class="stil-calendar-date" aria-hidden="true">${date.getDate()}</span>
                     ${mini ? '' : `<ul class="stil-calendar-events">${chips}</ul>${more}<div class="stil-calendar-dots" aria-hidden="true">${dots}</div>`}
                 </td>`;
@@ -290,6 +302,9 @@
     // ---------- Week view ----------
 
     function renderWeek(container) {
+        // The hours the grid shows are settings of stil-week.
+        container.style.setProperty('--stil-week-first-hour', gridFrom);
+        container.style.setProperty('--stil-week-hours', gridHours);
         const monday = state.week;
         const sunday = addDays(monday, 6);
         const days = Array.from({ length: 7 }, (_, i) => addDays(monday, i));
@@ -300,14 +315,14 @@
                 <span class="stil-week-day-name">${weekdayShort.format(date)}</span>
                 <span class="stil-calendar-date">${date.getDate()}</span>
                 <span class="stil-week-load" title="${hours(b)} booked of ${hours(workEnd - workStart)}">
-                    <span class="stil-week-load-bar" style="--load: ${load(date).toFixed(2)}" aria-hidden="true"></span>
+                    <span class="stil-week-load-bar" style="--stil-load: ${load(date).toFixed(2)}" aria-hidden="true"></span>
                     <span>${b ? hours(b) : 'Free'}</span>
                 </span>
             </div>`;
         }).join('');
 
         const times = Array.from({ length: gridHours }, (_, h) =>
-            `<span class="stil-week-time" style="--h: ${h}">${time((gridFrom + h) * 60)}</span>`).join('');
+            `<span class="stil-week-time" style="--stil-start: ${(gridFrom + h) * 60}">${time((gridFrom + h) * 60)}</span>`).join('');
 
         const columns = days.map(date => {
             const gridStart = gridFrom * 60;
@@ -316,14 +331,16 @@
                 const start = Math.max(gridStart, p.start);
                 const end = Math.min(gridEnd, p.end);
                 if (end <= start) return '';
-                return eventButton(p.e, { meta: end - start >= 45 })
-                    .replace('class="stil-event', `style="--start: ${start}; --length: ${end - start}; --col: ${p.col}; --cols: ${p.cols}" class="stil-event`);
+                return eventButton(p.e, {
+                    meta: end - start >= 45,
+                    style: `--stil-start: ${start}; --stil-length: ${end - start}; --stil-col: ${p.col}; --stil-cols: ${p.cols}`,
+                });
             }).join('');
-            const free = freeBlocks(date).map(f => html`<button type="button" class="stil-week-free" style="--start: ${f.start}; --length: ${f.end - f.start}"
+            const free = freeBlocks(date).map(f => html`<button type="button" class="stil-week-free" style="--stil-start: ${f.start}; --stil-length: ${f.end - f.start}"
                 data-free="${key(date)}|${f.start}|${f.end}" aria-label="Free ${span(f.start, f.end)}, create an event">Free · ${hours(f.end - f.start)}</button>`).join('');
             const nowLine = sameDay(date, today) && minutesOf(now) >= gridStart && minutesOf(now) <= gridEnd
-                ? `<div class="stil-week-now" style="--start: ${minutesOf(now)}" aria-hidden="true"></div>` : '';
-            return `<div class="stil-week-col"${isWeekend(date) ? ' data-weekend' : ''}>${free}${events}${nowLine}</div>`;
+                ? `<div class="stil-week-now" style="--stil-start: ${minutesOf(now)}" aria-hidden="true"></div>` : '';
+            return `<div class="stil-week-col${isWeekend(date) ? ' stil-week-col-muted' : ''}">${free}${events}${nowLine}</div>`;
         }).join('');
 
         container.innerHTML = html`
@@ -377,13 +394,13 @@
         document.querySelector('[data-free-list]').innerHTML = blocks.length
             ? blocks.map(f => html`<li><button type="button" data-free="${key(f.date)}|${f.start}|${f.end}" aria-label="Free ${weekdayLong.format(f.date)} ${span(f.start, f.end)}, create an event">
                 <span>${weekdayShort.format(f.date)} ${span(f.start, f.end)}</span>
-                <span class="stil-planner-free-length">${hours(f.end - f.start)}</span></button></li>`).join('')
+                <span class="planner-free-length">${hours(f.end - f.start)}</span></button></li>`).join('')
             : '<li class="stil-text-muted">No free hour left this week.</li>';
     }
 
     function renderFilters() {
         document.querySelector('[data-calendar-filters]').innerHTML = calendars.map(c => html`
-            <label class="stil-calendar-filter stil-event-${c.variant}">
+            <label class="stil-calendar-filter${colorOf(c).cls}"${styleAttr(colorOf(c).style)}>
                 <input type="checkbox" data-calendar="${c.id}"${state.hidden.has(c.id) ? '' : ' checked'}> ${c.name}
             </label>`).join('');
     }
@@ -436,7 +453,7 @@
         const target = event.target.closest('button, td[data-date]');
         if (!target) return;
 
-        if (target.dataset.view) { state.view = target.dataset.view; render(); return; }
+        if (target.dataset.view) { state.view = target.dataset.view; saveView(state.view); render(); return; }
 
         if (target.dataset.nav !== undefined) {
             const step = Number(target.dataset.nav);
@@ -476,7 +493,7 @@
 
         if (target.dataset.date) {
             const date = parseKey(target.dataset.date);
-            if (target.closest('[data-mini-month]')) { showWeekOf(date); return; }
+            if (target.closest('[data-mini-month]') || sameDay(date, state.selected)) { showWeekOf(date); return; }
             state.selected = date;
             render();
             monthEl.querySelector(`td[data-date="${key(date)}"]`)?.focus();
@@ -495,36 +512,32 @@
         render();
     });
 
-    // Keyboard: arrow keys move between days (the WAI-ARIA grid pattern), Enter opens the week.
+    // The arrow keys switch between the view tabs.
     document.addEventListener('keydown', event => {
         const tab = event.target.closest('[role="tab"]');
-        if (tab && (event.key === 'ArrowRight' || event.key === 'ArrowLeft')) {
-            const tabs = [...document.querySelectorAll('[role="tab"]')];
-            const next = tabs[(tabs.indexOf(tab) + (event.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
-            state.view = next.dataset.view;
-            render();
-            next.focus();
-            event.preventDefault();
-            return;
-        }
+        if (!tab || (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft')) return;
+        const tabs = [...document.querySelectorAll('[role="tab"]')];
+        const next = tabs[(tabs.indexOf(tab) + (event.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+        state.view = next.dataset.view;
+        saveView(state.view);
+        render();
+        next.focus();
+        event.preventDefault();
+    });
 
-        const cell = event.target.closest('[data-month] td[data-date], [data-mini-month] td[data-date]');
-        if (!cell) return;
+    // stil.js moves between the days with the arrow keys and clicks a day on Enter. Past the
+    // first or last day it fires stilcalendaredge: show the previous or next month there.
+    document.addEventListener('stilcalendaredge', event => {
+        const { key: pressed, cell } = event.detail;
         const moves = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 };
-        const date = parseKey(cell.dataset.date);
+        if (!(pressed in moves)) return;
+        const next = addDays(parseKey(cell.dataset.date), moves[pressed]);
         const mini = !!cell.closest('[data-mini-month]');
-        if (event.key in moves) {
-            const next = addDays(date, moves[event.key]);
-            state.selected = next;
-            if (mini) miniMonth = new Date(next.getFullYear(), next.getMonth(), 1);
-            else if (next.getMonth() !== state.month.getMonth()) state.month = new Date(next.getFullYear(), next.getMonth(), 1);
-            render();
-            (mini ? miniEl : monthEl).querySelector(`td[data-date="${key(next)}"]`)?.focus();
-            event.preventDefault();
-        } else if (event.key === 'Enter' || event.key === ' ') {
-            showWeekOf(date);
-            event.preventDefault();
-        }
+        state.selected = next;
+        if (mini) miniMonth = new Date(next.getFullYear(), next.getMonth(), 1);
+        else state.month = new Date(next.getFullYear(), next.getMonth(), 1);
+        render();
+        (mini ? miniEl : monthEl).querySelector(`td[data-date="${key(next)}"]`)?.focus();
     });
 
     renderFilters();

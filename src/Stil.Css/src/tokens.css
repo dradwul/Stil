@@ -53,6 +53,7 @@
     /* Layout */
     --stil-container-max: 1200px;
     --stil-sidebar-width: 16rem;
+    --stil-calendar-hour: 3rem;
 
     /* Shape and depth */
     --stil-radius-sm: 0.125rem;
