@@ -305,8 +305,9 @@ same form when you override them, or the override applies to both modes:
 
 The defaults are in [`src/tokens.css`](src/tokens.css).
 
-Stil uses **Didact Gothic** if your page loads it, for example from Google
-Fonts. Otherwise it falls back to `sans-serif`. The stylesheet never
+Stil uses **Lexend** if your page loads it, for example with
+`<link href="https://fonts.cdnfonts.com/css/lexend" rel="stylesheet">`.
+Otherwise it falls back to `sans-serif`. The stylesheet never
 fetches fonts on its own.
 
 ### Accessibility check

@@ -17,6 +17,7 @@ Nothing has been published.
 - **Stil CSS** (`stil-css`):
   - Tokens (`--stil-*`) for colors, typography, spacing, shape, depth and
     motion, with light, dark and auto modes through `data-stil-theme`.
+    The default font is Lexend, used when the page loads it.
   - Derived colors: text on colored backgrounds, links and focus rings stay
     WCAG AA readable for any brand color. CI runs 163 contrast checks.
   - Cascade layers (`stil.tokens`, `stil.reset`, `stil.base`,

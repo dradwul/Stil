@@ -546,6 +546,21 @@ calendar; العربية turns the whole page right to left. In the docs site
 - Reloading JSON files while the app runs.
 - Translating the docs site itself.
 
+## Detour: Lexend as the default font ✅ Done
+
+A small change outside the phase plan: `--stil-font-family` is now
+`'Lexend', sans-serif` instead of Didact Gothic.
+
+- [x] The token in `tokens.css`, and the font link in the HTML samples, the
+  demo and the docs site: `https://fonts.cdnfonts.com/css/lexend`. As before,
+  the stylesheet never fetches fonts itself.
+- [x] The docs (theming page, theme builder, CSS README).
+- [x] Before and after screenshots, approved by the owner.
+
+The logo keeps Didact Gothic: its text is drawn as outlines. The Playwright
+baselines are unchanged, because the tests block external fonts and render
+with the fallback font.
+
 ---
 
 ## Owner tasks (not part of a phase)
