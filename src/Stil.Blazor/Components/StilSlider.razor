@@ -1,0 +1,71 @@
+@typeparam TValue
+@inherits StilInputBase<TValue>
+@using System.Globalization
+
+@* One value on a track: a native range input, so the arrow keys, Home, End and Page Up/Down work,
+   and it also posts in static SSR forms. TValue is a number type (int, double, decimal, …). *@
+<StilField Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
+    <div class="stil-slider-header">
+        @if (!string.IsNullOrWhiteSpace(Label))
+        {
+            <label class="stil-label" for="@InputId">@Label</label>
+        }
+        @if (ShowValue)
+        {
+            <output class="stil-slider-value" for="@InputId">@FormatNumber(Current)</output>
+        }
+    </div>
+    <input @attributes="SliderAttributes" type="range" min="@Css(Min)" max="@Css(Max)" step="@Css(Step)"
+           value="@Css(Current)" style="@FillStyle" aria-valuetext="@FormatNumber(Current)"
+           aria-invalid="@StilCssClasses.AriaBool(Messages.Count > 0)" @oninput="OnInputAsync" />
+    @if (ShowMinMax)
+    {
+        <div class="stil-slider-marks" aria-hidden="true"><span>@FormatNumber(Min)</span><span>@FormatNumber(Max)</span></div>
+    }
+</StilField>
+
+@code {
+    /// <summary>The lowest value. The default is 0.</summary>
+    [Parameter]
+    public double Min { get; set; }
+
+    /// <summary>The highest value. The default is 100.</summary>
+    [Parameter]
+    public double Max { get; set; } = 100;
+
+    /// <summary>The step between values. The default is 1.</summary>
+    [Parameter]
+    public double Step { get; set; } = 1;
+
+    /// <summary>Shows the value next to the label. The default is true.</summary>
+    [Parameter]
+    public bool ShowValue { get; set; } = true;
+
+    /// <summary>Shows Min and Max under the track.</summary>
+    [Parameter]
+    public bool ShowMinMax { get; set; }
+
+    /// <summary>A format for the shown value, for example "N0", "0 'min'" or "C0".</summary>
+    [Parameter]
+    public string? Format { get; set; }
+
+    private double Current => Value is null ? Min : Math.Clamp(Convert.ToDouble(Value, CultureInfo.InvariantCulture), Min, Max);
+
+    private IReadOnlyDictionary<string, object> SliderAttributes => ControlAttributes("stil-slider");
+
+    private string FillStyle => $"--_fill: {Css(Fill)}%";
+
+    private double Fill => Max <= Min ? 0 : (Current - Min) / (Max - Min) * 100;
+
+    private string FormatNumber(double value) => value.ToString(Format ?? "0.##", CultureInfo.CurrentCulture);
+
+    private static string Css(double value) => value.ToString("0.####", CultureInfo.InvariantCulture);
+
+    private async Task OnInputAsync(ChangeEventArgs e)
+    {
+        if (double.TryParse(e.Value?.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var number))
+        {
+            await SetValueAsync(StilNumbers.To<TValue>(number));
+        }
+    }
+}

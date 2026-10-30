@@ -1,0 +1,10 @@
+@* Type "1430", "930" or pick from the list; the times follow the culture. *@
+<div class="stil-grid">
+    <StilTimePicker @bind-Value="_start" Label="Start" Step="15" Min="new TimeOnly(7, 0)" Max="new TimeOnly(19, 0)" class="stil-col-md-4" />
+    <StilDateTimePicker @bind-Value="_delivery" Label="Delivery" Hint="The time defaults to 09:00." class="stil-col-md-8" />
+</div>
+
+@code {
+    private TimeOnly? _start = new(9, 30);
+    private DateTime? _delivery;
+}

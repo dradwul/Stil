@@ -32,6 +32,7 @@ const layers = [
         'components/overlay.css',
         'components/data.css',
         'components/pickers.css',
+        'components/inputs.css',
         'components/tree.css',
         'components/calendar.css',
         'components/extras.css',

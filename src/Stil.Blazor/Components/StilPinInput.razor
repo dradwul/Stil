@@ -1,0 +1,50 @@
+@inherits StilInputBase<string>
+
+@* A one-time code or PIN in one input, drawn as a row of cells. One field means paste, autofill
+   from a text message (autocomplete="one-time-code") and screen readers all work as usual.
+   OnComplete is raised when every cell is filled. *@
+<StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
+    <input @attributes="PinAttributes" type="@(Secret ? "password" : "text")" style="@LengthStyle"
+           inputmode="@(Numeric ? "numeric" : null)" autocomplete="one-time-code" maxlength="@Length" spellcheck="false"
+           pattern="@Pattern" value="@Value"
+           aria-invalid="@StilCssClasses.AriaBool(Messages.Count > 0)" @oninput="OnInputAsync" />
+</StilField>
+
+@code {
+    /// <summary>The number of characters. The default is 6.</summary>
+    [Parameter]
+    public int Length { get; set; } = 6;
+
+    /// <summary>Accepts digits only. The default is true.</summary>
+    [Parameter]
+    public bool Numeric { get; set; } = true;
+
+    /// <summary>Hides the characters, for a PIN.</summary>
+    [Parameter]
+    public bool Secret { get; set; }
+
+    /// <summary>Raised with the code when every cell is filled, for example to verify it at once.</summary>
+    [Parameter]
+    public EventCallback<string> OnComplete { get; set; }
+
+    private IReadOnlyDictionary<string, object> PinAttributes => ControlAttributes("stil-pin");
+
+    private string LengthStyle => $"--stil-pin-length: {Length}";
+
+    private string? Pattern => Numeric ? $"\\d{{{Length}}}" : null;
+
+    private async Task OnInputAsync(ChangeEventArgs e)
+    {
+        var text = new string((e.Value?.ToString() ?? "").Where(c => Numeric ? char.IsDigit(c) : !char.IsWhiteSpace(c)).Take(Length).ToArray());
+        if (text == (Value ?? ""))
+        {
+            return;
+        }
+
+        await SetValueAsync(text);
+        if (text.Length == Length)
+        {
+            await OnComplete.InvokeAsync(text);
+        }
+    }
+}

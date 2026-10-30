@@ -17,7 +17,7 @@ something usable.
 | 6 | 1.0 release and ecosystem | ✅ Done |
 | 7 | Time and planning: calendar, week planner, agenda | ✅ Done |
 | 8 | Language and localization | ✅ Done |
-| 9 | Forms 2: popover, time, slider, wizard, rating, color, masks | Planned |
+| 9 | Forms 2: popover, time, slider, wizard, rating, color, masks | ✅ Done |
 | 10 | Layout and media: skeleton, splitter, carousel, image cropper, PDF viewer | Planned |
 | 11 | Data grid 2: grouping, editing, export, tree grid | Planned |
 | 12 | Capture and records: scanner, QR codes, signature, activity log, chat | Planned |
@@ -28,11 +28,11 @@ A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
 end, so they never keep a phase open.
 
-## Where we are (0.1.0, Phases 0–8 done)
+## Where we are (0.1.0, Phases 0–9 done)
 
 - **Stil CSS:** an npm package (`stil-css`, not yet published). It is built
   with Lightning CSS from partials into `dist/stil.css` and `stil.min.css`
-  (about 16 kB gzipped), plus the optional 16 kB `stil.js`. It has:
+  (about 18 kB gzipped), plus the optional 20 kB `stil.js`. It has:
   - cascade layers;
   - a full `--stil-*` token set;
   - light and dark mode;
@@ -59,7 +59,9 @@ end, so they never keep a phase open.
   - Built-in texts in English, Swedish, Norwegian, Danish and Finnish,
     `AddStilLocalization()` for the app's own JSON texts, `StilLanguageSelector`
     and right-to-left support.
-  - 659 bUnit tests.
+  - Forms 2: time and date-time pickers, sliders, rating, color picker,
+    masked and PIN inputs, popover, stepper and wizard.
+  - 693 bUnit tests.
 - **Stil.Charts:** SVG line, area, bar, donut and sparkline charts that
   follow the theme, with 68 bUnit tests.
 - **Stil.Templates:** `dotnet new stil-app`.
@@ -569,7 +571,7 @@ with the fallback font.
 
 ---
 
-## Phase 9: Forms 2
+## Phase 9: Forms 2 ✅ Done
 
 Goal: the inputs that business forms still lack, built on the same field
 model as Phase 3 (label, hint, validation, `@bind-Value`, EditForm), and
@@ -577,28 +579,48 @@ following the culture from Phase 8.
 
 **Plan:**
 
-- [ ] `StilPopover`: a panel anchored to a button, for pickers and rich
-  hints. It uses the Popover API with a positioned fallback until CSS anchor
-  positioning is in every target browser. CSS `stil-popover`.
-- [ ] `StilTimePicker` (`TimeOnly`) and `StilDateTimePicker` (`DateTime`):
-  typed input with a list of times in steps (`Step`, for example 15 minutes),
-  `Min`/`Max`, and the 24-hour clock where the culture uses it.
-- [ ] `StilSlider`: one value or a range (`@bind-Start`/`@bind-End`), steps,
-  marks and a value label. It is a native `input type="range"`, so it works
-  with the keyboard and in static SSR.
-- [ ] `StilStepper` and `StilWizard`: steps with a state (done, current,
-  error), and a wizard that validates each step's fields before moving on.
-- [ ] `StilRating`: stars or another icon, read-only or editable, as a radio
+- [x] `StilPopover`: a panel anchored to a button, for pickers and rich
+  hints. It uses the Popover API (so it works without JavaScript and in
+  static SSR), and `stil.js` places it under or above the button. CSS
+  `stil-popover`.
+- [x] `StilTimePicker` (`TimeOnly`) and `StilDateTimePicker` (`DateTime`):
+  typed input ("1430", "930") with a list of times in steps (`Step`),
+  `Min`/`Max`, and the culture's clock.
+- [x] `StilSlider` and `StilRangeSlider` (`@bind-Start`/`@bind-End`): steps,
+  a formatted value label and min and max marks, as native
+  `input type="range"`, so they work with the keyboard and in static SSR.
+- [x] `StilStepper` and `StilWizard`: steps with a state (done, current,
+  error), and a wizard that validates only the current step's fields before
+  moving on.
+- [x] `StilRating`: stars or another icon, read-only or editable, as a radio
   group.
-- [ ] `StilColorPicker`: the native color input plus swatches (the theme's
-  colors by default), with the contrast check from `derived.css` as a hint.
-- [ ] `StilMaskedInput` (`Mask="0000 00 00-0000"`) and `StilPinInput` (a code
-  in separate boxes, for one-time codes).
-- [ ] CSS for all of them, built-in texts in the five languages, bUnit tests,
-  docs and demo sections.
+- [x] `StilColorPicker`: the native color input, the hex code and swatches
+  (Stil's palette by default), with a WCAG contrast hint.
+- [x] `StilMaskedInput` (`Mask="00000000-0000"`, formatted while typing by
+  `stil.js`) and `StilPinInput` (a one-time code).
+- [x] CSS for all of them (`inputs.css`), built-in texts in the five
+  languages, 34 bUnit tests, a docs page, a demo section and a showcase
+  section.
 
 **Done when:** a booking form (date, time, duration slider, rating) and a
-three-step sign-up wizard can be built only with Stil.
+three-step sign-up wizard can be built only with Stil. ✅
+
+**Verified in the browser:** the popover opens under its button and closes
+on an outside click; typed times and steps follow the culture; the masked
+input and the code field format while typing, and `OnComplete` fires; the
+wizard stops on a step with errors and marks it in the stepper; the section
+works at phone width.
+
+**Changes from the plan:**
+
+- The PIN input is one field drawn as cells, not separate boxes, so paste,
+  autofill and screen readers work as usual.
+- The range is its own component, `StilRangeSlider`, so `StilSlider` keeps
+  the plain field model (`@bind-Value`, EditForm validation).
+- The color picker's contrast hint is computed in C# (black or white text,
+  with the ratio) instead of reusing `derived.css`.
+- The popover has no `@bind-Open`: opening it from code would need
+  JavaScript. `OnToggle` reports its state.
 
 ## Phase 10: Layout and media
 

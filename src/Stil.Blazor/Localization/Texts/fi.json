@@ -115,5 +115,33 @@
   },
   "Toasts": {
     "Label": "Ilmoitukset"
+  },
+  "DateTime": {
+    "Date": "Päivämäärä",
+    "Time": "Aika"
+  },
+  "Slider": {
+    "Start": "Vähimmäisarvo",
+    "End": "Enimmäisarvo"
+  },
+  "Rating": {
+    "OptionFormat": "{0}/{1}"
+  },
+  "ColorPicker": {
+    "Hex": "heksakoodi",
+    "Swatches": "Ehdotetut värit",
+    "ContrastFormat": "Teksti tällä värillä: {0} ({1}:1)",
+    "Black": "musta",
+    "White": "valkoinen"
+  },
+  "Stepper": {
+    "Label": "Edistyminen",
+    "Done": "valmis",
+    "Error": "sisältää virheitä"
+  },
+  "Wizard": {
+    "Back": "Takaisin",
+    "Next": "Seuraava",
+    "Finish": "Valmis"
   }
 }

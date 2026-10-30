@@ -115,5 +115,33 @@
   },
   "Toasts": {
     "Label": "Notifikationer"
+  },
+  "DateTime": {
+    "Date": "Dato",
+    "Time": "Tid"
+  },
+  "Slider": {
+    "Start": "Minimum",
+    "End": "Maksimum"
+  },
+  "Rating": {
+    "OptionFormat": "{0} af {1}"
+  },
+  "ColorPicker": {
+    "Hex": "hexkode",
+    "Swatches": "Foreslåede farver",
+    "ContrastFormat": "Tekst på denne farve: {0} ({1}:1)",
+    "Black": "sort",
+    "White": "hvid"
+  },
+  "Stepper": {
+    "Label": "Forløb",
+    "Done": "fuldført",
+    "Error": "har fejl"
+  },
+  "Wizard": {
+    "Back": "Tilbage",
+    "Next": "Næste",
+    "Finish": "Afslut"
   }
 }

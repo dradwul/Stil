@@ -315,6 +315,51 @@
     </div>
 </section>
 
+<section class="demo-section" aria-labelledby="inputs">
+    <h2 id="inputs">More inputs</h2>
+    <p>Times in steps that also take typed times ("1430"), sliders, ratings, colors, masks, one-time codes and popovers.</p>
+    <div class="stil-grid">
+        <div class="stil-col-md-6 stil-stack">
+            <StilDateTimePicker @bind-Value="_meetingAt" Label="Meeting" Step="15" Culture="CalendarCulture" />
+            <StilTimePicker @bind-Value="_pickup" Label="Pickup time" Min="new TimeOnly(7, 0)" Max="new TimeOnly(18, 0)" Culture="CalendarCulture" />
+            <StilSlider @bind-Value="_duration" Label="Duration" Min="15" Max="180" Step="15" Format="0 'min'" ShowMinMax />
+            <StilRangeSlider @bind-Start="_priceFrom" @bind-End="_priceTo" Label="Price" Min="0" Max="5000" Step="100" Format="N0" />
+        </div>
+        <div class="stil-col-md-6 stil-stack">
+            <StilRating @bind-Value="_rating" Label="How was the service?" />
+            <StilColorPicker @bind-Value="_brand" Label="Brand color" />
+            <StilMaskedInput @bind-Value="_personalNumber" Label="Personal identity number" Mask="00000000-0000" Hint="YYYYMMDD-XXXX" />
+            <StilPinInput @bind-Value="_code" Label="Verification code" OnComplete="@(code => Toasts.Success($"Code {code} entered."))" />
+            <div class="stil-cluster">
+                <StilPopover Text="What is this?" Title="Verification code">
+                    <p>We sent a six-digit code to your phone. It is valid for ten minutes.</p>
+                </StilPopover>
+                <StilRating Value="4" ReadOnly Size="StilSize.Small" />
+            </div>
+        </div>
+    </div>
+
+    <h3 class="stil-mt-5">Wizard</h3>
+    <div class="stil-card stil-card-body">
+        <EditForm Model="_wizard">
+            <DataAnnotationsValidator />
+            <StilWizard @bind-Step="_wizardStep" OnFinish="@(() => Toasts.Success($"Welcome, {_wizard.Name}!"))">
+                <StilWizardStep Title="Account" Description="Name and email" HeadingLevel="4">
+                    <StilTextBox @bind-Value="_wizard.Name" Label="Name" />
+                    <StilTextBox @bind-Value="_wizard.Email" Label="Email" Type="email" />
+                </StilWizardStep>
+                <StilWizardStep Title="Delivery" Description="Where we ship" HeadingLevel="4">
+                    <StilTextBox @bind-Value="_wizard.Street" Label="Street" />
+                    <StilMaskedInput @bind-Value="_wizard.PostalCode" Label="Postal code" Mask="000 00" />
+                </StilWizardStep>
+                <StilWizardStep Title="Confirm" HeadingLevel="4">
+                    <p>@_wizard.Name, @_wizard.Email<br />@_wizard.Street, @_wizard.PostalCode</p>
+                </StilWizardStep>
+            </StilWizard>
+        </EditForm>
+    </div>
+</section>
+
 <section class="demo-section" aria-labelledby="trees">
     <h2 id="trees">Tree view and navigation groups</h2>
     <div class="stil-grid">
@@ -472,6 +517,21 @@
 
     private sealed record DemoRow(int Id, string Name, string Region, double Score);
 
+    private sealed class WizardSignUp
+    {
+        [Required]
+        public string? Name { get; set; }
+
+        [Required, EmailAddress]
+        public string? Email { get; set; }
+
+        [Required]
+        public string? Street { get; set; }
+
+        [Required, RegularExpression(@"\d{3} \d{2}", ErrorMessage = "Enter a postal code like 114 55.")]
+        public string? PostalCode { get; set; }
+    }
+
     private sealed record DemoEvent(string Title, DateTime Start, DateTime End, StilVariant? Variant, string? Color = null,
         string? Place = null, bool Draft = false);
 
@@ -603,6 +663,17 @@
     private bool _compact;
     private int _tablePage = 1;
     private int _languagePage = 3;
+    private DateTime? _meetingAt = new(2026, 10, 14, 13, 30, 0);
+    private TimeOnly? _pickup = new(16, 0);
+    private int _duration = 60;
+    private int? _priceFrom = 500;
+    private int? _priceTo = 2500;
+    private int? _rating = 4;
+    private string? _brand = "#34dbbf";
+    private string? _personalNumber;
+    private string? _code;
+    private int _wizardStep;
+    private readonly WizardSignUp _wizard = new();
     private int _rtlPage = 2;
     private string? _rtlName = "ليلى";
     private bool _rtlNotify = true;

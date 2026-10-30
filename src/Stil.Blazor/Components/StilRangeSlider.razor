@@ -1,0 +1,120 @@
+@typeparam TValue
+@inherits StilComponentBase
+@using System.Globalization
+
+@* A range of two values on one track, for example a price span. Two native range inputs share the
+   track, so each thumb works with the keyboard; they cannot pass each other. *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-field")" role="group" aria-labelledby="@LabelId"
+     aria-describedby="@(string.IsNullOrWhiteSpace(Hint) ? null : HintId)">
+    <div class="stil-slider-header">
+        <span class="stil-label" id="@LabelId">@Label</span>
+        <output class="stil-slider-value">@FormatNumber(StartValue) – @FormatNumber(EndValue)</output>
+    </div>
+    <div class="stil-range" style="@($"--_from: {Css(Percent(StartValue))}; --_to: {Css(Percent(EndValue))}")">
+        <input type="range" class="stil-slider" min="@Css(Min)" max="@Css(Max)" step="@Css(Step)" value="@Css(StartValue)"
+               aria-label="@Localize(StartLabel, "Slider.Start")" aria-valuetext="@FormatNumber(StartValue)" disabled="@Disabled"
+               @oninput="e => OnInputAsync(e, start: true)" />
+        <input type="range" class="stil-slider" min="@Css(Min)" max="@Css(Max)" step="@Css(Step)" value="@Css(EndValue)"
+               aria-label="@Localize(EndLabel, "Slider.End")" aria-valuetext="@FormatNumber(EndValue)" disabled="@Disabled"
+               @oninput="e => OnInputAsync(e, start: false)" />
+    </div>
+    @if (ShowMinMax)
+    {
+        <div class="stil-slider-marks" aria-hidden="true"><span>@FormatNumber(Min)</span><span>@FormatNumber(Max)</span></div>
+    }
+    @if (!string.IsNullOrWhiteSpace(Hint))
+    {
+        <div class="stil-field-hint" id="@HintId">@Hint</div>
+    }
+</div>
+
+@code {
+    private readonly string _id = StilIds.Next("range");
+
+    /// <summary>The label of the group.</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>Help text under the track.</summary>
+    [Parameter]
+    public string? Hint { get; set; }
+
+    /// <summary>The start of the range. Supports two-way binding (@bind-Start).</summary>
+    [Parameter]
+    public TValue? Start { get; set; }
+
+    [Parameter]
+    public EventCallback<TValue?> StartChanged { get; set; }
+
+    /// <summary>The end of the range. Supports two-way binding (@bind-End).</summary>
+    [Parameter]
+    public TValue? End { get; set; }
+
+    [Parameter]
+    public EventCallback<TValue?> EndChanged { get; set; }
+
+    /// <summary>The lowest value. The default is 0.</summary>
+    [Parameter]
+    public double Min { get; set; }
+
+    /// <summary>The highest value. The default is 100.</summary>
+    [Parameter]
+    public double Max { get; set; } = 100;
+
+    /// <summary>The step between values. The default is 1.</summary>
+    [Parameter]
+    public double Step { get; set; } = 1;
+
+    /// <summary>A format for the shown values, for example "N0" or "C0".</summary>
+    [Parameter]
+    public string? Format { get; set; }
+
+    /// <summary>Shows Min and Max under the track.</summary>
+    [Parameter]
+    public bool ShowMinMax { get; set; }
+
+    /// <summary>The sliders cannot be used.</summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>The accessible name of the start thumb. The default is the localized "Minimum".</summary>
+    [Parameter]
+    public string? StartLabel { get; set; }
+
+    /// <summary>The accessible name of the end thumb. The default is the localized "Maximum".</summary>
+    [Parameter]
+    public string? EndLabel { get; set; }
+
+    private string LabelId => $"{_id}-label";
+
+    private string HintId => $"{_id}-hint";
+
+    private double StartValue => Math.Clamp(StilNumbers.From(Start) ?? Min, Min, Max);
+
+    private double EndValue => Math.Clamp(StilNumbers.From(End) ?? Max, StartValue, Max);
+
+    private double Percent(double value) => Max <= Min ? 0 : (value - Min) / (Max - Min) * 100;
+
+    private string FormatNumber(double value) => value.ToString(Format ?? "0.##", CultureInfo.CurrentCulture);
+
+    private static string Css(double value) => value.ToString("0.####", CultureInfo.InvariantCulture);
+
+    private async Task OnInputAsync(ChangeEventArgs e, bool start)
+    {
+        if (!double.TryParse(e.Value?.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var number))
+        {
+            return;
+        }
+
+        if (start)
+        {
+            Start = StilNumbers.To<TValue>(Math.Min(number, EndValue));
+            await StartChanged.InvokeAsync(Start);
+        }
+        else
+        {
+            End = StilNumbers.To<TValue>(Math.Max(number, StartValue));
+            await EndChanged.InvokeAsync(End);
+        }
+    }
+}

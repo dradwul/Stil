@@ -29,6 +29,9 @@ Nothing has been published.
     range, file drop zone, stat cards, tree, accordion, nav and nav groups,
     navbar, breadcrumbs, pagination, tabs, dropdowns, dialogs, drawers,
     tooltips, progress, spinners and toasts.
+  - Popover, slider and range, rating, color picker, one-time code, stepper
+    and wizard styles (`stil-popover`, `stil-slider`, `stil-range`,
+    `stil-rating`, `stil-color`, `stil-pin`, `stil-stepper`, `stil-wizard`).
   - Calendar components: events with variants or an own color, a month grid
     tinted by how busy each day is, a week time grid with free blocks and a now
     line, and an agenda. `stil.js` adds keyboard navigation in the month grid
@@ -37,15 +40,21 @@ Nothing has been published.
   - Right-to-left support: logical properties throughout, mirrored switches,
     drawers and tree chevrons, and arrow and chevron icons that flip under
     `dir="rtl"` (`stil-icon-directional` for icons of your own).
-  - `stil.js`, an optional 16 kB module for dropdowns, dismissing, dialogs,
-    toggles, calendar dragging, language links (`data-stil-culture`) and
-    keyboard handling.
+  - `stil.js`, an optional 20 kB module for dropdowns, dismissing, dialogs,
+    toggles, calendar dragging, popover placement, input masks, language
+    links (`data-stil-culture`) and keyboard handling.
 - **Stil for Blazor** (`Stil`):
   - About 60 components, with one for every Stil CSS component, including
     `StilDataGrid` (sorting, filtering, paging, selection, virtualization and
     server-side data), `StilAutocomplete`, `StilMultiSelect`,
     `StilDateRangePicker`, `StilFileUpload`, `StilTreeView`, `StilNavGroup`
     and `StilStatCard`.
+  - More inputs: `StilTimePicker` and `StilDateTimePicker` (typed times and
+    steps in the culture's format), `StilSlider` and `StilRangeSlider`,
+    `StilRating`, `StilColorPicker` (with a contrast hint), `StilMaskedInput`,
+    `StilPinInput` and `StilPopover` (the Popover API).
+  - `StilWizard`, `StilWizardStep` and `StilStepper`: a form in steps where
+    Next validates only the current step's fields.
   - `StilCalendar`, `StilWeekPlanner` and `StilAgenda`: a month, a week
     planner and an agenda from one list of items, showing how booked each day
     is and where the free time is. The planner can move, resize and create

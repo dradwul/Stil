@@ -1,0 +1,86 @@
+@inherits StilComponentBase
+@using Microsoft.AspNetCore.Components.Forms
+@implements IDisposable
+
+@* One step of a StilWizard. Only the current step renders its content. Stil form fields inside it
+   register themselves, so the wizard can validate just this step. *@
+@if (Wizard?.IsCurrent(this) == true)
+{
+    <CascadingValue Value="this" IsFixed="true">
+        <section @attributes="AdditionalAttributes" class="@Classes("stil-wizard-step")" aria-labelledby="@TitleId">
+            <StilHeading Level="HeadingLevel" id="@TitleId" class="stil-wizard-title">@Title</StilHeading>
+            @ChildContent
+        </section>
+    </CascadingValue>
+}
+
+@code {
+    private readonly string _id = StilIds.Next("wizard-step");
+    private readonly HashSet<FieldIdentifier> _fields = [];
+
+    [CascadingParameter]
+    private StilWizard? Wizard { get; set; }
+
+    /// <summary>The step's name, shown in the stepper and as the heading of the step.</summary>
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = "";
+
+    /// <summary>An optional line under the name in the stepper.</summary>
+    [Parameter]
+    public string? Description { get; set; }
+
+    /// <summary>The heading level of the step's title. The default is 2.</summary>
+    [Parameter]
+    public int HeadingLevel { get; set; } = 2;
+
+    /// <summary>
+    /// An extra check before the wizard moves on, for rules that are not validation attributes.
+    /// Return false to stay on the step.
+    /// </summary>
+    [Parameter]
+    public Func<Task<bool>>? Validate { get; set; }
+
+    /// <summary>The step's fields.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string TitleId => $"{_id}-title";
+
+    protected override void OnInitialized()
+    {
+        if (Wizard is null)
+        {
+            throw new InvalidOperationException("StilWizardStep must be inside a StilWizard.");
+        }
+
+        Wizard.Add(this);
+    }
+
+    /// <summary>Called by the Stil form fields in this step.</summary>
+    internal void Register(FieldIdentifier field) => _fields.Add(field);
+
+    /// <summary>Validates this step's fields one by one, then runs Validate.</summary>
+    internal async Task<bool> ValidateAsync(EditContext? editContext)
+    {
+        var valid = true;
+        if (editContext is not null)
+        {
+            foreach (var field in _fields)
+            {
+                // The DataAnnotationsValidator (and most others) validates one field on a field change.
+                editContext.NotifyFieldChanged(field);
+            }
+
+            valid = _fields.All(field => !editContext.GetValidationMessages(field).Any());
+        }
+
+        if (valid && Validate is not null)
+        {
+            valid = await Validate();
+        }
+
+        return valid;
+    }
+
+    public void Dispose() => Wizard?.Remove(this);
+}

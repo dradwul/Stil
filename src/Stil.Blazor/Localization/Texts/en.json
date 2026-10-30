@@ -115,5 +115,33 @@
   },
   "Toasts": {
     "Label": "Notifications"
+  },
+  "DateTime": {
+    "Date": "Date",
+    "Time": "Time"
+  },
+  "Slider": {
+    "Start": "Minimum",
+    "End": "Maximum"
+  },
+  "Rating": {
+    "OptionFormat": "{0} of {1}"
+  },
+  "ColorPicker": {
+    "Hex": "hex code",
+    "Swatches": "Suggested colors",
+    "ContrastFormat": "Text on this color: {0} ({1}:1)",
+    "Black": "black",
+    "White": "white"
+  },
+  "Stepper": {
+    "Label": "Progress",
+    "Done": "completed",
+    "Error": "has errors"
+  },
+  "Wizard": {
+    "Back": "Back",
+    "Next": "Next",
+    "Finish": "Finish"
   }
 }

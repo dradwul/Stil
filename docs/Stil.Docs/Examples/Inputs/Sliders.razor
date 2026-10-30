@@ -1,0 +1,10 @@
+<div class="stil-stack">
+    <StilSlider @bind-Value="_minutes" Label="Duration" Min="15" Max="180" Step="15" Format="0 'min'" ShowMinMax />
+    <StilRangeSlider @bind-Start="_from" @bind-End="_to" Label="Price" Max="5000" Step="100" Format="N0" />
+</div>
+
+@code {
+    private int _minutes = 60;
+    private int? _from = 500;
+    private int? _to = 2500;
+}

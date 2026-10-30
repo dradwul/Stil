@@ -115,5 +115,33 @@
   },
   "Toasts": {
     "Label": "Varsler"
+  },
+  "DateTime": {
+    "Date": "Dato",
+    "Time": "Tid"
+  },
+  "Slider": {
+    "Start": "Minimum",
+    "End": "Maksimum"
+  },
+  "Rating": {
+    "OptionFormat": "{0} av {1}"
+  },
+  "ColorPicker": {
+    "Hex": "heksadesimal kode",
+    "Swatches": "Foreslåtte farger",
+    "ContrastFormat": "Tekst på denne fargen: {0} ({1}:1)",
+    "Black": "svart",
+    "White": "hvit"
+  },
+  "Stepper": {
+    "Label": "Fremdrift",
+    "Done": "fullført",
+    "Error": "har feil"
+  },
+  "Wizard": {
+    "Back": "Tilbake",
+    "Next": "Neste",
+    "Finish": "Fullfør"
   }
 }

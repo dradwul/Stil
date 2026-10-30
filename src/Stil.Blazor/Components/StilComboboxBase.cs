@@ -109,17 +109,6 @@ public abstract class StilComboboxBase<TItem, TValue> : StilInputBase<TValue>
     /// <summary>Called for keys the base does not handle, for example Backspace.</summary>
     protected virtual Task OnOtherKeyAsync(KeyboardEventArgs e) => Task.CompletedTask;
 
-    /// <summary>Notifies the binding and the EditContext of a new value.</summary>
-    protected async Task SetValueAsync(TValue? value)
-    {
-        Value = value;
-        await ValueChanged.InvokeAsync(value);
-        if (EditContext is not null && Field is { } field)
-        {
-            EditContext.NotifyFieldChanged(field);
-        }
-    }
-
     protected async Task OnInputAsync(ChangeEventArgs e)
     {
         Text = e.Value?.ToString() ?? "";

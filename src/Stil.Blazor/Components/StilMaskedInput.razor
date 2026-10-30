@@ -1,0 +1,88 @@
+@inherits StilInputBase<string>
+
+@* A text field with a fixed shape, such as a personal identity number or a postal code. stil.js
+   formats it while typing (data-stil-mask); the component formats the value again when it
+   changes, so it is also right without JavaScript. In Mask, 0 is a digit, A a letter, * any
+   character, and the rest are literals that are filled in. *@
+<StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
+    @WithAddons(Control)
+</StilField>
+
+@code {
+    private RenderFragment Control => @<input @attributes="ControlAttributes(InputCss)" type="text" data-stil-mask="@Mask"
+                                              inputmode="@(Mask.All(c => c != 'A' && c != '*') ? "numeric" : null)" autocomplete="off"
+                                              maxlength="@Mask.Length" placeholder="@(Placeholder ?? Mask)" value="@Value"
+                                              aria-invalid="@StilCssClasses.AriaBool(Messages.Count > 0 || _incomplete)"
+                                              @onchange="OnChangeAsync" />;
+
+    private bool _incomplete;
+
+    /// <summary>The shape, for example "000000-0000" or "000 00". 0 is a digit, A a letter, * any character.</summary>
+    [Parameter, EditorRequired]
+    public string Mask { get; set; } = "";
+
+    /// <summary>The placeholder. The default is the mask itself.</summary>
+    [Parameter]
+    public string? Placeholder { get; set; }
+
+    /// <summary>Small, Medium (default) or Large.</summary>
+    [Parameter]
+    public StilSize Size { get; set; }
+
+    private string InputCss => $"stil-input {StilCssClasses.Size("stil-input", Size)}".TrimEnd();
+
+    private async Task OnChangeAsync(ChangeEventArgs e)
+    {
+        var formatted = Apply(Mask, e.Value?.ToString() ?? "");
+        _incomplete = formatted.Length > 0 && !IsComplete(Mask, formatted);
+        await SetValueAsync(formatted.Length == 0 ? null : formatted);
+    }
+
+    /// <summary>Formats <paramref name="text"/> with <paramref name="mask"/>, like stil.js does while typing.</summary>
+    public static string Apply(string mask, string text)
+    {
+        static bool Accepts(char slot, char c) => slot switch
+        {
+            '0' => char.IsDigit(c),
+            'A' => char.IsLetter(c),
+            '*' => !char.IsWhiteSpace(c),
+            _ => false
+        };
+
+        var chars = text.Where(c => mask.Any(slot => Accepts(slot, c))).ToList();
+        var result = new System.Text.StringBuilder();
+        var next = 0;
+        foreach (var slot in mask)
+        {
+            if (next >= chars.Count)
+            {
+                break;
+            }
+
+            if (slot is '0' or 'A' or '*')
+            {
+                while (next < chars.Count && !Accepts(slot, chars[next]))
+                {
+                    next++;
+                }
+
+                if (next >= chars.Count)
+                {
+                    break;
+                }
+
+                result.Append(chars[next++]);
+            }
+            else
+            {
+                result.Append(slot);
+            }
+        }
+
+        return result.ToString();
+    }
+
+    /// <summary>Whether <paramref name="text"/> fills every slot of <paramref name="mask"/>; use it in your own validation.</summary>
+    public static bool IsComplete(string mask, string? text) =>
+        text is not null && text.Length == mask.Length && Apply(mask, text) == text;
+}

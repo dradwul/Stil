@@ -25,6 +25,10 @@
 //   - Language links (a[data-stil-culture="sv"]) store the culture in the ASP.NET Core culture
 //     cookie and in local storage (key stil-culture), then reload the page.
 //   - In a right-to-left page the arrow keys of the calendar grid follow the reading direction.
+//   - Popovers (.stil-popover with popover) are placed next to their popovertarget toggle, below
+//     it or above it (data-stil-placement="top"), and follow it on scroll and resize.
+//   - data-stil-mask="0000 00 00-0000" on an input formats it while typing (0 digit, A letter,
+//     * any character, the rest literals).
 // Stil for Blazor loads this module automatically and also uses showDialog/closeDialog.
 
 const initialized = Symbol.for('stil.initialized');
@@ -41,6 +45,9 @@ export function init(root = document) {
     root.addEventListener('pointermove', onPointerMove);
     root.addEventListener('pointerup', onPointerUp);
     root.addEventListener('pointercancel', cancelDrag);
+    root.addEventListener('input', onMaskInput, true);
+    addEventListener('scroll', placeOpenPopovers, { capture: true, passive: true });
+    addEventListener('resize', placeOpenPopovers);
 }
 
 const openDropdowns = () => document.querySelectorAll('details.stil-dropdown[open]');
@@ -339,12 +346,100 @@ function cancelDrag() {
 }
 
 function onToggle(event) {
+    if (event.target instanceof HTMLElement && event.target.matches('.stil-popover')) {
+        onPopoverToggle(event);
+        return;
+    }
     const dropdown = event.target;
     if (!(dropdown instanceof HTMLDetailsElement) || !dropdown.matches('.stil-dropdown') || !dropdown.open) return;
     for (const other of openDropdowns()) {
         if (other !== dropdown) other.open = false;
     }
 }
+
+// Popovers (.stil-popover with the popover attribute) sit in the top layer, so they are placed
+// next to their toggle (the element whose popovertarget names them) here, and again on scroll
+// and resize while open. Below by default; data-stil-placement="top" puts it above. It flips when
+// there is no room, aligns with the toggle's start edge, and stays inside the viewport.
+const openPopovers = new Set();
+
+function onPopoverToggle(event) {
+    const popover = event.target;
+    if (event.newState === 'open') {
+        openPopovers.add(popover);
+        placePopover(popover);
+    } else {
+        openPopovers.delete(popover);
+    }
+}
+
+function placePopover(popover) {
+    const toggle = document.querySelector(`[popovertarget="${CSS.escape(popover.id)}"]`);
+    if (!toggle) return;
+    const gap = 6;
+    const margin = 8;
+    const anchor = toggle.getBoundingClientRect();
+    const size = popover.getBoundingClientRect();
+    const roomBelow = innerHeight - anchor.bottom - gap - margin;
+    const roomAbove = anchor.top - gap - margin;
+    const wantsTop = popover.dataset.stilPlacement === 'top';
+    const top = (wantsTop ? roomAbove >= size.height || roomAbove > roomBelow : roomBelow < size.height && roomAbove > roomBelow)
+        ? anchor.top - gap - size.height
+        : anchor.bottom + gap;
+    const rtl = getComputedStyle(toggle).direction === 'rtl';
+    let left = rtl ? anchor.right - size.width : anchor.left;
+    left = Math.min(Math.max(margin, left), innerWidth - size.width - margin);
+    // Keep it inside the viewport while its toggle is visible; otherwise let it scroll away with it.
+    const visible = anchor.bottom > 0 && anchor.top < innerHeight;
+    popover.style.top = `${visible ? Math.max(margin, top) : top}px`;
+    popover.style.left = `${Math.max(margin, left)}px`;
+}
+
+function placeOpenPopovers() {
+    for (const popover of openPopovers) {
+        if (popover.matches(':popover-open')) placePopover(popover);
+        else openPopovers.delete(popover);
+    }
+}
+
+// Masked inputs: data-stil-mask="0000 00 00-0000" formats the value while typing. 0 is a digit,
+// A a letter, * any character; everything else is a literal that is filled in. Runs in the
+// capture phase, so a framework that reads the value on input sees the formatted one.
+function onMaskInput(event) {
+    const input = event.target;
+    if (!(input instanceof HTMLInputElement) || !input.dataset.stilMask) return;
+    const mask = input.dataset.stilMask;
+    const caretFromEnd = input.value.length - (input.selectionEnd ?? input.value.length);
+    const formatted = applyMask(mask, input.value, event.inputType?.startsWith('delete') === true);
+    if (formatted === input.value) return;
+    input.value = formatted;
+    const caret = Math.max(0, formatted.length - caretFromEnd);
+    input.setSelectionRange(caret, caret);
+}
+
+export function applyMask(mask, value, deleting = false) {
+    const accepts = (slot, char) =>
+        slot === '0' ? /\d/.test(char) : slot === 'A' ? /\p{L}/u.test(char) : slot === '*' ? char.trim() !== '' : false;
+    const chars = [...value].filter(char => [...mask].some(slot => accepts(slot, char)) || false);
+    let result = '';
+    let next = 0;
+    for (const slot of mask) {
+        if (next >= chars.length) break;
+        if ('0A*'.includes(slot)) {
+            while (next < chars.length && !accepts(slot, chars[next])) next++;
+            if (next >= chars.length) break;
+            result += chars[next++];
+        } else {
+            result += slot;
+        }
+    }
+    // While deleting, do not add a literal back at the end.
+    if (deleting) {
+        while (result.length > 0 && !'0A*'.includes(mask[result.length - 1])) result = result.slice(0, -1);
+    }
+    return result;
+}
+
 
 // Opens a <dialog> as a modal. When it closes (Escape, a form with method="dialog", close()),
 // dotNetRef.OnDialogClosed is called, so a Blazor component can update its state.

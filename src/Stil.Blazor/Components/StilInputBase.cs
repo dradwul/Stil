@@ -95,6 +95,21 @@ public abstract class StilInputBase<TValue> : ComponentBase, IDisposable
 
     protected EditContext? EditContext => CascadedEditContext;
 
+    /// <summary>The wizard step the field is in, which validates it before moving on.</summary>
+    [CascadingParameter]
+    private StilWizardStep? WizardStep { get; set; }
+
+    /// <summary>Notifies the binding and the EditContext of a new value.</summary>
+    protected async Task SetValueAsync(TValue? value)
+    {
+        Value = value;
+        await ValueChanged.InvokeAsync(value);
+        if (EditContext is not null && Field is { } field)
+        {
+            EditContext.NotifyFieldChanged(field);
+        }
+    }
+
     /// <summary>
     /// The expression passed to Blazor's inner input. Blazor's inputs require one, so without
     /// @bind-Value (for example Value plus ValueChanged) an expression for this component's Value is used.
@@ -200,6 +215,10 @@ public abstract class StilInputBase<TValue> : ComponentBase, IDisposable
     protected override void OnParametersSet()
     {
         Field = ValueExpression is null ? null : FieldIdentifier.Create(ValueExpression);
+        if (Field is { } field)
+        {
+            WizardStep?.Register(field);
+        }
 
         if (!ReferenceEquals(_subscribedContext, EditContext))
         {

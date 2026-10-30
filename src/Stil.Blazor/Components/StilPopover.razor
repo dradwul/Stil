@@ -1,0 +1,111 @@
+@inherits StilComponentBase
+
+@* A button that opens a panel next to it, built on the Popover API: it opens and closes without
+   JavaScript (also in static SSR), closes on an outside click or Escape, and sits above dialogs.
+   stil.js (loaded automatically) places the panel under or above the button. *@
+<span class="stil-popover-anchor">
+    <button type="button" class="@StilCssClasses.Button(Variant, Appearance, Size, IconOnly)" popovertarget="@PanelId"
+            aria-label="@AriaLabel" disabled="@Disabled">
+        @if (Toggle is not null)
+        {
+            @Toggle
+        }
+        else
+        {
+            @Text
+        }
+    </button>
+    <div @attributes="PanelAttributes" id="@PanelId" popover="@(Manual ? "manual" : "auto")" role="@Role"
+         aria-labelledby="@(string.IsNullOrWhiteSpace(Title) ? null : TitleId)" data-stil-placement="@(Top ? "top" : null)"
+         class="@Classes("stil-popover")">
+        @if (!string.IsNullOrWhiteSpace(Title))
+        {
+            <p class="stil-popover-title" id="@TitleId">@Title</p>
+        }
+        @ChildContent
+        @if (Manual)
+        {
+            <StilCloseButton popovertarget="@PanelId" popovertargetaction="hide" class="stil-popover-close" />
+        }
+    </div>
+</span>
+
+@code {
+    private readonly string _id = StilIds.Next("popover");
+
+    /// <summary>The button text. Use Toggle for richer content, such as an icon.</summary>
+    [Parameter]
+    public string? Text { get; set; }
+
+    /// <summary>The button content, instead of Text.</summary>
+    [Parameter]
+    public RenderFragment? Toggle { get; set; }
+
+    /// <summary>The button's accessible name, needed when it only shows an icon.</summary>
+    [Parameter]
+    public string? AriaLabel { get; set; }
+
+    /// <summary>A heading at the top of the panel; it also names the panel.</summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>The panel content.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Opens the panel above the button instead of below. It flips when there is no room.</summary>
+    [Parameter]
+    public bool Top { get; set; }
+
+    /// <summary>
+    /// Keeps the panel open on an outside click and Escape; it gets a close button instead. Use it
+    /// for panels with a form.
+    /// </summary>
+    [Parameter]
+    public bool Manual { get; set; }
+
+    /// <summary>The button's color. The default is Secondary.</summary>
+    [Parameter]
+    public StilVariant Variant { get; set; } = StilVariant.Secondary;
+
+    /// <summary>The button's look. The default is Outline.</summary>
+    [Parameter]
+    public StilButtonAppearance Appearance { get; set; } = StilButtonAppearance.Outline;
+
+    /// <summary>The button's size.</summary>
+    [Parameter]
+    public StilSize Size { get; set; }
+
+    /// <summary>A square button for an icon; set AriaLabel.</summary>
+    [Parameter]
+    public bool IconOnly { get; set; }
+
+    /// <summary>The button cannot be used.</summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>Raised when the panel opens (true) or closes (false), however that happened.</summary>
+    [Parameter]
+    public EventCallback<bool> OnToggle { get; set; }
+
+    private string PanelId => AdditionalAttributes?.TryGetValue("id", out var id) == true && id?.ToString() is { Length: > 0 } own ? own : _id;
+
+    private string TitleId => $"{PanelId}-title";
+
+    // A panel with a title is a dialog-like region; a plain one is extra content for the button.
+    private string? Role => string.IsNullOrWhiteSpace(Title) ? null : "dialog";
+
+    // The consumer's attributes (except id, which PanelId uses) plus the toggle handler. Razor cannot
+    // bind @onstiltoggle inside the assembly that declares it, so the handler is added as an attribute.
+    private IReadOnlyDictionary<string, object> PanelAttributes
+    {
+        get
+        {
+            var attributes = AdditionalAttributes is null
+                ? new Dictionary<string, object>()
+                : AdditionalAttributes.Where(a => a.Key is not ("id" or "class")).ToDictionary();
+            attributes["onstiltoggle"] = EventCallback.Factory.Create<StilToggleEventArgs>(this, e => OnToggle.InvokeAsync(e.Open));
+            return attributes;
+        }
+    }
+}

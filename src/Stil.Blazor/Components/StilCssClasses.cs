@@ -36,6 +36,22 @@ internal static class StilCssClasses
     };
 
     /// <summary>Returns <c>{block}-sm</c> or <c>{block}-lg</c>, or null for the default size.</summary>
+    /// <summary>The classes of a button: stil-btn with its variant, appearance, size and icon-only look.</summary>
+    public static string Button(StilVariant variant, StilButtonAppearance appearance, StilSize size, bool iconOnly = false) =>
+        string.Join(' ', new[]
+        {
+            "stil-btn",
+            Variant("stil-btn", variant),
+            appearance switch
+            {
+                StilButtonAppearance.Outline => "stil-btn-outline",
+                StilButtonAppearance.Ghost => "stil-btn-ghost",
+                _ => null
+            },
+            Size("stil-btn", size),
+            iconOnly ? "stil-btn-icon" : null,
+        }.Where(c => c is not null));
+
     public static string? Size(string block, StilSize size) => size switch
     {
         StilSize.Small => $"{block}-sm",

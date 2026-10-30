@@ -1,0 +1,426 @@
+/* Popover: a panel anchored to its toggle, using the Popover API, so it opens without JavaScript,
+   closes on an outside click or Escape and sits in the top layer.
+   <button class="stil-btn" popovertarget="tips">Tips</button>
+   <div class="stil-popover" id="tips" popover>…</div>
+   stil.js places it under (or above, with data-stil-placement="top") the toggle; where CSS anchor
+   positioning exists, it does that itself. */
+.stil-popover {
+    position: fixed;
+    inset: auto;
+    width: max-content;
+    max-width: min(22rem, calc(100vw - 2 * var(--stil-space-3)));
+    margin: 0;
+    padding: var(--stil-space-3) var(--stil-space-4);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-lg);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+    box-shadow: var(--stil-shadow-lg);
+    font-size: var(--stil-font-size-sm);
+}
+
+.stil-popover:popover-open { animation: stil-popover-in var(--stil-duration-fast) var(--stil-easing); }
+
+@keyframes stil-popover-in {
+    from { opacity: 0; translate: 0 -4px; }
+}
+
+.stil-popover-title {
+    margin: 0 0 var(--stil-space-2);
+    font-size: var(--stil-font-size-md);
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-popover > :last-child { margin-bottom: 0; }
+
+/* Date and time in one field: <fieldset class="stil-field stil-datetime"> with two controls. */
+.stil-datetime-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: var(--stil-space-2);
+}
+
+/* Slider: <input type="range" class="stil-slider">. A range of two values is a stil-range with two
+   sliders on one track; --_from and --_to (0–100) fill the part between them. */
+.stil-slider {
+    --_fill: 0%;
+    width: 100%;
+    height: 1.25rem;
+    margin: 0;
+    background: transparent;
+    cursor: pointer;
+    appearance: none;
+}
+
+.stil-slider::-webkit-slider-runnable-track {
+    height: 0.375rem;
+    border-radius: var(--stil-radius-pill);
+    background: linear-gradient(to right, var(--_accent) var(--_fill), var(--stil-color-border) var(--_fill));
+}
+
+.stil-slider::-moz-range-track {
+    height: 0.375rem;
+    border-radius: var(--stil-radius-pill);
+    background-color: var(--stil-color-border);
+}
+
+.stil-slider::-moz-range-progress {
+    height: 0.375rem;
+    border-radius: var(--stil-radius-pill);
+    background-color: var(--_accent);
+}
+
+.stil-slider::-webkit-slider-thumb {
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-top: -0.375rem;
+    border: 2px solid var(--_accent);
+    border-radius: 50%;
+    background-color: var(--stil-color-surface);
+    appearance: none;
+}
+
+.stil-slider::-moz-range-thumb {
+    width: 0.875rem;
+    height: 0.875rem;
+    border: 2px solid var(--_accent);
+    border-radius: 50%;
+    background-color: var(--stil-color-surface);
+}
+
+.stil-slider:dir(rtl)::-webkit-slider-runnable-track {
+    background: linear-gradient(to left, var(--_accent) var(--_fill), var(--stil-color-border) var(--_fill));
+}
+
+.stil-slider:focus-visible { outline: none; }
+
+.stil-slider:focus-visible::-webkit-slider-thumb {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+}
+
+.stil-slider:focus-visible::-moz-range-thumb {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+}
+
+.stil-slider:disabled { cursor: not-allowed; opacity: 0.6; }
+
+.stil-slider-header {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--stil-space-2);
+}
+
+.stil-slider-value {
+    color: var(--stil-color-text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.stil-slider-marks {
+    display: flex;
+    justify-content: space-between;
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-xs);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Two thumbs on one track: the inputs lie on top of each other and only their thumbs take
+   pointer events. */
+.stil-range {
+    --_from: 0;
+    --_to: 100;
+    position: relative;
+    height: 1.25rem;
+}
+
+.stil-range::before {
+    content: "";
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 0.375rem;
+    border-radius: var(--stil-radius-pill);
+    background: linear-gradient(to right,
+        var(--stil-color-border) calc(var(--_from) * 1%),
+        var(--_accent) calc(var(--_from) * 1%) calc(var(--_to) * 1%),
+        var(--stil-color-border) calc(var(--_to) * 1%));
+    translate: 0 -50%;
+}
+
+.stil-range:dir(rtl)::before { scale: -1 1; }
+
+.stil-range > .stil-slider {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.stil-range > .stil-slider::-webkit-slider-runnable-track { background: transparent; }
+.stil-range > .stil-slider::-moz-range-track { background: transparent; }
+.stil-range > .stil-slider::-moz-range-progress { background: transparent; }
+.stil-range > .stil-slider::-webkit-slider-thumb { pointer-events: auto; }
+.stil-range > .stil-slider::-moz-range-thumb { pointer-events: auto; }
+
+/* Rating: radio buttons drawn as stars. Every star up to the checked (or hovered) one is filled.
+   <fieldset class="stil-rating"><label><input type="radio" …><span class="stil-icon stil-icon-star"></span></label>…</fieldset> */
+.stil-rating {
+    display: inline-flex;
+    gap: 0.125rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    color: var(--stil-color-border-strong);
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.stil-rating-sm { font-size: 1.125rem; }
+
+.stil-rating label {
+    display: inline-flex;
+    cursor: pointer;
+}
+
+.stil-rating input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Filled up to the checked star; while hovering, up to the hovered star. */
+.stil-rating label:has(~ label > input:checked),
+.stil-rating label:has(> input:checked) { color: var(--stil-color-warning); }
+
+.stil-rating:hover label { color: var(--stil-color-border-strong); }
+
+.stil-rating:hover label:has(~ label:hover),
+.stil-rating:hover label:hover { color: var(--stil-color-warning); }
+
+.stil-rating label:has(> input:focus-visible) {
+    border-radius: var(--stil-radius-sm);
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: 1px;
+}
+
+.stil-rating .stil-icon { fill: currentColor; }
+
+.stil-rating[aria-disabled="true"],
+.stil-rating-readonly {
+    pointer-events: none;
+}
+
+.stil-rating-readonly .stil-rating-on { color: var(--stil-color-warning); }
+
+/* Color picker: a color input with its hex value, and swatches. */
+.stil-color {
+    display: flex;
+    align-items: center;
+    gap: var(--stil-space-2);
+}
+
+.stil-color-input {
+    flex: none;
+    width: 2.5rem;
+    height: 2.25rem;
+    padding: 0.125rem;
+    border: 1px solid var(--stil-color-border-strong);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface);
+    cursor: pointer;
+}
+
+.stil-color-input:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+}
+
+.stil-color-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--stil-space-1);
+    margin: var(--stil-space-2) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stil-color-swatch {
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 1px solid var(--stil-color-border-strong);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--_swatch);
+    cursor: pointer;
+}
+
+.stil-color-swatch[aria-pressed="true"] {
+    outline: 2px solid var(--stil-color-text);
+    outline-offset: 2px;
+}
+
+.stil-color-swatch:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+}
+
+/* PIN or one-time code: one input, drawn as a row of cells. Set --stil-pin-length. */
+.stil-pin {
+    --stil-pin-length: 6;
+    --_cell: 2.5rem;
+    /* Half a cell more than the cells, so the spacing after the last character never scrolls the text. */
+    width: calc((var(--stil-pin-length) + 0.5) * var(--_cell));
+    padding: var(--stil-space-2) 0 var(--stil-space-2) calc((var(--_cell) - 1ch) / 2);
+    border: 0;
+    border-radius: 0;
+    background:
+        repeating-linear-gradient(to right,
+            var(--stil-color-border-strong) 0 calc(var(--_cell) - var(--stil-space-2)),
+            transparent calc(var(--_cell) - var(--stil-space-2)) var(--_cell))
+        calc(var(--stil-space-2) / 2) 100% / calc(var(--stil-pin-length) * var(--_cell)) 2px no-repeat;
+    color: var(--stil-color-text);
+    font-family: var(--stil-font-family-mono);
+    font-size: var(--stil-font-size-lg);
+    letter-spacing: calc(var(--_cell) - 1ch);
+}
+
+.stil-pin:focus {
+    outline: none;
+    background-image:
+        repeating-linear-gradient(to right,
+            var(--_accent) 0 calc(var(--_cell) - var(--stil-space-2)),
+            transparent calc(var(--_cell) - var(--stil-space-2)) var(--_cell));
+}
+
+.stil-pin[aria-invalid="true"] {
+    background-image:
+        repeating-linear-gradient(to right,
+            var(--stil-color-danger) 0 calc(var(--_cell) - var(--stil-space-2)),
+            transparent calc(var(--_cell) - var(--stil-space-2)) var(--_cell));
+}
+
+/* Stepper: the steps of a process.
+   <ol class="stil-stepper"><li class="stil-step stil-step-done">…</li><li class="stil-step" aria-current="step">…</li></ol> */
+.stil-stepper {
+    display: flex;
+    gap: var(--stil-space-2);
+    margin: 0 0 var(--stil-space-5);
+    padding: 0;
+    list-style: none;
+    counter-reset: stil-step;
+}
+
+.stil-step {
+    display: flex;
+    flex: 1 1 0;
+    align-items: center;
+    gap: var(--stil-space-2);
+    min-width: 0;
+    color: var(--stil-color-text-muted);
+    counter-increment: stil-step;
+}
+
+/* The line to the next step. */
+.stil-step:not(:last-child)::after {
+    content: "";
+    flex: 1;
+    min-width: var(--stil-space-3);
+    height: 2px;
+    border-radius: var(--stil-radius-pill);
+    background-color: var(--stil-color-border);
+}
+
+.stil-step-done:not(:last-child)::after { background-color: var(--_accent); }
+
+.stil-step-marker {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 2px solid var(--stil-color-border-strong);
+    border-radius: 50%;
+    font-size: var(--stil-font-size-sm);
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-step-marker:empty::before { content: counter(stil-step); }
+
+.stil-step-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.3;
+}
+
+.stil-step-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.stil-step-description { font-size: var(--stil-font-size-xs); }
+
+.stil-step[aria-current="step"] { color: var(--stil-color-text); }
+
+.stil-step[aria-current="step"] .stil-step-marker {
+    border-color: var(--_accent);
+    color: var(--_accent);
+}
+
+.stil-step[aria-current="step"] .stil-step-title { font-weight: var(--stil-font-weight-bold); }
+
+.stil-step-done .stil-step-marker {
+    --_bg: var(--_accent);
+    border-color: var(--_bg);
+    background-color: var(--_bg);
+    color: var(--_fg);
+}
+
+.stil-step.stil-step-error .stil-step-marker {
+    border-color: var(--stil-color-danger);
+    color: var(--stil-color-danger);
+}
+
+.stil-step-button {
+    display: flex;
+    align-items: center;
+    gap: var(--stil-space-2);
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+}
+
+.stil-step-button:focus-visible {
+    border-radius: var(--stil-radius-sm);
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+}
+
+/* Narrow: only the current step keeps its title. */
+@container (width < 36rem) {
+    .stil-step:not([aria-current="step"]) .stil-step-text { display: none; }
+}
+
+.stil-wizard { container-type: inline-size; }
+
+.stil-wizard-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--stil-space-2);
+    margin-top: var(--stil-space-5);
+}
+
+/* A popover that stays open until closed (popover="manual") has a close button. */
+.stil-popover-close {
+    position: absolute;
+    inset-block-start: var(--stil-space-2);
+    inset-inline-end: var(--stil-space-2);
+}
+
+.stil-popover:has(> .stil-popover-close) { padding-inline-end: var(--stil-space-7); }

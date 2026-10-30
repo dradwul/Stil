@@ -1,0 +1,40 @@
+@using System.ComponentModel.DataAnnotations
+
+@* Next validates only the fields of the current step. *@
+<EditForm Model="_model">
+    <DataAnnotationsValidator />
+    <StilWizard @bind-Step="_step" OnFinish="() => _done = true">
+        <StilWizardStep Title="Account" Description="Name and email" HeadingLevel="3">
+            <StilTextBox @bind-Value="_model.Name" Label="Name" />
+            <StilTextBox @bind-Value="_model.Email" Label="Email" Type="email" />
+        </StilWizardStep>
+        <StilWizardStep Title="Plan" HeadingLevel="3">
+            <StilRadioGroup @bind-Value="_model.Plan" Label="Plan" Items="@(["Free", "Team", "Business"])" />
+        </StilWizardStep>
+        <StilWizardStep Title="Confirm" HeadingLevel="3">
+            <p>@_model.Name (@_model.Email), @_model.Plan.</p>
+        </StilWizardStep>
+    </StilWizard>
+</EditForm>
+@if (_done)
+{
+    <StilAlert Variant="StilVariant.Success" class="stil-mt-4">Account created.</StilAlert>
+}
+
+@code {
+    private readonly SignUp _model = new();
+    private int _step;
+    private bool _done;
+
+    private sealed class SignUp
+    {
+        [Required]
+        public string? Name { get; set; }
+
+        [Required, EmailAddress]
+        public string? Email { get; set; }
+
+        [Required]
+        public string? Plan { get; set; }
+    }
+}

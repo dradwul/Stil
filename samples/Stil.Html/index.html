@@ -22,6 +22,7 @@
                 <a href="#buttons">Buttons</a>
                 <a href="#forms">Forms</a>
                 <a href="#pickers">Pickers</a>
+                <a href="#inputs">More inputs</a>
                 <a href="#cards">Cards</a>
                 <a href="#stats">Stat cards</a>
                 <a href="#alerts">Alerts</a>
@@ -540,6 +541,88 @@
                         </li>
                     </ul>
                 </div>
+            </div>
+        </section>
+
+        <section class="component-group" id="inputs">
+            <h1>More inputs</h1>
+            <p>Sliders, ratings, colors, one-time codes, popovers and steppers. Set the slider's <code>--_fill</code> (0–100%) from its value, or <code>--_from</code> and <code>--_to</code> (0–100) on a <code>stil-range</code>. <code>data-stil-mask</code> on an input formats it while typing (with <code>stil.js</code>).</p>
+
+            <h2>Slider and range</h2>
+            <div class="example">
+                <div class="stil-stack">
+                    <div class="stil-field">
+                        <div class="stil-slider-header"><label class="stil-label" for="slider-duration">Duration</label><output class="stil-slider-value" for="slider-duration">60 min</output></div>
+                        <input class="stil-slider" type="range" id="slider-duration" min="15" max="180" step="15" value="60" style="--_fill: 27.27%">
+                    </div>
+                    <div class="stil-field" role="group" aria-labelledby="range-price">
+                        <div class="stil-slider-header"><span class="stil-label" id="range-price">Price</span><output class="stil-slider-value">500 – 2,500</output></div>
+                        <div class="stil-range" style="--_from: 10; --_to: 50">
+                            <input class="stil-slider" type="range" min="0" max="5000" step="100" value="500" aria-label="Minimum">
+                            <input class="stil-slider" type="range" min="0" max="5000" step="100" value="2500" aria-label="Maximum">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2>Rating</h2>
+            <div class="example">
+                <fieldset class="stil-field">
+                    <legend class="stil-label">How was the service?</legend>
+                    <div class="stil-rating">
+                        <label><input type="radio" name="rating" value="1" aria-label="1 of 5"><span class="stil-icon stil-icon-star"></span></label>
+                        <label><input type="radio" name="rating" value="2" aria-label="2 of 5"><span class="stil-icon stil-icon-star"></span></label>
+                        <label><input type="radio" name="rating" value="3" aria-label="3 of 5" checked><span class="stil-icon stil-icon-star"></span></label>
+                        <label><input type="radio" name="rating" value="4" aria-label="4 of 5"><span class="stil-icon stil-icon-star"></span></label>
+                        <label><input type="radio" name="rating" value="5" aria-label="5 of 5"><span class="stil-icon stil-icon-star"></span></label>
+                    </div>
+                </fieldset>
+            </div>
+
+            <h2>Color and code</h2>
+            <div class="example">
+                <div class="stil-stack">
+                    <div class="stil-field">
+                        <label class="stil-label" for="color-brand">Brand color</label>
+                        <div class="stil-color">
+                            <input class="stil-color-input" type="color" id="color-brand" value="#7048e8">
+                            <input class="stil-input stil-w-auto" type="text" size="8" value="#7048e8" aria-label="Brand color hex code">
+                        </div>
+                        <ul class="stil-color-swatches" aria-label="Suggested colors">
+                            <li><button class="stil-color-swatch" type="button" style="--_swatch: #34dbbf" aria-label="#34dbbf" aria-pressed="false"></button></li>
+                            <li><button class="stil-color-swatch" type="button" style="--_swatch: #7048e8" aria-label="#7048e8" aria-pressed="true"></button></li>
+                            <li><button class="stil-color-swatch" type="button" style="--_swatch: #e8590c" aria-label="#e8590c" aria-pressed="false"></button></li>
+                        </ul>
+                    </div>
+                    <div class="stil-field">
+                        <label class="stil-label" for="pin-code">Verification code</label>
+                        <input class="stil-pin" type="text" id="pin-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" value="1234">
+                    </div>
+                    <div class="stil-field">
+                        <label class="stil-label" for="mask-postal">Postal code</label>
+                        <input class="stil-input" type="text" id="mask-postal" data-stil-mask="000 00" placeholder="000 00" inputmode="numeric">
+                    </div>
+                </div>
+            </div>
+
+            <h2>Popover</h2>
+            <div class="example">
+                <button class="stil-btn stil-btn-outline stil-btn-secondary" type="button" popovertarget="popover-help">What is this?</button>
+                <div class="stil-popover" id="popover-help" popover role="dialog" aria-labelledby="popover-help-title">
+                    <p class="stil-popover-title" id="popover-help-title">Order number</p>
+                    <p>The number on your receipt, for example 1042.</p>
+                </div>
+            </div>
+
+            <h2>Stepper</h2>
+            <div class="example">
+                <nav aria-label="Progress">
+                    <ol class="stil-stepper">
+                        <li class="stil-step stil-step-done"><span class="stil-step-marker" aria-hidden="true"><span class="stil-icon stil-icon-check"></span></span><span class="stil-step-text"><span class="stil-step-title">Account<span class="stil-visually-hidden">, completed</span></span><span class="stil-step-description">Name and email</span></span></li>
+                        <li class="stil-step" aria-current="step"><span class="stil-step-marker" aria-hidden="true"></span><span class="stil-step-text"><span class="stil-step-title">Delivery</span><span class="stil-step-description">Where we ship</span></span></li>
+                        <li class="stil-step"><span class="stil-step-marker" aria-hidden="true"></span><span class="stil-step-text"><span class="stil-step-title">Confirm</span></span></li>
+                    </ol>
+                </nav>
             </div>
         </section>
 

@@ -1,0 +1,30 @@
+@using System.ComponentModel.DataAnnotations
+
+<EditForm Model="_model">
+    <DataAnnotationsValidator />
+    <StilWizard @bind-Step="Step" OnFinish="() => Finished = true">
+        <StilWizardStep Title="Name">
+            <StilTextBox @bind-Value="_model.Name" Label="Your name" />
+        </StilWizardStep>
+        <StilWizardStep Title="Email">
+            <StilTextBox @bind-Value="_model.Email" Label="Email" />
+        </StilWizardStep>
+    </StilWizard>
+</EditForm>
+
+@code {
+    private readonly SignUp _model = new();
+
+    public int Step { get; set; }
+
+    public bool Finished { get; private set; }
+
+    private sealed class SignUp
+    {
+        [Required]
+        public string? Name { get; set; }
+
+        [Required]
+        public string? Email { get; set; }
+    }
+}

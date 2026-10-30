@@ -1,0 +1,174 @@
+@typeparam TValue
+@inherits StilComboboxBase<TimeOnly, TValue>
+@using System.Globalization
+
+@* A time field that suggests times in steps (a WAI-ARIA combobox) and also takes typed times:
+   "14:30", "1430", "930" or "2 pm". The times are shown in the culture's format, so a Swedish
+   app gets the 24-hour clock. TValue is TimeOnly or TimeOnly?. *@
+<StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
+    @WithAddons(Control)
+</StilField>
+
+@code {
+    private TimeOnly? _shown;
+
+    private RenderFragment Control => @<div class="stil-combobox" @onfocusout="OnFocusOutAsync">
+        <input @attributes="ControlAttributes(InputCss)" type="text" role="combobox" autocomplete="off" inputmode="numeric"
+               aria-autocomplete="list" aria-expanded="@(ListVisible ? "true" : "false")" aria-controls="@ListId"
+               aria-activedescendant="@ActiveDescendant" aria-invalid="@StilCssClasses.AriaBool(Messages.Count > 0 || _invalid)"
+               placeholder="@(Placeholder ?? FormatTime(new TimeOnly(9, 0)))" value="@Text"
+               @oninput="OnInputAsync" @onkeydown="OnKeyDownAsync" @onclick="OnInputClickAsync" />
+        <div class="stil-combobox-popup" hidden="@(!ListVisible)" @onmousedown:preventDefault="true">
+            <ul class="stil-combobox-list" id="@ListId" role="listbox" aria-label="@(Label ?? Placeholder)">
+                @for (var i = 0; i < Results.Count; i++)
+                {
+                    var index = i;
+                    var time = Results[i];
+                    <li id="@OptionId(index)" role="option" class="@OptionClass(index)"
+                        aria-selected="@(index == ActiveIndex ? "true" : "false")" @onclick="() => OnOptionClickAsync(time)">@FormatTime(time)</li>
+                }
+            </ul>
+        </div>
+    </div>;
+
+    private bool _invalid;
+
+    /// <summary>The minutes between the suggested times. The default is 30.</summary>
+    [Parameter]
+    public int Step { get; set; } = 30;
+
+    /// <summary>The earliest time to suggest and accept. The default is 00:00.</summary>
+    [Parameter]
+    public TimeOnly? Min { get; set; }
+
+    /// <summary>The latest time to suggest and accept. The default is the last step before midnight.</summary>
+    [Parameter]
+    public TimeOnly? Max { get; set; }
+
+    /// <summary>The culture of the shown times. The default is the current culture.</summary>
+    [Parameter]
+    public CultureInfo? Culture { get; set; }
+
+    private CultureInfo FormatCulture => Culture ?? CultureInfo.CurrentCulture;
+
+    private bool ListVisible => IsOpen && Results.Count > 0;
+
+    private string OptionClass(int index) =>
+        index == ActiveIndex ? "stil-combobox-option stil-combobox-option-active" : "stil-combobox-option";
+
+    private string FormatTime(TimeOnly time) => time.ToString("t", FormatCulture);
+
+    private static TimeOnly? AsTime(TValue? value) => value is TimeOnly time ? time : null;
+
+    private static TValue? FromTime(TimeOnly? time) => time is { } value ? (TValue)(object)value : default;
+
+    // With a time chosen and its text unchanged, opening the list shows every time, starting at it.
+    protected override string QueryText => AsTime(Value) is { } time && Text == FormatTime(time) ? "" : Text;
+
+    protected override void OnParametersSet()
+    {
+        if (typeof(TValue) != typeof(TimeOnly) && typeof(TValue) != typeof(TimeOnly?))
+        {
+            throw new InvalidOperationException($"StilTimePicker binds TimeOnly or TimeOnly?, not {typeof(TValue).Name}.");
+        }
+
+        base.OnParametersSet();
+        Items = Times().ToList();
+        ItemText = FormatTime;
+        MinLength = 0;
+        MaxResults = 24 * 60;
+
+        var value = AsTime(Value);
+        if (value != _shown)
+        {
+            _shown = value;
+            Text = value is { } time ? FormatTime(time) : "";
+            _invalid = false;
+        }
+    }
+
+    private IEnumerable<TimeOnly> Times()
+    {
+        var step = Math.Clamp(Step, 1, 24 * 60);
+        var from = Min ?? TimeOnly.MinValue;
+        var to = Max ?? TimeOnly.MaxValue;
+        for (var minutes = (int)from.ToTimeSpan().TotalMinutes; minutes < 24 * 60; minutes += step)
+        {
+            var time = TimeOnly.FromTimeSpan(TimeSpan.FromMinutes(minutes));
+            if (time > to)
+            {
+                yield break;
+            }
+
+            yield return time;
+        }
+    }
+
+    protected override async Task ChooseAsync(TimeOnly time)
+    {
+        Text = FormatTime(time);
+        _shown = time;
+        _invalid = false;
+        Close();
+        await SetValueAsync(FromTime(time));
+    }
+
+    // Enter with no suggestion highlighted takes the typed time, as leaving the field does.
+    protected override Task OnOtherKeyAsync(KeyboardEventArgs e) => e.Key == "Enter" ? OnClosedByBlurAsync() : Task.CompletedTask;
+
+    protected override async Task OnClosedByBlurAsync()
+    {
+        if (string.IsNullOrWhiteSpace(Text))
+        {
+            _invalid = false;
+            if (AsTime(Value) is not null && typeof(TValue) == typeof(TimeOnly?))
+            {
+                _shown = null;
+                await SetValueAsync(default);
+            }
+
+            Text = AsTime(Value) is { } kept ? FormatTime(kept) : "";
+            return;
+        }
+
+        if (Parse(Text, FormatCulture) is { } typed && (Min is null || typed >= Min) && (Max is null || typed <= Max))
+        {
+            _invalid = false;
+            _shown = typed;
+            Text = FormatTime(typed);
+            if (typed != AsTime(Value))
+            {
+                await SetValueAsync(FromTime(typed));
+            }
+
+            return;
+        }
+
+        // Not a time (or outside Min and Max): keep the text so it can be corrected, and mark it.
+        _invalid = true;
+    }
+
+    /// <summary>
+    /// Reads a typed time: the culture's format ("14:30", "2:30 PM"), or digits only ("1430", "930",
+    /// "14" for 14:00). Returns null when the text is not a time.
+    /// </summary>
+    internal static TimeOnly? Parse(string text, CultureInfo culture)
+    {
+        text = text.Trim();
+        if (TimeOnly.TryParse(text, culture, DateTimeStyles.AllowWhiteSpaces, out var parsed))
+        {
+            return parsed;
+        }
+
+        var digits = new string(text.Where(char.IsDigit).ToArray());
+        if (digits.Length == 0 || digits.Length > 4 || digits.Length != text.Count(c => !char.IsWhiteSpace(c) && c is not ('.' or ':')))
+        {
+            return null;
+        }
+
+        var (hours, minutes) = digits.Length <= 2
+            ? (int.Parse(digits, CultureInfo.InvariantCulture), 0)
+            : (int.Parse(digits[..^2], CultureInfo.InvariantCulture), int.Parse(digits[^2..], CultureInfo.InvariantCulture));
+        return hours is >= 0 and < 24 && minutes is >= 0 and < 60 ? new TimeOnly(hours, minutes) : null;
+    }
+}

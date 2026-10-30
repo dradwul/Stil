@@ -336,6 +336,31 @@ arrow keys move the active option, Enter chooses it and Escape closes the
 list. They are form fields, so labels, hints, validation and `class` on the
 wrapper work as for the other fields.
 
+### More inputs
+
+```razor
+<StilDateTimePicker @bind-Value="booking.Start" Label="Start" Step="15" />
+<StilSlider @bind-Value="booking.Minutes" Label="Duration" Min="15" Max="180" Step="15" Format="0 'min'" />
+<StilRating @bind-Value="review.Score" Label="How was it?" />
+<StilMaskedInput @bind-Value="person.Number" Label="Personal identity number" Mask="00000000-0000" />
+<StilPinInput @bind-Value="code" Label="Code" OnComplete="VerifyAsync" />
+<StilPopover Text="What is this?" Title="Order number">The number on your receipt.</StilPopover>
+```
+
+| Component | Value | Parameters |
+| --- | --- | --- |
+| `StilTimePicker<TValue>` | `TimeOnly` or `TimeOnly?` | `Step` (minutes, default 30), `Min`, `Max`, `Culture`, `Placeholder`, `Size`. Suggests times in steps and takes typed times ("1430", "930"). |
+| `StilDateTimePicker<TValue>` | `DateTime` or `DateTime?` | `Step`, `Min`/`Max` (dates), `DefaultTime` (09:00), `Culture`, `DateLabel`/`TimeLabel`, `Size`. |
+| `StilSlider<TValue>` | a number | `Min` (0), `Max` (100), `Step` (1), `Format`, `ShowValue`, `ShowMinMax`. A native range input. |
+| `StilRangeSlider<TValue>` | `@bind-Start`, `@bind-End` | `Label`, `Hint`, `Min`, `Max`, `Step`, `Format`, `ShowMinMax`, `StartLabel`/`EndLabel`. |
+| `StilRating<TValue>` | `int` or `int?` | `Max` (5), `ReadOnly`, `Icon`, `Size`, `OptionFormat`. A radio group; ReadOnly is one image. |
+| `StilColorPicker` | `string` (`#rrggbb`) | `Swatches` (Stil's palette by default), `ShowContrast`, `Size`. |
+| `StilMaskedInput` | `string` | `Mask` (`0` digit, `A` letter, `*` any), `Placeholder`, `Size`. `StilMaskedInput.IsComplete(mask, text)` for validation. |
+| `StilPinInput` | `string` | `Length` (6), `Numeric`, `Secret`, `OnComplete`. One input drawn as cells (`autocomplete="one-time-code"`). |
+| `StilPopover` | | `Text` or `Toggle`, `Title`, `ChildContent`, `Top`, `Manual`, `Variant`, `Appearance`, `Size`, `IconOnly`, `AriaLabel`, `OnToggle`. The Popover API, so it works in static SSR. |
+| `StilWizard` / `StilWizardStep` | `@bind-Step` | `OnFinish`, `AllowStepClick`, `BackText`/`NextText`/`FinishText`; a step has `Title`, `Description`, `HeadingLevel` and `Validate`. Inside an `EditForm`, Next validates only the current step's fields. |
+| `StilStepper` | | `Steps` (`StilStepItem`: Title, Description, State), `Current`, `OnStepClick`, `Label`. |
+
 ### KPI cards
 
 ```razor
@@ -521,6 +546,10 @@ Warning toasts use `role="alert"`; the others use `"status"`.
 | `stil-data-grid` | `StilDataGrid` with `StilDataGridColumn` and `StilDataGridTemplateColumn` |
 | `stil-combobox`, `stil-multi-select`, `stil-chip` | `StilAutocomplete`, `StilMultiSelect` |
 | `stil-date-range` | `StilDateRangePicker` |
+| `stil-slider`, `stil-range` | `StilSlider`, `StilRangeSlider` |
+| `stil-rating`, `stil-color`, `stil-pin`, `stil-datetime` | `StilRating`, `StilColorPicker`, `StilPinInput`, `StilDateTimePicker` |
+| `stil-popover` | `StilPopover` |
+| `stil-stepper`, `stil-step`, `stil-wizard` | `StilStepper`, `StilWizard` |
 | `stil-dropzone`, `stil-file-list` | `StilFileUpload` |
 | `stil-stat` | `StilStatCard` |
 | `stil-tree` | `StilTreeView` |

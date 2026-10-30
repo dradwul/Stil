@@ -1,0 +1,88 @@
+@typeparam TValue
+@inherits StilInputBase<TValue>
+
+@* Stars (or another icon) as a radio group, so the arrow keys move between them. ReadOnly shows a
+   score as one image with a text alternative. TValue is int or int?. *@
+@if (ReadOnly)
+{
+    <span class="@($"stil-rating stil-rating-readonly {SizeClass} {FieldClass}".Trim())" style="@FieldStyle" role="img"
+          aria-label="@OptionLabel(Score)">
+        @for (var i = 1; i <= Max; i++)
+        {
+            <span class="@(i <= Score ? "stil-rating-on" : null)"><StilIcon Name="@Icon" /></span>
+        }
+    </span>
+}
+else
+{
+    <fieldset class="@($"stil-field {FieldClass}".TrimEnd())" style="@FieldStyle" id="@InputId" aria-describedby="@DescribedBy">
+        @if (!string.IsNullOrWhiteSpace(Label))
+        {
+            <legend class="stil-label">@Label</legend>
+        }
+        <div class="@($"stil-rating {SizeClass}".TrimEnd())" aria-disabled="@StilCssClasses.AriaBool(Disabled)">
+            @for (var i = 1; i <= Max; i++)
+            {
+                var score = i;
+                <label>
+                    <input type="radio" name="@InputId" value="@score" checked="@(score == Score)" disabled="@Disabled"
+                           aria-label="@OptionLabel(score)" aria-invalid="@StilCssClasses.AriaBool(Messages.Count > 0)"
+                           @onchange="() => SetValueAsync((TValue)(object)score)" />
+                    <StilIcon Name="@Icon" />
+                </label>
+            }
+        </div>
+        @if (!string.IsNullOrWhiteSpace(Hint))
+        {
+            <div class="stil-field-hint" id="@HintId">@Hint</div>
+        }
+        @if (Messages.Count > 0)
+        {
+            <div class="stil-field-error" id="@ErrorId">
+                @foreach (var message in Messages)
+                {
+                    <div>@message</div>
+                }
+            </div>
+        }
+    </fieldset>
+}
+
+@code {
+    /// <summary>The highest score. The default is 5.</summary>
+    [Parameter]
+    public int Max { get; set; } = 5;
+
+    /// <summary>Shows the score without letting it change.</summary>
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    /// <summary>The icon of each step, a <see cref="StilIcons"/> name. The default is a star.</summary>
+    [Parameter]
+    public string Icon { get; set; } = StilIcons.Star;
+
+    /// <summary>Small or Medium (default).</summary>
+    [Parameter]
+    public StilSize Size { get; set; }
+
+    /// <summary>The accessible name of a score; {0} is the score and {1} the highest. The default is the localized "{0} of {1}".</summary>
+    [Parameter]
+    public string? OptionFormat { get; set; }
+
+    private int Score => Value is int score ? score : 0;
+
+    private string? SizeClass => Size == StilSize.Small ? "stil-rating-sm" : null;
+
+    private string OptionLabel(int score) =>
+        string.Format(System.Globalization.CultureInfo.CurrentCulture, Localize(OptionFormat, "Rating.OptionFormat"), score, Max);
+
+    protected override void OnParametersSet()
+    {
+        if (typeof(TValue) != typeof(int) && typeof(TValue) != typeof(int?))
+        {
+            throw new InvalidOperationException($"StilRating binds int or int?, not {typeof(TValue).Name}.");
+        }
+
+        base.OnParametersSet();
+    }
+}

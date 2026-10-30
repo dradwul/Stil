@@ -1,0 +1,172 @@
+@inherits StilComponentBase
+
+@* A form in steps: a StilStepper, the current StilWizardStep, and Back and Next (Finish on the last
+   step). Put it inside an EditForm: Next validates only the fields of the current step, so later
+   steps do not show errors before the user gets there. *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-wizard")">
+    <StilStepper Steps="StepItems" Current="Step" OnStepClick="StepClick" />
+    <CascadingValue Value="this" IsFixed="true">
+        <div class="stil-wizard-panel" tabindex="-1" @ref="_panel">
+            @ChildContent
+        </div>
+    </CascadingValue>
+    <div class="stil-wizard-actions">
+        <div>
+            @if (Step > 0)
+            {
+                <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline" OnClick="BackAsync">
+                    <StilIcon Name="@StilIcons.ArrowLeft" /> @Localize(BackText, "Wizard.Back")
+                </StilButton>
+            }
+        </div>
+        @if (Step < _steps.Count - 1)
+        {
+            <StilButton OnClick="NextAsync">@Localize(NextText, "Wizard.Next") <StilIcon Name="@StilIcons.ArrowRight" /></StilButton>
+        }
+        else
+        {
+            <StilButton Loading="_finishing" OnClick="FinishAsync">@Localize(FinishText, "Wizard.Finish")</StilButton>
+        }
+    </div>
+</div>
+
+@code {
+    private readonly List<StilWizardStep> _steps = [];
+    private readonly HashSet<StilWizardStep> _failed = [];
+    private ElementReference _panel;
+    private bool _focusPanel;
+    private bool _finishing;
+
+    [CascadingParameter]
+    private Microsoft.AspNetCore.Components.Forms.EditContext? EditContext { get; set; }
+
+    /// <summary>The StilWizardStep components.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>The index of the current step, starting at 0. Supports two-way binding (@bind-Step).</summary>
+    [Parameter]
+    public int Step { get; set; }
+
+    [Parameter]
+    public EventCallback<int> StepChanged { get; set; }
+
+    /// <summary>Raised by Finish once the last step is valid, for example to save.</summary>
+    [Parameter]
+    public EventCallback OnFinish { get; set; }
+
+    /// <summary>Lets the user go back to a done step by clicking it in the stepper.</summary>
+    [Parameter]
+    public bool AllowStepClick { get; set; } = true;
+
+    /// <summary>The back button's text. The default is the localized "Back".</summary>
+    [Parameter]
+    public string? BackText { get; set; }
+
+    /// <summary>The next button's text. The default is the localized "Next".</summary>
+    [Parameter]
+    public string? NextText { get; set; }
+
+    /// <summary>The finish button's text. The default is the localized "Finish".</summary>
+    [Parameter]
+    public string? FinishText { get; set; }
+
+    private EventCallback<int> StepClick => AllowStepClick ? EventCallback.Factory.Create<int>(this, GoToAsync) : default;
+
+    private IEnumerable<StilStepItem> StepItems => _steps.Select(step =>
+        new StilStepItem(step.Title, step.Description, _failed.Contains(step) ? StilStepState.Error : StilStepState.Auto));
+
+    internal bool IsCurrent(StilWizardStep step) => _steps.IndexOf(step) == Math.Clamp(Step, 0, Math.Max(0, _steps.Count - 1));
+
+    internal void Add(StilWizardStep step)
+    {
+        if (!_steps.Contains(step))
+        {
+            _steps.Add(step);
+            StateHasChanged();
+        }
+    }
+
+    internal void Remove(StilWizardStep step)
+    {
+        if (_steps.Remove(step))
+        {
+            StateHasChanged();
+        }
+    }
+
+    /// <summary>Validates the current step, and moves to the next one when it is valid.</summary>
+    public async Task<bool> NextAsync()
+    {
+        if (!await ValidateCurrentAsync())
+        {
+            return false;
+        }
+
+        await GoToAsync(Step + 1);
+        return true;
+    }
+
+    /// <summary>Moves to the previous step without validating.</summary>
+    public Task BackAsync() => GoToAsync(Step - 1);
+
+    private async Task GoToAsync(int index)
+    {
+        index = Math.Clamp(index, 0, Math.Max(0, _steps.Count - 1));
+        if (index == Step)
+        {
+            return;
+        }
+
+        Step = index;
+        _focusPanel = true;
+        await StepChanged.InvokeAsync(index);
+    }
+
+    private async Task FinishAsync()
+    {
+        if (!await ValidateCurrentAsync())
+        {
+            return;
+        }
+
+        _finishing = true;
+        try
+        {
+            await OnFinish.InvokeAsync();
+        }
+        finally
+        {
+            _finishing = false;
+        }
+    }
+
+    private async Task<bool> ValidateCurrentAsync()
+    {
+        if (_steps.FirstOrDefault(IsCurrent) is not { } step)
+        {
+            return true;
+        }
+
+        var valid = await step.ValidateAsync(EditContext);
+        if (valid)
+        {
+            _failed.Remove(step);
+        }
+        else
+        {
+            _failed.Add(step);
+        }
+
+        return valid;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_focusPanel)
+        {
+            _focusPanel = false;
+            await _panel.FocusAsync();
+        }
+    }
+}

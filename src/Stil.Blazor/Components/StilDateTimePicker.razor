@@ -1,0 +1,121 @@
+@typeparam TValue
+@inherits StilInputBase<TValue>
+@using System.Globalization
+
+@* A date and a time in one field: the native date input and a StilTimePicker. TValue is DateTime
+   or DateTime?. Choosing a date before a time uses DefaultTime. *@
+<fieldset class="@($"stil-field stil-datetime {FieldClass}".TrimEnd())" style="@FieldStyle" id="@InputId" aria-describedby="@DescribedBy">
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <legend class="stil-label">@Label</legend>
+    }
+    <div class="stil-datetime-controls">
+        <input type="date" class="@InputCss" id="@($"{InputId}-date")" value="@_date?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)"
+               min="@Min?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)" max="@Max?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)"
+               aria-label="@Localize(DateLabel, "DateTime.Date")" aria-invalid="@StilCssClasses.AriaBool(Messages.Count > 0)"
+               disabled="@Disabled" @onchange="OnDateChangedAsync" />
+        <StilTimePicker TValue="TimeOnly?" Value="_time" ValueChanged="OnTimeChangedAsync" Step="Step" Size="Size" Culture="Culture"
+                        Disabled="Disabled" aria-label="@Localize(TimeLabel, "DateTime.Time")" id="@($"{InputId}-time")" />
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Hint))
+    {
+        <div class="stil-field-hint" id="@HintId">@Hint</div>
+    }
+    @if (Messages.Count > 0)
+    {
+        <div class="stil-field-error" id="@ErrorId">
+            @foreach (var message in Messages)
+            {
+                <div>@message</div>
+            }
+        </div>
+    }
+</fieldset>
+
+@code {
+    private DateOnly? _date;
+    private TimeOnly? _time;
+    private DateTime? _shown;
+
+    /// <summary>The minutes between the suggested times. The default is 30.</summary>
+    [Parameter]
+    public int Step { get; set; } = 30;
+
+    /// <summary>The earliest date.</summary>
+    [Parameter]
+    public DateOnly? Min { get; set; }
+
+    /// <summary>The latest date.</summary>
+    [Parameter]
+    public DateOnly? Max { get; set; }
+
+    /// <summary>The time used when a date is chosen before a time. The default is 09:00.</summary>
+    [Parameter]
+    public TimeOnly DefaultTime { get; set; } = new(9, 0);
+
+    /// <summary>The culture of the shown times. The default is the current culture.</summary>
+    [Parameter]
+    public CultureInfo? Culture { get; set; }
+
+    /// <summary>Small, Medium (default) or Large.</summary>
+    [Parameter]
+    public StilSize Size { get; set; }
+
+    /// <summary>The accessible name of the date input. The default is the localized "Date".</summary>
+    [Parameter]
+    public string? DateLabel { get; set; }
+
+    /// <summary>The accessible name of the time input. The default is the localized "Time".</summary>
+    [Parameter]
+    public string? TimeLabel { get; set; }
+
+    private string InputCss => $"stil-input {StilCssClasses.Size("stil-input", Size)}".TrimEnd();
+
+    protected override void OnParametersSet()
+    {
+        if (typeof(TValue) != typeof(DateTime) && typeof(TValue) != typeof(DateTime?))
+        {
+            throw new InvalidOperationException($"StilDateTimePicker binds DateTime or DateTime?, not {typeof(TValue).Name}.");
+        }
+
+        base.OnParametersSet();
+        var value = Value is DateTime dateTime ? dateTime : (DateTime?)null;
+        if (value != _shown)
+        {
+            _shown = value;
+            _date = value is { } v ? DateOnly.FromDateTime(v) : null;
+            _time = value is { } t ? TimeOnly.FromDateTime(t) : null;
+        }
+    }
+
+    private Task OnDateChangedAsync(ChangeEventArgs e)
+    {
+        _date = DateOnly.TryParseExact(e.Value?.ToString(), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)
+            ? date
+            : null;
+        if (_date is not null)
+        {
+            _time ??= DefaultTime;
+        }
+
+        return CommitAsync();
+    }
+
+    private Task OnTimeChangedAsync(TimeOnly? time)
+    {
+        _time = time;
+        return CommitAsync();
+    }
+
+    private async Task CommitAsync()
+    {
+        DateTime? combined = _date is { } date && _time is { } time ? date.ToDateTime(time) : null;
+        if (combined == _shown || (combined is null && typeof(TValue) == typeof(DateTime)))
+        {
+            return;
+        }
+
+        _shown = combined;
+        await SetValueAsync(combined is { } value ? (TValue)(object)value : default);
+    }
+}

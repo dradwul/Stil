@@ -1,0 +1,76 @@
+@page "/components/inputs"
+@using Stil.Docs.Examples.Inputs
+
+<DocsHeader Title="More inputs" Eyebrow="Components">
+    <Lead>Times, sliders, ratings, colors, masks, one-time codes, popovers and forms in steps. Like every Stil field, they take a label, a hint and <code>@@bind-Value</code>, and show EditForm validation.</Lead>
+</DocsHeader>
+
+<h2 id="times">Time and date with time</h2>
+<p>
+    <code>StilTimePicker</code> binds a <code>TimeOnly</code>. It suggests times in steps (<code>Step</code>, 30 minutes by
+    default) between <code>Min</code> and <code>Max</code>, and takes typed times: "14:30", "1430", "930" or "9". The times
+    are written in the culture's format, so a Swedish app gets the 24-hour clock. Text that is not a time stays in the field,
+    marked as invalid, so it can be corrected. <code>StilDateTimePicker</code> binds a <code>DateTime</code> with a date input
+    and a time picker side by side.
+</p>
+<DocExample Type="typeof(Times)" ShowCode />
+
+<h2 id="sliders">Sliders</h2>
+<p>
+    <code>StilSlider</code> is a native range input, so the arrow keys, Home, End and Page Up and Down work, and it posts
+    in static SSR forms. <code>Format</code> formats the shown value (also for screen readers). <code>StilRangeSlider</code>
+    picks a span with two thumbs on one track; they cannot pass each other.
+</p>
+<DocExample Type="typeof(Sliders)" ShowCode />
+
+<h2 id="rating">Rating</h2>
+<p>Stars as a radio group: the arrow keys move between them, and each has a name such as "4 of 5". <code>ReadOnly</code> shows a score as one image.</p>
+<DocExample Type="typeof(Ratings)" ShowCode />
+
+<h2 id="color">Color</h2>
+<p>
+    <code>StilColorPicker</code> binds a hex color (<code>#rrggbb</code>) with the browser's color picker, the hex code as
+    text and swatches (Stil's palette by default, or <code>Swatches</code>).
+</p>
+<DocExample Type="typeof(Colors)" ShowCode />
+
+<h2 id="masks">Masks and codes</h2>
+<p>
+    <code>StilMaskedInput</code> formats text to a fixed shape while typing: in <code>Mask</code>, <code>0</code> is a
+    digit, <code>A</code> a letter, <code>*</code> any character, and the rest are filled in.
+    <code>StilMaskedInput.IsComplete</code> helps in your own validation. <code>StilPinInput</code> is a one-time code in
+    one field, drawn as cells, so paste and autofill from a text message work. <code>OnComplete</code> fires when every
+    cell is filled.
+</p>
+<DocExample Type="typeof(Masks)" ShowCode />
+
+<h2 id="popover">Popover</h2>
+<p>
+    <code>StilPopover</code> opens a panel next to its button with the Popover API. It works without JavaScript and in
+    static SSR, closes on an outside click or Escape, and sits above dialogs. <code>stil.js</code> places it under the
+    button (or above with <code>Top</code>) and flips it when there is no room.
+</p>
+<DocExample Type="typeof(Popovers)" ShowCode />
+
+<h2 id="wizard">Wizard and stepper</h2>
+<p>
+    <code>StilWizard</code> shows one <code>StilWizardStep</code> at a time with a <code>StilStepper</code> above it.
+    Put it in an <code>EditForm</code>: Next validates only the Stil fields of the current step, so later steps show no
+    errors before the user gets there. A step with errors is marked in the stepper, and done steps can be clicked to go
+    back. <code>Validate</code> on a step adds checks of your own. <code>StilStepper</code> also works on its own.
+</p>
+<DocExample Type="typeof(Wizard)" ShowCode />
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilTimePicker<>)" />
+<ApiTable Type="typeof(StilDateTimePicker<>)" />
+<ApiTable Type="typeof(StilSlider<>)" />
+<ApiTable Type="typeof(StilRangeSlider<>)" />
+<ApiTable Type="typeof(StilRating<>)" />
+<ApiTable Type="typeof(StilColorPicker)" />
+<ApiTable Type="typeof(StilMaskedInput)" />
+<ApiTable Type="typeof(StilPinInput)" />
+<ApiTable Type="typeof(StilPopover)" />
+<ApiTable Type="typeof(StilWizard)" />
+<ApiTable Type="typeof(StilWizardStep)" />
+<ApiTable Type="typeof(StilStepper)" />

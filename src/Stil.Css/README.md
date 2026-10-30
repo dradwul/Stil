@@ -112,6 +112,12 @@ classes: `aria-current="page"`, `aria-selected="true"`,
 | Data grid | `stil-data-grid` around a table, with `stil-data-grid-toolbar`, `stil-data-grid-footer`, sort buttons `stil-data-grid-sort` in headers with `aria-sort`, a filter row `stil-data-grid-filters`, a checkbox column `stil-data-grid-select` and `stil-data-grid-message`. Selected rows have `aria-selected="true"`. Add `stil-data-grid-scroll` and a `max-height` to the `stil-table-responsive` wrapper for a sticky header. |
 | Combobox, multi-select | `stil-combobox` > `stil-input` (`role="combobox"`) + `stil-combobox-popup` > `stil-combobox-list` (`role="listbox"`) > `stil-combobox-option` (`stil-combobox-option-active`), and `stil-combobox-message`. A multi-select adds `stil-multi-select stil-input` to the combobox, `stil-chip` elements (`stil-chip-text`, `stil-chip-remove`) and a `stil-multi-select-input`. Opening the list and moving between options needs a script. |
 | Chip | `stil-chip` with `stil-chip-text` and an optional `stil-chip-remove` button, for tags |
+| Slider, range | `<input type="range" class="stil-slider">` with `--_fill` (0–100%); `stil-slider-header` (label and `stil-slider-value`) and `stil-slider-marks`. Two sliders in a `stil-range` (`--_from`, `--_to`, 0–100) pick a span. |
+| Rating | `stil-rating` (`stil-rating-sm`) with a radio and a `stil-icon-star` in each `label`; `stil-rating-readonly` with `stil-rating-on` for a shown score |
+| Color | `stil-color` > `stil-color-input` (`type="color"`) + a text input, and `stil-color-swatches` > `stil-color-swatch` (`--_swatch`, `aria-pressed`) |
+| One-time code | `<input class="stil-pin">` drawn as cells; set `--stil-pin-length` |
+| Popover | `<div class="stil-popover" popover>` opened by a `popovertarget` button; `stil-popover-title`. stil.js places it next to the button (`data-stil-placement="top"` for above). |
+| Stepper | `<ol class="stil-stepper">` > `stil-step` (`stil-step-done`, `stil-step-error`, `aria-current="step"`) > `stil-step-marker` + `stil-step-text` (`stil-step-title`, `stil-step-description`); `stil-wizard` and `stil-wizard-actions` around a form in steps |
 | Date range | `<fieldset class="stil-date-range">` with a legend and `stil-date-range-inputs` around two fields |
 | File upload | `stil-dropzone` (`data-dragover="true"` while dragging) > `stil-dropzone-input` (the file input, laid over the zone), `stil-dropzone-icon`, `stil-dropzone-text`, `stil-dropzone-button`; `stil-file-list` > `stil-file-list-item` with `stil-file-list-name` and `stil-file-list-size` |
 | Stat card | `stil-card stil-stat` with `stil-stat-header` (`stil-stat-label`, `stil-stat-icon`), `stil-stat-value`, and `stil-stat-footer` with a `stil-stat-trend` badge (`data-trend="up"` or `"down"`) and `stil-stat-description` |
@@ -142,7 +148,7 @@ full page built only with Stil, open
 
 ## Optional JavaScript
 
-Stil works without JavaScript. The optional `dist/stil.js` module, 16 kB with
+Stil works without JavaScript. The optional `dist/stil.js` module, 20 kB with
 no dependencies, adds a few behaviours:
 
 ```html
@@ -178,6 +184,11 @@ no dependencies, adds a few behaviours:
   submit a form or close a dialog: the arrow keys on `role="treeitem"`,
   `role="tab"` and `role="combobox"`, and Enter and Escape in an open
   combobox.
+- Popovers (`.stil-popover` with `popover`) are placed next to their
+  `popovertarget` button, below it or above it (`data-stil-placement="top"`),
+  and follow it on scroll and resize.
+- `data-stil-mask="000 00"` on an input formats it while typing: `0` is a digit,
+  `A` a letter, `*` any character, and the rest are literals that are filled in.
 - A language link, `<a href="?culture=sv" data-stil-culture="sv">`, stores the
   language in the ASP.NET Core culture cookie (`.AspNetCore.Culture`) and in
   local storage (`stil-culture`), then reloads the page.

@@ -32,6 +32,7 @@ public static class StilIcons
     public const string More = "more";
     public const string Plus = "plus";
     public const string Search = "search";
+    public const string Star = "star";
     public const string Success = "success";
     public const string Sun = "sun";
     public const string Upload = "upload";

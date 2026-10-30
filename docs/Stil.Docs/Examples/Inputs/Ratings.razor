@@ -1,0 +1,8 @@
+<div class="stil-cluster stil-gap-5">
+    <StilRating @bind-Value="_score" Label="How was your visit?" />
+    <StilRating Value="4" ReadOnly Size="StilSize.Small" />
+</div>
+
+@code {
+    private int? _score;
+}

@@ -1,0 +1,86 @@
+@inherits StilComponentBase
+
+@* The steps of a process, with the current one marked (aria-current="step"). Steps before the
+   current one are done, unless they have an error. With OnStepClick, done steps are buttons. *@
+<nav @attributes="AdditionalAttributes" class="@Classes()" aria-label="@Localize(Label, "Stepper.Label")">
+    <ol class="stil-stepper">
+        @for (var i = 0; i < _steps.Count; i++)
+        {
+            var index = i;
+            var step = _steps[i];
+            var state = StateOf(index, step);
+            <li class="@StepClass(state)" aria-current="@(index == Current ? "step" : null)">
+                @if (OnStepClick.HasDelegate && state == StilStepState.Done && index != Current)
+                {
+                    <button type="button" class="stil-step-button" @onclick="() => OnStepClick.InvokeAsync(index)">@StepContent(index, step, state)</button>
+                }
+                else
+                {
+                    @StepContent(index, step, state)
+                }
+            </li>
+        }
+    </ol>
+</nav>
+
+@code {
+    private IReadOnlyList<StilStepItem> _steps = [];
+
+    /// <summary>The steps, in order.</summary>
+    [Parameter, EditorRequired]
+    public IEnumerable<StilStepItem> Steps { get; set; } = [];
+
+    /// <summary>The index of the current step, starting at 0.</summary>
+    [Parameter]
+    public int Current { get; set; }
+
+    /// <summary>Raised with a step's index when a done step is clicked; without it the steps are plain text.</summary>
+    [Parameter]
+    public EventCallback<int> OnStepClick { get; set; }
+
+    /// <summary>The accessible name of the list. The default is the localized "Progress".</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    protected override void OnParametersSet() => _steps = Steps.ToList();
+
+    private StilStepState StateOf(int index, StilStepItem step) => step.State switch
+    {
+        StilStepState.Auto when index < Current => StilStepState.Done,
+        StilStepState.Auto => StilStepState.Upcoming,
+        var explicitState => explicitState
+    };
+
+    private static string StepClass(StilStepState state) => state switch
+    {
+        StilStepState.Done => "stil-step stil-step-done",
+        StilStepState.Error => "stil-step stil-step-error",
+        _ => "stil-step"
+    };
+
+    private RenderFragment StepContent(int index, StilStepItem step, StilStepState state) => @<text>
+        <span class="stil-step-marker" aria-hidden="true">
+            @if (state == StilStepState.Done)
+            {
+                <StilIcon Name="@StilIcons.Check" />
+            }
+            else if (state == StilStepState.Error)
+            {
+                <text>!</text>
+            }
+        </span>
+        <span class="stil-step-text">
+            <span class="stil-step-title">
+                @step.Title
+                @if (state is StilStepState.Done or StilStepState.Error)
+                {
+                    <span class="stil-visually-hidden">, @Localize(null, state == StilStepState.Done ? "Stepper.Done" : "Stepper.Error")</span>
+                }
+            </span>
+            @if (!string.IsNullOrWhiteSpace(step.Description))
+            {
+                <span class="stil-step-description">@step.Description</span>
+            }
+        </span>
+    </text>;
+}

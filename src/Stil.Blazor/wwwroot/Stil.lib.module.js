@@ -9,7 +9,8 @@ const load = () => import('./stil.js');
 function registerEvents(blazor) {
     blazor?.registerCustomEventType?.('stiltoggle', {
         browserEventName: 'toggle',
-        createEventArgs: event => ({ open: event.target.open === true }),
+        // <details> has open; a popover reports its new state.
+        createEventArgs: event => ({ open: event.newState ? event.newState === 'open' : event.target.open === true }),
     });
     blazor?.registerCustomEventType?.('stilcalendaredge', {
         createEventArgs: event => ({ key: event.detail?.key ?? '', date: event.detail?.cell?.dataset.date ?? null }),

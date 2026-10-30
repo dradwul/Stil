@@ -1,0 +1,120 @@
+@inherits StilInputBase<string>
+@using System.Globalization
+
+@* A color as a hex value (#rrggbb): the native color input, the hex code as text, and swatches.
+   Under it, which text color reads best on the chosen color, with its contrast ratio. *@
+<StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
+    <div class="stil-color">
+        <input @attributes="ColorAttributes" type="color" value="@(Hex ?? "#000000")"
+               aria-invalid="@StilCssClasses.AriaBool(Messages.Count > 0)" @onchange="e => ChooseAsync(e.Value?.ToString())" />
+        <input type="text" class="@HexCss" size="8" maxlength="7"
+               spellcheck="false" autocomplete="off" value="@Hex" disabled="@Disabled"
+               aria-label="@($"{Label} {Localize(HexLabel, "ColorPicker.Hex")}".Trim())" @onchange="e => ChooseAsync(e.Value?.ToString())" />
+    </div>
+    @if (_swatches.Count > 0)
+    {
+        <ul class="stil-color-swatches" aria-label="@Localize(SwatchesLabel, "ColorPicker.Swatches")">
+            @foreach (var swatch in _swatches)
+            {
+                <li>
+                    <button type="button" class="stil-color-swatch" style="@($"--_swatch: {swatch}")" aria-label="@swatch" disabled="@Disabled"
+                            aria-pressed="@(string.Equals(swatch, Hex, StringComparison.OrdinalIgnoreCase) ? "true" : "false")"
+                            @onclick="() => ChooseAsync(swatch)"></button>
+                </li>
+            }
+        </ul>
+    }
+    @if (ShowContrast && Hex is { } hex)
+    {
+        <div class="stil-field-hint" aria-live="polite">@ContrastText(hex)</div>
+    }
+</StilField>
+
+@code {
+    private IReadOnlyList<string> _swatches = [];
+
+    /// <summary>Stil's default brand and status colors.</summary>
+    public static readonly IReadOnlyList<string> DefaultSwatches =
+        ["#34dbbf", "#a6dbd2", "#34db58", "#db3434", "#ebc444", "#34c2db", "#7048e8", "#e8590c", "#1f2328", "#ffffff"];
+
+    /// <summary>The swatches under the input, as #rrggbb. The default is Stil's palette; pass an empty list for none.</summary>
+    [Parameter]
+    public IEnumerable<string>? Swatches { get; set; }
+
+    /// <summary>Shows whether black or white text reads better on the color, with the WCAG contrast ratio. The default is true.</summary>
+    [Parameter]
+    public bool ShowContrast { get; set; } = true;
+
+    /// <summary>Small, Medium (default) or Large, for the hex text input.</summary>
+    [Parameter]
+    public StilSize Size { get; set; }
+
+    /// <summary>The accessible name of the hex input after the label. The default is the localized "hex code".</summary>
+    [Parameter]
+    public string? HexLabel { get; set; }
+
+    /// <summary>The accessible name of the swatch list. The default is the localized "Suggested colors".</summary>
+    [Parameter]
+    public string? SwatchesLabel { get; set; }
+
+    private string? Hex => Normalize(Value);
+
+    private IReadOnlyDictionary<string, object> ColorAttributes => ControlAttributes("stil-color-input");
+
+    private string HexCss => $"stil-input stil-w-auto {StilCssClasses.Size("stil-input", Size)}".TrimEnd();
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        _swatches = (Swatches ?? DefaultSwatches).Select(Normalize).OfType<string>().Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+    }
+
+    private async Task ChooseAsync(string? text)
+    {
+        // Text that is not a color is ignored; the field shows the last valid one again.
+        if (Normalize(text) is { } hex && hex != Hex)
+        {
+            await SetValueAsync(hex);
+        }
+    }
+
+    /// <summary>#rrggbb in lower case from "#RGB", "rgb" or "#rrggbb", or null.</summary>
+    internal static string? Normalize(string? text)
+    {
+        var hex = text?.Trim().TrimStart('#') ?? "";
+        if (hex.Length == 3)
+        {
+            hex = string.Concat(hex.Select(c => $"{c}{c}"));
+        }
+
+        return hex.Length == 6 && hex.All(Uri.IsHexDigit) ? "#" + hex.ToLowerInvariant() : null;
+    }
+
+    /// <summary>The WCAG contrast ratio of two #rrggbb colors.</summary>
+    internal static double Contrast(string a, string b)
+    {
+        var (light, dark) = (Luminance(a), Luminance(b)) is var (x, y) && x > y ? (x, y) : (y, x);
+        return (light + 0.05) / (dark + 0.05);
+    }
+
+    private static double Luminance(string hex)
+    {
+        double Channel(int index)
+        {
+            var value = Convert.ToInt32(hex.Substring(1 + index * 2, 2), 16) / 255.0;
+            return value <= 0.04045 ? value / 12.92 : Math.Pow((value + 0.055) / 1.055, 2.4);
+        }
+
+        return 0.2126 * Channel(0) + 0.7152 * Channel(1) + 0.0722 * Channel(2);
+    }
+
+    private string ContrastText(string hex)
+    {
+        var black = Contrast(hex, "#000000");
+        var white = Contrast(hex, "#ffffff");
+        var (name, ratio) = black >= white
+            ? (Localize(null, "ColorPicker.Black"), black)
+            : (Localize(null, "ColorPicker.White"), white);
+        return string.Format(CultureInfo.CurrentCulture, Localize(null, "ColorPicker.ContrastFormat"), name, ratio.ToString("0.0", CultureInfo.CurrentCulture));
+    }
+}

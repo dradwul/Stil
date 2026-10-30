@@ -31,6 +31,7 @@ public static class DocsPages
             new("Tables", "components/tables"),
             new("Forms", "components/forms"),
             new("Pickers and uploads", "components/pickers"),
+            new("More inputs", "components/inputs"),
             new("Navigation", "components/navigation"),
             new("Tabs, dropdowns and tooltips", "components/menus"),
             new("Dialogs, drawers and toasts", "components/dialogs"),

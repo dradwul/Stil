@@ -1,0 +1,18 @@
+<div class="stil-grid">
+    <StilMaskedInput @bind-Value="_personalNumber" Label="Personal identity number" Mask="00000000-0000" class="stil-col-md-6" />
+    <StilMaskedInput @bind-Value="_postalCode" Label="Postal code" Mask="000 00" class="stil-col-md-6" />
+    <StilPinInput @bind-Value="_code" Label="Verification code" Hint="Six digits from the text message." OnComplete="Verify" class="stil-col-12" />
+</div>
+@if (_verified is not null)
+{
+    <p class="stil-text-success">Checking @_verified…</p>
+}
+
+@code {
+    private string? _personalNumber;
+    private string? _postalCode;
+    private string? _code;
+    private string? _verified;
+
+    private void Verify(string code) => _verified = code;
+}
