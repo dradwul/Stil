@@ -806,13 +806,12 @@ These need the repository or package owner.
 - [x] Rename the GitHub repository from `StilCSS` to `Stil`, then update the
   links (package metadata, READMEs, samples and docs now point at
   `dradwul/Stil`).
-- [ ] Push and confirm that CI passes on GitHub. It has only been run
-  locally so far.
-- [ ] Set up publishing: a trusted publishing policy on nuget.org for
+- [x] Push and confirm that CI passes on GitHub.
+- [x] Set up publishing: a trusted publishing policy on nuget.org for
   `release.yml`, the `nuget` environment and the `NUGET_USER` variable on
   GitHub (see Releases in CONTRIBUTING.md).
-- [ ] First release: move the Unreleased notes in CHANGELOG.md to
-  `[0.1.0]` (or a preview version), then push the tag `v0.1.0`.
+- [x] First release: `0.1.0-preview.1`, published to nuget.org from the tag
+  `v0.1.0-preview.1` on 2026-10-30.
 
 ## CSS backlog (no phase yet)
 
