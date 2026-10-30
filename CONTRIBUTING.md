@@ -216,10 +216,15 @@ All packages share the version in `Directory.Build.props` and are listed in
    AA, or if a package is missing its stylesheet. It also runs
    `node templates/test-templates.mjs` and the axe checks of
    `tests/Stil.Visual`.
-5. For a visual change, run the Playwright tests in `tests/Stil.Visual`
-   (`npm test`). Look at the differences in the report, update the
-   baselines with `npm run test:update` and commit them with the change.
-   Only the axe checks run in CI, because the baselines are made on Windows.
+5. Run as few Playwright tests in `tests/Stil.Visual` as you can, and only
+   when they are really needed: when CSS, `stil.js` or a page's markup
+   changed in a way bUnit and a look in the browser cannot cover. Then run
+   only the affected sections (`npx playwright test -g "section buttons"`),
+   update their baselines with `--update-snapshots` and commit them with the
+   change. The full suite (`npm test`, about 6 minutes) is for larger visual
+   changes, at most once per phase. Only the axe checks run in CI, because
+   the baselines are made on Windows; they catch accessibility regressions
+   without a local run.
 6. Nothing is published: no NuGet or npm releases and no deploy of the docs
    site. CI only builds, tests and packs.
 7. When you change a color formula in `src/derived.css`, update the mirror
