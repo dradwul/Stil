@@ -17,6 +17,12 @@ something usable.
 | 6 | 1.0 release and ecosystem | ✅ Done |
 | 7 | Time and planning: calendar, week planner, agenda | ✅ Done |
 | 8 | Language and localization | ✅ Done |
+| 9 | Forms 2: popover, time, slider, wizard, rating, color, masks | Planned |
+| 10 | Layout and media: skeleton, splitter, carousel, image cropper, PDF viewer | Planned |
+| 11 | Data grid 2: grouping, editing, export, tree grid | Planned |
+| 12 | Capture and records: scanner, QR codes, signature, activity log, chat | Planned |
+| 13 | Boards and workspace: kanban, command palette, recurring events, Gantt | Planned |
+| 14 | Rich text and charts 2: editor, scatter, gauge, heat map, combined | Planned |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -563,6 +569,201 @@ with the fallback font.
 
 ---
 
+## Phase 9: Forms 2
+
+Goal: the inputs that business forms still lack, built on the same field
+model as Phase 3 (label, hint, validation, `@bind-Value`, EditForm), and
+following the culture from Phase 8.
+
+**Plan:**
+
+- [ ] `StilPopover`: a panel anchored to a button, for pickers and rich
+  hints. It uses the Popover API with a positioned fallback until CSS anchor
+  positioning is in every target browser. CSS `stil-popover`.
+- [ ] `StilTimePicker` (`TimeOnly`) and `StilDateTimePicker` (`DateTime`):
+  typed input with a list of times in steps (`Step`, for example 15 minutes),
+  `Min`/`Max`, and the 24-hour clock where the culture uses it.
+- [ ] `StilSlider`: one value or a range (`@bind-Start`/`@bind-End`), steps,
+  marks and a value label. It is a native `input type="range"`, so it works
+  with the keyboard and in static SSR.
+- [ ] `StilStepper` and `StilWizard`: steps with a state (done, current,
+  error), and a wizard that validates each step's fields before moving on.
+- [ ] `StilRating`: stars or another icon, read-only or editable, as a radio
+  group.
+- [ ] `StilColorPicker`: the native color input plus swatches (the theme's
+  colors by default), with the contrast check from `derived.css` as a hint.
+- [ ] `StilMaskedInput` (`Mask="0000 00 00-0000"`) and `StilPinInput` (a code
+  in separate boxes, for one-time codes).
+- [ ] CSS for all of them, built-in texts in the five languages, bUnit tests,
+  docs and demo sections.
+
+**Done when:** a booking form (date, time, duration slider, rating) and a
+three-step sign-up wizard can be built only with Stil.
+
+## Phase 10: Layout and media
+
+Goal: the layout pieces and media components that make an app feel
+finished. Most are small, and several (skeleton, splitter) are used by the
+later phases.
+
+**Plan:**
+
+- [ ] `StilSkeleton`: placeholder shapes (text lines, a circle, a card, table
+  rows) with a calm shimmer that stops under reduced motion. The data grid,
+  cards and charts get a `Loading` look built from it.
+- [ ] `StilSplitter`: two or more panes with draggable dividers, horizontal or
+  vertical, min and max sizes, collapse to one side, keyboard resizing (the
+  WAI-ARIA window splitter pattern), and sizes that can be saved.
+- [ ] `StilCarousel`: slides with previous and next buttons, dots, swipe,
+  optional autoplay that pauses on hover and focus and never runs under
+  reduced motion. CSS scroll snap, so it also works without JavaScript.
+- [ ] `StilImageCropper`: crop and rotate an image to a fixed or free aspect
+  ratio (round for avatars), with zoom, keyboard nudging, and output as a
+  file for `StilFileUpload` or a data URL. `StilCameraCapture` takes a photo
+  with the device camera into the same flow.
+- [ ] `StilPdfViewer`: shows a PDF with the browser's own viewer inside a Stil
+  frame (toolbar with download, open in a new tab, print), with a clear
+  fallback where the browser cannot show PDFs. An app can plug in a full
+  renderer for page thumbnails and search, so Stil ships no third-party
+  code.
+- [ ] CSS (`stil-skeleton`, `stil-splitter`, `stil-carousel`, `stil-cropper`,
+  `stil-pdf`), built-in texts in the five languages, bUnit tests, docs and
+  demo sections.
+
+**Done when:** the demo has a mail-like layout (splitter with a list and a
+reading pane, skeletons while loading), a product page with a carousel, and
+a profile page where an avatar is cropped and uploaded.
+
+## Phase 11: Data grid 2
+
+Goal: the data grid features that larger apps expect, without making the
+simple grid harder to use.
+
+**Plan:**
+
+- [ ] Grouping by one or more columns, with group headers that collapse and
+  show counts and sums.
+- [ ] Column resizing and reordering by dragging (and the keyboard), sticky
+  (frozen) first and last columns, and a column chooser. The layout can be
+  saved and restored (`@bind-Layout`).
+- [ ] Inline editing: a row or a cell switches to Stil fields, validates with
+  EditForm, and raises `OnRowSave`/`OnRowCancel`.
+- [ ] Export of the filtered rows to CSV (and Excel-friendly CSV), with the
+  same formats as the cells.
+- [ ] Aggregates in a footer row (sum, average, count).
+- [ ] `StilTreeGrid<TItem>`: the data grid with expandable rows from a
+  children selector, using the WAI-ARIA treegrid pattern.
+- [ ] Server-side data (`ItemsProvider`, `StilDataGridRequest`) supports
+  grouping and aggregates.
+
+**Done when:** the demo's orders page groups by status, edits a row in place,
+exports CSV and remembers its column layout.
+
+## Phase 12: Capture and records
+
+Goal: components for apps that register things on the spot: check-ins at a
+reception, deliveries in a warehouse, visits, inspections. Few component
+libraries cover this, and it fits Stil's focus on calm, practical business
+screens.
+
+**Plan:**
+
+- [ ] `StilScanner`: reads barcodes and QR codes with the camera. It uses the
+  browser's `BarcodeDetector` where it exists (Chromium, Android) and an
+  optional decoder that the app registers elsewhere, so Stil ships no
+  third-party code. Torch and camera switching, a scan sound, and
+  `OnScan(code, format)`.
+- [ ] `StilScanInput`: an input that recognizes handheld barcode scanners
+  (fast keystrokes ending in Enter), so a USB or Bluetooth scanner works
+  without a camera. It works in every browser, and also as a plain text
+  field.
+- [ ] `StilQrCode` and `StilBarcode`: generate QR codes and Code 128 / EAN
+  barcodes as SVG in C#, with no dependency, so they render in static SSR,
+  print sharply and follow the theme.
+- [ ] `StilSignaturePad`: draw a signature with a finger, pen or mouse
+  (pointer events, pressure where available). `Clear`, undo, and output as
+  SVG, PNG and the points, with EditForm validation ("signature required").
+  A typed name is the keyboard alternative. The docs state that it is a
+  drawn signature, not a qualified electronic signature.
+- [ ] `StilActivityLog<TItem>`: a log of anything that happens (check-ins,
+  status changes, comments, system events), from `Items` and selectors like
+  the calendar: `Time`, `Title`, `Actor`, `Variant`, `Icon`, `Details`.
+  - Grouped by day with relative times ("2 minutes ago", localized), filters
+    by type and actor, search, and virtualization for long logs.
+  - Live: new entries appear at the top without the list jumping, and are
+    announced politely to screen readers.
+  - `StilTimeline` is the compact form, for an order's history in a side
+    panel.
+- [ ] `StilChat` and `StilComments`: a conversation or a comment thread on
+  top of the activity log's data model, with avatars, own and others'
+  messages, day separators, a composer (Enter sends, Shift+Enter breaks the
+  line), attachments through `StilFileUpload`, and "is typing". Transport is
+  the app's (SignalR or anything else); Stil only renders and raises
+  `OnSend`.
+- [ ] A demo page that combines them: a check-in desk that scans a badge or
+  a QR code, asks for a signature, and writes the visit to the log.
+- [ ] CSS (`stil-scanner`, `stil-signature`, `stil-log`, `stil-timeline`),
+  built-in texts in the five languages, bUnit tests and docs.
+
+**Done when:** the check-in demo works on a phone (camera), on a desktop
+with a USB scanner, and with only a keyboard.
+
+## Phase 13: Boards and workspace
+
+Goal: the building blocks of planning and internal tools beyond forms and
+grids.
+
+**Plan:**
+
+- [ ] `StilKanban`: columns of cards that move by dragging and with the
+  keyboard (stil.js, like the week planner), with WIP limits, collapsible
+  columns and `OnCardMove`.
+- [ ] `StilCommandPalette`: Ctrl+K search over pages and actions, with
+  groups, keyboard navigation and recent choices.
+- [ ] `StilNotificationCenter`: a bell with a list of unread items, built on
+  `IStilToastService`, so a toast can also be kept for later.
+- [ ] The planner, extended: recurring events (RRULE-style rules expanded by
+  Stil), a resource view (rooms or people as rows over time), and a simple
+  Gantt view with dependencies.
+
+**Done when:** the demo has a task board, a command palette and a resource
+schedule for meeting rooms.
+
+## Phase 14: Rich text and charts 2
+
+Goal: writing formatted text and showing more kinds of data, both in the Stil
+look and without large dependencies.
+
+**Plan:**
+
+- [ ] `StilRichTextEditor`: bold, italic, headings, lists, links, quotes and
+  code, with a Stil toolbar and keyboard shortcuts, on top of
+  `contenteditable`. The output is sanitized HTML (an allow-list of tags), or
+  Markdown. Works in EditForm (`@bind-Value`, required, max length) and pastes
+  cleanly from Word and web pages.
+- [ ] `StilRichTextView`: renders saved HTML or Markdown safely, with Stil's
+  typography.
+- [ ] Charts 2 in Stil.Charts, with the same accessibility as today (summary,
+  data table, tooltips):
+  - `StilScatterChart`, also as a bubble chart.
+  - `StilGauge`, for a value against a target, as an arc or a bar.
+  - `StilHeatMap`, for example activity by weekday and hour (it can show the
+    calendar's load).
+  - Combined charts: bars and a line in one chart, with a second value axis.
+- [ ] Docs, demo sections and bUnit tests.
+
+**Done when:** the demo's order page has notes written in the editor, and its
+dashboard shows a gauge, a heat map of orders per hour, and revenue as bars
+with a margin line.
+
+## Ideas for later (no phase yet)
+
+- A file manager on top of the tree view and the data grid.
+- A map component (it would need an external map service, so it is not
+  planned yet).
+
+---
+
 ## Owner tasks (not part of a phase)
 
 These need the repository or package owner.
@@ -585,4 +786,4 @@ when a phase needs them.
   `stil-btn-ghost stil-text-inherit` works on colored bars.
 - [ ] Striped or animated progress bars.
 - [ ] A 50–900 scale per brand color, if the utilities need one.
-- [ ] Carousel and popover.
+- [ ] Carousel and popover: planned in Phases 10 and 9.
