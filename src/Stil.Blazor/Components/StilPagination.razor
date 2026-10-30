@@ -1,12 +1,12 @@
 @inherits StilComponentBase
 
-<nav aria-label="@Label" @attributes="AdditionalAttributes" class="@Classes()">
+<nav aria-label="@Localize(Label, "Pagination.Label")" @attributes="AdditionalAttributes" class="@Classes()">
     <ul class="@ListClass">
         @if (ShowFirstLast)
         {
-            <li>@PageLink(1, StilIcons.ChevronsLeft, FirstText, CurrentPage == 1, current: false)</li>
+            <li>@PageLink(1, StilIcons.ChevronsLeft, Localize(FirstText, "Pagination.First"), CurrentPage == 1, current: false)</li>
         }
-        <li>@PageLink(CurrentPage - 1, StilIcons.ChevronLeft, PreviousText, CurrentPage == 1, current: false)</li>
+        <li>@PageLink(CurrentPage - 1, StilIcons.ChevronLeft, Localize(PreviousText, "Pagination.Previous"), CurrentPage == 1, current: false)</li>
         @foreach (var item in GetPageItems(CurrentPage, TotalPages, Siblings))
         {
             if (item is { } page)
@@ -18,10 +18,10 @@
                 <li><span class="stil-page-link" aria-hidden="true">…</span></li>
             }
         }
-        <li>@PageLink(CurrentPage + 1, StilIcons.ChevronRight, NextText, CurrentPage == TotalPages, current: false)</li>
+        <li>@PageLink(CurrentPage + 1, StilIcons.ChevronRight, Localize(NextText, "Pagination.Next"), CurrentPage == TotalPages, current: false)</li>
         @if (ShowFirstLast)
         {
-            <li>@PageLink(TotalPages, StilIcons.ChevronsRight, LastText, CurrentPage == TotalPages, current: false)</li>
+            <li>@PageLink(TotalPages, StilIcons.ChevronsRight, Localize(LastText, "Pagination.Last"), CurrentPage == TotalPages, current: false)</li>
         }
     </ul>
 </nav>
@@ -68,23 +68,23 @@
 
     /// <summary>The accessible name of the navigation landmark.</summary>
     [Parameter]
-    public string Label { get; set; } = "Pagination";
+    public string? Label { get; set; }
 
     /// <summary>The accessible name of the previous page button.</summary>
     [Parameter]
-    public string PreviousText { get; set; } = "Previous page";
+    public string? PreviousText { get; set; }
 
     /// <summary>The accessible name of the next page button.</summary>
     [Parameter]
-    public string NextText { get; set; } = "Next page";
+    public string? NextText { get; set; }
 
     /// <summary>The accessible name of the first page button.</summary>
     [Parameter]
-    public string FirstText { get; set; } = "First page";
+    public string? FirstText { get; set; }
 
     /// <summary>The accessible name of the last page button.</summary>
     [Parameter]
-    public string LastText { get; set; } = "Last page";
+    public string? LastText { get; set; }
 
     private int TotalPages => Math.Max(1, PageCount ?? (TotalItems is { } total ? (int)Math.Ceiling(total / (double)Math.Max(1, PageSize)) : 1));
 

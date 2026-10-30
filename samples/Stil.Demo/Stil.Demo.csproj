@@ -14,4 +14,7 @@
     <ProjectReference Include="..\..\src\Stil.Charts\Stil.Charts.csproj" />
   </ItemGroup>
 
+  <!-- A project reference does not import the package's build targets (they embed Locales/*.json). -->
+  <Import Project="..\..\src\Stil.Blazor\build\Stil.targets" />
+
 </Project>

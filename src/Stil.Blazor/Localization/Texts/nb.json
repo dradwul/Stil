@@ -1,0 +1,119 @@
+{
+  "Common": {
+    "Close": "Lukk",
+    "Loading": "Laster…"
+  },
+  "Agenda": {
+    "Tomorrow": "I morgen",
+    "Empty": "Ingenting planlagt.",
+    "BookedFormat": "{0} booket"
+  },
+  "Breadcrumbs": {
+    "Label": "Brødsmuler"
+  },
+  "Calendar": {
+    "Today": "I dag",
+    "Free": "Ledig",
+    "HoursFormat": "{0:0.#} t",
+    "PreviousMonth": "Forrige måned",
+    "NextMonth": "Neste måned",
+    "Week": "Uke",
+    "WeekShort": "U.",
+    "WeekNumber": "Ukenummer",
+    "MoreFormat": "+{0} til",
+    "OneEvent": "1 hendelse",
+    "EventsFormat": "{0} hendelser",
+    "BookedPercentFormat": "{0} % booket"
+  },
+  "WeekPlanner": {
+    "WeekTitleFormat": "Uke {0}",
+    "PreviousWeek": "Forrige uke",
+    "NextWeek": "Neste uke",
+    "PreviousDay": "Forrige dag",
+    "NextDay": "Neste dag",
+    "BookedOfFormat": "{0} booket av {1}",
+    "FreeSlotFormat": "Ledig {0}, opprett en hendelse"
+  },
+  "Chart": {
+    "ShowData": "Vis data",
+    "Empty": "Ingen data å vise.",
+    "Category": "Kategori",
+    "Total": "Totalt",
+    "Other": "Annet",
+    "Share": "Andel",
+    "BarChart": "Stolpediagram",
+    "StackedBarChart": "Stablet stolpediagram",
+    "LineChart": "Linjediagram",
+    "AreaChart": "Arealdiagram",
+    "DonutChart": "Smultringdiagram",
+    "And": "og",
+    "OneCategoryFormat": "1 kategori, {0}",
+    "CategoriesFormat": "{0} kategorier, fra {1} til {2}",
+    "OneSeriesFormat": "{0} over {1}, {2}.",
+    "SeriesFormat": "{0} med {1} serier ({2}), {3}.",
+    "NoValuesFormat": "{0}: ingen verdier.",
+    "RangeFormat": "lavest {0} ({1}), høyest {2} ({3}).",
+    "TotalsRangeFormat": "Summene går fra {0} ({1}) til {2} ({3}).",
+    "DonutSummaryFormat": "{0} over {1}: {2} deler, totalt {3}.",
+    "LargestFormat": "Størst: {0}, {1}.",
+    "SparklineFormat": "{0}: {1} verdier fra {2} til {3}, lavest {4}, høyest {5}."
+  },
+  "Combobox": {
+    "NoResults": "Ingen treff",
+    "Searching": "Søker…",
+    "RemoveFormat": "Fjern {0}"
+  },
+  "DataGrid": {
+    "Empty": "Ingen rader",
+    "Filter": "Filtrer",
+    "FilterLabelFormat": "Filtrer {0}",
+    "All": "Alle",
+    "SummaryFormat": "{0}–{1} av {2}",
+    "RowsPerPage": "Rader per side",
+    "Pages": "Tabellsider",
+    "SelectAll": "Velg alle rader på denne siden",
+    "SelectRow": "Velg rad",
+    "Yes": "Ja",
+    "No": "Nei"
+  },
+  "DateRange": {
+    "Start": "Fra",
+    "End": "Til",
+    "RangeError": "Sluttdatoen må være samme dag som eller etter startdatoen."
+  },
+  "Dialog": {
+    "Confirm": "OK",
+    "Cancel": "Avbryt"
+  },
+  "FileUpload": {
+    "Prompt": "Dra filer hit eller",
+    "Browse": "Bla gjennom",
+    "RemoveFormat": "Fjern {0}",
+    "TooLargeFormat": "{0} er større enn {1}.",
+    "WrongTypeFormat": "{0} er ikke en tillatt filtype.",
+    "TooManyFormat": "{0} ble ikke lagt til. Du kan legge til opptil {1} filer.",
+    "SelectedFormat": "{0} fil(er) valgt.",
+    "List": "Valgte filer"
+  },
+  "LanguageSelector": {
+    "Label": "Språk"
+  },
+  "Navbar": {
+    "Toggle": "Meny"
+  },
+  "Pagination": {
+    "Label": "Sidenummerering",
+    "Previous": "Forrige side",
+    "Next": "Neste side",
+    "First": "Første side",
+    "Last": "Siste side"
+  },
+  "StatCard": {
+    "Up": "opp",
+    "Down": "ned",
+    "Neutral": "uendret"
+  },
+  "Toasts": {
+    "Label": "Varsler"
+  }
+}

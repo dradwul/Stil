@@ -23,6 +23,7 @@ public static class StilIcons
     public const string File = "file";
     public const string Filter = "filter";
     public const string Folder = "folder";
+    public const string Globe = "globe";
     public const string Home = "home";
     public const string Info = "info";
     public const string Menu = "menu";
@@ -37,6 +38,12 @@ public static class StilIcons
     public const string Warning = "warning";
 
     private static readonly Lazy<IReadOnlyDictionary<string, string>> BuiltInIcons = new(Load);
+
+    // Icons that point along the reading direction (also listed in the CSS build).
+    private static readonly HashSet<string> Directional = [ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight];
+
+    /// <summary>Whether the icon points left or right, and is mirrored in right-to-left text.</summary>
+    public static bool IsDirectional(string name) => Directional.Contains(name);
 
     /// <summary>The inner SVG markup of every built-in icon, keyed by name.</summary>
     public static IReadOnlyDictionary<string, string> BuiltIn => BuiltInIcons.Value;

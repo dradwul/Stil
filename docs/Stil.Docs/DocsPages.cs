@@ -18,6 +18,7 @@ public static class DocsPages
             new("Introduction", ""),
             new("Installation", "get-started"),
             new("Theming", "theming"),
+            new("Localization", "localization"),
             new("Theme builder", "theme-builder"),
         ]),
         new("Components", StilIcons.Menu,

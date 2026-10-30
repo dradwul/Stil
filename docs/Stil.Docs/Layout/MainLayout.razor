@@ -24,6 +24,7 @@
             </div>
         </ChildContent>
         <End>
+            <StilLanguageSelector Cultures="Languages" Size="StilSize.Small" AlignEnd />
             <StilSelect TValue="StilThemeMode" Value="_mode" ValueChanged="SetModeAsync" Size="StilSize.Small" aria-label="Color mode" />
         </End>
     </StilNavbar>
@@ -44,6 +45,9 @@
 
 @code {
     private const string ModeKey = "stil-docs-mode";
+    // The docs are in English; the language changes the examples and Stil's own texts.
+    private static readonly string[] Languages = ["en", "sv", "nb", "da", "fi"];
+
     private StilThemeMode _mode = StilThemeMode.Auto;
 
     protected override async Task OnInitializedAsync()

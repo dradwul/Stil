@@ -1,6 +1,6 @@
 @inherits StilComponentBase
 
-<nav aria-label="@Label" @attributes="AdditionalAttributes" class="@Classes()">
+<nav aria-label="@Localize(Label, "Breadcrumbs.Label")" @attributes="AdditionalAttributes" class="@Classes()">
     <ol class="stil-breadcrumb">
         @if (Items is not null)
         {
@@ -26,5 +26,5 @@
 
     /// <summary>The accessible name of the navigation landmark.</summary>
     [Parameter]
-    public string Label { get; set; } = "Breadcrumb";
+    public string? Label { get; set; }
 }

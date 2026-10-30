@@ -71,6 +71,30 @@
     }
 
     [Fact]
+    public void SummaryAndTableFollowTheUiCulture()
+    {
+        var previous = CultureInfo.CurrentUICulture;
+        CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("sv-SE");
+        try
+        {
+            var cut = Render(@<StilLineChart Items="_sales" Category="s => s.Month" Title="Revenue" Format="N0">
+                <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+                <StilChartSeries Name="This year" Value="s => s.ThisYear" />
+            </StilLineChart>);
+
+            Assert.StartsWith("Linjediagram med 2 serier (Last year och This year), 5 kategorier, från Jan till May. " +
+                              "Last year: lägst 900 (Feb), högst 3,000 (May).",
+                cut.Find("svg.stil-chart-svg > desc").TextContent);
+            Assert.Equal("Visa data", cut.Find("summary").TextContent);
+            Assert.Equal("Kategori", cut.Find("thead th").TextContent);
+        }
+        finally
+        {
+            CultureInfo.CurrentUICulture = previous;
+        }
+    }
+
+    [Fact]
     public void SummaryCanBeSet()
     {
         var cut = Render(@<StilLineChart Items="_sales" Category="s => s.Month" Summary="Revenue doubled.">
@@ -345,7 +369,7 @@
 
         var desc = cut.Find("desc").TextContent;
         Assert.StartsWith("Stacked bar chart with 2 series", desc);
-        Assert.EndsWith("Sums range from 2,500 (Apr) to 7,300 (May).", desc);
+        Assert.EndsWith("Totals range from 2,500 (Apr) to 7,300 (May).", desc);
 
         Assert.Equal("Jan\nLast year: 1,200\nSum: 2,700", cut.FindAll("g.stil-chart-bar-item")[0].QuerySelector("title")!.TextContent);
         Assert.Equal(["2,700", "2,600", "4,700", "2,500", "7,300"], cut.FindAll("text.stil-chart-value").Select(t => t.TextContent));

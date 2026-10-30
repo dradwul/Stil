@@ -13,7 +13,7 @@
         <button type="button" class="stil-navbar-toggle" aria-controls="@_collapseId" aria-expanded="@(_expanded ? "true" : "false")"
                 data-stil-toggle="@(RendererInfo.IsInteractive ? null : "")" @onclick="Toggle">
             <StilIcon Name="@(_expanded ? StilIcons.Close : StilIcons.Menu)" />
-            <span class="stil-visually-hidden">@ToggleLabel</span>
+            <span class="stil-visually-hidden">@Localize(ToggleLabel, "Navbar.Toggle")</span>
         </button>
     }
     <div class="stil-navbar-collapse" id="@_collapseId">
@@ -58,7 +58,7 @@
 
     /// <summary>The accessible name of the menu button.</summary>
     [Parameter]
-    public string ToggleLabel { get; set; } = "Menu";
+    public string? ToggleLabel { get; set; }
 
     /// <summary>Keep the bar at the top of the page while scrolling.</summary>
     [Parameter]

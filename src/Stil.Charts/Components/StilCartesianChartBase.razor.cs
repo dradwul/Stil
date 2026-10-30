@@ -64,7 +64,7 @@ public abstract partial class StilCartesianChartBase<TItem> : StilChartBase<TIte
 
     private protected virtual string TotalHeader => "Total";
 
-    private protected string CategoryHeader => string.IsNullOrWhiteSpace(CategoryAxisTitle) ? CategoryText : CategoryAxisTitle;
+    private protected string CategoryHeader => string.IsNullOrWhiteSpace(CategoryAxisTitle) ? Localize(CategoryText, "Chart.Category") : CategoryAxisTitle;
 
     private protected string TickText(double value) =>
         ChartText.Value(value, TickFormat ?? Format ?? ChartText.TickFormat(Scale.Decimals));
@@ -132,13 +132,13 @@ public abstract partial class StilCartesianChartBase<TItem> : StilChartBase<TIte
         var categories = Data.Categories;
         var series = Data.Series;
         var span = categories.Count == 1
-            ? $"1 category, {categories[0]}"
-            : $"{categories.Count} categories, from {categories[0]} to {categories[^1]}";
+            ? Phrase("OneCategoryFormat", categories[0])
+            : Phrase("CategoriesFormat", categories.Count, categories[0], categories[^1]);
         var parts = new List<string>
         {
             series.Count == 1
-                ? $"{KindName} of {series[0].Name}, {span}."
-                : $"{KindName} with {series.Count} series ({ChartText.List(series.Select(s => s.Name).ToList())}), {span}."
+                ? Phrase("OneSeriesFormat", KindName, series[0].Name, span)
+                : Phrase("SeriesFormat", KindName, series.Count, ChartText.List(series.Select(s => s.Name).ToList(), Phrase("And")), span)
         };
 
         if (series.Count <= 4)
@@ -148,14 +148,14 @@ public abstract partial class StilCartesianChartBase<TItem> : StilChartBase<TIte
                 var present = s.Values.Select((v, i) => (Value: v, Index: i)).Where(p => p.Value.HasValue).ToList();
                 if (present.Count == 0)
                 {
-                    parts.Add($"{s.Name}: no values.");
+                    parts.Add(Phrase("NoValuesFormat", s.Name));
                     continue;
                 }
 
                 var low = present.MinBy(p => p.Value!.Value);
                 var high = present.MaxBy(p => p.Value!.Value);
-                var text = $"lowest {FormatValue(low.Value, s, MissingText)} ({categories[low.Index]}), highest {FormatValue(high.Value, s, MissingText)} ({categories[high.Index]}).";
-                parts.Add(series.Count == 1 ? char.ToUpperInvariant(text[0]) + text[1..] : $"{s.Name}: {text}");
+                var text = Phrase("RangeFormat", FormatValue(low.Value, s, MissingText), categories[low.Index], FormatValue(high.Value, s, MissingText), categories[high.Index]);
+                parts.Add(series.Count == 1 ? char.ToUpper(text[0], TextCulture) + text[1..] : $"{s.Name}: {text}");
             }
         }
 

@@ -41,13 +41,17 @@ public sealed class StilDataGridColumn<TItem, TValue> : StilDataGridColumnBase<T
     [Parameter]
     public StilSortDirection InitialSort { get; set; }
 
-    /// <summary>The text for true in the cells and the filter of a bool column.</summary>
+    /// <summary>The text for true in the cells and the filter of a bool column. The default is the localized "Yes".</summary>
     [Parameter]
-    public string TrueText { get; set; } = "Yes";
+    public string? TrueText { get; set; }
 
-    /// <summary>The text for false in the cells and the filter of a bool column.</summary>
+    /// <summary>The text for false in the cells and the filter of a bool column. The default is the localized "No".</summary>
     [Parameter]
-    public string FalseText { get; set; } = "No";
+    public string? FalseText { get; set; }
+
+    private string TrueDisplay => Grid?.Localize(TrueText, "DataGrid.Yes") ?? TrueText ?? "Yes";
+
+    private string FalseDisplay => Grid?.Localize(FalseText, "DataGrid.No") ?? FalseText ?? "No";
 
     private static Type ValueType => Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
 
@@ -71,7 +75,7 @@ public sealed class StilDataGridColumn<TItem, TValue> : StilDataGridColumnBase<T
         {
             if (ValueType == typeof(bool))
             {
-                return [("true", TrueText), ("false", FalseText)];
+                return [("true", TrueDisplay), ("false", FalseDisplay)];
             }
 
             return ValueType.IsEnum
@@ -101,7 +105,7 @@ public sealed class StilDataGridColumn<TItem, TValue> : StilDataGridColumnBase<T
         var value = _getter!(item);
         return builder => builder.AddContent(0, value switch
         {
-            bool flag => flag ? TrueText : FalseText,
+            bool flag => flag ? TrueDisplay : FalseDisplay,
             IFormattable formattable when Format is not null => formattable.ToString(Format, CultureInfo.CurrentCulture),
             _ => value?.ToString()
         });

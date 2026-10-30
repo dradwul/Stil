@@ -1,3 +1,4 @@
+@inject IServiceProvider StilServices
 @typeparam TValue
 @using System.Globalization
 @using System.Linq.Expressions
@@ -14,9 +15,9 @@
     }
     <CascadingValue Value="Context" IsFixed="false">
         <div class="stil-date-range-inputs">
-            <StilDatePicker TValue="TValue" Id="@StartId" Label="@StartLabel" Value="@Start" ValueChanged="OnStartChanged"
+            <StilDatePicker TValue="TValue" Id="@StartId" Label="@Localize(StartLabel, "DateRange.Start")" Value="@Start" ValueChanged="OnStartChanged"
                             ValueExpression="@StartFieldExpression" Min="@Min" Max="@StartMax" Disabled="@Disabled" Size="@Size" />
-            <StilDatePicker TValue="TValue" Id="@EndId" Label="@EndLabel" Value="@End" ValueChanged="OnEndChanged"
+            <StilDatePicker TValue="TValue" Id="@EndId" Label="@Localize(EndLabel, "DateRange.End")" Value="@End" ValueChanged="OnEndChanged"
                             ValueExpression="@EndFieldExpression" Min="@EndMin" Max="@Max" Disabled="@Disabled" Size="@Size" />
         </div>
     </CascadingValue>
@@ -64,13 +65,13 @@
     [Parameter]
     public string? Label { get; set; }
 
-    /// <summary>The label of the start field. The default is "From".</summary>
+    /// <summary>The label of the start field. The default is the localized "From".</summary>
     [Parameter]
-    public string StartLabel { get; set; } = "From";
+    public string? StartLabel { get; set; }
 
-    /// <summary>The label of the end field. The default is "To".</summary>
+    /// <summary>The label of the end field. The default is the localized "To".</summary>
     [Parameter]
-    public string EndLabel { get; set; } = "To";
+    public string? EndLabel { get; set; }
 
     /// <summary>The earliest date, as yyyy-MM-dd.</summary>
     [Parameter]
@@ -98,7 +99,7 @@
 
     /// <summary>The message when the end is before the start.</summary>
     [Parameter]
-    public string RangeErrorText { get; set; } = "The end date must be on or after the start date.";
+    public string? RangeErrorText { get; set; }
 
     /// <summary>Unmatched attributes go on the fieldset; <c>class</c> is appended to its classes.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
@@ -194,7 +195,7 @@
         _store.Clear();
         if (hasError)
         {
-            _store.Add(EndField, RangeErrorText);
+            _store.Add(EndField, Localize(RangeErrorText, "DateRange.RangeError"));
         }
 
         _storeContext.NotifyValidationStateChanged();
@@ -237,4 +238,7 @@
         DetachStore();
         GC.SuppressFinalize(this);
     }
+
+    private string Localize(string? text, string key) =>
+        text ?? StilLocalizer.Get(StilLocalizer.From(StilServices), key, System.Globalization.CultureInfo.CurrentUICulture);
 }

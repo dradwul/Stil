@@ -193,6 +193,9 @@
 /* The arrow points right; turn it up or down with the trend. */
 .stil-stat-trend[data-trend="up"] > .stil-icon { rotate: -45deg; }
 .stil-stat-trend[data-trend="down"] > .stil-icon { rotate: 45deg; }
+/* The arrow is mirrored in right-to-left text, so it turns the other way. */
+.stil-stat-trend[data-trend="up"] > .stil-icon:dir(rtl) { rotate: 45deg; }
+.stil-stat-trend[data-trend="down"] > .stil-icon:dir(rtl) { rotate: -45deg; }
 
 /* A stat card as a link. */
 a.stil-stat {

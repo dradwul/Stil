@@ -23,7 +23,7 @@
             }
             else
             {
-                @(string.Format(CurrentCulture, WeekTitleFormat, WeekNumber(_days[0])) + " ")
+                @(string.Format(CurrentCulture, Localize(WeekTitleFormat, "WeekPlanner.WeekTitleFormat"), WeekNumber(_days[0])) + " ")
                 <small>@_days[0].ToString("M", CurrentCulture) – @_days[^1].ToString("M", CurrentCulture) @_days[^1].Year</small>
             }
         </StilHeading>
@@ -31,16 +31,16 @@
         {
             var step = View == StilWeekView.Day ? 1 : 7;
             <div class="stil-cluster stil-gap-1">
-                @NavButton(_date.AddDays(-step), StilIcons.ChevronLeft, View == StilWeekView.Day ? PreviousDayText : PreviousWeekText)
+                @NavButton(_date.AddDays(-step), StilIcons.ChevronLeft, View == StilWeekView.Day ? Localize(PreviousDayText, "WeekPlanner.PreviousDay") : Localize(PreviousWeekText, "WeekPlanner.PreviousWeek"))
                 @if (HrefTemplate is not null)
                 {
-                    <a class="stil-btn stil-btn-outline stil-btn-secondary stil-btn-sm" href="@Href(Today)">@TodayText</a>
+                    <a class="stil-btn stil-btn-outline stil-btn-secondary stil-btn-sm" href="@Href(Today)">@Localize(TodayText, "Calendar.Today")</a>
                 }
                 else
                 {
-                    <button type="button" class="stil-btn stil-btn-outline stil-btn-secondary stil-btn-sm" @onclick="() => ShowDateAsync(Today)">@TodayText</button>
+                    <button type="button" class="stil-btn stil-btn-outline stil-btn-secondary stil-btn-sm" @onclick="() => ShowDateAsync(Today)">@Localize(TodayText, "Calendar.Today")</button>
                 }
-                @NavButton(_date.AddDays(step), StilIcons.ChevronRight, View == StilWeekView.Day ? NextDayText : NextWeekText)
+                @NavButton(_date.AddDays(step), StilIcons.ChevronRight, View == StilWeekView.Day ? Localize(NextDayText, "WeekPlanner.NextDay") : Localize(NextWeekText, "WeekPlanner.NextWeek"))
             </div>
         }
     </div>
@@ -55,9 +55,9 @@
                     <span class="stil-calendar-date">@date.Day</span>
                     @if (ShowLoad)
                     {
-                        <span class="stil-week-load" title="@string.Format(CurrentCulture, BookedOfFormat, FormatHours(booked), FormatHours(WorkdayEndMinute - WorkdayStartMinute))">
+                        <span class="stil-week-load" title="@string.Format(CurrentCulture, Localize(BookedOfFormat, "WeekPlanner.BookedOfFormat"), FormatHours(booked), FormatHours(WorkdayEndMinute - WorkdayStartMinute))">
                             <span class="stil-week-load-bar" style="@($"--stil-load: {Css(Load(date))}")" aria-hidden="true"></span>
-                            <span>@(booked > 0 ? FormatHours(booked) : FreeText)</span>
+                            <span>@(booked > 0 ? FormatHours(booked) : Localize(FreeText, "Calendar.Free"))</span>
                         </span>
                     }
                 </div>
@@ -83,11 +83,11 @@
                         }
 
                         var style = $"--stil-start: {start}; --stil-length: {end - start}";
-                        var text = $"{FreeText} · {FormatHours(end - start)}";
+                        var text = $"{Localize(FreeText, "Calendar.Free")} · {FormatHours(end - start)}";
                         if (OnSlotSelect.HasDelegate)
                         {
                             <button type="button" class="stil-week-free" style="@style"
-                                    aria-label="@string.Format(CurrentCulture, FreeSlotFormat, $"{DayName(date)} {FormatRange(start, end)}")"
+                                    aria-label="@string.Format(CurrentCulture, Localize(FreeSlotFormat, "WeekPlanner.FreeSlotFormat"), $"{DayName(date)} {FormatRange(start, end)}")"
                                     @onclick="() => SelectSlotAsync(date, start, Math.Min(end, start + Math.Max(SnapMinutes, NewEventMinutes)))">@text</button>
                         }
                         else
@@ -206,27 +206,27 @@
 
     /// <summary>The title of a week view; {0} is the week number.</summary>
     [Parameter]
-    public string WeekTitleFormat { get; set; } = "Week {0}";
+    public string? WeekTitleFormat { get; set; }
 
     [Parameter]
-    public string PreviousWeekText { get; set; } = "Previous week";
+    public string? PreviousWeekText { get; set; }
 
     [Parameter]
-    public string NextWeekText { get; set; } = "Next week";
+    public string? NextWeekText { get; set; }
 
     [Parameter]
-    public string PreviousDayText { get; set; } = "Previous day";
+    public string? PreviousDayText { get; set; }
 
     [Parameter]
-    public string NextDayText { get; set; } = "Next day";
+    public string? NextDayText { get; set; }
 
     /// <summary>The tooltip of a day's load bar; {0} is the booked time and {1} the length of the working day.</summary>
     [Parameter]
-    public string BookedOfFormat { get; set; } = "{0} booked of {1}";
+    public string? BookedOfFormat { get; set; }
 
     /// <summary>The accessible name of a free block; {0} is the day and time.</summary>
     [Parameter]
-    public string FreeSlotFormat { get; set; } = "Free {0}, create an event";
+    public string? FreeSlotFormat { get; set; }
 
     private int FirstHourShown => Math.Clamp(FirstHour, 0, 23);
 

@@ -1,11 +1,11 @@
 @inherits StilComponentBase
 
-<button type="button" aria-label="@Label" @attributes="AdditionalAttributes" class="@Classes("stil-close")" @onclick="OnClick"></button>
+<button type="button" aria-label="@Localize(Label, "Common.Close")" @attributes="AdditionalAttributes" class="@Classes("stil-close")" @onclick="OnClick"></button>
 
 @code {
-    /// <summary>The accessible name. The default is "Close".</summary>
+    /// <summary>The accessible name. The default is the localized "Close".</summary>
     [Parameter]
-    public string Label { get; set; } = "Close";
+    public string? Label { get; set; }
 
     /// <summary>Raised when the button is clicked.</summary>
     [Parameter]

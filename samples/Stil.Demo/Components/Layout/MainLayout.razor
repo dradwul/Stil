@@ -17,6 +17,7 @@
         <End>
             <StilSelect @bind-Value="_mode" Size="StilSize.Small" aria-label="Color mode" />
             <StilSelect @bind-Value="_palette" Items="Palettes.Keys" Size="StilSize.Small" aria-label="Palette" />
+            <StilLanguageSelector Cultures="Cultures" Size="StilSize.Small" AlignEnd />
         </End>
     </StilNavbar>
 
@@ -39,6 +40,9 @@
 </div>
 
 @code {
+    /// <summary>The languages the demo offers; Program.cs supports the same ones.</summary>
+    public static readonly string[] Cultures = ["en", "sv", "nb", "da", "fi", "ar"];
+
     private static readonly Dictionary<string, StilTheme> Palettes = new()
     {
         ["Teal"] = new(),

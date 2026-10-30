@@ -1,0 +1,11 @@
+@* The built-in texts follow the language; a parameter overrides one text on one component. *@
+<div class="stil-stack">
+    <StilPagination @bind-Page="_page" PageCount="10" ShowFirstLast />
+    <StilDateRangePicker TValue="DateOnly?" @bind-Start="_start" @bind-End="_end" Label="Period" EndLabel="Until" />
+</div>
+
+@code {
+    private int _page = 4;
+    private DateOnly? _start;
+    private DateOnly? _end;
+}

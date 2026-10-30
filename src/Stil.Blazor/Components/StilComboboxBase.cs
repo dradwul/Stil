@@ -61,11 +61,11 @@ public abstract class StilComboboxBase<TItem, TValue> : StilInputBase<TValue>
 
     /// <summary>The message when no option matches.</summary>
     [Parameter]
-    public string NoResultsText { get; set; } = "No results";
+    public string? NoResultsText { get; set; }
 
     /// <summary>The message while Search is running.</summary>
     [Parameter]
-    public string SearchingText { get; set; } = "Searching…";
+    public string? SearchingText { get; set; }
 
     protected string Text { get; set; } = "";
 

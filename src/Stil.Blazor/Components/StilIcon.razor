@@ -5,12 +5,12 @@
    registered provider, or child content, render inside a span with the same sizing. *@
 @if (ChildContent is not null || ProviderIcon is not null)
 {
-    <span @attributes="AdditionalAttributes" class="@Classes("stil-icon-slot")" style="@SizeStyle"
+    <span @attributes="AdditionalAttributes" class="@Classes("stil-icon-slot", DirectionalClass)" style="@SizeStyle"
           role="@Role" aria-label="@Label" aria-hidden="@Hidden">@(ChildContent ?? ProviderIcon)</span>
 }
 else if (BuiltInMarkup is { } markup)
 {
-    <svg @attributes="AdditionalAttributes" class="@Classes("stil-icon")" style="@SizeStyle" viewBox="0 0 24 24"
+    <svg @attributes="AdditionalAttributes" class="@Classes("stil-icon", DirectionalClass)" style="@SizeStyle" viewBox="0 0 24 24"
          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
          role="@Role" aria-label="@Label" aria-hidden="@Hidden" focusable="false">@((MarkupString)markup)</svg>
 }
@@ -40,6 +40,9 @@ else if (BuiltInMarkup is { } markup)
 
     private string? BuiltInMarkup =>
         Name is not null && StilIcons.BuiltIn.TryGetValue(Name, out var markup) ? markup : null;
+
+    // Arrows and chevrons point along the reading direction, so they are mirrored in right-to-left text.
+    private string? DirectionalClass => Name is not null && StilIcons.IsDirectional(Name) ? "stil-icon-directional" : null;
 
     private string? Role => Label is null ? null : "img";
 

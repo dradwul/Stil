@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -21,6 +21,15 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Stil.Blazor\Stil.Blazor.csproj" />
+  </ItemGroup>
+
+  <!-- A project reference does not import the package's build targets, so import them here. -->
+  <Import Project="..\..\src\Stil.Blazor\build\Stil.targets" />
+
+  <ItemGroup>
+    <!-- An invalid file in a folder of its own, for the error test. -->
+    <EmbeddedResource Include="BrokenLocales\*.json" LogicalName="BrokenLocales/%(Filename)%(Extension)" WithCulture="false" />
+    <Content Remove="BrokenLocales\*.json" />
   </ItemGroup>
 
 </Project>

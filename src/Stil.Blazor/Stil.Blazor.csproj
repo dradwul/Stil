@@ -22,12 +22,20 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.12" />
+    <!-- IStringLocalizer<T> for AddStilLocalization(); part of the ASP.NET Core shared framework. -->
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="10.0.12" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
     <!-- The built-in icons; the same file generates the stil-icon-* CSS classes. -->
     <EmbeddedResource Include="..\Stil.Css\src\icons.json" LogicalName="Stil.Blazor.icons.json" />
+    <!-- The built-in texts in en, sv, nb, da and fi. -->
+    <EmbeddedResource Include="Localization\Texts\*.json" LogicalName="Stil.Blazor.Texts.%(Filename).json" WithCulture="false" />
+    <Content Remove="Localization\Texts\*.json" />
+    <!-- Embeds an app's Locales/*.json for AddStilLocalization(), in apps and in apps that reference them. -->
+    <None Include="build\Stil.targets" Pack="true" PackagePath="build\Stil.targets" />
+    <None Include="build\Stil.targets" Pack="true" PackagePath="buildTransitive\Stil.targets" />
   </ItemGroup>
 
   <!--

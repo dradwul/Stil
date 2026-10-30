@@ -17,6 +17,13 @@ section.demo-section ~ section.demo-section {
     margin-top: var(--stil-space-6);
 }
 
+/* The right-to-left sample in the language section. */
+.demo-rtl {
+    padding: var(--stil-space-4);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-md);
+}
+
 /* The host app's own footer: outside Stil's theme and scope, so it keeps these styles. */
 .demo-host-content {
     margin: 1rem;

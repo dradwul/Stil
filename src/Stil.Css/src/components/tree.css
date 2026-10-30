@@ -72,6 +72,7 @@
 .stil-tree-toggle > * { transition: rotate var(--stil-duration-fast) var(--stil-easing); }
 
 .stil-tree-item[aria-expanded="true"] > .stil-tree-row > .stil-tree-toggle > * { rotate: 90deg; }
+.stil-tree-item[aria-expanded="true"] > .stil-tree-row > .stil-tree-toggle > *:dir(rtl) { rotate: -90deg; }
 
 .stil-tree-row > .stil-icon,
 .stil-tree-row > .stil-icon-slot { flex: none; }
@@ -120,6 +121,7 @@
 }
 
 .stil-nav-group[open] > .stil-nav-group-header > .stil-nav-group-chevron { rotate: 90deg; }
+.stil-nav-group[open] > .stil-nav-group-header > .stil-nav-group-chevron:dir(rtl) { rotate: -90deg; }
 
 /* A closed group that holds the current page shows it on its header. */
 .stil-nav-group:not([open]):has(.stil-nav-link[aria-current="page"]) > .stil-nav-group-header {

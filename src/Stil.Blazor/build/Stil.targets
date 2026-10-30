@@ -1,0 +1,22 @@
+<Project>
+
+  <!--
+    Embeds the app's localization files (Locales/**/*.json) for AddStilLocalization(), so the
+    same files work in Server, static SSR and WebAssembly without a csproj change. The resource
+    names are "Locales/sv.json" and "Locales/Pages/Home.sv.json". Set StilLocalesPath to use
+    another folder, or StilEmbedLocales to false to embed the files yourself.
+  -->
+  <PropertyGroup>
+    <StilLocalesPath Condition="'$(StilLocalesPath)' == ''">Locales</StilLocalesPath>
+    <StilEmbedLocales Condition="'$(StilEmbedLocales)' == ''">true</StilEmbedLocales>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(StilEmbedLocales)' == 'true'">
+    <EmbeddedResource Include="$(StilLocalesPath)\**\*.json"
+                      Exclude="@(EmbeddedResource)"
+                      LogicalName="$(StilLocalesPath)/%(RecursiveDir)%(Filename)%(Extension)"
+                      WithCulture="false" />
+    <Content Remove="$(StilLocalesPath)\**\*.json" />
+  </ItemGroup>
+
+</Project>

@@ -37,7 +37,7 @@
             </ul>
             @if (Results.Count == 0)
             {
-                <div class="stil-combobox-message" role="status">@(Searching ? SearchingText : NoResultsText)</div>
+                <div class="stil-combobox-message" role="status">@(Searching ? Localize(SearchingText, "Combobox.Searching") : Localize(NoResultsText, "Combobox.NoResults"))</div>
             }
         </div>
     </div>;

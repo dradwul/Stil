@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@Language" dir="@StilCulture.Direction()">
 
 <head>
     <meta charset="utf-8" />
@@ -23,3 +23,8 @@
 </body>
 
 </html>
+
+@code {
+    // The UI culture from the culture cookie; the screenshot tests run with the invariant culture.
+    private static string Language => CultureInfo.CurrentUICulture.Name is { Length: > 0 } name ? name : "en";
+}

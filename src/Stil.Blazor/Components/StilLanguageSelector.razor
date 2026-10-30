@@ -1,0 +1,104 @@
+@inherits StilComponentBase
+@inject NavigationManager Navigation
+@using System.Globalization
+
+@* A language menu. Each language is a link that stil.js (loaded automatically) turns into a
+   stored choice: the ASP.NET Core culture cookie for the server, and local storage for
+   WebAssembly (see StilCulture.ApplyStoredAsync). Then the page reloads in that language. Without
+   the script, the link still shows the page once in that language through ?culture=. *@
+<StilDropdown Variant="Variant" Appearance="Appearance" Size="Size" IconOnly="IconOnly" AlignEnd="AlignEnd" DropUp="DropUp"
+              AriaLabel="@(IconOnly ? $"{Localize(Label, "LanguageSelector.Label")}: {CurrentName}" : null)"
+              @attributes="AdditionalAttributes" class="stil-language-selector">
+    <Toggle>
+        <StilIcon Name="@StilIcons.Globe" />
+        @if (!IconOnly)
+        {
+            <span class="stil-visually-hidden">@Localize(Label, "LanguageSelector.Label"): </span>
+            <span lang="@_current">@CurrentName</span>
+        }
+    </Toggle>
+    <ChildContent>
+        @foreach (var culture in _cultures)
+        {
+            <StilDropdownItem Href="@HrefFor(culture)" hreflang="@culture" lang="@culture" data-stil-culture="@culture"
+                              aria-current="@(IsCurrent(culture) ? "true" : null)">@StilCulture.DisplayName(culture)</StilDropdownItem>
+        }
+    </ChildContent>
+</StilDropdown>
+
+@code {
+    private IReadOnlyList<string> _cultures = [];
+    private string? _current;
+
+    /// <summary>
+    /// The languages to offer, as culture names such as <c>"en"</c>, <c>"sv"</c> or <c>"sv-FI"</c>,
+    /// in the order they are shown. Use the cultures the app supports in <c>UseRequestLocalization()</c>.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public IEnumerable<string> Cultures { get; set; } = [];
+
+    /// <summary>
+    /// The language shown as chosen. The default is the one of <see cref="Cultures"/> that matches
+    /// the current UI culture, or its language (<c>sv</c> for <c>sv-SE</c>).
+    /// </summary>
+    [Parameter]
+    public string? Current { get; set; }
+
+    /// <summary>The accessible name of the menu. The default is the localized "Language".</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>Shows only the globe icon; the language name becomes part of the accessible name.</summary>
+    [Parameter]
+    public bool IconOnly { get; set; }
+
+    /// <summary>The toggle's color. The default is Secondary.</summary>
+    [Parameter]
+    public StilVariant Variant { get; set; } = StilVariant.Secondary;
+
+    /// <summary>The toggle's look. The default is Ghost, which suits a navbar.</summary>
+    [Parameter]
+    public StilButtonAppearance Appearance { get; set; } = StilButtonAppearance.Ghost;
+
+    /// <summary>The toggle's size.</summary>
+    [Parameter]
+    public StilSize Size { get; set; }
+
+    /// <summary>Aligns the menu with the end of the toggle, for a selector at the end of a navbar.</summary>
+    [Parameter]
+    public bool AlignEnd { get; set; }
+
+    /// <summary>Opens the menu upwards, for a selector in a footer.</summary>
+    [Parameter]
+    public bool DropUp { get; set; }
+
+    private string CurrentName => _current is null ? Localize(Label, "LanguageSelector.Label") : StilCulture.DisplayName(_current);
+
+    protected override void OnParametersSet()
+    {
+        _cultures = Cultures.Where(c => !string.IsNullOrWhiteSpace(c)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        _current = Current ?? Match(CultureInfo.CurrentUICulture);
+    }
+
+    // The exact culture, else its parents (sv-FI, then sv), else one of the same language.
+    private string? Match(CultureInfo culture)
+    {
+        foreach (var name in StilLocalizer.CultureChain(culture))
+        {
+            if (_cultures.FirstOrDefault(c => string.Equals(c, name, StringComparison.OrdinalIgnoreCase)) is { } exact)
+            {
+                return exact;
+            }
+        }
+
+        var language = culture.Name.Split('-')[0];
+        return language.Length == 0
+            ? null
+            : _cultures.FirstOrDefault(c => string.Equals(c.Split('-')[0], language, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private bool IsCurrent(string culture) => string.Equals(culture, _current, StringComparison.OrdinalIgnoreCase);
+
+    private string HrefFor(string culture) =>
+        Navigation.GetUriWithQueryParameters(new Dictionary<string, object?> { ["culture"] = culture, ["ui-culture"] = culture });
+}

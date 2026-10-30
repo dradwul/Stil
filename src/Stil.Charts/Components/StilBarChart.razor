@@ -28,7 +28,7 @@
 
     /// <summary>The word for the sum of a stack, in tooltips and the data table.</summary>
     [Parameter]
-    public string TotalText { get; set; } = "Total";
+    public string? TotalText { get; set; }
 
     private bool IsStacked => Stacked && Data.Series.Count > 1;
 
@@ -39,13 +39,13 @@
     private protected override string KindClass =>
         Orientation == StilChartOrientation.Horizontal ? "stil-chart-bar stil-chart-bar-horizontal" : "stil-chart-bar";
 
-    private protected override string KindName => IsStacked ? "Stacked bar chart" : "Bar chart";
+    private protected override string KindName => Localize(null, IsStacked ? "Chart.StackedBarChart" : "Chart.BarChart");
 
     private protected override bool Horizontal => Orientation == StilChartOrientation.Horizontal;
 
     private protected override bool TableTotals => IsStacked;
 
-    private protected override string TotalHeader => TotalText;
+    private protected override string TotalHeader => Localize(TotalText, "Chart.Total");
 
     private protected override double ExtraTop => ShowColumnValues ? 16 : 0;
 
@@ -81,8 +81,8 @@
         var totals = Enumerable.Range(0, Data.Categories.Count).Select(i => (Total: CategoryTotal(i), Index: i)).ToList();
         var low = totals.MinBy(t => t.Total);
         var high = totals.MaxBy(t => t.Total);
-        yield return $"{TotalText}s range from {ChartText.Value(low.Total, Format)} ({Data.Categories[low.Index]}) " +
-                     $"to {ChartText.Value(high.Total, Format)} ({Data.Categories[high.Index]}).";
+        yield return Phrase("TotalsRangeFormat", ChartText.Value(low.Total, Format), Data.Categories[low.Index],
+                            ChartText.Value(high.Total, Format), Data.Categories[high.Index]);
     }
 
     /// <summary>The value labels at the bar ends: every value, or each stack's total.</summary>
@@ -112,7 +112,7 @@
             return segments;
         }
 
-        var total = $"\n{TotalText}: {ChartText.Value(CategoryTotal(index), Format)}";
+        var total = $"\n{Localize(TotalText, "Chart.Total")}: {ChartText.Value(CategoryTotal(index), Format)}";
         var lastPositive = Data.Series.LastOrDefault(s => s.Values[index] > 0);
         var lastNegative = Data.Series.LastOrDefault(s => s.Values[index] < 0);
         double up = 0, down = 0;

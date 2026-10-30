@@ -1,0 +1,16 @@
+@* dir="rtl" (on <html> for a whole app) mirrors the layout: logical spacing, arrows and switches. *@
+<div dir="rtl" lang="ar" class="stil-stack">
+    <StilBreadcrumbs>
+        <StilBreadcrumbItem Text="الرئيسية" Href="#rtl" />
+        <StilBreadcrumbItem Text="الإعدادات" Current />
+    </StilBreadcrumbs>
+    <StilTextBox @bind-Value="_name" Label="الاسم" PrependText="@@" />
+    <StilSwitch @bind-Value="_on" Label="الإشعارات" />
+    <StilPagination @bind-Page="_page" PageCount="5" PreviousText="السابق" NextText="التالي" Label="الصفحات" />
+</div>
+
+@code {
+    private string? _name = "ليلى";
+    private bool _on = true;
+    private int _page = 2;
+}

@@ -1,0 +1,119 @@
+{
+  "Common": {
+    "Close": "Close",
+    "Loading": "Loading…"
+  },
+  "Agenda": {
+    "Tomorrow": "Tomorrow",
+    "Empty": "Nothing planned.",
+    "BookedFormat": "{0} booked"
+  },
+  "Breadcrumbs": {
+    "Label": "Breadcrumb"
+  },
+  "Calendar": {
+    "Today": "Today",
+    "Free": "Free",
+    "HoursFormat": "{0:0.#} h",
+    "PreviousMonth": "Previous month",
+    "NextMonth": "Next month",
+    "Week": "Week",
+    "WeekShort": "Wk",
+    "WeekNumber": "Week number",
+    "MoreFormat": "+{0} more",
+    "OneEvent": "1 event",
+    "EventsFormat": "{0} events",
+    "BookedPercentFormat": "{0}% booked"
+  },
+  "WeekPlanner": {
+    "WeekTitleFormat": "Week {0}",
+    "PreviousWeek": "Previous week",
+    "NextWeek": "Next week",
+    "PreviousDay": "Previous day",
+    "NextDay": "Next day",
+    "BookedOfFormat": "{0} booked of {1}",
+    "FreeSlotFormat": "Free {0}, create an event"
+  },
+  "Chart": {
+    "ShowData": "Show data",
+    "Empty": "No data to show.",
+    "Category": "Category",
+    "Total": "Total",
+    "Other": "Other",
+    "Share": "Share",
+    "BarChart": "Bar chart",
+    "StackedBarChart": "Stacked bar chart",
+    "LineChart": "Line chart",
+    "AreaChart": "Area chart",
+    "DonutChart": "Donut chart",
+    "And": "and",
+    "OneCategoryFormat": "1 category, {0}",
+    "CategoriesFormat": "{0} categories, from {1} to {2}",
+    "OneSeriesFormat": "{0} of {1}, {2}.",
+    "SeriesFormat": "{0} with {1} series ({2}), {3}.",
+    "NoValuesFormat": "{0}: no values.",
+    "RangeFormat": "lowest {0} ({1}), highest {2} ({3}).",
+    "TotalsRangeFormat": "Totals range from {0} ({1}) to {2} ({3}).",
+    "DonutSummaryFormat": "{0} of {1}: {2} parts totalling {3}.",
+    "LargestFormat": "Largest: {0}, {1}.",
+    "SparklineFormat": "{0}: {1} values from {2} to {3}, lowest {4}, highest {5}."
+  },
+  "Combobox": {
+    "NoResults": "No results",
+    "Searching": "Searching…",
+    "RemoveFormat": "Remove {0}"
+  },
+  "DataGrid": {
+    "Empty": "No items",
+    "Filter": "Filter",
+    "FilterLabelFormat": "Filter {0}",
+    "All": "All",
+    "SummaryFormat": "{0}–{1} of {2}",
+    "RowsPerPage": "Rows per page",
+    "Pages": "Table pages",
+    "SelectAll": "Select all rows on this page",
+    "SelectRow": "Select row",
+    "Yes": "Yes",
+    "No": "No"
+  },
+  "DateRange": {
+    "Start": "From",
+    "End": "To",
+    "RangeError": "The end date must be on or after the start date."
+  },
+  "Dialog": {
+    "Confirm": "OK",
+    "Cancel": "Cancel"
+  },
+  "FileUpload": {
+    "Prompt": "Drag files here or",
+    "Browse": "Browse",
+    "RemoveFormat": "Remove {0}",
+    "TooLargeFormat": "{0} is larger than {1}.",
+    "WrongTypeFormat": "{0} is not an accepted file type.",
+    "TooManyFormat": "{0} was not added. You can add up to {1} files.",
+    "SelectedFormat": "{0} file(s) selected.",
+    "List": "Selected files"
+  },
+  "LanguageSelector": {
+    "Label": "Language"
+  },
+  "Navbar": {
+    "Toggle": "Menu"
+  },
+  "Pagination": {
+    "Label": "Pagination",
+    "Previous": "Previous page",
+    "Next": "Next page",
+    "First": "First page",
+    "Last": "Last page"
+  },
+  "StatCard": {
+    "Up": "up",
+    "Down": "down",
+    "Neutral": "unchanged"
+  },
+  "Toasts": {
+    "Label": "Notifications"
+  }
+}

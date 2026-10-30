@@ -1,6 +1,7 @@
 @page "/"
 @inject IStilDialogService Dialogs
 @inject IStilToastService Toasts
+@inject IStringLocalizer<Home> L
 
 <PageTitle>Stil for Blazor</PageTitle>
 
@@ -378,19 +379,49 @@
     </p>
     <StilWeekPlanner TItem="DemoEvent" Items="_events" Start="e => e.Start" End="e => e.End" Title="e => e.Title"
                      Variant="e => e.Variant" Color="e => e.Color" Details="e => e.Place" Draft="e => e.Draft"
-                     View="StilWeekView.WorkWeek" @bind-Date="_plannerDate" Now="DemoNow" Culture="_calendarCulture"
+                     View="StilWeekView.WorkWeek" @bind-Date="_plannerDate" Now="DemoNow" Culture="CalendarCulture"
                      HeadingLevel="3" Editable OnItemClick="ShowEvent" OnItemChange="MoveEvent" OnSlotSelect="CreateEvent" />
     <div class="stil-grid stil-mt-4">
         <div class="stil-col-lg-7">
             <StilCalendar TItem="DemoEvent" Items="_events" Start="e => e.Start" End="e => e.End" Title="e => e.Title"
                           Variant="e => e.Variant" Color="e => e.Color" Details="e => e.Place" Draft="e => e.Draft"
-                          Now="DemoNow" Culture="_calendarCulture" HeadingLevel="3" @bind-SelectedDate="_calendarDate"
+                          Now="DemoNow" Culture="CalendarCulture" HeadingLevel="3" @bind-SelectedDate="_calendarDate"
                           OnItemClick="ShowEvent" OnDateOpen="d => _plannerDate = d" />
         </div>
         <div class="stil-col-lg-5">
             <StilAgenda TItem="DemoEvent" Items="_events" Start="e => e.Start" End="e => e.End" Title="e => e.Title"
                         Variant="e => e.Variant" Color="e => e.Color" Details="e => e.Place" Draft="e => e.Draft"
-                        Now="DemoNow" Culture="_calendarCulture" HeadingLevel="3" Days="3" OnItemClick="ShowEvent" />
+                        Now="DemoNow" Culture="CalendarCulture" HeadingLevel="3" Days="3" OnItemClick="ShowEvent" />
+        </div>
+    </div>
+</section>
+
+<section class="demo-section" aria-labelledby="language">
+    <h2 id="language">@L["Language.Title"]</h2>
+    <p>@L["Language.Intro"]</p>
+    <div class="stil-grid">
+        <div class="stil-col-md-6 stil-stack">
+            <StilLanguageSelector Cultures="MainLayout.Cultures" Appearance="StilButtonAppearance.Outline" class="stil-align-self-start" />
+            <StilPagination @bind-Page="_languagePage" PageCount="8" ShowFirstLast />
+            <StilFileUpload Label="@L["Language.Attachments"]" Multiple />
+        </div>
+        <div class="stil-col-md-6">
+            <div class="demo-rtl stil-stack" dir="rtl" lang="ar">
+                <StilBreadcrumbs Label="مسار التنقل">
+                    <StilBreadcrumbItem Text="الرئيسية" Href="#language" />
+                    <StilBreadcrumbItem Text="الطلبات" Href="#language" />
+                    <StilBreadcrumbItem Text="الإعدادات" Current />
+                </StilBreadcrumbs>
+                <StilTextBox @bind-Value="_rtlName" Label="الاسم" PrependText="@@" />
+                <StilSwitch @bind-Value="_rtlNotify" Label="الإشعارات" />
+                <StilPagination @bind-Page="_rtlPage" PageCount="5" Label="الصفحات" PreviousText="السابق" NextText="التالي" />
+                <div class="stil-cluster">
+                    <StilButton>حفظ</StilButton>
+                    <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline">
+                        إلغاء <StilIcon Name="@StilIcons.ArrowRight" />
+                    </StilButton>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -448,7 +479,11 @@
     // from the invariant one (Monday first, 24-hour clock), since the screenshot tests run the demo
     // with invariant globalization, where named cultures are not available.
     private static readonly DateTime DemoNow = new(2026, 10, 14, 10, 20, 0);
-    private static readonly System.Globalization.CultureInfo _calendarCulture = CreateCalendarCulture();
+    private static readonly System.Globalization.CultureInfo InvariantCalendarCulture = CreateCalendarCulture();
+
+    // When a language is chosen in the navbar (not in the screenshot tests), the calendar follows it.
+    private static System.Globalization.CultureInfo CalendarCulture =>
+        System.Globalization.CultureInfo.CurrentCulture.Name.Length == 0 ? InvariantCalendarCulture : System.Globalization.CultureInfo.CurrentCulture;
 
     private static System.Globalization.CultureInfo CreateCalendarCulture()
     {
@@ -493,18 +528,18 @@
     private DateOnly? _calendarDate;
 
     private void ShowEvent(DemoEvent e) =>
-        Toasts.Info(string.Create(_calendarCulture, $"{e.Start:dddd d MMMM HH:mm}–{e.End:HH:mm}{(e.Place is null ? "" : $", {e.Place}")}"), e.Title);
+        Toasts.Info(string.Create(CalendarCulture, $"{e.Start:dddd d MMMM HH:mm}–{e.End:HH:mm}{(e.Place is null ? "" : $", {e.Place}")}"), e.Title);
 
     private void MoveEvent(StilCalendarItemChange<DemoEvent> change)
     {
         _events[_events.IndexOf(change.Item)] = change.Item with { Start = change.Start, End = change.End };
-        Toasts.Success(string.Create(_calendarCulture, $"{change.Item.Title}: {change.Start:ddd HH:mm}–{change.End:HH:mm}."), "Moved");
+        Toasts.Success(string.Create(CalendarCulture, $"{change.Item.Title}: {change.Start:ddd HH:mm}–{change.End:HH:mm}."), "Moved");
     }
 
     private void CreateEvent(StilTimeSlot slot)
     {
         _events.Add(new("New event", slot.Start, slot.End, StilVariant.Primary, Draft: true));
-        Toasts.Success(string.Create(_calendarCulture, $"{slot.Start:ddd HH:mm}–{slot.End:HH:mm}. In an app, this opens the editor."), "Draft created");
+        Toasts.Success(string.Create(CalendarCulture, $"{slot.Start:ddd HH:mm}–{slot.End:HH:mm}. In an app, this opens the editor."), "Draft created");
     }
 
     private static readonly string[] _cities = ["Oslo", "Stockholm", "Göteborg", "Malmö", "Helsinki", "Tampere", "København", "Aarhus", "Reykjavík"];
@@ -567,6 +602,10 @@
     private string? _search;
     private bool _compact;
     private int _tablePage = 1;
+    private int _languagePage = 3;
+    private int _rtlPage = 2;
+    private string? _rtlName = "ليلى";
+    private bool _rtlNotify = true;
     private static readonly (string Label, string Value)[] _stats = [("Revenue", "€84,210"), ("Orders", "1,326"), ("Customers", "87"), ("Returns", "1.8%")];
     private static readonly DemoOrder[] _tableOrders =
     [

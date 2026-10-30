@@ -18,19 +18,19 @@
         @if (ShowNavigation)
         {
             <div class="stil-cluster stil-gap-1">
-                @NavButton(_month.AddMonths(-1), StilIcons.ChevronLeft, PreviousText)
+                @NavButton(_month.AddMonths(-1), StilIcons.ChevronLeft, Localize(PreviousText, "Calendar.PreviousMonth"))
                 @if (!Mini)
                 {
                     @if (HrefTemplate is not null)
                     {
-                        <a class="stil-btn stil-btn-outline stil-btn-secondary stil-btn-sm" href="@Href(FirstOfMonth(Today))">@TodayText</a>
+                        <a class="stil-btn stil-btn-outline stil-btn-secondary stil-btn-sm" href="@Href(FirstOfMonth(Today))">@Localize(TodayText, "Calendar.Today")</a>
                     }
                     else
                     {
-                        <button type="button" class="stil-btn stil-btn-outline stil-btn-secondary stil-btn-sm" @onclick="GoToTodayAsync">@TodayText</button>
+                        <button type="button" class="stil-btn stil-btn-outline stil-btn-secondary stil-btn-sm" @onclick="GoToTodayAsync">@Localize(TodayText, "Calendar.Today")</button>
                     }
                 }
-                @NavButton(_month.AddMonths(1), StilIcons.ChevronRight, NextText)
+                @NavButton(_month.AddMonths(1), StilIcons.ChevronRight, Localize(NextText, "Calendar.NextMonth"))
             </div>
         }
     </div>
@@ -39,7 +39,7 @@
             <tr>
                 @if (ShowWeekNumbers)
                 {
-                    <th scope="col" class="stil-calendar-week"><abbr title="@WeekNumberText">@(Mini ? WeekShortText : WeekText)</abbr></th>
+                    <th scope="col" class="stil-calendar-week"><abbr title="@Localize(WeekNumberText, "Calendar.WeekNumber")">@(Mini ? Localize(WeekShortText, "Calendar.WeekShort") : Localize(WeekText, "Calendar.Week"))</abbr></th>
                 }
                 @for (var d = 0; d < 7; d++)
                 {
@@ -56,7 +56,7 @@
                 <tr>
                     @if (ShowWeekNumbers)
                     {
-                        <td class="stil-calendar-week" role="rowheader"><span class="stil-visually-hidden">@WeekText </span>@WeekNumber(weekStart)</td>
+                        <td class="stil-calendar-week" role="rowheader"><span class="stil-visually-hidden">@Localize(WeekText, "Calendar.Week") </span>@WeekNumber(weekStart)</td>
                     }
                     @for (var d = 0; d < 7; d++)
                     {
@@ -133,39 +133,39 @@
 
     /// <summary>The accessible name of the previous month button.</summary>
     [Parameter]
-    public string PreviousText { get; set; } = "Previous month";
+    public string? PreviousText { get; set; }
 
     /// <summary>The accessible name of the next month button.</summary>
     [Parameter]
-    public string NextText { get; set; } = "Next month";
+    public string? NextText { get; set; }
 
     /// <summary>The heading of the week number column.</summary>
     [Parameter]
-    public string WeekText { get; set; } = "Week";
+    public string? WeekText { get; set; }
 
     /// <summary>The heading of the week number column in a mini month.</summary>
     [Parameter]
-    public string WeekShortText { get; set; } = "Wk";
+    public string? WeekShortText { get; set; }
 
     /// <summary>The full name of the week number column.</summary>
     [Parameter]
-    public string WeekNumberText { get; set; } = "Week number";
+    public string? WeekNumberText { get; set; }
 
     /// <summary>The link under the chips when a day has more events; {0} is how many are hidden.</summary>
     [Parameter]
-    public string MoreFormat { get; set; } = "+{0} more";
+    public string? MoreFormat { get; set; }
 
     /// <summary>Part of a day's accessible name when it has one event.</summary>
     [Parameter]
-    public string OneEventText { get; set; } = "1 event";
+    public string? OneEventText { get; set; }
 
     /// <summary>Part of a day's accessible name; {0} is the number of events.</summary>
     [Parameter]
-    public string EventsFormat { get; set; } = "{0} events";
+    public string? EventsFormat { get; set; }
 
     /// <summary>Part of a day's accessible name; {0} is the booked percentage of the working day.</summary>
     [Parameter]
-    public string BookedFormat { get; set; } = "{0}% booked";
+    public string? BookedFormat { get; set; }
 
     protected override void OnParametersSet()
     {
@@ -262,7 +262,7 @@
                 {
                     <button type="button" class="stil-calendar-more" tabindex="-1"
                             @onclick="() => OnDateOpen.InvokeAsync(date)" @onclick:stopPropagation="true">
-                        @string.Format(CurrentCulture, MoreFormat, occurrences.Count - shown)
+                        @string.Format(CurrentCulture, Localize(MoreFormat, "Calendar.MoreFormat"), occurrences.Count - shown)
                     </button>
                 }
                 <div class="stil-calendar-dots" aria-hidden="true">
@@ -280,11 +280,11 @@
         var label = date.ToString("D", CurrentCulture);
         if (count == 0)
         {
-            return $"{label}, {FreeText.ToLower(CurrentCulture)}";
+            return $"{label}, {Localize(FreeText, "Calendar.Free").ToLower(CurrentCulture)}";
         }
 
-        var events = count == 1 ? OneEventText : string.Format(CurrentCulture, EventsFormat, count);
-        var booked = string.Format(CurrentCulture, BookedFormat, Math.Round(Load(date) * 100));
+        var events = count == 1 ? Localize(OneEventText, "Calendar.OneEvent") : string.Format(CurrentCulture, Localize(EventsFormat, "Calendar.EventsFormat"), count);
+        var booked = string.Format(CurrentCulture, Localize(BookedFormat, "Calendar.BookedPercentFormat"), Math.Round(Load(date) * 100));
         return $"{label}, {events}, {booked}";
     }
 

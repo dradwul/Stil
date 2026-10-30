@@ -16,17 +16,17 @@ something usable.
 | 5 | Data components | ✅ Done |
 | 6 | 1.0 release and ecosystem | ✅ Done |
 | 7 | Time and planning: calendar, week planner, agenda | ✅ Done |
-| 8 | Language and localization | Planned |
+| 8 | Language and localization | ✅ Done |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
 end, so they never keep a phase open.
 
-## Where we are (0.1.0, Phases 0–6 done)
+## Where we are (0.1.0, Phases 0–8 done)
 
 - **Stil CSS:** an npm package (`stil-css`, not yet published). It is built
   with Lightning CSS from partials into `dist/stil.css` and `stil.min.css`
-  (about 16 kB gzipped), plus the optional 14 kB `stil.js`. It has:
+  (about 16 kB gzipped), plus the optional 16 kB `stil.js`. It has:
   - cascade layers;
   - a full `--stil-*` token set;
   - light and dark mode;
@@ -50,9 +50,12 @@ end, so they never keep a phase open.
   - `IStilDialogService` and `IStilToastService`.
   - Theming with `AddStil()`, `StilTheme`, `StilHead` and
     `StilThemeProvider`.
-  - 594 bUnit tests.
+  - Built-in texts in English, Swedish, Norwegian, Danish and Finnish,
+    `AddStilLocalization()` for the app's own JSON texts, `StilLanguageSelector`
+    and right-to-left support.
+  - 659 bUnit tests.
 - **Stil.Charts:** SVG line, area, bar, donut and sparkline charts that
-  follow the theme, with 67 bUnit tests.
+  follow the theme, with 68 bUnit tests.
 - **Stil.Templates:** `dotnet new stil-app`.
 - **Docs:** `docs/Stil.Docs`, a documentation site with live examples, API
   tables and a theme builder.
@@ -434,7 +437,7 @@ showing at a glance how busy a period is and where the free time is.
 **Not in the first version:** recurring events (the app expands them into
 occurrences) and time zone conversion (the calendar shows the times it gets).
 
-## Phase 8: Language and localization
+## Phase 8: Language and localization ✅ Done
 
 Goal: one setting makes every Stil component speak the app's language,
 the app can translate its own texts with the same package, and users can
@@ -458,59 +461,82 @@ week days already follow `CultureInfo`.
   Stil-specific API to learn, and code written against it keeps working
   with resx if the app ever moves away from Stil.
 - **One package:** everything ships in `Stil`. The only new dependency is
-  Microsoft's small `Microsoft.Extensions.Localization`, which comes along
+  Microsoft's small `Microsoft.Extensions.Localization.Abstractions`, which comes along
   transitively.
 
 **Plan:**
 
-- [ ] `IStilLocalizer`, with a default implementation backed by embedded
+- [x] `IStilLocalizer`, with a default implementation backed by embedded
   JSON files for en, sv, nb, da and fi. JSON instead of resx means no
   satellite assemblies, which keeps WebAssembly and trimming simple. The
   text parameters default to `null` and fall back to the localizer. Format
-  texts such as `HoursFormat` and `BookedFormat` are included.
-  - `AddStil(o => …)` can add or replace languages, or plug in the app's own
-    `IStringLocalizer` resources.
-  - The keys are documented, and a test checks that every built-in language
-    has every key (like the icon test).
-- [ ] `AddStilLocalization()`, an opt-in JSON-based `IStringLocalizer` for
+  texts such as `HoursFormat` and `BookedFormat` are included, and so are the
+  charts' generated summaries.
+  - `AddStil(o => o.Texts.Add(…))` rewords texts or adds a language; an own
+    `IStilLocalizer` can read them from anywhere, for example resx files.
+  - The keys are listed on the docs page, and a test checks that every
+    built-in language has every key with the same placeholders.
+- [x] `AddStilLocalization()`, an opt-in JSON-based `IStringLocalizer` for
   the app's own texts:
-  - It reads files such as `Locales/sv.json`, from disk on the server and
-    from `wwwroot` or embedded resources in WebAssembly (the same loader as
-    Stil's own texts).
-  - Keys can be shared (`sv.json`) or per type (`Pages.Home.sv.json` for
+  - It reads `Locales/**/*.json`, which the package embeds in the app
+    (`build/Stil.targets`), so the same files work in Server, static SSR and
+    WebAssembly.
+  - Keys can be shared (`sv.json`) or per type (`Pages/Home.sv.json` for
     `IStringLocalizer<Home>`). Lookups fall back from the specific culture
-    to the parent culture (`sv-FI` to `sv`) and then to a default language.
-  - A missing key shows the key itself, and logs a warning in development.
-  - Format arguments work as usual (`L["Hello {0}", name]`).
-  - Apps use `@inject IStringLocalizer<Home> L` and `@L["Save"]` as in the
-    ASP.NET Core docs.
-- [ ] `StilLanguageSelector`: a menu of the app's cultures (`Cultures`),
+    to the parent culture (`sv-FI` to `sv`) and then to the default language.
+  - A missing key shows the key itself and logs one warning.
+  - Format arguments work as usual (`L["Hello {0}", name]`), and keys under
+    `"Stil"` override Stil's own texts.
+- [x] `StilLanguageSelector`: a menu of the app's cultures (`Cultures`),
   each shown by its own name ("Svenska", "Suomi"). No flags, because flags
   are countries, not languages.
-  - Server and static SSR: it posts to `MapStilCulture()`, which sets the
-    standard ASP.NET Core culture cookie and redirects back, so it works
-    without interactivity.
-  - WebAssembly: it stores the choice and reloads, and a startup helper
-    applies it before the app renders.
-- [ ] Culture checks: numbers, dates and times follow the culture in every
-  form field, in the data grid's cells and filters, and in the charts' axes
-  and summaries.
-- [ ] Right-to-left: everything works under `dir="rtl"`.
-  - The CSS uses logical properties; replace the last two physical ones (in
-    `form.css` and `overlay.css`).
-  - `stil.js` mirrors the left and right arrow keys in tabs, the calendar
-    grid and horizontal menus.
-  - Directional icons (chevrons, arrows) flip.
+  - `stil.js` stores the choice in the standard ASP.NET Core culture cookie
+    and in local storage, then reloads. The server reads the cookie with
+    `UseRequestLocalization()`; WebAssembly apps call
+    `StilCulture.ApplyStoredAsync()` before rendering.
+  - Without the script, each link shows the page once in its language
+    through `?culture=`.
+- [x] Culture checks: numbers and dates in the data grid, the calendar and
+  the charts' axes, tables and summaries follow the current culture; ARIA
+  values and SVG coordinates stay invariant.
+- [x] Right-to-left: everything works under `dir="rtl"`.
+  - The switch knob uses a logical inset; drawers slide in from the right
+    side, and tree and nav group chevrons turn the other way.
+  - Tabs and tree views swap the left and right arrow keys in right-to-left
+    cultures, and `stil.js` does the same in the calendar grid.
+  - Arrow and chevron icons flip (`stil-icon-directional`).
   - An RTL section in the HTML showcase and the demo, with Playwright
     baselines.
-- [ ] The language selector in the docs site and the demo, translated demo
+- [x] The language selector in the docs site and the demo, translated demo
   texts through `AddStilLocalization()`, a docs page on localization, and a
   `Culture` option in `dotnet new stil-app` that sets up the localizer and
   a `Locales` folder.
-- [ ] bUnit tests for the fallback order (parameter, then app texts, then
-  built-in language, then English) and for the selector in each render
-  mode. Unit tests for the JSON localizer: shared and per-type files,
-  culture fallback, missing keys, format arguments and invalid JSON.
+- [x] bUnit tests for the fallback order (parameter, options, app texts,
+  built-in language, English), the selector, the WebAssembly helper and the
+  right-to-left keys. Unit tests for the JSON localizer: shared and per-type
+  files, culture fallback, missing keys, format arguments and invalid JSON.
+
+**Verified in the browser:** in the demo, choosing Svenska sets the cookie
+and reloads with Swedish component texts, Swedish app texts and a Swedish
+calendar; العربية turns the whole page right to left. In the docs site
+(WebAssembly) the choice is kept in local storage and applied at startup.
+
+**Changes from the plan:**
+
+- No `MapStilCulture()` endpoint. It would need the ASP.NET Core shared
+  framework, which a WebAssembly app cannot reference. `stil.js` writes the
+  same cookie in the browser instead, which works in every render mode.
+- The app's JSON files are embedded instead of read from disk or `wwwroot`,
+  so there is one way that works everywhere.
+- In Blazor components the arrow keys follow the UI culture's direction, not
+  the `dir` attribute, since the server cannot see the DOM. Set `dir` from
+  the same culture (`StilCulture.Direction()`).
+- The tooltip keeps `left: 50%`: it centers the bubble, which is the same in
+  both directions.
+- A stacked bar chart's summary says "Totals range from …" in every language
+  instead of building the word from `TotalText`.
+- To hide a file upload text, set it to `""`; `null` now means the
+  localized default.
 
 **Not in the first version:**
 

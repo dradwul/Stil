@@ -1,0 +1,7 @@
+{
+  "Language": {
+    "Title": "Language and direction",
+    "Intro": "Pick a language in the navbar or here. Stil's own texts (the pager's screen reader labels, the upload texts) are built in for English, Swedish, Norwegian, Danish and Finnish, and this section's texts come from the app's own Locales/*.json files through IStringLocalizer. Arabic switches the whole page to right to left; the panel shows the same in a right-to-left container.",
+    "Attachments": "Attachments"
+  }
+}

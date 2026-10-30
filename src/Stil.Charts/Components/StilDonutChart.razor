@@ -22,11 +22,11 @@
 
     /// <summary>The name of the combined slice.</summary>
     [Parameter]
-    public string OtherText { get; set; } = "Other";
+    public string? OtherText { get; set; }
 
     /// <summary>The word under the total in the middle.</summary>
     [Parameter]
-    public string TotalText { get; set; } = "Total";
+    public string? TotalText { get; set; }
 
     /// <summary>Shows the total in the middle. The default is true.</summary>
     [Parameter]
@@ -38,13 +38,13 @@
 
     /// <summary>The header of the share column in the data table.</summary>
     [Parameter]
-    public string ShareText { get; set; } = "Share";
+    public string? ShareText { get; set; }
 
     private sealed record Slice(string Name, double Value, double Share, string Color, bool IsOther);
 
     private protected override string KindClass => "stil-chart-donut";
 
-    private protected override string KindName => "Donut chart";
+    private protected override string KindName => Localize(null, "Chart.DonutChart");
 
     private protected override int DefaultHeight => 200;
 
@@ -86,7 +86,7 @@
         if (kept.Count < parts.Count)
         {
             var other = parts.Except(kept).Sum(p => p.Value);
-            _slices.Add(new Slice(OtherText, other, other / _total, "var(--stil-chart-other, var(--stil-color-border-strong))", true));
+            _slices.Add(new Slice(Localize(OtherText, "Chart.Other"), other, other / _total, "var(--stil-chart-other, var(--stil-color-border-strong))", true));
         }
     }
 
@@ -96,19 +96,19 @@
     {
         if (_slices.Count == 0)
         {
-            return EmptyText;
+            return Localize(EmptyText, "Chart.Empty");
         }
 
         var largest = _slices.Where(s => !s.IsOther).MaxBy(s => s.Value) ?? _slices[0];
         var parts = _slices.Select(s => $"{s.Name} {Value(s.Value)} ({ChartText.Percent(s.Share)})").ToList();
-        return $"{KindName} of {Series!.Name}: {_slices.Count} parts totalling {Value(_total)}. " +
-               $"Largest: {largest.Name}, {ChartText.Percent(largest.Share)}. {string.Join(", ", parts)}.";
+        return Phrase("DonutSummaryFormat", KindName, Series!.Name, _slices.Count, Value(_total)) + " " +
+               Phrase("LargestFormat", largest.Name, ChartText.Percent(largest.Share)) + $" {string.Join(", ", parts)}.";
     }
 
     private protected override (IReadOnlyList<string> Headers, IReadOnlyList<IReadOnlyList<string>> Rows) TableData()
     {
         var series = Series!;
-        var headers = new List<string> { CategoryText, series.Name, ShareText };
+        var headers = new List<string> { Localize(CategoryText, "Chart.Category"), series.Name, Localize(ShareText, "Chart.Share") };
         var rows = new List<IReadOnlyList<string>>();
         for (var i = 0; i < Data.Categories.Count; i++)
         {
@@ -117,7 +117,7 @@
             rows.Add([Data.Categories[i], FormatValue(value, series, MissingText), share]);
         }
 
-        rows.Add([TotalText, Value(_total), ChartText.Percent(1)]);
+        rows.Add([Localize(TotalText, "Chart.Total"), Value(_total), ChartText.Percent(1)]);
         return (headers, rows);
     }
 
@@ -125,7 +125,7 @@
     {
         if (_slices.Count == 0)
         {
-            <div class="stil-chart-empty" style="min-height: @(EffectiveHeight)px">@EmptyText</div>
+            <div class="stil-chart-empty" style="min-height: @(EffectiveHeight)px">@Localize(EmptyText, "Chart.Empty")</div>
             return;
         }
 
@@ -153,7 +153,7 @@
                 {
                     <g class="stil-chart-donut-center" style="font-size: @(ChartText.N(totalSize))px">
                         @SvgText(totalText, "0", ChartText.N(totalSize * 0.3), "stil-chart-donut-total", "middle")
-                        @SvgText(TotalText, "0", ChartText.N(totalSize * 0.3 + 18), "stil-chart-donut-label", "middle")
+                        @SvgText(Localize(TotalText, "Chart.Total"), "0", ChartText.N(totalSize * 0.3 + 18), "stil-chart-donut-label", "middle")
                     </g>
                 }
             </svg>

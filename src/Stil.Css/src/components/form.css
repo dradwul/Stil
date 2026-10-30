@@ -185,7 +185,7 @@ textarea.stil-input {
     content: "";
     position: absolute;
     top: 50%;
-    left: 0.125rem;
+    inset-inline-start: 0.125rem;
     width: 0.875rem;
     height: 0.875rem;
     border-radius: 50%;
@@ -203,6 +203,9 @@ textarea.stil-input {
     background-color: var(--_fg);
     translate: 1rem -50%;
 }
+
+/* In right-to-left text the knob starts on the right and moves left. */
+.stil-switch:checked:dir(rtl)::before { translate: -1rem -50%; }
 
 .stil-check-input:focus-visible,
 .stil-switch:focus-visible {

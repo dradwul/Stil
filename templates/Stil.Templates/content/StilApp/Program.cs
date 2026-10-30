@@ -1,3 +1,4 @@
+using StilApp;
 using StilApp.Components;
 #if (IncludeSampleContent)
 using StilApp.Data;
@@ -20,6 +21,8 @@ builder.Services.AddStil(options => options.Theme = new() { Primary = "STIL_PRIM
 // builder.Services.AddStil(options => options.Theme = new() { Primary = "#7048e8" });
 builder.Services.AddStil();
 #endif
+// The app's own texts from Locales/*.json, through IStringLocalizer<T>.
+builder.Services.AddStilLocalization();
 #if (IncludeSampleContent)
 builder.Services.AddSingleton<OrderStore>();
 #endif
@@ -35,6 +38,11 @@ if (!app.Environment.IsDevelopment())
 
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
+// The language the StilLanguageSelector in the navbar stores in the culture cookie.
+app.UseRequestLocalization(options => options
+    .SetDefaultCulture(AppCultures.Default)
+    .AddSupportedCultures(AppCultures.All)
+    .AddSupportedUICultures(AppCultures.All));
 app.UseAntiforgery();
 
 app.MapStaticAssets();

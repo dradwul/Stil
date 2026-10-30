@@ -9,4 +9,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddStil();
 
-await builder.Build().RunAsync();
+var host = builder.Build();
+// The language picked in the navbar's StilLanguageSelector.
+await StilCulture.ApplyStoredAsync(host.Services, defaultCulture: "en");
+await host.RunAsync();

@@ -82,6 +82,20 @@
         ]
       }
     },
+    "Culture": {
+      "type": "parameter",
+      "description": "The app's default language, for visitors whose browser asks for none of the offered ones. Users can change it with the language selector in the navbar. Stil's components have built-in texts in all of these; the app's own texts are in Locales/*.json (English and Swedish to start with).",
+      "datatype": "choice",
+      "choices": [
+        { "choice": "en", "description": "English" },
+        { "choice": "sv", "description": "Swedish" },
+        { "choice": "nb", "description": "Norwegian (Bokmål)" },
+        { "choice": "da", "description": "Danish" },
+        { "choice": "fi", "description": "Finnish" }
+      ],
+      "defaultValue": "en",
+      "replaces": "STIL_DEFAULT_CULTURE"
+    },
     "Interactivity": {
       "type": "parameter",
       "description": "The render mode of the app.",

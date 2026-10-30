@@ -32,7 +32,7 @@
 
     private protected override string KindClass => Area ? "stil-chart-line stil-chart-line-area" : "stil-chart-line";
 
-    private protected override string KindName => Area ? "Area chart" : "Line chart";
+    private protected override string KindName => Localize(null, Area ? "Chart.AreaChart" : "Chart.LineChart");
 
     private protected override bool LegendUsesLines => !Area;
 

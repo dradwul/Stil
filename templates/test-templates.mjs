@@ -53,7 +53,7 @@ const cases = [
         options: ['--IncludeSampleContent', 'false'],
         expect: {
             'Components/Pages/Home.razor': ['Hello, world!'],
-            'Components/Layout/MainLayout.razor': ['>Home</StilNavLink>', 'BrandText="Empty-App"'],
+            'Components/Layout/MainLayout.razor': ['@L["Nav.Home"]</StilNavLink>', 'BrandText="Empty-App"'],
         },
         absent: ['Data', 'Components/Pages/NewOrder.razor', 'Components/Pages/Home.Empty.razor'],
         forbidden: { 'Program.cs': ['OrderStore'], 'Components/_Imports.razor': ['.Data'] },
@@ -77,10 +77,12 @@ const cases = [
     },
     {
         name: 'ThemedApp',
-        options: ['--Primary', '#7048e8', '--ColorMode', 'dark'],
+        options: ['--Primary', '#7048e8', '--ColorMode', 'dark', '--Culture', 'sv'],
         expect: {
             'Program.cs': ['options.Theme = new() { Primary = "#7048e8" }'],
-            'Components/Layout/MainLayout.razor': ['StilThemeMode.Dark'],
+            'Components/Layout/MainLayout.razor': ['StilThemeMode.Dark', 'StilLanguageSelector'],
+            'AppCultures.cs': ['public const string Default = "sv";'],
+            'Locales/sv.json': ['Ny beställning'],
         },
     },
     {

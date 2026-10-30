@@ -96,15 +96,15 @@ public abstract class StilCalendarBase<TItem> : StilComponentBase
 
     /// <summary>The text of a free block.</summary>
     [Parameter]
-    public string FreeText { get; set; } = "Free";
+    public string? FreeText { get; set; }
 
-    /// <summary>How a number of hours is written; {0} is the hours. The default is "{0:0.#} h".</summary>
+    /// <summary>How a number of hours is written; {0} is the hours. The default is the localized "{0:0.#} h".</summary>
     [Parameter]
-    public string HoursFormat { get; set; } = "{0:0.#} h";
+    public string? HoursFormat { get; set; }
 
     /// <summary>The text of the button (or heading) for today.</summary>
     [Parameter]
-    public string TodayText { get; set; } = "Today";
+    public string? TodayText { get; set; }
 
     public override Task SetParametersAsync(ParameterView parameters)
     {
@@ -113,6 +113,9 @@ public abstract class StilCalendarBase<TItem> : StilComponentBase
     }
 
     internal CultureInfo CurrentCulture => Culture ?? CultureInfo.CurrentCulture;
+
+    /// <inheritdoc />
+    protected override CultureInfo TextCulture => Culture ?? CultureInfo.CurrentUICulture;
 
     internal DateTime CurrentNow => Now ?? DateTime.Now;
 
@@ -303,7 +306,7 @@ public abstract class StilCalendarBase<TItem> : StilComponentBase
 
     internal string FormatRange(int start, int end) => $"{FormatTime(start)}–{FormatTime(end)}";
 
-    internal string FormatHours(int minutes) => string.Format(CurrentCulture, HoursFormat, minutes / 60.0);
+    internal string FormatHours(int minutes) => string.Format(CurrentCulture, Localize(HoursFormat, "Calendar.HoursFormat"), minutes / 60.0);
 
     internal string DayName(DateOnly date)
     {

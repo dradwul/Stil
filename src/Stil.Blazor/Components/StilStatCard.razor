@@ -53,15 +53,15 @@ else
 
     /// <summary>The words for each direction in the default TrendLabel.</summary>
     [Parameter]
-    public string UpText { get; set; } = "up";
+    public string? UpText { get; set; }
 
     /// <summary>The word for Down in the default TrendLabel.</summary>
     [Parameter]
-    public string DownText { get; set; } = "down";
+    public string? DownText { get; set; }
 
     /// <summary>The word for Neutral in the default TrendLabel.</summary>
     [Parameter]
-    public string NeutralText { get; set; } = "unchanged";
+    public string? NeutralText { get; set; }
 
     /// <summary>Extra content under the value, such as a sparkline.</summary>
     [Parameter]
@@ -94,9 +94,9 @@ else
 
             var word = TrendDirection switch
             {
-                StilTrendDirection.Up => UpText,
-                StilTrendDirection.Down => DownText,
-                _ => NeutralText
+                StilTrendDirection.Up => Localize(UpText, "StatCard.Up"),
+                StilTrendDirection.Down => Localize(DownText, "StatCard.Down"),
+                _ => Localize(NeutralText, "StatCard.Neutral")
             };
             var amount = (Trend ?? "").Trim().TrimStart('+', '-', '−', '±').Trim();
             return string.IsNullOrEmpty(amount) ? word : $"{word} {amount}";

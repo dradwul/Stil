@@ -1,0 +1,9 @@
+{
+  "Nav": {
+    "Main": "Main",
+    "Home": "Home",
+    "Dashboard": "Dashboard",
+    "NewOrder": "New order"
+  },
+  "ColorMode": "Color mode"
+}

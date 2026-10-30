@@ -168,6 +168,21 @@ public class StilTabsTests
     }
 
     [Theory]
+    [InlineData(0, "ArrowLeft", 1)]
+    [InlineData(1, "ArrowRight", 0)]
+    public void ArrowKeysFollowTheReadingDirectionInRightToLeftCultures(int start, string key, int expected) =>
+        StilLocalizationTests.InCulture("ar-SA", () =>
+        {
+            using var context = new BunitContext();
+
+            var cut = context.Render<TabsHost>(parameters => parameters.Add(component => component.ActiveIndex, start));
+
+            Tabs(cut)[start].KeyDown(new KeyboardEventArgs { Key = key });
+
+            Assert.Equal(expected, SelectedIndex(cut));
+        });
+
+    [Theory]
     [InlineData(0, "ArrowRight", 2)]
     [InlineData(2, "ArrowLeft", 0)]
     [InlineData(2, "ArrowRight", 0)]

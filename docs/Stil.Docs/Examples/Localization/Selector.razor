@@ -1,0 +1,9 @@
+@* The languages your app supports. Choosing one stores it and reloads the page in it. *@
+<div class="stil-cluster">
+    <StilLanguageSelector Cultures="Languages" Appearance="StilButtonAppearance.Outline" />
+    <StilLanguageSelector Cultures="Languages" IconOnly />
+</div>
+
+@code {
+    private static readonly string[] Languages = ["en", "sv", "nb", "da", "fi"];
+}

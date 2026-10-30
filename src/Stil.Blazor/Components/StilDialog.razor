@@ -9,7 +9,7 @@
             <h2 class="stil-dialog-title" id="@TitleId">@Title</h2>
             @if (ShowClose)
             {
-                <button type="button" class="stil-close" aria-label="@CloseLabel" @onclick="CloseAsync"></button>
+                <button type="button" class="stil-close" aria-label="@Localize(CloseLabel, "Common.Close")" @onclick="CloseAsync"></button>
             }
         </div>
         <div class="stil-dialog-body">

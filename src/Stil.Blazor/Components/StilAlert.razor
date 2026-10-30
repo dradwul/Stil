@@ -11,7 +11,7 @@
         @if (Dismissible)
         {
             @* With static rendering, stil.js removes the alert (data-stil-dismiss). When interactive, Blazor does. *@
-            <button type="button" class="stil-close" aria-label="@CloseLabel"
+            <button type="button" class="stil-close" aria-label="@Localize(CloseLabel, "Common.Close")"
                     data-stil-dismiss="@(RendererInfo.IsInteractive ? null : "")" @onclick="DismissAsync"></button>
         }
     </div>
@@ -36,7 +36,7 @@
 
     /// <summary>The accessible name of the close button.</summary>
     [Parameter]
-    public string CloseLabel { get; set; } = "Close";
+    public string? CloseLabel { get; set; }
 
     /// <summary>Raised when the user closes the alert.</summary>
     [Parameter]

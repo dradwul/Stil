@@ -18,11 +18,11 @@
         var booked = BookedMinutes(date);
         <section class="stil-agenda-day" aria-labelledby="@headingId">
             <StilHeading Level="HeadingLevel" class="stil-agenda-day-title" id="@headingId">
-                @DayTitle(date) <small>@date.ToString("M", CurrentCulture)@(booked > 0 ? $" · {string.Format(CurrentCulture, BookedFormat, FormatHours(booked))}" : null)</small>
+                @DayTitle(date) <small>@date.ToString("M", CurrentCulture)@(booked > 0 ? $" · {string.Format(CurrentCulture, Localize(BookedFormat, "Agenda.BookedFormat"), FormatHours(booked))}" : null)</small>
             </StilHeading>
             @if (occurrences.Count == 0 && free.Count == 0)
             {
-                <p class="stil-text-muted stil-fs-sm stil-mb-0">@EmptyText</p>
+                <p class="stil-text-muted stil-fs-sm stil-mb-0">@Localize(EmptyText, "Agenda.Empty")</p>
             }
             else
             {
@@ -49,7 +49,7 @@
                         {
                             <li class="stil-agenda-item stil-agenda-free">
                                 <span class="stil-agenda-time">@FormatRange(entry.Start, entry.End)</span>
-                                <span class="stil-agenda-free-line">@FreeText · @FormatHours(entry.End - entry.Start)</span>
+                                <span class="stil-agenda-free-line">@Localize(FreeText, "Calendar.Free") · @FormatHours(entry.End - entry.Start)</span>
                             </li>
                         }
                     }
@@ -76,20 +76,20 @@
 
     /// <summary>The heading of tomorrow.</summary>
     [Parameter]
-    public string TomorrowText { get; set; } = "Tomorrow";
+    public string? TomorrowText { get; set; }
 
     /// <summary>The text of a day with nothing in it.</summary>
     [Parameter]
-    public string EmptyText { get; set; } = "Nothing planned.";
+    public string? EmptyText { get; set; }
 
     /// <summary>The booked time after a day's date; {0} is the hours.</summary>
     [Parameter]
-    public string BookedFormat { get; set; } = "{0} booked";
+    public string? BookedFormat { get; set; }
 
     private DateOnly FirstDate => Date ?? Today;
 
     private string DayTitle(DateOnly date) =>
-        date == Today ? TodayText : date == Today.AddDays(1) ? TomorrowText : DayName(date);
+        date == Today ? Localize(TodayText, "Calendar.Today") : date == Today.AddDays(1) ? Localize(TomorrowText, "Agenda.Tomorrow") : DayName(date);
 
     private readonly record struct Entry(int Start, int End, StilCalendarOccurrence<TItem>? Occurrence);
 

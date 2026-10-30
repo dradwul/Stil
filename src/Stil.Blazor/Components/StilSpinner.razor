@@ -1,6 +1,6 @@
 @inherits StilComponentBase
 
-<span role="status" @attributes="AdditionalAttributes" class="@CssClass"><span class="stil-visually-hidden">@Label</span></span>
+<span role="status" @attributes="AdditionalAttributes" class="@CssClass"><span class="stil-visually-hidden">@Localize(Label, "Common.Loading")</span></span>
 
 @code {
     /// <summary>Medium (default) or Small.</summary>
@@ -13,7 +13,7 @@
 
     /// <summary>Text for screen readers.</summary>
     [Parameter]
-    public string Label { get; set; } = "Loading…";
+    public string? Label { get; set; }
 
     private string CssClass => Classes(
         "stil-spinner",

@@ -90,8 +90,8 @@ public class StilFileUploadTests
         using var context = new BunitContext();
 
         var cut = context.Render<StilFileUpload>(parameters => parameters
-            .Add(component => component.Text, null)
-            .Add(component => component.ButtonText, null));
+            .Add(component => component.Text, "")
+            .Add(component => component.ButtonText, ""));
 
         Assert.Empty(cut.FindAll(".stil-dropzone-text, .stil-dropzone-button"));
     }

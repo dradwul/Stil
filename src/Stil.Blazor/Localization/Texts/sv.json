@@ -1,0 +1,119 @@
+{
+  "Common": {
+    "Close": "Stäng",
+    "Loading": "Laddar…"
+  },
+  "Agenda": {
+    "Tomorrow": "I morgon",
+    "Empty": "Inget planerat.",
+    "BookedFormat": "{0} bokat"
+  },
+  "Breadcrumbs": {
+    "Label": "Brödsmulor"
+  },
+  "Calendar": {
+    "Today": "I dag",
+    "Free": "Ledigt",
+    "HoursFormat": "{0:0.#} h",
+    "PreviousMonth": "Föregående månad",
+    "NextMonth": "Nästa månad",
+    "Week": "Vecka",
+    "WeekShort": "V.",
+    "WeekNumber": "Veckonummer",
+    "MoreFormat": "+{0} till",
+    "OneEvent": "1 händelse",
+    "EventsFormat": "{0} händelser",
+    "BookedPercentFormat": "{0} % bokat"
+  },
+  "WeekPlanner": {
+    "WeekTitleFormat": "Vecka {0}",
+    "PreviousWeek": "Föregående vecka",
+    "NextWeek": "Nästa vecka",
+    "PreviousDay": "Föregående dag",
+    "NextDay": "Nästa dag",
+    "BookedOfFormat": "{0} bokat av {1}",
+    "FreeSlotFormat": "Ledigt {0}, skapa en händelse"
+  },
+  "Chart": {
+    "ShowData": "Visa data",
+    "Empty": "Ingen data att visa.",
+    "Category": "Kategori",
+    "Total": "Totalt",
+    "Other": "Övrigt",
+    "Share": "Andel",
+    "BarChart": "Stapeldiagram",
+    "StackedBarChart": "Staplat stapeldiagram",
+    "LineChart": "Linjediagram",
+    "AreaChart": "Ytdiagram",
+    "DonutChart": "Ringdiagram",
+    "And": "och",
+    "OneCategoryFormat": "1 kategori, {0}",
+    "CategoriesFormat": "{0} kategorier, från {1} till {2}",
+    "OneSeriesFormat": "{0} över {1}, {2}.",
+    "SeriesFormat": "{0} med {1} serier ({2}), {3}.",
+    "NoValuesFormat": "{0}: inga värden.",
+    "RangeFormat": "lägst {0} ({1}), högst {2} ({3}).",
+    "TotalsRangeFormat": "Summorna går från {0} ({1}) till {2} ({3}).",
+    "DonutSummaryFormat": "{0} över {1}: {2} delar, totalt {3}.",
+    "LargestFormat": "Störst: {0}, {1}.",
+    "SparklineFormat": "{0}: {1} värden från {2} till {3}, lägst {4}, högst {5}."
+  },
+  "Combobox": {
+    "NoResults": "Inga träffar",
+    "Searching": "Söker…",
+    "RemoveFormat": "Ta bort {0}"
+  },
+  "DataGrid": {
+    "Empty": "Inga rader",
+    "Filter": "Filtrera",
+    "FilterLabelFormat": "Filtrera {0}",
+    "All": "Alla",
+    "SummaryFormat": "{0}–{1} av {2}",
+    "RowsPerPage": "Rader per sida",
+    "Pages": "Tabellsidor",
+    "SelectAll": "Markera alla rader på sidan",
+    "SelectRow": "Markera rad",
+    "Yes": "Ja",
+    "No": "Nej"
+  },
+  "DateRange": {
+    "Start": "Från",
+    "End": "Till",
+    "RangeError": "Slutdatumet måste vara samma dag som eller efter startdatumet."
+  },
+  "Dialog": {
+    "Confirm": "OK",
+    "Cancel": "Avbryt"
+  },
+  "FileUpload": {
+    "Prompt": "Dra filer hit eller",
+    "Browse": "Bläddra",
+    "RemoveFormat": "Ta bort {0}",
+    "TooLargeFormat": "{0} är större än {1}.",
+    "WrongTypeFormat": "{0} är inte en tillåten filtyp.",
+    "TooManyFormat": "{0} lades inte till. Du kan lägga till högst {1} filer.",
+    "SelectedFormat": "{0} fil(er) valda.",
+    "List": "Valda filer"
+  },
+  "LanguageSelector": {
+    "Label": "Språk"
+  },
+  "Navbar": {
+    "Toggle": "Meny"
+  },
+  "Pagination": {
+    "Label": "Sidnumrering",
+    "Previous": "Föregående sida",
+    "Next": "Nästa sida",
+    "First": "Första sidan",
+    "Last": "Sista sidan"
+  },
+  "StatCard": {
+    "Up": "upp",
+    "Down": "ner",
+    "Neutral": "oförändrat"
+  },
+  "Toasts": {
+    "Label": "Aviseringar"
+  }
+}

@@ -142,7 +142,7 @@ full page built only with Stil, open
 
 ## Optional JavaScript
 
-Stil works without JavaScript. The optional `dist/stil.js` module, 14 kB with
+Stil works without JavaScript. The optional `dist/stil.js` module, 16 kB with
 no dependencies, adds a few behaviours:
 
 ```html
@@ -163,7 +163,9 @@ no dependencies, adds a few behaviours:
   arrow keys move between the days, Home and End go to the start and end of
   the week, and Enter or Space clicks the day. Moving past the first or last
   day fires a bubbling `stilcalendaredge` event (`detail.key`, `detail.cell`),
-  so your script can show the previous or next month.
+  so your script can show the previous or next month. In a right-to-left page
+  the left and right arrows follow the reading direction, and `detail.key` is
+  the logical key (`ArrowRight` means the next day).
 - In a week grid with `data-stil-editable` (`div.stil-week`), the user can drag
   an event to another time or day, drag its `stil-event-resize` handle to
   change its end, and drag on empty time to mark a new event. Times snap to
@@ -176,8 +178,20 @@ no dependencies, adds a few behaviours:
   submit a form or close a dialog: the arrow keys on `role="treeitem"`,
   `role="tab"` and `role="combobox"`, and Enter and Escape in an open
   combobox.
+- A language link, `<a href="?culture=sv" data-stil-culture="sv">`, stores the
+  language in the ASP.NET Core culture cookie (`.AspNetCore.Culture`) and in
+  local storage (`stil-culture`), then reloads the page.
 
 Stil for Blazor loads it automatically.
+
+## Right to left
+
+Stil uses logical properties (start and end instead of left and right), so
+`dir="rtl"` on `<html>` or any element mirrors the layout: spacing, input
+add-ons, borders, breadcrumbs, pagination, switches, drawers and tree and nav
+group chevrons. The arrow and chevron icons (`stil-icon-arrow-left`,
+`stil-icon-chevron-right`, …) flip; add `stil-icon-directional` to an icon of
+your own that points along the reading direction.
 
 ## Utilities
 

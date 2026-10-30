@@ -44,6 +44,7 @@
                 <a href="#progress">Progress</a>
                 <a href="#spinner">Spinner</a>
                 <a href="#toasts">Toasts</a>
+                <a href="#rtl">Right to left</a>
                 <a href="#utilities">Utilities</a>
                 <div class="theme-picker">
                     <select class="stil-select stil-select-sm" data-theme-mode aria-label="Color mode">
@@ -1570,6 +1571,51 @@
                             The file is larger than 10 MB.
                         </div>
                         <button type="button" class="stil-close" aria-label="Close" onclick="this.parentElement.remove()"></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="component-group" id="rtl">
+            <h1>Right to left</h1>
+            <p>Stil uses logical properties (start and end, not left and right), so <code>dir="rtl"</code> on <code>&lt;html&gt;</code> or any element mirrors the layout: spacing, add-ons, borders, switches and drawers. Arrow and chevron icons flip, and the arrow keys in a calendar grid follow the reading direction.</p>
+
+            <div class="example" dir="rtl" lang="ar">
+                <div class="stil-stack">
+                    <nav aria-label="مسار التنقل">
+                        <ol class="stil-breadcrumb">
+                            <li><a href="#rtl">الرئيسية</a></li>
+                            <li><a href="#rtl">الطلبات</a></li>
+                            <li aria-current="page">‎#1042</li>
+                        </ol>
+                    </nav>
+                    <div class="stil-field">
+                        <label class="stil-label" for="rtl-website">الموقع</label>
+                        <div class="stil-input-group">
+                            <span class="stil-input-group-text">https://</span>
+                            <input class="stil-input" type="text" id="rtl-website" dir="ltr" placeholder="example.com">
+                        </div>
+                    </div>
+                    <label class="stil-check">
+                        <input class="stil-switch" type="checkbox" role="switch" id="rtl-notifications" checked>
+                        الإشعارات
+                    </label>
+                    <div class="stil-alert stil-alert-info" role="status">
+                        <span class="stil-alert-title">تنبيه</span>
+                        تم حفظ التغييرات.
+                    </div>
+                    <nav aria-label="الصفحات">
+                        <ul class="stil-pagination">
+                            <li><a class="stil-page-link" href="#rtl"><span class="stil-icon stil-icon-chevron-left" aria-hidden="true"></span><span class="stil-visually-hidden">السابق</span></a></li>
+                            <li><a class="stil-page-link" href="#rtl">1</a></li>
+                            <li><a class="stil-page-link" href="#rtl" aria-current="page">2</a></li>
+                            <li><a class="stil-page-link" href="#rtl">3</a></li>
+                            <li><a class="stil-page-link" href="#rtl"><span class="stil-icon stil-icon-chevron-right" aria-hidden="true"></span><span class="stil-visually-hidden">التالي</span></a></li>
+                        </ul>
+                    </nav>
+                    <div class="stil-cluster">
+                        <button class="stil-btn stil-btn-primary" type="button">حفظ</button>
+                        <button class="stil-btn stil-btn-outline stil-btn-secondary" type="button">التالي <span class="stil-icon stil-icon-arrow-right" aria-hidden="true"></span></button>
                     </div>
                 </div>
             </div>

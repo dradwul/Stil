@@ -1,26 +1,28 @@
 @inherits LayoutComponentBase
+@inject IStringLocalizer<MainLayout> L
 
 @* StilThemeProvider sets the color mode for the whole app. *@
 <StilThemeProvider Mode="_mode" class="app-shell">
     <StilNavbar Sticky CollapseBelow="StilBreakpoint.Medium" BrandText="My Stil App">
         <ChildContent>
-            <StilNav Label="Main">
+            <StilNav Label="@L["Nav.Main"]">
                 @*#if (IncludeSampleContent)
-                <StilNavLink Href="" Match="NavLinkMatch.All" Icon="@StilIcons.Home">Dashboard</StilNavLink>
-                <StilNavLink Href="orders/new" Icon="@StilIcons.Plus">New order</StilNavLink>
+                <StilNavLink Href="" Match="NavLinkMatch.All" Icon="@StilIcons.Home">@L["Nav.Dashboard"]</StilNavLink>
+                <StilNavLink Href="orders/new" Icon="@StilIcons.Plus">@L["Nav.NewOrder"]</StilNavLink>
                 ##else
-                <StilNavLink Href="" Match="NavLinkMatch.All" Icon="@StilIcons.Home">Home</StilNavLink>
+                <StilNavLink Href="" Match="NavLinkMatch.All" Icon="@StilIcons.Home">@L["Nav.Home"]</StilNavLink>
                 ##endif*@
             </StilNav>
         </ChildContent>
         <End>
+            <StilLanguageSelector Cultures="AppCultures.All" Size="StilSize.Small" AlignEnd />
             @*#if (UseServer)
-            <StilSelect @bind-Value="_mode" Size="StilSize.Small" aria-label="Color mode" />
+            <StilSelect @bind-Value="_mode" Size="StilSize.Small" aria-label="@L["ColorMode"]" />
             ##else
             @* The app has no interactivity, so the switch is a form. The choice is kept in a cookie. *@
             <form method="post" @formname="color-mode" @onsubmit="SaveColorMode" data-enhance>
                 <AntiforgeryToken />
-                <StilButtonGroup Label="Color mode">
+                <StilButtonGroup Label="@L["ColorMode"]">
                     @foreach (var mode in Enum.GetValues<StilThemeMode>())
                     {
                         <StilButton Type="submit" name="ColorMode" value="@mode" Size="StilSize.Small"

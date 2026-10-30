@@ -412,6 +412,7 @@ Recurring events and time zones are up to the app.
 | `StilNav` | `Items` or `StilNavLink` children, `Vertical`, `Pills`, `Label` |
 | `StilNavLink` | `Href`, `Match`, `Icon`, `Badge`/`BadgeVariant`. Wraps Blazor's `NavLink`, so `aria-current` follows the route. |
 | `StilBreadcrumbs` | `Items` (`StilLinkItem`: Text, Href) or `StilBreadcrumbItem` children (`Text`, `Href`, `Current`), `Label`. The last item is the current page. |
+| `StilLanguageSelector` | `Cultures` (for example `["en", "sv", "fi"]`), `Current`, `IconOnly`, `Label`, `Variant`, `Appearance`, `Size`, `AlignEnd`, `DropUp`. A language menu; see [Localization](#localization). |
 | `StilPagination` | `@bind-Page` (1-based), `PageCount` or `TotalItems` + `PageSize`, `MaxVisiblePages` (default 7, with ellipses), `ShowFirstLast`, `HrefTemplate` (links, for example `"orders?page={0}"`), `Size`, `Label`, `PreviousText`/`NextText`/`FirstText`/`LastText` |
 | `StilNavGroup` | `Title`, `Icon`, `@bind-Expanded`, `StilNavLink` children. A collapsible group in a vertical `StilNav`; it opens by itself when one of its links is the current page. |
 | `StilTreeView<TItem>` | `Items`, `ChildrenSelector`, `ItemText` or `ItemTemplate`, `ItemIcon`, `@bind-SelectedItem`, `@bind-ExpandedItems`, `ExpandAll`, `ItemKey`, `Label`. The WAI-ARIA tree pattern: arrow keys, Home and End move, Right and Left expand and collapse. |
@@ -559,6 +560,53 @@ inside the provider so dialogs and toasts follow its theme.
 You can also override tokens in CSS. Stil's rules are in cascade layers, so
 your CSS always wins. See the
 [theming guide and full token list](https://github.com/dradwul/StilCSS/tree/main/src/Stil.Css#theming).
+
+## Localization
+
+Every text a component writes by itself ("Next page" for screen readers, "No
+items", chart summaries) is built in for English, Swedish, Norwegian
+(Bokmål), Danish and Finnish, and follows `CultureInfo.CurrentUICulture`. An
+app that sets its culture gets translated components with no Stil setting;
+`sv-FI` gets Swedish, and other languages get English. A text parameter on a
+component (`NextText`, `EmptyText`, …) always wins.
+
+```csharp
+// Reword a text everywhere, or add a language (the keys are on the docs site).
+builder.Services.AddStil(options => options.Texts
+    .Add("sv", "Dialog.Confirm", "Ja")
+    .Add("de", "Common.Close", "Schließen"));
+
+// The app's own texts from Locales/sv.json, Locales/Pages/Home.sv.json, …
+builder.Services.AddStilLocalization();
+
+// Server and static SSR: the language the selector stores in the culture cookie.
+app.UseRequestLocalization(o => o.SetDefaultCulture("en")
+    .AddSupportedCultures(cultures).AddSupportedUICultures(cultures));
+```
+
+```razor
+@inject IStringLocalizer<Home> L
+
+<h1>@L["Orders.Title"]</h1>
+<StilLanguageSelector Cultures="@(["en", "sv", "fi"])" AlignEnd />
+```
+
+- `AddStilLocalization()` reads JSON files through the standard
+  `IStringLocalizer<T>`. The package embeds `Locales/**/*.json` in the app, so
+  the same files work in Server, static SSR and WebAssembly. A type's own file
+  wins over the shared one; lookups fall back from `sv-FI` to `sv` to the
+  default language (`en`), and a missing key shows the key. Keys under
+  `"Stil"` override Stil's own texts.
+- `StilLanguageSelector` lists languages by their own names and stores the
+  choice in the ASP.NET Core culture cookie and in local storage (through
+  stil.js), then reloads. In WebAssembly, call
+  `await StilCulture.ApplyStoredAsync(host.Services)` before `RunAsync()` and
+  set `BlazorWebAssemblyLoadAllGlobalizationData`.
+- Right to left: put `dir="@StilCulture.Direction()"` on `<html>`. The CSS
+  mirrors, arrow and chevron icons flip, and tabs and tree views swap the
+  left and right arrow keys in right-to-left cultures.
+- Register your own `IStilLocalizer` to read Stil's texts from elsewhere, for
+  example resx files; return `null` for the texts it does not have.
 
 ## Development
 

@@ -22,6 +22,9 @@
 //     midnight). The page saves the change and redraws: the grid puts the event back first.
 //   - Keys that a widget handles itself (arrows in a tree, tab list or combobox; Enter and Escape
 //     in an open combobox) do not also scroll the page, submit the form or close a dialog.
+//   - Language links (a[data-stil-culture="sv"]) store the culture in the ASP.NET Core culture
+//     cookie and in local storage (key stil-culture), then reload the page.
+//   - In a right-to-left page the arrow keys of the calendar grid follow the reading direction.
 // Stil for Blazor loads this module automatically and also uses showDialog/closeDialog.
 
 const initialized = Symbol.for('stil.initialized');
@@ -29,6 +32,7 @@ const initialized = Symbol.for('stil.initialized');
 export function init(root = document) {
     if (root[initialized]) return;
     root[initialized] = true;
+    root.addEventListener('click', onCultureClick, true);
     root.addEventListener('click', onClick);
     root.addEventListener('keydown', onKeyDown);
     // The toggle event does not bubble, so listen in the capture phase.
@@ -71,6 +75,32 @@ function onClick(event) {
     if (closer) {
         closer.closest('dialog')?.close();
     }
+}
+
+// Language links (data-stil-culture="sv", as StilLanguageSelector renders them): store the choice
+// in the standard ASP.NET Core culture cookie and in local storage (for WebAssembly), then reload
+// without the ?culture= fallback the link carries for pages without this script. Runs in the
+// capture phase, before a framework's own link handling.
+function onCultureClick(event) {
+    const link = event.target instanceof Element ? event.target.closest('a[data-stil-culture]') : null;
+    if (!link || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    event.stopPropagation();
+
+    const culture = link.getAttribute('data-stil-culture');
+    const cookie = encodeURIComponent(`c=${culture}|uic=${culture}`);
+    document.cookie = `.AspNetCore.Culture=${cookie}; path=/; max-age=31536000; samesite=lax`;
+    try {
+        localStorage.setItem('stil-culture', culture);
+    } catch {
+        // Storage can be blocked; the cookie still works on the server.
+    }
+
+    const url = new URL(location.href);
+    url.searchParams.delete('culture');
+    url.searchParams.delete('ui-culture');
+    if (url.href === location.href) location.reload();
+    else location.replace(url.href);
 }
 
 function onKeyDown(event) {
@@ -136,6 +166,12 @@ function moveInDropdown(event) {
     return true;
 }
 
+// ArrowLeft and ArrowRight as "earlier" and "later": swapped when the element is right to left.
+function logicalArrow(key, element) {
+    if (getComputedStyle(element).direction !== 'rtl') return key;
+    return key === 'ArrowLeft' ? 'ArrowRight' : key === 'ArrowRight' ? 'ArrowLeft' : key;
+}
+
 // The WAI-ARIA grid pattern for a month: one day is in the tab order (tabindex="0"), the
 // arrow keys move it. Day cells are the td elements with role="gridcell".
 const calendarKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'Enter', ' '];
@@ -151,6 +187,9 @@ function moveInCalendar(event) {
         return true;
     }
 
+    // In a right-to-left page the next day is to the left, so the keys are swapped. The edge
+    // event reports the logical key: ArrowRight always means "later".
+    const key = logicalArrow(event.key, cell);
     const row = cell.parentElement;
     const days = [...row.querySelectorAll(':scope > td[role="gridcell"]')];
     const rows = [...cell.closest('table').querySelectorAll(':scope > tbody > tr')];
@@ -165,10 +204,10 @@ function moveInCalendar(event) {
         ArrowDown: dayIn(rowIndex + 1),
         Home: days[0],
         End: days[days.length - 1],
-    }[event.key];
+    }[key];
 
     if (!next) {
-        cell.dispatchEvent(new CustomEvent('stilcalendaredge', { bubbles: true, detail: { key: event.key, cell } }));
+        cell.dispatchEvent(new CustomEvent('stilcalendaredge', { bubbles: true, detail: { key, cell } }));
         return true;
     }
 

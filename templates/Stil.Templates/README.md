@@ -50,6 +50,7 @@ dotnet nuget add source ~/stil-feed --name stil-local
 | `--IncludeSampleContent` | `true`, `false` | `true` | Adds a dashboard with KPI cards (`StilStatCard`) and a `StilDataGrid`, and a form page with an `EditForm` and validation. With `false` the app has one empty Home page. |
 | `--Primary` | a CSS color, for example `#7048e8` | Stil's teal (`#34dbbf`) | The brand color. It is set with `AddStil()` in `Program.cs`, so it applies to the whole app. |
 | `--ColorMode` | `light`, `dark`, `auto` | `auto` | The color mode the app starts in. `auto` follows the operating system. Users can change it with the switch in the navbar. |
+| `--Culture` | `en`, `sv`, `nb`, `da`, `fi` | `en` | The default language, for visitors whose browser asks for none of the offered ones. Users can change it with the language selector in the navbar. Stil's components have built-in texts in all five; the app's own texts are in `Locales/*.json` (English and Swedish to start with) and are read with `IStringLocalizer<T>`. |
 | `--StilVersion` | a version | `0.1.0` | The version of the `Stil` package to reference. |
 | `-f`, `--framework` | `net10.0` | `net10.0` | The target framework. |
 | `--no-restore` | | | Skips the restore after creating the app. |
@@ -68,13 +69,16 @@ dotnet new stil-app -n Contoso.Site --Interactivity None --IncludeSampleContent 
 
 ## What the app contains
 
-- `Program.cs` registers Stil with `AddStil()`.
+- `Program.cs` registers Stil with `AddStil()`, the app's translations with
+  `AddStilLocalization()`, and the language cookie with `UseRequestLocalization()`.
+- `AppCultures.cs` lists the languages and the default one; `Locales/en.json`
+  and `Locales/sv.json` hold the app's own texts. Add a file per language.
 - `Components/App.razor` adds the stylesheet with `<StilHead />` and sets
   `class="stil-scope"` on `<body>`.
 - `Components/Layout/MainLayout.razor` has a `StilThemeProvider` around a
   `StilNavbar` (it collapses behind a menu button on small screens), a
-  `StilNav` with `StilNavLink`s and a color-mode switch. In the interactive
-  app it also has `StilDialogHost` and `StilToastHost`, so
+  `StilNav` with `StilNavLink`s, a `StilLanguageSelector` and a color-mode
+  switch. In the interactive app it also has `StilDialogHost` and `StilToastHost`, so
   `IStilDialogService` and `IStilToastService` work on every page.
 - With `--Interactivity None`, the color-mode switch is a small form that
   keeps the choice in a cookie, and the data grid shows every row.

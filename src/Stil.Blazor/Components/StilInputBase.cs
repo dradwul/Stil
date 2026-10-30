@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -14,6 +15,7 @@ public abstract class StilInputBase<TValue> : ComponentBase, IDisposable
 {
     private EditContext? _subscribedContext;
     private readonly string _generatedId;
+    private IStilLocalizer? _localizer;
 
     protected StilInputBase()
     {
@@ -22,6 +24,13 @@ public abstract class StilInputBase<TValue> : ComponentBase, IDisposable
 
     [CascadingParameter]
     private EditContext? CascadedEditContext { get; set; }
+
+    [Inject]
+    private IServiceProvider StilServices { get; set; } = default!;
+
+    /// <summary><paramref name="text"/> when it is set, otherwise the localized built-in text for <paramref name="key"/>.</summary>
+    protected string Localize(string? text, string key) =>
+        text ?? StilLocalizer.Get(_localizer ??= StilLocalizer.From(StilServices), key, CultureInfo.CurrentUICulture);
 
     /// <summary>The value of the field. Bind it with @bind-Value.</summary>
     [Parameter]

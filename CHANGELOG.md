@@ -33,8 +33,12 @@ Nothing has been published.
     line, and an agenda. `stil.js` adds keyboard navigation in the month grid
     and dragging events in a week grid (`data-stil-editable`).
   - About 900 utility classes and about 30 built-in icons (`stil-icon-*`).
-  - `stil.js`, an optional 14 kB module for dropdowns, dismissing, dialogs,
-    toggles, calendar dragging and keyboard handling.
+  - Right-to-left support: logical properties throughout, mirrored switches,
+    drawers and tree chevrons, and arrow and chevron icons that flip under
+    `dir="rtl"` (`stil-icon-directional` for icons of your own).
+  - `stil.js`, an optional 16 kB module for dropdowns, dismissing, dialogs,
+    toggles, calendar dragging, language links (`data-stil-culture`) and
+    keyboard handling.
 - **Stil for Blazor** (`Stil`):
   - About 60 components, with one for every Stil CSS component, including
     `StilDataGrid` (sorting, filtering, paging, selection, virtualization and
@@ -51,11 +55,24 @@ Nothing has been published.
     `StilHead` and `StilThemeProvider`.
   - `StilIcon` with built-in icons, and `IStilIconProvider` for other icon
     sets.
+  - Localization: every built-in text (screen reader labels, empty states,
+    chart summaries) in English, Swedish, Norwegian (Bokmål), Danish and
+    Finnish, following the UI culture. Text parameters override one
+    component, `AddStil(o => o.Texts.Add(…))` rewords a text everywhere or
+    adds a language, and `IStilLocalizer` reads texts from elsewhere.
+  - `AddStilLocalization()`: the app's own texts from `Locales/*.json`
+    through the standard `IStringLocalizer<T>`, embedded by the package so
+    the files work in Server, static SSR and WebAssembly.
+  - `StilLanguageSelector` and `StilCulture`: a language menu that stores
+    the choice in the ASP.NET Core culture cookie and local storage, and
+    helpers for WebAssembly startup and `<html dir>`. Tabs and tree views
+    follow the reading direction of right-to-left cultures.
   - XML documentation for IntelliSense, Source Link and symbol packages.
 - **Stil.Charts**: SVG line, area, bar (grouped, stacked or horizontal), donut
   and sparkline charts that follow the theme and dark mode and render in static
   SSR. Each chart has a generated summary and a data table for screen readers.
-- **Stil.Templates**: `dotnet new stil-app`.
+- **Stil.Templates**: `dotnet new stil-app`, with a language selector,
+  `Locales/*.json` and a `Culture` option for the default language.
 - A documentation site with live examples, API tables and a theme builder.
 - A guide for migrating from Bootstrap.
 

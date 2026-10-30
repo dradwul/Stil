@@ -12,7 +12,7 @@
                 <span class="stil-chip-text">@TextOf(item)</span>
                 @if (!Disabled)
                 {
-                    <button type="button" class="stil-chip-remove" aria-label="@string.Format(System.Globalization.CultureInfo.CurrentCulture, RemoveLabelFormat, TextOf(item))"
+                    <button type="button" class="stil-chip-remove" aria-label="@string.Format(System.Globalization.CultureInfo.CurrentCulture, Localize(RemoveLabelFormat, "Combobox.RemoveFormat"), TextOf(item))"
                             @onclick="() => RemoveAsync(item)" @onclick:stopPropagation="true">
                         <StilIcon Name="@StilIcons.Close" />
                     </button>
@@ -46,7 +46,7 @@
             </ul>
             @if (Results.Count == 0)
             {
-                <div class="stil-combobox-message" role="status">@(Searching ? SearchingText : NoResultsText)</div>
+                <div class="stil-combobox-message" role="status">@(Searching ? Localize(SearchingText, "Combobox.Searching") : Localize(NoResultsText, "Combobox.NoResults"))</div>
             }
         </div>
     </div>
@@ -57,7 +57,7 @@
 
     /// <summary>The accessible name of a chip's remove button; {0} is the option text.</summary>
     [Parameter]
-    public string RemoveLabelFormat { get; set; } = "Remove {0}";
+    public string? RemoveLabelFormat { get; set; }
 
     private IReadOnlyCollection<TItem> Chosen => Value ?? [];
 

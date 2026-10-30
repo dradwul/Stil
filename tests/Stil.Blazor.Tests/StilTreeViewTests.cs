@@ -343,6 +343,19 @@ public class StilTreeViewTests
         Assert.Equal("Docs", TabStop(cut));
     }
 
+    [Fact]
+    public void ArrowRightCollapsesInRightToLeftCultures() => StilLocalizationTests.InCulture("he-IL", () =>
+    {
+        using var context = new BunitContext();
+
+        var cut = RenderTree(context, parameters => parameters.Add(component => component.ExpandAll, true));
+        Item(cut, "Guide").Focus();
+
+        Item(cut, "Guide").KeyDown(new KeyboardEventArgs { Key = "ArrowRight" });
+
+        Assert.Equal("false", Item(cut, "Guide").GetAttribute("aria-expanded"));
+    });
+
     [Theory]
     [InlineData("Enter")]
     [InlineData(" ")]

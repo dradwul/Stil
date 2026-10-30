@@ -89,7 +89,8 @@
                 return $"{Label}: {V(_values[0])}.";
             }
 
-            return $"{Label}: {_values.Count} values from {V(_values[0])} to {V(_values[^1])}, lowest {V(_values.Min())}, highest {V(_values.Max())}.";
+            return string.Format(System.Globalization.CultureInfo.CurrentCulture, Localize(null, "Chart.SparklineFormat"),
+                Label, _values.Count, V(_values[0]), V(_values[^1]), V(_values.Min()), V(_values.Max()));
         }
     }
 

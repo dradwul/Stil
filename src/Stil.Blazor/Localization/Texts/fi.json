@@ -1,0 +1,119 @@
+{
+  "Common": {
+    "Close": "Sulje",
+    "Loading": "Ladataan…"
+  },
+  "Agenda": {
+    "Tomorrow": "Huomenna",
+    "Empty": "Ei suunniteltua.",
+    "BookedFormat": "{0} varattu"
+  },
+  "Breadcrumbs": {
+    "Label": "Murupolku"
+  },
+  "Calendar": {
+    "Today": "Tänään",
+    "Free": "Vapaa",
+    "HoursFormat": "{0:0.#} h",
+    "PreviousMonth": "Edellinen kuukausi",
+    "NextMonth": "Seuraava kuukausi",
+    "Week": "Viikko",
+    "WeekShort": "Vk",
+    "WeekNumber": "Viikkonumero",
+    "MoreFormat": "+{0} lisää",
+    "OneEvent": "1 tapahtuma",
+    "EventsFormat": "{0} tapahtumaa",
+    "BookedPercentFormat": "{0} % varattu"
+  },
+  "WeekPlanner": {
+    "WeekTitleFormat": "Viikko {0}",
+    "PreviousWeek": "Edellinen viikko",
+    "NextWeek": "Seuraava viikko",
+    "PreviousDay": "Edellinen päivä",
+    "NextDay": "Seuraava päivä",
+    "BookedOfFormat": "{0} / {1} varattu",
+    "FreeSlotFormat": "Vapaa {0}, luo tapahtuma"
+  },
+  "Chart": {
+    "ShowData": "Näytä tiedot",
+    "Empty": "Ei näytettäviä tietoja.",
+    "Category": "Luokka",
+    "Total": "Yhteensä",
+    "Other": "Muut",
+    "Share": "Osuus",
+    "BarChart": "Pylväskaavio",
+    "StackedBarChart": "Pinottu pylväskaavio",
+    "LineChart": "Viivakaavio",
+    "AreaChart": "Aluekaavio",
+    "DonutChart": "Rengaskaavio",
+    "And": "ja",
+    "OneCategoryFormat": "1 luokka, {0}",
+    "CategoriesFormat": "{0} luokkaa, {1}–{2}",
+    "OneSeriesFormat": "{0}: {1}, {2}.",
+    "SeriesFormat": "{0}, {1} sarjaa ({2}), {3}.",
+    "NoValuesFormat": "{0}: ei arvoja.",
+    "RangeFormat": "pienin {0} ({1}), suurin {2} ({3}).",
+    "TotalsRangeFormat": "Summat vaihtelevat välillä {0} ({1}) – {2} ({3}).",
+    "DonutSummaryFormat": "{0}: {1}, {2} osaa, yhteensä {3}.",
+    "LargestFormat": "Suurin: {0}, {1}.",
+    "SparklineFormat": "{0}: {1} arvoa, {2}–{3}, pienin {4}, suurin {5}."
+  },
+  "Combobox": {
+    "NoResults": "Ei tuloksia",
+    "Searching": "Haetaan…",
+    "RemoveFormat": "Poista {0}"
+  },
+  "DataGrid": {
+    "Empty": "Ei rivejä",
+    "Filter": "Suodata",
+    "FilterLabelFormat": "Suodata: {0}",
+    "All": "Kaikki",
+    "SummaryFormat": "{0}–{1} / {2}",
+    "RowsPerPage": "Rivejä sivulla",
+    "Pages": "Taulukon sivut",
+    "SelectAll": "Valitse kaikki tämän sivun rivit",
+    "SelectRow": "Valitse rivi",
+    "Yes": "Kyllä",
+    "No": "Ei"
+  },
+  "DateRange": {
+    "Start": "Alkupäivä",
+    "End": "Loppupäivä",
+    "RangeError": "Loppupäivän on oltava sama tai myöhempi kuin alkupäivä."
+  },
+  "Dialog": {
+    "Confirm": "OK",
+    "Cancel": "Peruuta"
+  },
+  "FileUpload": {
+    "Prompt": "Vedä tiedostot tähän tai",
+    "Browse": "Selaa",
+    "RemoveFormat": "Poista {0}",
+    "TooLargeFormat": "{0} on suurempi kuin {1}.",
+    "WrongTypeFormat": "{0} ei ole sallittu tiedostotyyppi.",
+    "TooManyFormat": "Tiedostoa {0} ei lisätty. Voit lisätä enintään {1} tiedostoa.",
+    "SelectedFormat": "Valittu {0} tiedosto(a).",
+    "List": "Valitut tiedostot"
+  },
+  "LanguageSelector": {
+    "Label": "Kieli"
+  },
+  "Navbar": {
+    "Toggle": "Valikko"
+  },
+  "Pagination": {
+    "Label": "Sivutus",
+    "Previous": "Edellinen sivu",
+    "Next": "Seuraava sivu",
+    "First": "Ensimmäinen sivu",
+    "Last": "Viimeinen sivu"
+  },
+  "StatCard": {
+    "Up": "nousu",
+    "Down": "lasku",
+    "Neutral": "ennallaan"
+  },
+  "Toasts": {
+    "Label": "Ilmoitukset"
+  }
+}

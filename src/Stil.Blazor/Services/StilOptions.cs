@@ -14,4 +14,10 @@ public sealed class StilOptions
 
     /// <summary>How long a toast stays visible when no duration is given. The default is 5 seconds.</summary>
     public TimeSpan DefaultToastDuration { get; set; } = TimeSpan.FromSeconds(5);
+
+    /// <summary>
+    /// Overrides for the built-in texts of the components, or texts for another language:
+    /// <c>o.Texts.Add("de", "Common.Close", "Schließen")</c>.
+    /// </summary>
+    public StilTextOptions Texts { get; } = new();
 }

@@ -283,7 +283,7 @@
         }
 
         var node = _visible[index];
-        switch (e.Key)
+        switch (StilCulture.LogicalArrow(e.Key, TextCulture))
         {
             case "ArrowDown":
                 MoveFocus(index + 1 < _visible.Count ? _visible[index + 1] : null);

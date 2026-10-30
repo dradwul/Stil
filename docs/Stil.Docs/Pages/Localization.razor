@@ -1,0 +1,168 @@
+@page "/localization"
+@using Stil.Docs.Examples.Localization
+
+<DocsHeader Title="Localization" Eyebrow="Get started">
+    <Lead>Stil's components speak English, Swedish, Norwegian, Danish and Finnish out of the box, your app's own texts can be translated with the same package, and users can switch language themselves.</Lead>
+</DocsHeader>
+
+<h2 id="built-in">Built-in texts</h2>
+<p>
+    Every text a component writes by itself, such as "Next page" for screen readers, "No items" in an empty grid or
+    "Show data" under a chart, follows <code>CultureInfo.CurrentUICulture</code>. An app that already sets its
+    culture gets translated components without any Stil setting. A regional culture uses its language
+    (<code>sv-FI</code> gets Swedish), Nynorsk gets Bokmål, and other languages get English. Dates, times, numbers and
+    week days follow <code>CultureInfo.CurrentCulture</code> as before.
+</p>
+<p>
+    A text set on a component always wins. Every built-in text has a parameter, so you can reword it in one place.
+    Pick the language at the top of this page to see the example change:
+</p>
+<DocExample Type="typeof(Texts)" ShowCode />
+
+<h2 id="selector">Language selector</h2>
+<p>
+    <code>StilLanguageSelector</code> shows the languages you list, each in its own name ("Svenska", "Suomi"). There
+    are no flags: a flag is a country, not a language. Choosing one stores it and reloads the page in that language:
+</p>
+<DocExample Type="typeof(Selector)" ShowCode />
+<p>
+    The choice is written to the standard ASP.NET Core culture cookie, which <code>UseRequestLocalization()</code>
+    reads on the server, and to local storage for WebAssembly. That is done by <code>stil.js</code>, which Stil for
+    Blazor loads automatically, so the selector also works on statically rendered pages. Without the script, each
+    link still shows the page once in its language through <code>?culture=</code>.
+</p>
+
+<h3 id="server">Server and static SSR</h3>
+<CodeBlock Language="csharp" Code="@ServerSnippet" />
+<p>Give the page its language and direction in <code>App.razor</code>, so screen readers and right-to-left layout follow the choice:</p>
+<CodeBlock Language="razor" Code="@AppSnippet" />
+
+<h3 id="webassembly">WebAssembly</h3>
+<p>A WebAssembly app reads the stored choice before it renders. It also needs the culture data of every language:</p>
+<CodeBlock Language="csharp" Code="@WasmSnippet" />
+<CodeBlock Language="xml" Code="@WasmProjectSnippet" />
+
+<h2 id="overrides">Reword or add a language</h2>
+<p>
+    To change a text everywhere, or to add a language Stil has no texts for, set them in <code>AddStil</code>. The keys
+    are listed <a href="localization#keys">below</a>; a key you leave out falls back to English.
+</p>
+<CodeBlock Language="csharp" Code="@OptionsSnippet" />
+<p>
+    To read the texts from somewhere else, for example your resx files, register your own <code>IStilLocalizer</code>.
+    It only has to return the texts it knows; for the rest it returns <code>null</code> and Stil uses its own.
+</p>
+
+<h2 id="app-texts">Your app's own texts</h2>
+<p>
+    <code>AddStilLocalization()</code> translates your app's texts from plain JSON files through the standard
+    <code>IStringLocalizer&lt;T&gt;</code>, so there is no Stil API to learn, and the code keeps working with resx if you
+    ever switch. Put the files in a <code>Locales</code> folder; the Stil package embeds them in the app, so the same
+    files work in Server, static SSR and WebAssembly.
+</p>
+<CodeBlock Language="csharp" Code="@AppTextsSnippet" />
+<CodeBlock Language="json" Code="@JsonSnippet" />
+<CodeBlock Language="razor" Code="@InjectSnippet" />
+<ul>
+    <li><strong>Shared texts</strong> go in <code>Locales/sv.json</code>, and <strong>one component's texts</strong> in <code>Locales/Pages/Home.sv.json</code> (its namespace below the app's, then its name), which wins over the shared file.</li>
+    <li><strong>Nested objects</strong> become dotted keys: <code>"Orders": { "Title": … }</code> is <code>L["Orders.Title"]</code>. Comments are allowed.</li>
+    <li><strong>Fallback:</strong> <code>sv-FI</code>, then <code>sv</code>, then the default language (<code>en</code>, set with <code>DefaultCulture</code>). A missing key shows the key itself and logs one warning.</li>
+    <li><strong>Stil's texts</strong> can be overridden in the same files under <code>"Stil"</code>, for example <code>"Stil": { "Pagination": { "Next": "Framåt" } }</code>.</li>
+    <li>Plural rules are not built in: use a key per form (as Stil does with <code>Calendar.OneEvent</code> and <code>Calendar.EventsFormat</code>).</li>
+</ul>
+
+<h2 id="rtl">Right to left</h2>
+<p>
+    Stil's CSS uses logical properties (start and end instead of left and right), so <code>dir="rtl"</code> mirrors the
+    layout: spacing, input add-ons, breadcrumbs, the pager's arrows, switches and drawers. Arrows and chevrons in
+    <code>StilIcon</code> flip; add <code>stil-icon-directional</code> to an icon of your own that should flip too.
+    The arrow keys in tabs, tree views and the calendar follow the reading direction: in Blazor components they follow
+    the UI culture (<code>StilCulture.IsRightToLeft()</code>), so set <code>dir</code> from the same culture.
+</p>
+<DocExample Type="typeof(RightToLeft)" ShowCode />
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilLanguageSelector)" />
+
+<h2 id="keys">Text keys</h2>
+<p>The built-in texts in English and Swedish. <code>{0}</code> and <code>{1}</code> are filled in by the component.</p>
+<div class="stil-table-responsive">
+    <table class="stil-table stil-table-compact">
+        <thead>
+            <tr><th scope="col">Key</th><th scope="col">English</th><th scope="col">Swedish</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var (key, english) in StilCulture.BuiltInTexts("en"))
+            {
+                <tr><th scope="row"><code class="docs-type">@key</code></th><td>@english</td><td lang="sv">@StilCulture.BuiltInTexts("sv")[key]</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private const string ServerSnippet = """
+        // Program.cs
+        string[] cultures = ["en", "sv", "fi"];
+
+        builder.Services.AddStil();
+
+        var app = builder.Build();
+        app.UseRequestLocalization(options => options
+            .SetDefaultCulture("en")
+            .AddSupportedCultures(cultures)
+            .AddSupportedUICultures(cultures));
+        """;
+
+    private const string AppSnippet = """
+        <html lang="@CultureInfo.CurrentUICulture.Name" dir="@StilCulture.Direction()">
+        """;
+
+    private const string WasmSnippet = """
+        // Program.cs
+        builder.Services.AddStil();
+
+        var host = builder.Build();
+        await StilCulture.ApplyStoredAsync(host.Services, defaultCulture: "en");
+        await host.RunAsync();
+        """;
+
+    private const string WasmProjectSnippet = """
+        <PropertyGroup>
+          <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
+        </PropertyGroup>
+        """;
+
+    private const string OptionsSnippet = """
+        builder.Services.AddStil(options => options.Texts
+            .Add("sv", "Dialog.Confirm", "Ja")
+            .Add("de", new Dictionary<string, string>
+            {
+                ["Common.Close"] = "Schließen",
+                ["Pagination.Next"] = "Nächste Seite",
+            }));
+        """;
+
+    private const string AppTextsSnippet = """
+        // Program.cs
+        builder.Services.AddStil();
+        builder.Services.AddStilLocalization();
+        """;
+
+    private const string JsonSnippet = """
+        // Locales/sv.json
+        {
+          "Save": "Spara",
+          "Greeting": "Hej {0}",
+          "Orders": { "Title": "Beställningar" }
+        }
+        """;
+
+    private const string InjectSnippet = """
+        @inject IStringLocalizer<Home> L
+
+        <h1>@L["Orders.Title"]</h1>
+        <p>@L["Greeting", user.Name]</p>
+        <StilButton>@L["Save"]</StilButton>
+        """;
+}

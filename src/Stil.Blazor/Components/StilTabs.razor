@@ -128,7 +128,7 @@
         }
 
         var position = enabled.IndexOf(index);
-        int? target = e.Key switch
+        int? target = StilCulture.LogicalArrow(e.Key, TextCulture) switch
         {
             "ArrowRight" => enabled[(position + 1) % enabled.Count],
             "ArrowLeft" => enabled[(position - 1 + enabled.Count) % enabled.Count],

@@ -1,9 +1,10 @@
+@inject IServiceProvider StilServices
 @implements IDisposable
 @inject IStilToastService ToastService
 
 @* Renders the toasts shown with IStilToastService. Put it once in an interactive layout. The
    container is always present so screen readers announce new toasts. *@
-<div class="stil-toast-container" role="region" aria-label="@Label">
+<div class="stil-toast-container" role="region" aria-label="@Localize(Label, "Toasts.Label")">
     @foreach (var toast in ToastService.Toasts)
     {
         <div @key="toast.Id" class="stil-toast @VariantClass(toast)"
@@ -15,7 +16,7 @@
                 }
                 @toast.Message
             </div>
-            <button type="button" class="stil-close" aria-label="@CloseLabel" @onclick="() => ToastService.Close(toast)"></button>
+            <button type="button" class="stil-close" aria-label="@Localize(CloseLabel, "Common.Close")" @onclick="() => ToastService.Close(toast)"></button>
         </div>
     }
 </div>
@@ -25,11 +26,11 @@
 
     /// <summary>The accessible name of the toast region.</summary>
     [Parameter]
-    public string Label { get; set; } = "Notifications";
+    public string? Label { get; set; }
 
     /// <summary>The accessible name of the close button on each toast.</summary>
     [Parameter]
-    public string CloseLabel { get; set; } = "Close";
+    public string? CloseLabel { get; set; }
 
     protected override void OnInitialized()
     {
@@ -61,4 +62,7 @@
     private static string VariantClass(StilToast toast) => StilCssClasses.Variant("stil-toast", toast.Variant);
 
     public void Dispose() => ToastService.ToastsChanged -= OnToastsChanged;
+
+    private string Localize(string? text, string key) =>
+        text ?? StilLocalizer.Get(StilLocalizer.From(StilServices), key, System.Globalization.CultureInfo.CurrentUICulture);
 }

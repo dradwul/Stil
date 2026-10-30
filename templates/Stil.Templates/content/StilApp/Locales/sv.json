@@ -1,0 +1,9 @@
+{
+  "Nav": {
+    "Main": "Huvudmeny",
+    "Home": "Start",
+    "Dashboard": "Översikt",
+    "NewOrder": "Ny beställning"
+  },
+  "ColorMode": "Färgläge"
+}

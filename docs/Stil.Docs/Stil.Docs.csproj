@@ -8,6 +8,8 @@
     <AssemblyName>Stil.Docs</AssemblyName>
     <RootNamespace>Stil.Docs</RootNamespace>
     <IsPackable>false</IsPackable>
+    <!-- Culture data for every language of the language selector. -->
+    <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
   </PropertyGroup>
 
   <ItemGroup>

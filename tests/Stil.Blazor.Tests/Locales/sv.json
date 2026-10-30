@@ -1,0 +1,13 @@
+{
+  // Comments and nested keys are allowed.
+  "Save": "Spara",
+  "Greeting": "Hej {0}",
+  "Orders": {
+    "Title": "Beställningar"
+  },
+  "Stil": {
+    "Pagination": {
+      "Next": "Framåt"
+    }
+  }
+}

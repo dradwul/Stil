@@ -171,6 +171,9 @@ function indent(text) {
     return text.split('\n').map(line => (line ? '    ' + line : line)).join('\n');
 }
 
+// Icons that point left or right, mirrored in right-to-left text (also listed in StilIcon).
+export const directionalIcons = ['arrow-left', 'arrow-right', 'chevron-left', 'chevron-right', 'chevrons-left', 'chevrons-right'];
+
 // Icons: src/icons.json holds the inner SVG markup of Stil's built-in icons (24x24 grid,
 // 2px round strokes). The same file feeds Stil for Blazor's StilIcon component.
 export function generateIcons() {
@@ -214,6 +217,11 @@ svg.stil-icon {
     font-size: 1em;
     max-width: 100%;
     max-height: 100%;
+}`,
+        `/* Icons that point along the reading direction are mirrored in right-to-left text.
+   StilIcon adds stil-icon-directional to them; add it to an icon of your own that should flip. */
+${directionalIcons.map(name => `.stil-icon-${name}`).concat('.stil-icon-directional').join(',\n')} {
+    &:dir(rtl) { scale: -1 1; }
 }`,
         ...rules,
     ].join('\n');

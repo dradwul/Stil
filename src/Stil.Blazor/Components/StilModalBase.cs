@@ -39,7 +39,7 @@ public abstract class StilModalBase<TSelf> : StilComponentBase, IAsyncDisposable
 
     /// <summary>The accessible name of the close button.</summary>
     [Parameter]
-    public string CloseLabel { get; set; } = "Close";
+    public string? CloseLabel { get; set; }
 
     /// <summary>Raised after it closes, whatever closed it (the close button, Escape or code).</summary>
     [Parameter]

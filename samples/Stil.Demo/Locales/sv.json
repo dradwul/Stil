@@ -1,0 +1,7 @@
+{
+  "Language": {
+    "Title": "Språk och läsriktning",
+    "Intro": "Välj språk i navigeringsfältet eller här. Stils egna texter (sidnumreringens skärmläsartexter, uppladdningens texter) finns inbyggda på engelska, svenska, norska, danska och finska, och den här sektionens texter kommer från appens egna Locales/*.json-filer via IStringLocalizer. Arabiska växlar hela sidan till höger till vänster; panelen visar samma sak i en behållare som läses från höger till vänster.",
+    "Attachments": "Bilagor"
+  }
+}

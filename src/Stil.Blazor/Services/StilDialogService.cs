@@ -33,8 +33,10 @@ public sealed class StilDialogOptions
 
 public sealed class StilConfirmOptions
 {
-    public string ConfirmText { get; set; } = "OK";
-    public string CancelText { get; set; } = "Cancel";
+    /// <summary>The confirm button text. The default is the localized "OK".</summary>
+    public string? ConfirmText { get; set; }
+    /// <summary>The cancel button text. The default is the localized "Cancel".</summary>
+    public string? CancelText { get; set; }
 
     /// <summary>The color of the confirm button, for example Danger for a delete.</summary>
     public StilVariant ConfirmVariant { get; set; } = StilVariant.Primary;

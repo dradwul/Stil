@@ -34,7 +34,7 @@
             }
             else
             {
-                <div class="stil-chart-empty" style="min-height: @(EffectiveHeight)px">@EmptyText</div>
+                <div class="stil-chart-empty" style="min-height: @(EffectiveHeight)px">@Localize(EmptyText, "Chart.Empty")</div>
             }
         </figure>
     };
@@ -64,7 +64,7 @@
         else
         {
             <details class="stil-chart-data">
-                <summary>@ShowDataText</summary>
+                <summary>@Localize(ShowDataText, "Chart.ShowData")</summary>
                 @RenderTable(headers, rows)
             </details>
         }

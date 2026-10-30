@@ -30,7 +30,7 @@ else
     [Parameter]
     public string? Caption { get; set; }
 
-    /// <summary>Shown in a single row when there are no items. The default is "No items".</summary>
+    /// <summary>Shown in a single row when there are no items. The default is the localized "No items".</summary>
     [Parameter]
     public RenderFragment? EmptyContent { get; set; }
 
@@ -104,7 +104,7 @@ else
             {
                 <tr>
                     <td colspan="@Math.Max(1, _columns.Count)" class="stil-text-muted">
-                        @(EmptyContent ?? (RenderFragment)(b => b.AddContent(0, "No items")))
+                        @(EmptyContent ?? (RenderFragment)(b => b.AddContent(0, Localize(null, "DataGrid.Empty"))))
                     </td>
                 </tr>
             }

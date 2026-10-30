@@ -72,15 +72,15 @@ public abstract partial class StilChartBase<TItem> : StilComponentBase
 
     /// <summary>The text of the data table toggle.</summary>
     [Parameter]
-    public string ShowDataText { get; set; } = "Show data";
+    public string? ShowDataText { get; set; }
 
     /// <summary>Shown instead of the chart when there is nothing to draw.</summary>
     [Parameter]
-    public string EmptyText { get; set; } = "No data to show.";
+    public string? EmptyText { get; set; }
 
     /// <summary>The header of the category column in the data table.</summary>
     [Parameter]
-    public string CategoryText { get; set; } = "Category";
+    public string? CategoryText { get; set; }
 
     /// <summary>Shown in tooltips and the data table for a missing value.</summary>
     [Parameter]
@@ -121,6 +121,10 @@ public abstract partial class StilChartBase<TItem> : StilComponentBase
     private protected bool LegendVisible => ShowLegend ?? Data.Series.Count >= 2;
 
     private protected string SummaryText => string.IsNullOrWhiteSpace(Summary) ? BuildSummary() : Summary;
+
+    /// <summary>A localized chart text (<c>Chart.{key}</c>), formatted with the current culture.</summary>
+    private protected string Phrase(string key, params object[] arguments) =>
+        string.Format(System.Globalization.CultureInfo.CurrentCulture, Localize(null, "Chart." + key), arguments);
 
     /// <summary>
     /// The whole chart. The series register through the cascading value, and the figure renders
