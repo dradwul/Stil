@@ -1,7 +1,7 @@
 # Stil for Blazor
 
 Stil for Blazor is a set of themeable Blazor components built on
-[Stil CSS](https://github.com/dradwul/StilCSS/tree/main/src/Stil.Css). It
+[Stil CSS](https://github.com/dradwul/Stil/tree/main/src/Stil.Css). It
 includes buttons, icons, form fields with validation, lists, tables, cards,
 alerts, navigation, tabs, dropdowns, accordions, dialogs, drawers and toasts. Every component renders plain HTML with
 `stil-*` classes. You can mix the components with hand-written Stil markup,
@@ -9,7 +9,7 @@ and theme both with the same `--stil-*` tokens.
 
 > **Status:** early preview (`0.1.0`, not yet on NuGet). Requires .NET 10.
 > APIs may still change before `1.0`. See the
-> [roadmap](https://github.com/dradwul/StilCSS/blob/main/ROADMAP.md).
+> [roadmap](https://github.com/dradwul/Stil/blob/main/ROADMAP.md).
 
 ## Get started
 
@@ -588,7 +588,7 @@ inside the provider so dialogs and toasts follow its theme.
 
 You can also override tokens in CSS. Stil's rules are in cascade layers, so
 your CSS always wins. See the
-[theming guide and full token list](https://github.com/dradwul/StilCSS/tree/main/src/Stil.Css#theming).
+[theming guide and full token list](https://github.com/dradwul/Stil/tree/main/src/Stil.Css#theming).
 
 ## Localization
 
@@ -644,4 +644,4 @@ The component source is in this folder. The tests are in
 a CRUD page, is in `samples/Stil.Demo`. The stylesheet and `stil.js` are
 served from `src/Stil.Css/dist/`, which is built from `src/Stil.Css/src/`.
 Naming rules are in
-[CONTRIBUTING.md](https://github.com/dradwul/StilCSS/blob/main/CONTRIBUTING.md).
+[CONTRIBUTING.md](https://github.com/dradwul/Stil/blob/main/CONTRIBUTING.md).

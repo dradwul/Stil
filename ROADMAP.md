@@ -366,7 +366,8 @@ built only with Stil.
   - 67 bUnit tests.
 - [x] Package metadata (authors, repository, icon, Source Link, symbols, XML
   docs), one shared version in `Directory.Build.props`, and a changelog.
-  Publishing is not planned: nothing is pushed to NuGet or npm.
+  Publishing came later: a version tag publishes to NuGet (see the release
+  flow below and in CONTRIBUTING.md).
 
 **Verified in the browser,** in light and dark mode:
 
@@ -786,14 +787,32 @@ with a margin line.
 
 ---
 
+## Detour: release flow ✅ Done
+
+A small change outside the phase plan: `.github/workflows/release.yml`
+publishes `Stil`, `Stil.Charts` and `Stil.Templates` to nuget.org when the
+owner pushes a version tag (`v0.1.0`, or `v0.1.0-preview.1` for a
+prerelease). It uses nuget.org trusted publishing, so no API key is stored,
+takes its release notes from CHANGELOG.md and creates a GitHub release.
+Pushes to `main` and pull requests still only build and test; nothing goes
+to npm, and the docs site is not deployed.
+
+---
+
 ## Owner tasks (not part of a phase)
 
 These need the repository or package owner.
 
-- [ ] Rename the GitHub repository from `StilCSS` to `Stil`, then update the
-  links in `src/Stil.Blazor/README.md` and `src/Stil.Css/package.json`.
+- [x] Rename the GitHub repository from `StilCSS` to `Stil`, then update the
+  links (package metadata, READMEs, samples and docs now point at
+  `dradwul/Stil`).
 - [ ] Push and confirm that CI passes on GitHub. It has only been run
   locally so far.
+- [ ] Set up publishing: a trusted publishing policy on nuget.org for
+  `release.yml`, the `nuget` environment and the `NUGET_USER` variable on
+  GitHub (see Releases in CONTRIBUTING.md).
+- [ ] First release: move the Unreleased notes in CHANGELOG.md to
+  `[0.1.0]` (or a preview version), then push the tag `v0.1.0`.
 
 ## CSS backlog (no phase yet)
 

@@ -43,7 +43,7 @@ jobs:
       - name: Test
         run: dotnet test Stil.sln --configuration Release --no-build
 
-      # The packages are built and checked, never pushed to a feed.
+      # The packages are built and checked here; release.yml publishes them from a version tag.
       - name: Pack
         run: |
           dotnet pack src/Stil.Blazor --configuration Release --no-build --output artifacts

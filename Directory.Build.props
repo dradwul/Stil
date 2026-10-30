@@ -9,8 +9,8 @@
     <Authors>Ludvig Andersson</Authors>
     <Copyright>Copyright (c) Ludvig Andersson</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/dradwul/StilCSS</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/dradwul/StilCSS</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/dradwul/Stil</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/dradwul/Stil</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>

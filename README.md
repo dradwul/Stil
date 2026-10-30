@@ -24,7 +24,7 @@ CSS without clashing. You change the look by overriding a small set of CSS
 custom properties (design tokens). You do not need to rebuild or fork the
 library.
 
-> **Status:** early preview (`0.1.0`, not yet published). Class names, token
+> **Status:** early preview (`0.1.x`). Class names, token
 > names and component APIs may still change before `1.0`. See the
 > [roadmap](ROADMAP.md).
 
@@ -155,7 +155,8 @@ npm ci
 npm test
 ```
 
-Build local NuGet packages. Nothing is published to NuGet or npm:
+Build local NuGet packages (releases are published from a tag; see
+[CONTRIBUTING.md](CONTRIBUTING.md#releases)):
 
 ```shell
 dotnet pack src/Stil.Blazor -o artifacts

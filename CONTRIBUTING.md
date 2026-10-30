@@ -185,10 +185,10 @@ first.
 
 | Package | Name | Status |
 | --- | --- | --- |
-| NuGet (Blazor + stylesheet) | `Stil` | Free on nuget.org. Not published yet. |
+| NuGet (Blazor + stylesheet) | `Stil` | Published from a version tag (see Releases). |
 | npm (CSS only) | `stil-css` | Free on npm. Prepared in `src/Stil.Css/package.json`. Not published yet. `stil` is taken by another package. |
-| NuGet (charts) | `Stil.Charts` | Packed by `src/Stil.Charts`. Not published. |
-| NuGet (`dotnet new` templates) | `Stil.Templates` | Packed by `templates/Stil.Templates`. Not published. |
+| NuGet (charts) | `Stil.Charts` | Packed by `src/Stil.Charts`, published with `Stil`. |
+| NuGet (`dotnet new` templates) | `Stil.Templates` | Packed by `templates/Stil.Templates`, published with `Stil`. |
 
 All packages share the version in `Directory.Build.props` and are listed in
 [CHANGELOG.md](CHANGELOG.md).
@@ -225,11 +225,51 @@ All packages share the version in `Directory.Build.props` and are listed in
    changes, at most once per phase. Only the axe checks run in CI, because
    the baselines are made on Windows; they catch accessibility regressions
    without a local run.
-6. Nothing is published: no NuGet or npm releases and no deploy of the docs
-   site. CI only builds, tests and packs.
+6. Only a version tag pushed by the owner publishes anything (see
+   [Releases](#releases)). Pushes to `main` and pull requests only build,
+   test and pack. Nothing goes to npm, and the docs site is not deployed.
 7. When you change a color formula in `src/derived.css`, update the mirror
    of it in `tools/check-contrast.mjs`. The script fails if the two drift
    apart.
 8. Commit messages follow
    [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`,
    `fix:`, `docs:`, `test:`, `chore:`).
+
+## Releases
+
+`.github/workflows/release.yml` publishes `Stil`, `Stil.Charts` and
+`Stil.Templates` to nuget.org when the owner pushes a version tag. Nothing
+else publishes.
+
+1. In `CHANGELOG.md`, move the notes under `[Unreleased]` to a new section
+   `## [0.2.0] - 2026-11-15` (the version and the date). The release fails
+   without that section, and its text becomes the GitHub release notes.
+2. Set `<VersionPrefix>` in `Directory.Build.props` to the next version, so
+   local builds and CI packs carry it. Commit both and push.
+3. Tag the commit and push the tag. A tag with a suffix, such as
+   `v0.2.0-preview.1`, publishes a prerelease.
+
+   ```shell
+   git tag v0.2.0
+   git push origin v0.2.0
+   ```
+
+The workflow takes the version from the tag. It checks `dist/`, builds,
+tests, packs, sets the template's default `Stil` version to the tag (so new
+apps reference the release), checks the packages, pushes them with their
+symbol packages, and creates a GitHub release with the packages attached.
+A version that is already on nuget.org is skipped, so a failed run can be
+retried. Published versions cannot be deleted from nuget.org, only unlisted.
+
+### One-time setup (owner)
+
+- **nuget.org:** sign in with the account that owns the `Stil` package IDs
+  and add a *trusted publishing* policy for the repository `dradwul/Stil`,
+  the workflow file `release.yml` and the environment `nuget`. No API key is
+  stored in GitHub; the workflow gets a short-lived one at each run.
+- **GitHub:** create the environment `nuget` (Settings > Environments),
+  optionally with yourself as a required reviewer so each release waits for
+  approval, and add the repository variable `NUGET_USER` with the nuget.org
+  user name.
+- Optionally, request the `Stil.` ID prefix on nuget.org, so no one else can
+  publish packages under it and Stil's packages show as verified.

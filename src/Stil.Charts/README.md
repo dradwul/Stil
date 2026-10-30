@@ -1,6 +1,6 @@
 # Stil.Charts
 
-Themeable SVG charts for [Stil for Blazor](https://github.com/dradwul/StilCSS/tree/main/src/Stil.Blazor):
+Themeable SVG charts for [Stil for Blazor](https://github.com/dradwul/Stil/tree/main/src/Stil.Blazor):
 line, area, bar (grouped, stacked, vertical or horizontal), donut and
 sparkline charts.
 

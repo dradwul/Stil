@@ -86,4 +86,4 @@ Nothing has been published.
 - A documentation site with live examples, API tables and a theme builder.
 - A guide for migrating from Bootstrap.
 
-[Unreleased]: https://github.com/dradwul/StilCSS/commits/main
+[Unreleased]: https://github.com/dradwul/Stil/commits/main

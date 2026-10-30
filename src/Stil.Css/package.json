@@ -11,10 +11,10 @@
     "components",
     "utilities"
   ],
-  "homepage": "https://github.com/dradwul/StilCSS/tree/main/src/Stil.Css#readme",
+  "homepage": "https://github.com/dradwul/Stil/tree/main/src/Stil.Css#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dradwul/StilCSS.git",
+    "url": "git+https://github.com/dradwul/Stil.git",
     "directory": "src/Stil.Css"
   },
   "license": "MIT",

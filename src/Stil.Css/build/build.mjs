@@ -42,7 +42,7 @@ const layers = [
     ['stil.utilities', ['utilities.css', generateUtilities]],
 ];
 
-const banner = `/*! Stil CSS v${pkg.version} | MIT License | https://github.com/dradwul/StilCSS */\n`;
+const banner = `/*! Stil CSS v${pkg.version} | MIT License | https://github.com/dradwul/Stil */\n`;
 const targets = browserslistToTargets(browserslist(pkg.browserslist));
 
 function bundle() {

@@ -1,6 +1,6 @@
 # Stil for Blazor templates
 
-`dotnet new` templates for [Stil for Blazor](https://github.com/dradwul/StilCSS/tree/main/src/Stil.Blazor),
+`dotnet new` templates for [Stil for Blazor](https://github.com/dradwul/Stil/tree/main/src/Stil.Blazor),
 a set of themeable Blazor components built on Stil CSS.
 
 | Template | Short name | What you get |
@@ -87,7 +87,7 @@ dotnet new stil-app -n Contoso.Site --Interactivity None --IncludeSampleContent 
   `Components/Pages/NewOrder.razor` (the form) and `Data/`, an in-memory
   order store to replace with your own data access.
 
-See the [Stil for Blazor README](https://github.com/dradwul/StilCSS/tree/main/src/Stil.Blazor#readme)
+See the [Stil for Blazor README](https://github.com/dradwul/Stil/tree/main/src/Stil.Blazor#readme)
 for all components and theming.
 
 ## Development
