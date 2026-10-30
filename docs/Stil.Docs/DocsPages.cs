@@ -39,6 +39,7 @@ public static class DocsPages
         [
             new("Data grid", "components/data-grid"),
             new("Tree view", "components/tree-view"),
+            new("Calendar and planner", "components/calendar"),
             new("Stat cards", "components/stat-cards"),
             new("Charts", "components/charts"),
         ]),

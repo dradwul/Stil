@@ -1,0 +1,83 @@
+@page "/components/calendar"
+@using Stil.Docs.Examples.Calendar
+
+<DocsHeader Title="Calendar and planner" Eyebrow="Data">
+    <Lead>A month view, a week planner and an agenda that show at a glance how busy a period is and where the free time is.</Lead>
+</DocsHeader>
+
+<p>
+    <code>StilCalendar</code>, <code>StilWeekPlanner</code> and <code>StilAgenda</code> share one data model. Like the
+    <a href="components/data-grid">data grid</a>, they take any item type: <code>Items</code> plus selectors for
+    <code>Start</code>, <code>End</code> and <code>Title</code>. <code>Variant</code> colors an item, for example by its
+    calendar, or <code>Color</code> gives it any CSS color. <code>Details</code> adds a place or a note, and
+    <code>Draft</code> marks events that are not saved yet. The rest is worked out from the items: how booked each
+    working day is, the free blocks left in it, and the layout of events that overlap.
+</p>
+<p>
+    Names, times and the first day of the week come from the current culture (or <code>Culture</code>), so a Swedish
+    app gets Monday first, ISO week numbers and the 24-hour clock without settings. The working day is 08:00–17:00 on
+    Monday to Friday; change it with <code>WorkdayStart</code>, <code>WorkdayEnd</code> and <code>WorkingDays</code>.
+</p>
+
+<h2 id="month">Month</h2>
+<DocExample Type="typeof(Month)">
+    <p>
+        Each day is tinted by how much of its working day is booked, so free and full days show without a click. A day
+        shows up to <code>MaxEventsPerDay</code> events, then "+N more". In a narrow container the events become
+        colored dots. Bind <code>@@bind-SelectedDate</code> for the chosen day; <code>OnDateOpen</code> fires when the
+        selected day is clicked again or its "+N more" link is clicked, for example to open it in the planner.
+    </p>
+    <p>
+        The month is a grid: the arrow keys move between the days, Home and End go to the start and end of the week, and
+        moving past the first or last day shows the previous or next month. <code>Mini</code> shows dates only, and
+        <code>RangeStart</code> and <code>RangeEnd</code> mark the week shown next to it.
+    </p>
+</DocExample>
+
+<h2 id="planner">Week planner</h2>
+<DocExample Type="typeof(Planner)">
+    <p>
+        <code>View</code> shows a <code>Week</code>, a <code>WorkWeek</code> or a <code>Day</code>, from
+        <code>FirstHour</code> to <code>LastHour</code>. Each day has a load bar, overlapping events cascade so every
+        title stays readable, free blocks are marked quietly, and today has a line at the current time.
+    </p>
+    <p>
+        With <code>Editable</code>, events can be dragged to another time or day and resized by their bottom edge, and
+        dragging on empty time selects a range. The planner reports the change in <code>OnItemChange</code> or
+        <code>OnSlotSelect</code> and keeps showing your items: save the change and it redraws. A click on a free block
+        also raises <code>OnSlotSelect</code>, so a new event can always be made without dragging. Open an editor from
+        <code>OnItemClick</code> to change an event with the keyboard.
+    </p>
+    <p>
+        In a container narrower than 36rem, such as a phone, the week is shown as an agenda of the same days.
+        Set <code>AgendaWhenNarrow</code> to false to keep the time grid, which then scrolls sideways; the switch above
+        does that.
+    </p>
+</DocExample>
+
+<h2 id="agenda">Agenda</h2>
+<DocExample Type="typeof(Agenda)">
+    <p>
+        <code>StilAgenda</code> lists <code>Days</code> days from <code>Date</code> (today by default), with the free
+        gaps of the working day between the events. It works well on small screens and as a text view next to a grid.
+        Set <code>HeadingLevel</code> so the day headings fit the page's outline.
+    </p>
+</DocExample>
+
+<h2 id="render-modes">Render modes</h2>
+<p>
+    All three render in static server rendering. Give <code>StilCalendar</code> and <code>StilWeekPlanner</code> a
+    <code>HrefTemplate</code>, such as <code>"planner?date={0:yyyy-MM-dd}"</code>, and their navigation becomes links.
+    Selecting days, clicking events and dragging need an interactive render mode. Dragging is done by
+    <code>stil.js</code>, which Stil for Blazor loads automatically. Without Blazor, the same markup works with
+    <code>data-stil-editable</code> and the <code>stilweekedit</code> event; see the Stil CSS README.
+</p>
+<p>
+    Recurring events and time zones are up to the app: expand a series into one item per occurrence, and give the
+    components times in the zone they should show.
+</p>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilCalendar<>)" />
+<ApiTable Type="typeof(StilWeekPlanner<>)" />
+<ApiTable Type="typeof(StilAgenda<>)" />

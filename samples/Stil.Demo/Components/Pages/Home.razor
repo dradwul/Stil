@@ -370,6 +370,31 @@
     </div>
 </section>
 
+<section class="demo-section" aria-labelledby="calendar">
+    <h2 id="calendar">Calendar and planner</h2>
+    <p>
+        One list of events in three views. Drag an event in the week to move or resize it, drag on empty time or click
+        a free block to create one, and click a day in the month twice to open its week.
+    </p>
+    <StilWeekPlanner TItem="DemoEvent" Items="_events" Start="e => e.Start" End="e => e.End" Title="e => e.Title"
+                     Variant="e => e.Variant" Color="e => e.Color" Details="e => e.Place" Draft="e => e.Draft"
+                     View="StilWeekView.WorkWeek" @bind-Date="_plannerDate" Now="DemoNow" Culture="_calendarCulture"
+                     HeadingLevel="3" Editable OnItemClick="ShowEvent" OnItemChange="MoveEvent" OnSlotSelect="CreateEvent" />
+    <div class="stil-grid stil-mt-4">
+        <div class="stil-col-lg-7">
+            <StilCalendar TItem="DemoEvent" Items="_events" Start="e => e.Start" End="e => e.End" Title="e => e.Title"
+                          Variant="e => e.Variant" Color="e => e.Color" Details="e => e.Place" Draft="e => e.Draft"
+                          Now="DemoNow" Culture="_calendarCulture" HeadingLevel="3" @bind-SelectedDate="_calendarDate"
+                          OnItemClick="ShowEvent" OnDateOpen="d => _plannerDate = d" />
+        </div>
+        <div class="stil-col-lg-5">
+            <StilAgenda TItem="DemoEvent" Items="_events" Start="e => e.Start" End="e => e.End" Title="e => e.Title"
+                        Variant="e => e.Variant" Color="e => e.Color" Details="e => e.Place" Draft="e => e.Draft"
+                        Now="DemoNow" Culture="_calendarCulture" HeadingLevel="3" Days="3" OnItemClick="ShowEvent" />
+        </div>
+    </div>
+</section>
+
 <section class="demo-section" aria-labelledby="datagrid">
     <h2 id="datagrid">Data grid</h2>
     <p>
@@ -415,6 +440,72 @@
     private static readonly double[] _weekly = [92, 104, 99, 118, 121, 109, 130, 127, 141, 152];
 
     private sealed record DemoRow(int Id, string Name, string Region, double Score);
+
+    private sealed record DemoEvent(string Title, DateTime Start, DateTime End, StilVariant? Variant, string? Color = null,
+        string? Place = null, bool Draft = false);
+
+    // A fixed "now" and culture, so the calendar looks the same on every run. The culture is built
+    // from the invariant one (Monday first, 24-hour clock), since the screenshot tests run the demo
+    // with invariant globalization, where named cultures are not available.
+    private static readonly DateTime DemoNow = new(2026, 10, 14, 10, 20, 0);
+    private static readonly System.Globalization.CultureInfo _calendarCulture = CreateCalendarCulture();
+
+    private static System.Globalization.CultureInfo CreateCalendarCulture()
+    {
+        var culture = (System.Globalization.CultureInfo)System.Globalization.CultureInfo.InvariantCulture.Clone();
+        var format = culture.DateTimeFormat;
+        format.FirstDayOfWeek = DayOfWeek.Monday;
+        format.YearMonthPattern = "MMMM yyyy";
+        format.MonthDayPattern = "d MMMM";
+        format.LongDatePattern = "dddd d MMMM yyyy";
+        format.ShortTimePattern = "HH:mm";
+        return System.Globalization.CultureInfo.ReadOnly(culture);
+    }
+
+    private static DateTime At(int day, int hour, int minute = 0) => new(2026, 10, day, hour, minute, 0);
+
+    private readonly List<DemoEvent> _events =
+    [
+        new("Standup", At(12, 8, 30), At(12, 9), StilVariant.Success),
+        new("Q4 planning", At(12, 10), At(12, 11, 30), StilVariant.Primary, Place: "Room Fjord"),
+        new("Lunch with Kallio Design", At(12, 13), At(12, 14), StilVariant.Info, Place: "Helsinki"),
+        new("Supplier review", At(12, 15), At(12, 17), StilVariant.Primary),
+        new("Standup", At(13, 8, 30), At(13, 9), StilVariant.Success),
+        new("Design review", At(13, 9), At(13, 10), StilVariant.Primary, Place: "Room Skär"),
+        new("Call with Østerby Marine", At(13, 11), At(13, 12), StilVariant.Info, Place: "Video"),
+        new("Standup", At(14, 8, 30), At(14, 9), StilVariant.Success),
+        new("Workshop: warehouse flow", At(14, 9, 30), At(14, 12, 30), StilVariant.Primary, Place: "Warehouse B"),
+        new("Visit from Hallberg & Söner", At(14, 10), At(14, 11), StilVariant.Info, Place: "Reception"),
+        new("Price list due", At(14, 16), At(14, 16, 30), StilVariant.Danger),
+        new("Standup", At(15, 8, 30), At(15, 9), StilVariant.Success),
+        new("Budget 2027", At(15, 9), At(15, 11), StilVariant.Primary, Place: "Room Fjord"),
+        new("Running club", At(15, 17, 30), At(15, 18, 30), null, Color: "light-dark(#9c36b5, #da77f2)"),
+        new("Retrospective", At(16, 10), At(16, 11), StilVariant.Success),
+        new("Invoice run", At(16, 14), At(16, 14, 30), StilVariant.Danger),
+        new("Training", At(5, 9), At(5, 12), StilVariant.Success),
+        new("Customer call", At(7, 13), At(7, 14), StilVariant.Info),
+        new("Supplier visit", At(21, 9), At(21, 15), StilVariant.Info, Place: "Warehouse B"),
+        new("Report due", At(23, 15), At(23, 15, 30), StilVariant.Danger),
+        new("Planning", At(27, 10), At(27, 11, 30), StilVariant.Primary),
+    ];
+
+    private DateOnly? _plannerDate = DateOnly.FromDateTime(DemoNow);
+    private DateOnly? _calendarDate;
+
+    private void ShowEvent(DemoEvent e) =>
+        Toasts.Info(string.Create(_calendarCulture, $"{e.Start:dddd d MMMM HH:mm}–{e.End:HH:mm}{(e.Place is null ? "" : $", {e.Place}")}"), e.Title);
+
+    private void MoveEvent(StilCalendarItemChange<DemoEvent> change)
+    {
+        _events[_events.IndexOf(change.Item)] = change.Item with { Start = change.Start, End = change.End };
+        Toasts.Success(string.Create(_calendarCulture, $"{change.Item.Title}: {change.Start:ddd HH:mm}–{change.End:HH:mm}."), "Moved");
+    }
+
+    private void CreateEvent(StilTimeSlot slot)
+    {
+        _events.Add(new("New event", slot.Start, slot.End, StilVariant.Primary, Draft: true));
+        Toasts.Success(string.Create(_calendarCulture, $"{slot.Start:ddd HH:mm}–{slot.End:HH:mm}. In an app, this opens the editor."), "Draft created");
+    }
 
     private static readonly string[] _cities = ["Oslo", "Stockholm", "Göteborg", "Malmö", "Helsinki", "Tampere", "København", "Aarhus", "Reykjavík"];
     private static readonly string[] _countries = ["Denmark", "Estonia", "Finland", "Iceland", "Latvia", "Lithuania", "Norway", "Sweden"];

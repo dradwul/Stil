@@ -1,0 +1,55 @@
+<div class="stil-cluster stil-gap-4 stil-mb-3">
+    <StilSelect @bind-Value="_view" Label="View" />
+    <StilSwitch @bind-Value="_gridOnPhones" Label="Time grid on small screens" />
+</div>
+
+<StilWeekPlanner TItem="Booking" Items="_bookings" Start="b => b.Start" End="b => b.End" Title="b => b.Title"
+                 Variant="b => b.Variant" Color="b => b.Color" Details="b => b.Place" Draft="b => b.IsDraft"
+                 View="_view" @bind-Date="_date" AgendaWhenNarrow="!_gridOnPhones" Editable
+                 OnItemClick="Show" OnItemChange="Move" OnSlotSelect="Create" />
+<p class="stil-text-muted stil-fs-sm stil-mt-2 stil-mb-0" aria-live="polite">@_message</p>
+
+@code {
+    private sealed record Booking(string Title, DateTime Start, DateTime End, StilVariant? Variant, string? Color = null,
+        string? Place = null, bool IsDraft = false);
+
+    private static readonly DateOnly Monday = DateOnly.FromDateTime(DateTime.Today)
+        .AddDays(-(((int)DateTime.Today.DayOfWeek + 6) % 7));
+
+    private static DateTime At(int day, int hour, int minute = 0) => Monday.AddDays(day).ToDateTime(new TimeOnly(hour, minute));
+
+    private readonly List<Booking> _bookings =
+    [
+        new("Standup", At(0, 8, 30), At(0, 9), StilVariant.Success),
+        new("Q4 planning", At(0, 10), At(0, 11, 30), StilVariant.Primary, Place: "Room Fjord"),
+        new("Lunch with a customer", At(0, 13), At(0, 14), StilVariant.Info, Place: "Helsinki"),
+        new("Design review", At(1, 9), At(1, 10), StilVariant.Primary),
+        new("Workshop", At(2, 9, 30), At(2, 12, 30), StilVariant.Primary, Place: "Warehouse B"),
+        new("Visitor", At(2, 10), At(2, 11), StilVariant.Info),
+        new("Price list due", At(2, 16), At(2, 16, 30), StilVariant.Danger),
+        new("Budget 2027", At(3, 9), At(3, 11), StilVariant.Primary),
+        new("Running club", At(3, 17, 30), At(3, 18, 30), null, Color: "light-dark(#9c36b5, #da77f2)"),
+        new("Retrospective", At(4, 10), At(4, 11), StilVariant.Success),
+    ];
+
+    private StilWeekView _view = StilWeekView.WorkWeek;
+    private DateOnly? _date;
+    private bool _gridOnPhones;
+    private string _message = "Drag an event to move it, drag its bottom edge to resize it, or drag on empty time to create one.";
+
+    private void Show(Booking booking) => _message = $"{booking.Title}, {booking.Start:ddd t}–{booking.End:t}.";
+
+    // The planner does not change by itself: the app saves the change and the planner redraws.
+    private void Move(StilCalendarItemChange<Booking> change)
+    {
+        _bookings[_bookings.IndexOf(change.Item)] = change.Item with { Start = change.Start, End = change.End };
+        _message = $"Moved {change.Item.Title} to {change.Start:ddd t}–{change.End:t}.";
+    }
+
+    // A clicked free block or a range dragged on empty time.
+    private void Create(StilTimeSlot slot)
+    {
+        _bookings.Add(new("New event", slot.Start, slot.End, StilVariant.Primary, IsDraft: true));
+        _message = $"Draft created {slot.Start:ddd t}–{slot.End:t}. In an app, this opens the editor.";
+    }
+}

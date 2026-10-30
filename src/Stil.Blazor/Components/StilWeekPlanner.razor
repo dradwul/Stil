@@ -1,0 +1,383 @@
+@typeparam TItem
+@inherits StilCalendarBase<TItem>
+@using System.Globalization
+
+@* Days on a time grid (stil-week): a load bar per day, overlapping events side by side, free
+   blocks in the working day and a now line. With Editable, stil.js lets the user drag events to
+   move or resize them and drag on empty time to create one (stilweekedit). In a narrow
+   container it shows the same days as an agenda (AgendaWhenNarrow). *@
+@{
+    BuildDays();
+    var gridStart = FirstHourShown * 60;
+    var gridEnd = LastHourShown * 60;
+    _placed.Clear();
+}
+<div @attributes="RootAttributes" class="@Classes("stil-week", Auto ? "stil-week-auto" : null)"
+     style="@($"--stil-week-days: {_days.Count}; --stil-week-first-hour: {FirstHourShown}; --stil-week-hours: {LastHourShown - FirstHourShown}")"
+     data-stil-editable="@(Editable ? "" : null)">
+    <div class="stil-calendar-header">
+        <StilHeading Level="HeadingLevel" class="stil-calendar-title" id="@_titleId">
+            @if (View == StilWeekView.Day)
+            {
+                @_days[0].ToString("D", CurrentCulture)
+            }
+            else
+            {
+                @(string.Format(CurrentCulture, WeekTitleFormat, WeekNumber(_days[0])) + " ")
+                <small>@_days[0].ToString("M", CurrentCulture) – @_days[^1].ToString("M", CurrentCulture) @_days[^1].Year</small>
+            }
+        </StilHeading>
+        @if (ShowNavigation)
+        {
+            var step = View == StilWeekView.Day ? 1 : 7;
+            <div class="stil-cluster stil-gap-1">
+                @NavButton(_date.AddDays(-step), StilIcons.ChevronLeft, View == StilWeekView.Day ? PreviousDayText : PreviousWeekText)
+                @if (HrefTemplate is not null)
+                {
+                    <a class="stil-btn stil-btn-outline stil-btn-secondary stil-btn-sm" href="@Href(Today)">@TodayText</a>
+                }
+                else
+                {
+                    <button type="button" class="stil-btn stil-btn-outline stil-btn-secondary stil-btn-sm" @onclick="() => ShowDateAsync(Today)">@TodayText</button>
+                }
+                @NavButton(_date.AddDays(step), StilIcons.ChevronRight, View == StilWeekView.Day ? NextDayText : NextWeekText)
+            </div>
+        }
+    </div>
+    <div class="stil-week-scroll" role="region" aria-labelledby="@_titleId" tabindex="0">
+        <div class="stil-week-grid">
+            <div class="stil-week-corner" aria-hidden="true"></div>
+            @foreach (var date in _days)
+            {
+                var booked = BookedMinutes(date);
+                <div class="stil-week-day-head" aria-current="@(date == Today ? "date" : null)">
+                    <span class="stil-week-day-name">@CurrentCulture.DateTimeFormat.GetAbbreviatedDayName(date.DayOfWeek)</span>
+                    <span class="stil-calendar-date">@date.Day</span>
+                    @if (ShowLoad)
+                    {
+                        <span class="stil-week-load" title="@string.Format(CurrentCulture, BookedOfFormat, FormatHours(booked), FormatHours(WorkdayEndMinute - WorkdayStartMinute))">
+                            <span class="stil-week-load-bar" style="@($"--stil-load: {Css(Load(date))}")" aria-hidden="true"></span>
+                            <span>@(booked > 0 ? FormatHours(booked) : FreeText)</span>
+                        </span>
+                    }
+                </div>
+            }
+            <div class="stil-week-times" aria-hidden="true">
+                @for (var hour = FirstHourShown; hour < LastHourShown; hour++)
+                {
+                    <span class="stil-week-time" style="@($"--stil-start: {hour * 60}")">@FormatTime(hour * 60)</span>
+                }
+            </div>
+            @for (var i = 0; i < _days.Count; i++)
+            {
+                var dayIndex = i;
+                var date = _days[i];
+                <div class="@(IsWorkingDay(date) ? "stil-week-col" : "stil-week-col stil-week-col-muted")">
+                    @foreach (var (freeStart, freeEnd) in FreeBlocks(date))
+                    {
+                        var start = Math.Max(freeStart, gridStart);
+                        var end = Math.Min(freeEnd, gridEnd);
+                        if (end <= start)
+                        {
+                            continue;
+                        }
+
+                        var style = $"--stil-start: {start}; --stil-length: {end - start}";
+                        var text = $"{FreeText} · {FormatHours(end - start)}";
+                        if (OnSlotSelect.HasDelegate)
+                        {
+                            <button type="button" class="stil-week-free" style="@style"
+                                    aria-label="@string.Format(CurrentCulture, FreeSlotFormat, $"{DayName(date)} {FormatRange(start, end)}")"
+                                    @onclick="() => SelectSlotAsync(date, start, Math.Min(end, start + Math.Max(SnapMinutes, NewEventMinutes)))">@text</button>
+                        }
+                        else
+                        {
+                            <div class="stil-week-free" style="@style">@text</div>
+                        }
+                    }
+                    @foreach (var placement in Placements(date, gridStart, gridEnd))
+                    {
+                        var occurrence = placement.Occurrence;
+                        var item = occurrence.Item;
+                        var key = $"{occurrence.Index}-{dayIndex}";
+                        _placed[key] = (placement, dayIndex);
+                        var position = $"--stil-start: {placement.Start}; --stil-length: {placement.End - placement.Start}; --stil-col: {placement.Column}; --stil-cols: {placement.Columns}";
+                        // Events shorter than 45 minutes only have room for the title.
+                        var meta = placement.End - placement.Start >= 45
+                            ? JoinMeta(FormatRange(occurrence.StartMinute, occurrence.EndMinute), Details?.Invoke(item))
+                            : null;
+                        @(new StilCalendarEventView
+                        {
+                            Classes = EventClasses(item),
+                            Style = JoinStyles(ColorStyle(item), position),
+                            Title = TitleOf(item),
+                            Meta = meta,
+                            Label = EventLabel(occurrence, withDay: true),
+                            ItemKey = Editable ? key : null,
+                            Resizable = Editable,
+                            OnClick = ItemClick(item),
+                        }.Render())
+                    }
+                    @if (date == Today && NowMinute >= gridStart && NowMinute <= gridEnd)
+                    {
+                        <div class="stil-week-now" style="@($"--stil-start: {NowMinute}")" aria-hidden="true"></div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+    @if (Auto)
+    {
+        <StilAgenda TItem="TItem" Items="Items" Start="Start" End="End" Title="Title" Variant="Variant" Color="Color"
+                    Details="Details" Draft="Draft" OnItemClick="OnItemClick" Now="Now" WorkdayStart="WorkdayStart"
+                    WorkdayEnd="WorkdayEnd" WorkingDays="WorkingDays" ShowFreeTime="ShowFreeTime" MinFreeMinutes="MinFreeMinutes"
+                    Culture="Culture" FirstDayOfWeek="FirstDayOfWeek" HeadingLevel="Math.Min(6, HeadingLevel + 1)"
+                    FreeText="@FreeText" HoursFormat="@HoursFormat" TodayText="@TodayText"
+                    Date="_days[0]" Days="_days.Count" />
+    }
+</div>
+
+@code {
+    private readonly string _titleId = StilIds.Next("week");
+    private readonly Dictionary<string, (StilCalendarPlacement<TItem> Placement, int Day)> _placed = [];
+    private List<DateOnly> _days = [];
+    private DateOnly _date;
+    private DateOnly? _syncedDate;
+    private bool _initialized;
+
+    /// <summary>A day in the period shown. Supports two-way binding (@bind-Date). The default is today.</summary>
+    [Parameter]
+    public DateOnly? Date { get; set; }
+
+    /// <summary>Raised when the user goes to another week or day.</summary>
+    [Parameter]
+    public EventCallback<DateOnly?> DateChanged { get; set; }
+
+    /// <summary>Week (the default), WorkWeek (Monday to Friday) or Day.</summary>
+    [Parameter]
+    public StilWeekView View { get; set; }
+
+    /// <summary>The first hour on the grid. The default is 7.</summary>
+    [Parameter]
+    public int FirstHour { get; set; } = 7;
+
+    /// <summary>The hour the grid ends at. The default is 19, so 07:00–19:00 is shown.</summary>
+    [Parameter]
+    public int LastHour { get; set; } = 19;
+
+    /// <summary>
+    /// Lets the user drag events to move them (also to another day), drag their bottom edge to
+    /// resize them, and drag on empty time to create one. Needs an interactive render mode. The
+    /// grid does not change by itself: update the items in OnItemChange and OnSlotSelect.
+    /// </summary>
+    [Parameter]
+    public bool Editable { get; set; }
+
+    /// <summary>Raised when an event was moved or resized, with its new start and end.</summary>
+    [Parameter]
+    public EventCallback<StilCalendarItemChange<TItem>> OnItemChange { get; set; }
+
+    /// <summary>
+    /// Raised with the time for a new event: the start of a free block that was clicked (NewEventMinutes
+    /// long, or the whole block when it is shorter), or a range dragged on the grid. Free blocks are
+    /// buttons only when it is set.
+    /// </summary>
+    [Parameter]
+    public EventCallback<StilTimeSlot> OnSlotSelect { get; set; }
+
+    /// <summary>The length, in minutes, of the slot a click on a free block selects. The default is 60.</summary>
+    [Parameter]
+    public int NewEventMinutes { get; set; } = 60;
+
+    /// <summary>In a narrow container (below 36rem), show the days as an agenda instead of the grid. Applies to the week views.</summary>
+    [Parameter]
+    public bool AgendaWhenNarrow { get; set; } = true;
+
+    /// <summary>Show the previous, today and next buttons.</summary>
+    [Parameter]
+    public bool ShowNavigation { get; set; } = true;
+
+    /// <summary>
+    /// Renders the navigation as links, for example "planner?date={0:yyyy-MM-dd}", where {0} is a
+    /// DateOnly in the period. Links also work with static rendering; DateChanged is not raised.
+    /// </summary>
+    [Parameter]
+    public string? HrefTemplate { get; set; }
+
+    /// <summary>The title of a week view; {0} is the week number.</summary>
+    [Parameter]
+    public string WeekTitleFormat { get; set; } = "Week {0}";
+
+    [Parameter]
+    public string PreviousWeekText { get; set; } = "Previous week";
+
+    [Parameter]
+    public string NextWeekText { get; set; } = "Next week";
+
+    [Parameter]
+    public string PreviousDayText { get; set; } = "Previous day";
+
+    [Parameter]
+    public string NextDayText { get; set; } = "Next day";
+
+    /// <summary>The tooltip of a day's load bar; {0} is the booked time and {1} the length of the working day.</summary>
+    [Parameter]
+    public string BookedOfFormat { get; set; } = "{0} booked of {1}";
+
+    /// <summary>The accessible name of a free block; {0} is the day and time.</summary>
+    [Parameter]
+    public string FreeSlotFormat { get; set; } = "Free {0}, create an event";
+
+    private int FirstHourShown => Math.Clamp(FirstHour, 0, 23);
+
+    private int LastHourShown => Math.Clamp(LastHour, FirstHourShown + 1, 24);
+
+    private bool Auto => AgendaWhenNarrow && View != StilWeekView.Day;
+
+    private int NowMinute => (int)CurrentNow.TimeOfDay.TotalMinutes;
+
+    // The consumer's attributes plus the stilweekedit handler. Razor cannot bind @onstilweekedit
+    // inside the assembly that declares it, so the handler is added as an attribute.
+    private IReadOnlyDictionary<string, object> RootAttributes
+    {
+        get
+        {
+            var attributes = AdditionalAttributes is null
+                ? new Dictionary<string, object>()
+                : new Dictionary<string, object>(AdditionalAttributes);
+            attributes["onstilweekedit"] = EventCallback.Factory.Create<StilWeekEditEventArgs>(this, OnEditAsync);
+            return attributes;
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (!_initialized || Date != _syncedDate)
+        {
+            _date = Date ?? Today;
+            _syncedDate = Date;
+            _initialized = true;
+        }
+    }
+
+    private void BuildDays()
+    {
+        var (first, count) = View switch
+        {
+            StilWeekView.Day => (_date, 1),
+            StilWeekView.WorkWeek => (_date.AddDays(-(((int)_date.DayOfWeek + 6) % 7)), 5),
+            _ => (StartOfWeek(_date), 7)
+        };
+        _days = Enumerable.Range(0, count).Select(first.AddDays).ToList();
+    }
+
+    // The day's events clipped to the grid, at least 15 minutes tall, with their overlap columns.
+    private List<StilCalendarPlacement<TItem>> Placements(DateOnly date, int gridStart, int gridEnd)
+    {
+        var placements = new List<StilCalendarPlacement<TItem>>();
+        foreach (var occurrence in OccurrencesOn(date))
+        {
+            var start = Math.Clamp(occurrence.StartMinute, gridStart, gridEnd);
+            var end = Math.Clamp(occurrence.EndMinute, gridStart, gridEnd);
+            if (end <= start && (occurrence.StartMinute < gridStart || occurrence.StartMinute >= gridEnd))
+            {
+                continue;
+            }
+
+            if (end - start < SnapMinutes)
+            {
+                start = Math.Min(start, gridEnd - SnapMinutes);
+                end = start + SnapMinutes;
+            }
+
+            placements.Add(new(occurrence, start, end));
+        }
+
+        Layout(placements);
+        return placements;
+    }
+
+    private static string JoinMeta(params string?[] parts) => string.Join(" · ", parts.Where(p => !string.IsNullOrEmpty(p)));
+
+    private string Href(DateOnly date) => string.Format(CultureInfo.InvariantCulture, HrefTemplate!, date);
+
+    private RenderFragment NavButton(DateOnly date, string icon, string text) => @<text>
+        @if (HrefTemplate is not null)
+        {
+            <a class="stil-btn stil-btn-ghost stil-btn-sm stil-btn-icon" href="@Href(date)" aria-label="@text"><StilIcon Name="@icon" /></a>
+        }
+        else
+        {
+            <button type="button" class="stil-btn stil-btn-ghost stil-btn-sm stil-btn-icon" aria-label="@text"
+                    @onclick="() => ShowDateAsync(date)"><StilIcon Name="@icon" /></button>
+        }
+    </text>;
+
+    private async Task ShowDateAsync(DateOnly date)
+    {
+        if (date == _date)
+        {
+            return;
+        }
+
+        _date = date;
+        await DateChanged.InvokeAsync(date);
+    }
+
+    private static DateTime At(DateOnly date, int minutes) => date.ToDateTime(TimeOnly.MinValue).AddMinutes(minutes);
+
+    private Task SelectSlotAsync(DateOnly date, int start, int end) =>
+        OnSlotSelect.InvokeAsync(new StilTimeSlot(At(date, start), At(date, end)));
+
+    // stil.js finished a drag. The times it reports are where the event was shown; the change is
+    // applied to the item's own start and end, so an event clipped by the grid keeps its length.
+    private async Task OnEditAsync(StilWeekEditEventArgs e)
+    {
+        if (e.Day < 0 || e.Day >= _days.Count)
+        {
+            return;
+        }
+
+        if (e.Action == "create")
+        {
+            if (e.End > e.Start)
+            {
+                await SelectSlotAsync(_days[e.Day], e.Start, e.End);
+            }
+
+            return;
+        }
+
+        if (e.Item is null || !_placed.TryGetValue(e.Item, out var placed) || Start is null || End is null)
+        {
+            return;
+        }
+
+        var item = placed.Placement.Occurrence.Item;
+        var start = Start(item);
+        var end = End(item);
+        if (e.Action == "move")
+        {
+            var shift = TimeSpan.FromDays(e.Day - placed.Day) + TimeSpan.FromMinutes(e.Start - placed.Placement.Start);
+            start += shift;
+            end += shift;
+        }
+        else if (e.Action == "resize")
+        {
+            end += TimeSpan.FromMinutes(e.End - placed.Placement.End);
+            if (end <= start)
+            {
+                end = start.AddMinutes(SnapMinutes);
+            }
+        }
+        else
+        {
+            return;
+        }
+
+        if (start != Start(item) || end != End(item))
+        {
+            await OnItemChange.InvokeAsync(new StilCalendarItemChange<TItem>(item, start, end));
+        }
+    }
+}

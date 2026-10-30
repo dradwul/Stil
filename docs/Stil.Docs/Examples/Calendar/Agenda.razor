@@ -1,0 +1,19 @@
+<StilAgenda TItem="Booking" Items="_bookings" Start="b => b.Start" End="b => b.End" Title="b => b.Title"
+            Variant="b => b.Variant" Details="b => b.Place" Days="3" HeadingLevel="3" />
+
+@code {
+    private sealed record Booking(string Title, DateTime Start, DateTime End, StilVariant Variant, string? Place = null);
+
+    private static DateTime At(int day, int hour, int minute = 0) =>
+        DateOnly.FromDateTime(DateTime.Today).AddDays(day).ToDateTime(new TimeOnly(hour, minute));
+
+    private static readonly Booking[] _bookings =
+    [
+        new("Standup", At(0, 8, 30), At(0, 9), StilVariant.Success),
+        new("Customer call", At(0, 11), At(0, 12), StilVariant.Info, "Video"),
+        new("Product photos", At(0, 13, 30), At(0, 15), StilVariant.Primary, "Studio"),
+        new("Standup", At(1, 8, 30), At(1, 9), StilVariant.Success),
+        new("Supplier review", At(1, 9), At(1, 12), StilVariant.Primary, "Room Fjord"),
+        new("Invoice run", At(2, 14), At(2, 14, 30), StilVariant.Danger),
+    ];
+}

@@ -1,0 +1,31 @@
+<StilCalendar TItem="Booking" Items="_bookings" Start="b => b.Start" End="b => b.End" Title="b => b.Title"
+              Variant="b => b.Variant" Details="b => b.Place"
+              @bind-SelectedDate="_selected" OnDateOpen="d => _opened = d" />
+<p class="stil-text-muted stil-fs-sm stil-mt-2 stil-mb-0">
+    @(_selected is { } day ? $"Selected {day:D}." : "Choose a day.")
+    @(_opened is { } open ? $" Opened {open:D}." : null)
+</p>
+
+@code {
+    private sealed record Booking(string Title, DateTime Start, DateTime End, StilVariant Variant, string? Place = null);
+
+    private static readonly DateOnly First = new(DateTime.Today.Year, DateTime.Today.Month, 1);
+
+    private static DateTime At(int day, int hour, int minute = 0) => First.AddDays(day).ToDateTime(new TimeOnly(hour, minute));
+
+    private static readonly Booking[] _bookings =
+    [
+        new("Kick-off", At(1, 9), At(1, 11), StilVariant.Primary, "Room Fjord"),
+        new("Customer call", At(1, 13), At(1, 14), StilVariant.Info),
+        new("Design review", At(4, 10), At(4, 12), StilVariant.Primary),
+        new("Team lunch", At(4, 12), At(4, 13), StilVariant.Success),
+        new("Supplier visit", At(4, 13), At(4, 16), StilVariant.Info, "Warehouse B"),
+        new("Report due", At(4, 16), At(4, 16, 30), StilVariant.Danger),
+        new("Workshop", At(10, 8), At(10, 17), StilVariant.Primary),
+        new("Training", At(15, 9), At(15, 12), StilVariant.Success),
+        new("Invoice run", At(20, 14), At(20, 15), StilVariant.Danger),
+    ];
+
+    private DateOnly? _selected;
+    private DateOnly? _opened;
+}

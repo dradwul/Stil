@@ -1,6 +1,8 @@
 // Renders a month view, a week planner and an agenda (Stil CSS: stil-calendar, stil-week,
 // stil-agenda) from one list of events. stil.js adds the keyboard navigation in the month grids.
-// This script is sample-only; StilCalendar, StilWeekPlanner and StilAgenda will do this in Blazor.
+// This script is sample-only; StilCalendar, StilWeekPlanner and StilAgenda do this in Blazor.
+// The week has data-stil-editable, so stil.js lets the user drag events; this script saves the
+// change when stil.js fires stilweekedit.
 //
 // The data model is the one planned for the components: an event has a start, an end, a
 // title and a calendar (which gives it a variant). Everything else is derived: the load of a
@@ -227,7 +229,7 @@
     const styleAttr = (...styles) => (styles.some(Boolean) ? ` style="${styles.filter(Boolean).join('; ')}"` : '');
     const describe = e => `${e.title}, ${span(minutesOf(e.start), minutesOf(e.end))}, ${calendarById[e.calendar]?.name ?? ''}`;
 
-    function eventButton(e, { meta = true, tabbable = true, startTime = false, metaTime = true, style = '' } = {}) {
+    function eventButton(e, { meta = true, tabbable = true, startTime = false, metaTime = true, style = '', resizable = false } = {}) {
         const draft = e.draft ? ' stil-event-draft' : '';
         const extra = [calendarById[e.calendar]?.name, e.location].filter(Boolean).join(' · ');
         const color = colorOf(calendarById[e.calendar]);
@@ -235,6 +237,7 @@
             aria-label="${esc(describe(e))}"${tabbable ? '' : ' tabindex="-1"'}>
             <span class="stil-event-title">${startTime ? `<span class="stil-event-time">${time(minutesOf(e.start))}</span>` : ''}${esc(e.title)}</span>
             ${meta ? html`<span class="stil-event-meta">${[metaTime ? span(minutesOf(e.start), minutesOf(e.end)) : '', esc(extra)].filter(Boolean).join(' · ')}</span>` : ''}
+            ${resizable ? '<span class="stil-event-resize" aria-hidden="true"></span>' : ''}
         </button>`;
     }
 
@@ -333,6 +336,7 @@
                 if (end <= start) return '';
                 return eventButton(p.e, {
                     meta: end - start >= 45,
+                    resizable: true,
                     style: `--stil-start: ${start}; --stil-length: ${end - start}; --stil-col: ${p.col}; --stil-cols: ${p.cols}`,
                 });
             }).join('');
@@ -523,6 +527,41 @@
         render();
         next.focus();
         event.preventDefault();
+    });
+
+    // stil.js finished a drag in the week: save the new time, or create a draft for a dragged range.
+    document.addEventListener('stilweekedit', event => {
+        const { action, item, day, start, end } = event.detail;
+        const date = addDays(state.week, day);
+        const at = minutes => new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, minutes);
+        if (action === 'create') {
+            const draft = makeEvent(date, time(start), end - start, 'New event', 'work');
+            draft.draft = true;
+            state.drafts.push(draft);
+            render();
+            toast('Draft created', `${weekdayLong.format(date)} ${span(start, end)}. In the component, this opens the editor.`, 'success');
+            return;
+        }
+
+        const e = findEvent(Number(item?.dataset.event));
+        if (!e) return;
+        const length = e.end - e.start;
+        const oldDay = startOfDay(e.start);
+        if (action === 'move') {
+            e.start = at(start);
+            e.end = new Date(e.start.getTime() + length);
+        } else {
+            e.end = at(end);
+        }
+        // Generated events live in a list per day: move the event to its new day.
+        if (!e.draft && !sameDay(oldDay, e.start)) {
+            const list = eventsOn(oldDay);
+            list.splice(list.indexOf(e), 1);
+            eventsOn(e.start).push(e);
+        }
+        cache.forEach(events => events.sort((a, b) => a.start - b.start));
+        render();
+        toast(action === 'move' ? 'Moved' : 'Resized', `${e.title}: ${weekdayLong.format(e.start)} ${span(minutesOf(e.start), minutesOf(e.end))}.`, 'success');
     });
 
     // stil.js moves between the days with the arrow keys and clicks a day on Enter. Past the

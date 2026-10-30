@@ -55,15 +55,17 @@ and theme both with the same `--stil-*` tokens.
 
 The library also ships a small script, `stil.js`, which Blazor loads
 automatically. It closes dropdowns on an outside click or Escape, handles
-dismissing alerts on statically rendered pages, and stops the keys that trees,
-tabs and pickers handle from also scrolling the page or submitting a form. You do not need to add a
+dismissing alerts on statically rendered pages, moves between the days of a
+calendar month, drags events in an editable week planner, and stops the keys
+that trees, tabs and pickers handle from also scrolling the page or submitting
+a form. You do not need to add a
 `<script>` tag.
 
 ## Render modes
 
 | Works in static SSR | Needs an interactive render mode (Server, WebAssembly or Auto) |
 | --- | --- |
-| Button (links and submit), Badge, Card, StatCard, Container, Heading, Icon, List, ListItem (as a link), Avatar, Table, DataGrid (first page, initial sort), TreeView (initial state), NavGroup, Breadcrumbs, Pagination with `HrefTemplate`, Nav, NavLink, Navbar (the menu button works through stil.js), Accordion, the layout components, Progress, Spinner, Tooltip, ThemeProvider, Head, form fields inside an enhanced `EditForm`, Dropdown, dismissible Alert | Button `OnClick`, ListItem `OnClick`, Table `OnRowClick`, Pagination with buttons, Tabs switching, `@bind-Open` on Dropdown and AccordionItem, Dialog, Drawer, DialogService, ToastService, DataGrid sorting, filters, paging and selection, Autocomplete, MultiSelect, TreeView keyboard and selection, FileUpload (the drag highlight and remove buttons) |
+| Button (links and submit), Badge, Card, StatCard, Container, Heading, Icon, List, ListItem (as a link), Avatar, Table, DataGrid (first page, initial sort), TreeView (initial state), NavGroup, Breadcrumbs, Pagination with `HrefTemplate`, Calendar, WeekPlanner and Agenda (navigation with `HrefTemplate`), Nav, NavLink, Navbar (the menu button works through stil.js), Accordion, the layout components, Progress, Spinner, Tooltip, ThemeProvider, Head, form fields inside an enhanced `EditForm`, Dropdown, dismissible Alert | Button `OnClick`, ListItem `OnClick`, Table `OnRowClick`, Pagination with buttons, Tabs switching, `@bind-Open` on Dropdown and AccordionItem, Dialog, Drawer, DialogService, ToastService, DataGrid sorting, filters, paging and selection, Autocomplete, MultiSelect, TreeView keyboard and selection, FileUpload (the drag highlight and remove buttons), Calendar day selection, event clicks and dragging in WeekPlanner |
 
 ## Components
 
@@ -346,6 +348,37 @@ Up, Down), `TrendVariant` (default Success for Up, Danger for Down), `TrendLabel
 (what screen readers hear, by default for example "up 12.4%"), `Description`,
 `Href` (the whole card is a link), `ChildContent`.
 
+### Calendar and planner
+
+```razor
+<StilWeekPlanner TItem="Meeting" Items="meetings" Start="m => m.Start" End="m => m.End" Title="m => m.Title"
+                 Variant="m => m.Calendar.Variant" Details="m => m.Room" View="StilWeekView.WorkWeek"
+                 Editable OnItemChange="Save" OnSlotSelect="Create" OnItemClick="Edit" />
+
+<StilCalendar TItem="Meeting" Items="meetings" Start="m => m.Start" End="m => m.End" Title="m => m.Title"
+              @bind-SelectedDate="day" OnDateOpen="OpenWeek" />
+
+<StilAgenda TItem="Meeting" Items="meetings" Start="m => m.Start" End="m => m.End" Title="m => m.Title" Days="3" />
+```
+
+The three views share one data model: any item type with `Start`, `End` and
+`Title` selectors, plus `Variant` or `Color`, `Details` and `Draft`. From the
+items they work out how booked each working day is (a tint in the month, a bar
+in the week), the free blocks in it and the layout of overlapping events. The
+working day is 08:00–17:00, Monday to Friday, and names, times, week numbers and
+the first day of the week follow the culture.
+
+| Component | Parameters |
+| --- | --- |
+| Shared | `Items`, `Start`, `End`, `Title`, `Variant`, `Color`, `Details`, `Draft`, `OnItemClick` (events are buttons only when it is set), `Now`, `WorkdayStart`, `WorkdayEnd`, `WorkingDays`, `ShowLoad`, `ShowFreeTime`, `MinFreeMinutes`, `Culture`, `FirstDayOfWeek`, `HeadingLevel`, and the texts |
+| `StilCalendar<TItem>` | `@bind-Month`, `@bind-SelectedDate`, `OnDateOpen` (the selected day clicked again, or "+N more"), `Mini`, `ShowWeekNumbers`, `MaxEventsPerDay`, `RangeStart`/`RangeEnd`, `ShowNavigation`, `HrefTemplate`. A WAI-ARIA grid; stil.js moves between the days and past the edges of the month. |
+| `StilWeekPlanner<TItem>` | `@bind-Date`, `View` (`Week`, `WorkWeek`, `Day`), `FirstHour`/`LastHour`, `Editable`, `OnItemChange` (moved or resized), `OnSlotSelect` (a free block clicked or a range dragged), `NewEventMinutes`, `AgendaWhenNarrow` (an agenda below 36rem, the default), `ShowNavigation`, `HrefTemplate` |
+| `StilAgenda<TItem>` | `Date` (the first day, today by default), `Days`, `ShowEmptyDays`, `EmptyText` |
+
+Dragging never changes your data by itself: save the new times in
+`OnItemChange` or create the event in `OnSlotSelect`, and the planner redraws.
+Recurring events and time zones are up to the app.
+
 ### Navigation
 
 ```razor
@@ -490,6 +523,7 @@ Warning toasts use `role="alert"`; the others use `"status"`.
 | `stil-dropzone`, `stil-file-list` | `StilFileUpload` |
 | `stil-stat` | `StilStatCard` |
 | `stil-tree` | `StilTreeView` |
+| `stil-event`, `stil-calendar`, `stil-week`, `stil-agenda` | `StilCalendar`, `StilWeekPlanner`, `StilAgenda` |
 | `stil-accordion` | `StilAccordion` with `StilAccordionItem` |
 | `stil-nav`, `stil-navbar`, `stil-nav-group` | `StilNav`/`StilNavLink`, `StilNavbar`, `StilNavGroup` |
 | `stil-breadcrumb`, `stil-pagination` | `StilBreadcrumbs`, `StilPagination` |

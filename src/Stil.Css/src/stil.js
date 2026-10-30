@@ -13,6 +13,12 @@
 //     days, Home and End go to the start and end of the week, and Enter or Space clicks the day.
 //     Moving past the first or last day fires a bubbling stilcalendaredge event (detail: the key
 //     and the day cell), so the page can show the previous or next month.
+//   - Week grids with data-stil-editable (div.stil-week): drag an event to move it (also to
+//     another day), drag its .stil-event-resize handle to change its end, or drag on empty time
+//     to mark a new event. Times snap to 15 minutes and Escape cancels. On release a bubbling
+//     stilweekedit event fires (detail: action "move", "resize" or "create"; item, the event
+//     element or null; day, the index of the day column; start and end in minutes from
+//     midnight). The page saves the change and redraws: the grid puts the event back first.
 //   - Keys that a widget handles itself (arrows in a tree, tab list or combobox; Enter and Escape
 //     in an open combobox) do not also scroll the page, submit the form or close a dialog.
 // Stil for Blazor loads this module automatically and also uses showDialog/closeDialog.
@@ -26,6 +32,10 @@ export function init(root = document) {
     root.addEventListener('keydown', onKeyDown);
     // The toggle event does not bubble, so listen in the capture phase.
     root.addEventListener('toggle', onToggle, true);
+    root.addEventListener('pointerdown', onPointerDown);
+    root.addEventListener('pointermove', onPointerMove);
+    root.addEventListener('pointerup', onPointerUp);
+    root.addEventListener('pointercancel', cancelDrag);
 }
 
 const openDropdowns = () => document.querySelectorAll('details.stil-dropdown[open]');
@@ -63,6 +73,11 @@ function onClick(event) {
 }
 
 function onKeyDown(event) {
+    if (drag && event.key === 'Escape') {
+        cancelDrag();
+        event.preventDefault();
+        return;
+    }
     if (preventHandledKey(event)) return;
     if (moveInDropdown(event)) return;
     if (moveInCalendar(event)) return;
@@ -160,6 +175,127 @@ function moveInCalendar(event) {
     next.tabIndex = 0;
     next.focus();
     return true;
+}
+
+// Editing in a week grid. The grid reads its first hour and number of hours from the computed
+// --_from and --_hours of the stil-week, so the drag follows whatever the markup set.
+const snapMinutes = 15;
+let drag = null;
+
+function onPointerDown(event) {
+    if (event.button !== 0 || !event.isPrimary) return;
+    const target = event.target instanceof Element ? event.target : null;
+    const column = target?.closest('.stil-week[data-stil-editable] .stil-week-col');
+    if (!column) return;
+    const item = target.closest('.stil-week-col > .stil-event');
+    if (!item && target !== column && !target.matches('.stil-week-free')) return;
+
+    const week = column.closest('.stil-week');
+    const styles = getComputedStyle(week);
+    const first = parseFloat(styles.getPropertyValue('--_from')) * 60;
+    const length = item ? parseFloat(item.style.getPropertyValue('--stil-length')) : 0;
+    drag = {
+        week,
+        column,
+        item,
+        action: !item ? 'create' : target.closest('.stil-event-resize') ? 'resize' : 'move',
+        first,
+        last: first + parseFloat(styles.getPropertyValue('--_hours')) * 60,
+        start: item ? parseFloat(item.style.getPropertyValue('--stil-start')) : 0,
+        length,
+        style: item?.getAttribute('style') ?? null,
+        pointerId: event.pointerId,
+        x: event.clientX,
+        y: event.clientY,
+        moved: false,
+        ghost: null,
+        result: null,
+    };
+}
+
+function onPointerMove(event) {
+    if (!drag || event.pointerId !== drag.pointerId) return;
+    const d = drag;
+    if (!d.moved) {
+        if (Math.hypot(event.clientX - d.x, event.clientY - d.y) < 4) return;
+        d.moved = true;
+        try { (d.item ?? d.column).setPointerCapture(d.pointerId); } catch { /* the pointer is gone */ }
+        if (d.item) {
+            d.item.classList.add('stil-event-dragging');
+        } else {
+            d.ghost = document.createElement('div');
+            d.ghost.className = 'stil-event stil-event-draft stil-event-dragging';
+            d.ghost.setAttribute('aria-hidden', 'true');
+            d.column.append(d.ghost);
+        }
+    }
+
+    const rect = d.column.getBoundingClientRect();
+    const perMinute = rect.height / (d.last - d.first);
+    const snap = minutes => Math.round(minutes / snapMinutes) * snapMinutes;
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+    const columns = [...d.week.querySelectorAll('.stil-week-col')];
+    let day = columns.indexOf(d.column);
+    let start;
+    let end;
+
+    if (d.action === 'move') {
+        start = clamp(d.start + snap((event.clientY - d.y) / perMinute), d.first, d.last - d.length);
+        end = start + d.length;
+        // The day column under the pointer, or the nearest one.
+        const target = columns.reduce((best, column) => {
+            const r = column.getBoundingClientRect();
+            const distance = event.clientX < r.left ? r.left - event.clientX : event.clientX > r.right ? event.clientX - r.right : 0;
+            return distance < best.distance ? { column, distance } : best;
+        }, { column: d.column, distance: Infinity }).column;
+        day = columns.indexOf(target);
+        d.item.style.setProperty('--stil-start', start);
+        d.item.style.translate = `${target.getBoundingClientRect().left - rect.left}px 0`;
+    } else if (d.action === 'resize') {
+        start = d.start;
+        end = clamp(d.start + snap(d.length + (event.clientY - d.y) / perMinute), d.start + snapMinutes, d.last);
+        d.item.style.setProperty('--stil-length', end - start);
+    } else {
+        const at = clientY => clamp(snap(d.first + (clientY - rect.top) / perMinute), d.first, d.last);
+        const anchor = at(d.y);
+        const current = at(event.clientY);
+        start = Math.min(anchor, current);
+        end = Math.max(anchor, current, start + snapMinutes);
+        d.ghost.style.setProperty('--stil-start', start);
+        d.ghost.style.setProperty('--stil-length', end - start);
+    }
+
+    d.result = { day, start, end };
+    event.preventDefault();
+}
+
+function onPointerUp(event) {
+    if (!drag || event.pointerId !== drag.pointerId) return;
+    const d = drag;
+    cancelDrag();
+    if (!d.moved || !d.result) return;
+
+    // The click that follows a drag must not open the event or the free block.
+    const swallow = click => { click.stopPropagation(); click.preventDefault(); };
+    window.addEventListener('click', swallow, { capture: true, once: true });
+    setTimeout(() => window.removeEventListener('click', swallow, true), 0);
+
+    (d.item ?? d.column).dispatchEvent(new CustomEvent('stilweekedit', {
+        bubbles: true,
+        detail: { action: d.action, item: d.item, ...d.result },
+    }));
+}
+
+// Puts the grid back as the markup drew it.
+function cancelDrag() {
+    const d = drag;
+    drag = null;
+    if (!d) return;
+    if (d.item) {
+        d.item.classList.remove('stil-event-dragging');
+        if (d.style === null) d.item.removeAttribute('style'); else d.item.setAttribute('style', d.style);
+    }
+    d.ghost?.remove();
 }
 
 function onToggle(event) {

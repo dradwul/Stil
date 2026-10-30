@@ -1,0 +1,375 @@
+@typeparam TItem
+@inherits StilCalendarBase<TItem>
+@using System.Globalization
+
+@* A month as a WAI-ARIA grid (stil-calendar). Each day is tinted by how booked it is and shows
+   its events as chips, or as dots in a narrow container. stil.js moves between the days with
+   the arrow keys and fires stilcalendaredge past the first or last day, which shows the next
+   month here. With HrefTemplate the month links also work with static rendering. *@
+@{
+    var first = StartOfWeek(_month);
+    var lastOfMonth = _month.AddMonths(1).AddDays(-1);
+    var weeks = (lastOfMonth.DayNumber - first.DayNumber) / 7 + 1;
+    var tabStop = TabStop(first, weeks);
+}
+<div @attributes="AdditionalAttributes" class="@Classes("stil-calendar", Mini ? "stil-calendar-mini" : null)">
+    <div class="stil-calendar-header">
+        <StilHeading Level="HeadingLevel" class="stil-calendar-title" id="@_titleId">@_month.ToString("Y", CurrentCulture)</StilHeading>
+        @if (ShowNavigation)
+        {
+            <div class="stil-cluster stil-gap-1">
+                @NavButton(_month.AddMonths(-1), StilIcons.ChevronLeft, PreviousText)
+                @if (!Mini)
+                {
+                    @if (HrefTemplate is not null)
+                    {
+                        <a class="stil-btn stil-btn-outline stil-btn-secondary stil-btn-sm" href="@Href(FirstOfMonth(Today))">@TodayText</a>
+                    }
+                    else
+                    {
+                        <button type="button" class="stil-btn stil-btn-outline stil-btn-secondary stil-btn-sm" @onclick="GoToTodayAsync">@TodayText</button>
+                    }
+                }
+                @NavButton(_month.AddMonths(1), StilIcons.ChevronRight, NextText)
+            </div>
+        }
+    </div>
+    <table class="stil-calendar-grid" role="grid" aria-labelledby="@_titleId" @attributes="GridAttributes">
+        <thead>
+            <tr>
+                @if (ShowWeekNumbers)
+                {
+                    <th scope="col" class="stil-calendar-week"><abbr title="@WeekNumberText">@(Mini ? WeekShortText : WeekText)</abbr></th>
+                }
+                @for (var d = 0; d < 7; d++)
+                {
+                    var day = first.AddDays(d).DayOfWeek;
+                    var names = CurrentCulture.DateTimeFormat;
+                    <th scope="col"><abbr title="@names.GetDayName(day)">@(Mini ? ShortName(names.GetAbbreviatedDayName(day)) : names.GetAbbreviatedDayName(day))</abbr></th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for (var w = 0; w < weeks; w++)
+            {
+                var weekStart = first.AddDays(w * 7);
+                <tr>
+                    @if (ShowWeekNumbers)
+                    {
+                        <td class="stil-calendar-week" role="rowheader"><span class="stil-visually-hidden">@WeekText </span>@WeekNumber(weekStart)</td>
+                    }
+                    @for (var d = 0; d < 7; d++)
+                    {
+                        var date = weekStart.AddDays(d);
+                        @Day(date, date == tabStop)
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private readonly string _titleId = StilIds.Next("calendar");
+    private readonly Dictionary<DateOnly, ElementReference> _cells = [];
+    private DateOnly _month;
+    private DateOnly? _selected;
+    private DateOnly? _syncedMonth;
+    private DateOnly? _syncedSelected;
+    private bool _initialized;
+    private DateOnly? _focusPending;
+
+    /// <summary>The month shown: any day in it. Supports two-way binding (@bind-Month). The default is the selected date's month, else today's.</summary>
+    [Parameter]
+    public DateOnly? Month { get; set; }
+
+    /// <summary>Raised when another month is shown, with its first day.</summary>
+    [Parameter]
+    public EventCallback<DateOnly?> MonthChanged { get; set; }
+
+    /// <summary>The selected day. Supports two-way binding (@bind-SelectedDate).</summary>
+    [Parameter]
+    public DateOnly? SelectedDate { get; set; }
+
+    /// <summary>Raised when a day is selected with a click, Enter or Space.</summary>
+    [Parameter]
+    public EventCallback<DateOnly?> SelectedDateChanged { get; set; }
+
+    /// <summary>Raised when the selected day is clicked again or its "+N more" link is clicked, for example to open the day in a week view.</summary>
+    [Parameter]
+    public EventCallback<DateOnly> OnDateOpen { get; set; }
+
+    /// <summary>A small month with dates only (stil-calendar-mini); the tint still shows the load.</summary>
+    [Parameter]
+    public bool Mini { get; set; }
+
+    /// <summary>Show ISO week numbers (or the culture's) in the first column.</summary>
+    [Parameter]
+    public bool ShowWeekNumbers { get; set; } = true;
+
+    /// <summary>The most event chips in a day. When there are more, one fewer is shown with "+N more". The default is 3.</summary>
+    [Parameter]
+    public int MaxEventsPerDay { get; set; } = 3;
+
+    /// <summary>The first day of a range to mark (stil-calendar-range), for example the week shown next to a mini month.</summary>
+    [Parameter]
+    public DateOnly? RangeStart { get; set; }
+
+    /// <summary>The last day of the marked range.</summary>
+    [Parameter]
+    public DateOnly? RangeEnd { get; set; }
+
+    /// <summary>Show the previous, today and next buttons.</summary>
+    [Parameter]
+    public bool ShowNavigation { get; set; } = true;
+
+    /// <summary>
+    /// Renders the navigation as links, for example "calendar?month={0:yyyy-MM}", where {0} is the
+    /// first day of the month (a DateOnly). Links also work with static rendering; MonthChanged
+    /// is not raised.
+    /// </summary>
+    [Parameter]
+    public string? HrefTemplate { get; set; }
+
+    /// <summary>The accessible name of the previous month button.</summary>
+    [Parameter]
+    public string PreviousText { get; set; } = "Previous month";
+
+    /// <summary>The accessible name of the next month button.</summary>
+    [Parameter]
+    public string NextText { get; set; } = "Next month";
+
+    /// <summary>The heading of the week number column.</summary>
+    [Parameter]
+    public string WeekText { get; set; } = "Week";
+
+    /// <summary>The heading of the week number column in a mini month.</summary>
+    [Parameter]
+    public string WeekShortText { get; set; } = "Wk";
+
+    /// <summary>The full name of the week number column.</summary>
+    [Parameter]
+    public string WeekNumberText { get; set; } = "Week number";
+
+    /// <summary>The link under the chips when a day has more events; {0} is how many are hidden.</summary>
+    [Parameter]
+    public string MoreFormat { get; set; } = "+{0} more";
+
+    /// <summary>Part of a day's accessible name when it has one event.</summary>
+    [Parameter]
+    public string OneEventText { get; set; } = "1 event";
+
+    /// <summary>Part of a day's accessible name; {0} is the number of events.</summary>
+    [Parameter]
+    public string EventsFormat { get; set; } = "{0} events";
+
+    /// <summary>Part of a day's accessible name; {0} is the booked percentage of the working day.</summary>
+    [Parameter]
+    public string BookedFormat { get; set; } = "{0}% booked";
+
+    protected override void OnParametersSet()
+    {
+        if (!_initialized || SelectedDate != _syncedSelected)
+        {
+            _selected = SelectedDate;
+            _syncedSelected = SelectedDate;
+        }
+
+        if (!_initialized || Month != _syncedMonth)
+        {
+            _month = FirstOfMonth(Month ?? _selected ?? Today);
+            _syncedMonth = Month;
+        }
+
+        _initialized = true;
+    }
+
+    private static DateOnly FirstOfMonth(DateOnly date) => new(date.Year, date.Month, 1);
+
+    // The first two letters of a day name, for the mini month.
+    private static string ShortName(string name) => name.Length > 2 ? name[..2] : name;
+
+    // Razor cannot bind @onstilcalendaredge inside the assembly that declares it, so the handler
+    // is added as an attribute.
+    private IReadOnlyDictionary<string, object> GridAttributes => new Dictionary<string, object>
+    {
+        ["onstilcalendaredge"] = EventCallback.Factory.Create<StilCalendarEdgeEventArgs>(this, OnEdgeAsync),
+    };
+
+    private string Href(DateOnly month) => string.Format(CultureInfo.InvariantCulture, HrefTemplate!, month);
+
+    // The day in the tab order: the selected one, else today, else the first of the month.
+    private DateOnly TabStop(DateOnly first, int weeks)
+    {
+        var last = first.AddDays(weeks * 7 - 1);
+        bool Shown(DateOnly date) => date >= first && date <= last;
+        return _selected is { } selected && Shown(selected) ? selected
+            : Shown(Today) && Today.Month == _month.Month ? Today
+            : _month;
+    }
+
+    private RenderFragment NavButton(DateOnly month, string icon, string text) => @<text>
+        @if (HrefTemplate is not null)
+        {
+            <a class="stil-btn stil-btn-ghost stil-btn-sm stil-btn-icon" href="@Href(month)" aria-label="@text"><StilIcon Name="@icon" /></a>
+        }
+        else
+        {
+            <button type="button" class="stil-btn stil-btn-ghost stil-btn-sm stil-btn-icon" aria-label="@text"
+                    @onclick="() => ShowMonthAsync(month)"><StilIcon Name="@icon" /></button>
+        }
+    </text>;
+
+    private RenderFragment Day(DateOnly date, bool tabStop)
+    {
+        var occurrences = OccurrencesOn(date);
+        var load = ShowLoad ? Load(date) : 0;
+        var classes = string.Join(' ', new[]
+        {
+            "stil-calendar-day",
+            date.Month != _month.Month ? "stil-calendar-outside" : null,
+            RangeStart is { } from && date >= from && date <= (RangeEnd ?? from) ? "stil-calendar-range" : null,
+        }.Where(c => c is not null));
+        var shown = occurrences.Count > MaxEventsPerDay ? Math.Max(0, MaxEventsPerDay - 1) : occurrences.Count;
+
+        // Keyed by date: a new month gets new cells, so @ref captures them and focus can move there.
+        return @<td @key="date" role="gridcell" class="@classes" style="@(load > 0 ? $"--stil-load: {Css(load)}" : null)"
+                    data-date="@date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)" tabindex="@(tabStop ? 0 : -1)"
+                    aria-selected="@(_selected == date ? "true" : "false")" aria-current="@(date == Today ? "date" : null)"
+                    aria-label="@DayLabel(date, occurrences.Count)" @ref="_cells[date]" @onclick="() => OnDayClickAsync(date)">
+            <span class="stil-calendar-date" aria-hidden="true">@date.Day</span>
+            @if (!Mini && occurrences.Count > 0)
+            {
+                <ul class="stil-calendar-events">
+                    @foreach (var occurrence in occurrences.Take(shown))
+                    {
+                        var item = occurrence.Item;
+                        <li>
+                            @(new StilCalendarEventView
+                            {
+                                Classes = EventClasses(item),
+                                Style = ColorStyle(item),
+                                Title = TitleOf(item),
+                                Time = occurrence.StartMinute > 0 ? FormatTime(occurrence.StartMinute) : null,
+                                Label = EventLabel(occurrence, withDay: true),
+                                Tabbable = false,
+                                OnClick = ItemClick(item),
+                            }.Render())
+                        </li>
+                    }
+                </ul>
+                @if (shown < occurrences.Count)
+                {
+                    <button type="button" class="stil-calendar-more" tabindex="-1"
+                            @onclick="() => OnDateOpen.InvokeAsync(date)" @onclick:stopPropagation="true">
+                        @string.Format(CurrentCulture, MoreFormat, occurrences.Count - shown)
+                    </button>
+                }
+                <div class="stil-calendar-dots" aria-hidden="true">
+                    @foreach (var occurrence in occurrences.Take(5))
+                    {
+                        <span class="@($"stil-calendar-dot {DotVariantClass(occurrence.Item)}".TrimEnd())" style="@ColorStyle(occurrence.Item)"></span>
+                    }
+                </div>
+            }
+        </td>;
+    }
+
+    private string DayLabel(DateOnly date, int count)
+    {
+        var label = date.ToString("D", CurrentCulture);
+        if (count == 0)
+        {
+            return $"{label}, {FreeText.ToLower(CurrentCulture)}";
+        }
+
+        var events = count == 1 ? OneEventText : string.Format(CurrentCulture, EventsFormat, count);
+        var booked = string.Format(CurrentCulture, BookedFormat, Math.Round(Load(date) * 100));
+        return $"{label}, {events}, {booked}";
+    }
+
+    private async Task ShowMonthAsync(DateOnly month)
+    {
+        month = FirstOfMonth(month);
+        if (month == _month)
+        {
+            return;
+        }
+
+        _month = month;
+        await MonthChanged.InvokeAsync(month);
+    }
+
+    private async Task GoToTodayAsync()
+    {
+        await ShowMonthAsync(Today);
+        await SelectAsync(Today, focus: false);
+    }
+
+    private async Task OnDayClickAsync(DateOnly date)
+    {
+        if (_selected == date)
+        {
+            await OnDateOpen.InvokeAsync(date);
+            return;
+        }
+
+        await SelectAsync(date, focus: date.Month != _month.Month);
+    }
+
+    private async Task SelectAsync(DateOnly date, bool focus)
+    {
+        if (date.Month != _month.Month || date.Year != _month.Year)
+        {
+            await ShowMonthAsync(date);
+        }
+
+        if (focus)
+        {
+            _focusPending = date;
+        }
+
+        if (_selected == date)
+        {
+            return;
+        }
+
+        _selected = date;
+        await SelectedDateChanged.InvokeAsync(date);
+    }
+
+    // stil.js moved past the first or last day: select the day beyond it, in the next or previous month.
+    private async Task OnEdgeAsync(StilCalendarEdgeEventArgs e)
+    {
+        if (!DateOnly.TryParseExact(e.Date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+        {
+            return;
+        }
+
+        var step = e.Key switch
+        {
+            "ArrowLeft" => -1,
+            "ArrowRight" => 1,
+            "ArrowUp" => -7,
+            "ArrowDown" => 7,
+            _ => 0
+        };
+
+        if (step != 0)
+        {
+            await SelectAsync(date.AddDays(step), focus: true);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_focusPending is { } date)
+        {
+            _focusPending = null;
+            if (_cells.TryGetValue(date, out var cell))
+            {
+                await cell.FocusAsync();
+            }
+        }
+    }
+}

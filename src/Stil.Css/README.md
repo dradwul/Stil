@@ -132,7 +132,7 @@ classes: `aria-current="page"`, `aria-selected="true"`,
 | Toast | `stil-toast-container` > `stil-toast` + `stil-toast-{variant}` > `stil-toast-body` (`stil-toast-title`) + `stil-close` |
 | Event | `stil-event` + `stil-event-{variant}`, or `--stil-event-color` for your own color, with `stil-event-title` (`stil-event-time`) and `stil-event-meta`. `stil-event-draft` marks an unsaved event. |
 | Calendar (month) | `stil-calendar` (`stil-calendar-mini` for a small month) > `stil-calendar-header` (`stil-calendar-title`) + `<table class="stil-calendar-grid" role="grid">`. Days are `<td role="gridcell" class="stil-calendar-day">` with `--stil-load` (0–1, tints the day), `aria-current="date"`, `aria-selected`, `stil-calendar-outside` and `stil-calendar-range`. Inside: `stil-calendar-date`, `stil-calendar-events` (event chips), `stil-calendar-more` and `stil-calendar-dots` (`stil-calendar-dot`, shown instead of chips on a narrow calendar). An optional week number column: `stil-calendar-week`. Key: `stil-calendar-legend` with `stil-calendar-legend-scale`. Filters: `stil-calendar-filter` with a variant class. |
-| Week | `stil-week` (`--stil-week-days`, `--stil-week-first-hour`, `--stil-week-hours`) > `stil-week-scroll` > `stil-week-grid` > `stil-week-corner`, `stil-week-day-head` (`stil-week-day-name`, `stil-calendar-date`, `stil-week-load` with `stil-week-load-bar`), `stil-week-times` (`stil-week-time`) and a `stil-week-col` per day (`stil-week-col-muted` for weekends). In a column, `stil-event`, `stil-week-free` and `stil-week-now` are placed by `--stil-start` and `--stil-length` (minutes from midnight); overlapping events get `--stil-col` and `--stil-cols`. |
+| Week | `stil-week` (`--stil-week-days`, `--stil-week-first-hour`, `--stil-week-hours`) > `stil-week-scroll` > `stil-week-grid` > `stil-week-corner`, `stil-week-day-head` (`stil-week-day-name`, `stil-calendar-date`, `stil-week-load` with `stil-week-load-bar`), `stil-week-times` (`stil-week-time`) and a `stil-week-col` per day (`stil-week-col-muted` for weekends). In a column, `stil-event`, `stil-week-free` and `stil-week-now` are placed by `--stil-start` and `--stil-length` (minutes from midnight); overlapping events get `--stil-col` and `--stil-cols`. With `data-stil-editable`, stil.js lets the user drag events (an optional `stil-event-resize` handle at the bottom of an event resizes it). `stil-week-auto` shows a `stil-agenda` child instead of the grid when the week is narrower than 36rem. |
 | Agenda | `stil-agenda` > `stil-agenda-day` (`stil-agenda-day-title`) > `stil-agenda-list` > `stil-agenda-item` (`stil-agenda-time` + a `stil-event`). A free gap: `stil-agenda-item stil-agenda-free` with `stil-agenda-free-line`. |
 
 To see every class with its markup, open
@@ -142,7 +142,7 @@ full page built only with Stil, open
 
 ## Optional JavaScript
 
-Stil works without JavaScript. The optional `dist/stil.js` module, 8 kB with
+Stil works without JavaScript. The optional `dist/stil.js` module, 14 kB with
 no dependencies, adds a few behaviours:
 
 ```html
@@ -164,6 +164,14 @@ no dependencies, adds a few behaviours:
   the week, and Enter or Space clicks the day. Moving past the first or last
   day fires a bubbling `stilcalendaredge` event (`detail.key`, `detail.cell`),
   so your script can show the previous or next month.
+- In a week grid with `data-stil-editable` (`div.stil-week`), the user can drag
+  an event to another time or day, drag its `stil-event-resize` handle to
+  change its end, and drag on empty time to mark a new event. Times snap to
+  15 minutes and Escape cancels. On release a bubbling `stilweekedit` event
+  fires with `detail.action` (`"move"`, `"resize"` or `"create"`),
+  `detail.item` (the event element, or null), `detail.day` (the index of the
+  day column) and `detail.start` and `detail.end` (minutes from midnight).
+  The grid puts the event back; save the change and redraw.
 - Keys that a widget's own script handles do not also scroll the page,
   submit a form or close a dialog: the arrow keys on `role="treeitem"`,
   `role="tab"` and `role="combobox"`, and Enter and Escape in an open

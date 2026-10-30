@@ -2,13 +2,26 @@
 // blazor.webassembly.js). It loads stil.js, which closes dropdowns on an outside click or Escape
 // and handles data-stil-dismiss, also on statically rendered pages. It also registers the
 // "stiltoggle" event, so components such as StilDropdown learn the real open state of a
-// <details> element, whoever opened or closed it.
+// <details> element, whoever opened or closed it, and the calendar events that stil.js fires:
+// "stilcalendaredge" (the keyboard left the month) and "stilweekedit" (an event was dragged).
 const load = () => import('./stil.js');
 
 function registerEvents(blazor) {
     blazor?.registerCustomEventType?.('stiltoggle', {
         browserEventName: 'toggle',
         createEventArgs: event => ({ open: event.target.open === true }),
+    });
+    blazor?.registerCustomEventType?.('stilcalendaredge', {
+        createEventArgs: event => ({ key: event.detail?.key ?? '', date: event.detail?.cell?.dataset.date ?? null }),
+    });
+    blazor?.registerCustomEventType?.('stilweekedit', {
+        createEventArgs: event => ({
+            action: event.detail?.action ?? '',
+            item: event.detail?.item?.dataset.stilItem ?? null,
+            day: event.detail?.day ?? 0,
+            start: event.detail?.start ?? 0,
+            end: event.detail?.end ?? 0,
+        }),
     });
 }
 

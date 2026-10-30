@@ -2735,11 +2735,17 @@
   }
 
   .stil-calendar-events {
+    grid-template-columns: minmax(0, 1fr);
     gap: 2px;
     margin: 0;
     padding: 0;
     list-style: none;
     display: grid;
+  }
+
+  .stil-calendar-events .stil-event {
+    width: fit-content;
+    max-width: 100%;
   }
 
   .stil-calendar-more {
@@ -3024,6 +3030,71 @@
     height: 10px;
     position: absolute;
     top: -6px;
+  }
+
+  .stil-week[data-stil-editable] .stil-week-col {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .stil-week[data-stil-editable] .stil-week-col > .stil-event {
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .stil-event-resize {
+    display: none;
+  }
+
+  .stil-week[data-stil-editable] .stil-event-resize {
+    inset-inline: 0;
+    cursor: ns-resize;
+    height: .5rem;
+    display: block;
+    position: absolute;
+    bottom: 0;
+  }
+
+  .stil-week[data-stil-editable] .stil-event-resize:after {
+    content: "";
+    inset-inline-start: 50%;
+    border-radius: var(--stil-radius-pill);
+    background-color: var(--_bg);
+    opacity: 0;
+    width: 1.25rem;
+    height: 2px;
+    transition: opacity var(--stil-duration-fast) var(--stil-easing);
+    position: absolute;
+    bottom: 2px;
+    translate: -50%;
+  }
+
+  .stil-week[data-stil-editable] .stil-event:is(:hover, :focus-visible) .stil-event-resize:after {
+    opacity: .8;
+  }
+
+  .stil-event-dragging {
+    z-index: 20;
+    box-shadow: var(--stil-shadow-md);
+    cursor: grabbing;
+  }
+
+  .stil-week[data-stil-editable] .stil-week-col > .stil-event-dragging {
+    cursor: grabbing;
+  }
+
+  .stil-week-auto > .stil-agenda {
+    display: none;
+  }
+
+  @container stil-week (width < 36rem) {
+    .stil-week-auto > .stil-week-scroll {
+      display: none;
+    }
+
+    .stil-week-auto > .stil-agenda {
+      display: block;
+    }
   }
 
   .stil-agenda {

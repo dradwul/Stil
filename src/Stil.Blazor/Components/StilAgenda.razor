@@ -1,0 +1,100 @@
+@typeparam TItem
+@inherits StilCalendarBase<TItem>
+
+@* Events grouped by day (stil-agenda), with the free gaps of the working day between them. It is
+   the small-screen view of a planner and a text alternative to the grids for screen readers. *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-agenda")">
+    @for (var i = 0; i < Math.Max(1, Days); i++)
+    {
+        var date = FirstDate.AddDays(i);
+        var occurrences = OccurrencesOn(date);
+        var free = FreeBlocks(date);
+        if (!ShowEmptyDays && occurrences.Count == 0)
+        {
+            continue;
+        }
+
+        var headingId = $"{_id}-{i}";
+        var booked = BookedMinutes(date);
+        <section class="stil-agenda-day" aria-labelledby="@headingId">
+            <StilHeading Level="HeadingLevel" class="stil-agenda-day-title" id="@headingId">
+                @DayTitle(date) <small>@date.ToString("M", CurrentCulture)@(booked > 0 ? $" · {string.Format(CurrentCulture, BookedFormat, FormatHours(booked))}" : null)</small>
+            </StilHeading>
+            @if (occurrences.Count == 0 && free.Count == 0)
+            {
+                <p class="stil-text-muted stil-fs-sm stil-mb-0">@EmptyText</p>
+            }
+            else
+            {
+                <ul class="stil-agenda-list">
+                    @foreach (var entry in Entries(occurrences, free))
+                    {
+                        if (entry.Occurrence is { } occurrence)
+                        {
+                            var item = occurrence.Item;
+                            <li class="stil-agenda-item">
+                                <span class="stil-agenda-time">@FormatRange(occurrence.StartMinute, occurrence.EndMinute)</span>
+                                @(new StilCalendarEventView
+                                {
+                                    Classes = EventClasses(item),
+                                    Style = ColorStyle(item),
+                                    Title = TitleOf(item),
+                                    Meta = Details?.Invoke(item),
+                                    Label = EventLabel(occurrence, withDay: false),
+                                    OnClick = ItemClick(item),
+                                }.Render())
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="stil-agenda-item stil-agenda-free">
+                                <span class="stil-agenda-time">@FormatRange(entry.Start, entry.End)</span>
+                                <span class="stil-agenda-free-line">@FreeText · @FormatHours(entry.End - entry.Start)</span>
+                            </li>
+                        }
+                    }
+                </ul>
+            }
+        </section>
+    }
+</div>
+
+@code {
+    private readonly string _id = StilIds.Next("agenda");
+
+    /// <summary>The first day shown. The default is today.</summary>
+    [Parameter]
+    public DateOnly? Date { get; set; }
+
+    /// <summary>How many days are shown. The default is 7.</summary>
+    [Parameter]
+    public int Days { get; set; } = 7;
+
+    /// <summary>Show days without events (with their free time, or EmptyText).</summary>
+    [Parameter]
+    public bool ShowEmptyDays { get; set; } = true;
+
+    /// <summary>The heading of tomorrow.</summary>
+    [Parameter]
+    public string TomorrowText { get; set; } = "Tomorrow";
+
+    /// <summary>The text of a day with nothing in it.</summary>
+    [Parameter]
+    public string EmptyText { get; set; } = "Nothing planned.";
+
+    /// <summary>The booked time after a day's date; {0} is the hours.</summary>
+    [Parameter]
+    public string BookedFormat { get; set; } = "{0} booked";
+
+    private DateOnly FirstDate => Date ?? Today;
+
+    private string DayTitle(DateOnly date) =>
+        date == Today ? TodayText : date == Today.AddDays(1) ? TomorrowText : DayName(date);
+
+    private readonly record struct Entry(int Start, int End, StilCalendarOccurrence<TItem>? Occurrence);
+
+    private static IEnumerable<Entry> Entries(IReadOnlyList<StilCalendarOccurrence<TItem>> occurrences, IReadOnlyList<(int Start, int End)> free) =>
+        occurrences.Select(o => new Entry(o.StartMinute, o.EndMinute, o))
+            .Concat(free.Select(f => new Entry(f.Start, f.End, null)))
+            .OrderBy(e => e.Start);
+}

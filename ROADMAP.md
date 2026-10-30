@@ -15,7 +15,7 @@ something usable.
 | 4 | Stil for Blazor: a component for every Stil CSS component | ✅ Done |
 | 5 | Data components | ✅ Done |
 | 6 | 1.0 release and ecosystem | ✅ Done |
-| 7 | Time and planning: calendar, week planner, agenda | In progress |
+| 7 | Time and planning: calendar, week planner, agenda | ✅ Done |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -25,7 +25,7 @@ end, so they never keep a phase open.
 
 - **Stil CSS:** an npm package (`stil-css`, not yet published). It is built
   with Lightning CSS from partials into `dist/stil.css` and `stil.min.css`
-  (about 16 kB gzipped), plus the optional 8 kB `stil.js`. It has:
+  (about 16 kB gzipped), plus the optional 14 kB `stil.js`. It has:
   - cascade layers;
   - a full `--stil-*` token set;
   - light and dark mode;
@@ -389,8 +389,9 @@ showing at a glance how busy a period is and where the free time is.
   without a click.
 - **Free time visible:** the week view shows a "now" line in the accent color
   and marks free blocks quietly. Clicking a free block creates an event there.
-- **Calm density:** overlapping events sit side by side up to a limit, then
-  collapse into "+3" with a popup. A full day becomes dots in the month view.
+- **Calm density:** overlapping events cascade in the week, so every title
+  stays readable. A busy day shows "+N more" in the month, and dots in a
+  narrow month.
 - **Nordic defaults that follow the culture:** the first day of the week, ISO
   week numbers and the 24-hour clock come from `CultureInfo`.
 
@@ -408,21 +409,26 @@ showing at a glance how busy a period is and where the free time is.
   - Tokens: `--stil-calendar-hour`, and `--stil-calendar-load` to override
     the busy tint.
   - `stil.js` adds the WAI-ARIA grid keyboard pattern to the month and fires
-    `stilcalendaredge` at the edges.
+    `stilcalendaredge` at the edges. In a week with `data-stil-editable` it
+    drags events to move, resize and create them and fires `stilweekedit`.
+  - `stil-week-auto` turns a narrow week into an agenda of the same days.
   - A showcase section, Playwright baselines and axe checks of
     `calendar.html`.
-- [ ] `StilCalendar`: a month view that picks dates and shows events as chips,
-  or dots when a day is full. Changing months works with links in static SSR
-  (like `StilPagination`'s `HrefTemplate`).
-- [ ] `StilWeekPlanner`: day, week and work-week views on a time grid, a
-  layout for overlapping events, and drag to create, move and resize
-  (interactive render modes).
-- [ ] `StilAgenda`: events grouped by day. It is the small-screen view and the
-  text alternative for screen readers, like the data table of a chart. A
-  planner opens in the agenda on a phone, and the user can switch view.
-- [ ] One data model for all three, like the data grid: `Items`, plus
-  `Start`, `End`, `Title` and `Variant` selectors. No event class of its own.
-- [ ] bUnit tests, a docs page, demo sections and Playwright baselines.
+- [x] `StilCalendar`: a month view that picks dates and shows events as chips,
+  or dots in a narrow container. The keyboard moves past the edges of the
+  month; changing months works with links in static SSR (`HrefTemplate`).
+  `Mini` and `RangeStart`/`RangeEnd` give a small month next to a planner.
+- [x] `StilWeekPlanner`: day, week and work-week views on a time grid, a
+  cascade layout for overlapping events, free blocks, a now line, and drag to
+  create, move and resize (`Editable`, interactive render modes). Clicking a
+  free block also creates an event, so dragging is never required.
+- [x] `StilAgenda`: events grouped by day, with the free gaps between them. A
+  planner shows its days as an agenda in a narrow container, such as a phone;
+  `AgendaWhenNarrow="false"` keeps the time grid.
+- [x] One data model for all three, like the data grid: `Items`, plus
+  `Start`, `End`, `Title`, `Variant`, `Color`, `Details` and `Draft`
+  selectors. No event class of its own.
+- [x] bUnit tests, a docs page, a demo section and Playwright baselines.
 
 **Not in the first version:** recurring events (the app expands them into
 occurrences) and time zone conversion (the calendar shows the times it gets).
