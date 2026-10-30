@@ -8,6 +8,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versions follow [Semantic Versioning](https://semver.org/). Before `1.0`,
 a minor version can contain breaking changes; they are marked **Breaking**.
 
+## [Unreleased]
+
+## [0.1.0-preview.1] - 2026-10-30
+
 ### Added
 
 - **Stil CSS** (`stil-css`):
