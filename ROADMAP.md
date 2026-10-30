@@ -16,6 +16,7 @@ something usable.
 | 5 | Data components | ✅ Done |
 | 6 | 1.0 release and ecosystem | ✅ Done |
 | 7 | Time and planning: calendar, week planner, agenda | ✅ Done |
+| 8 | Language and localization | Planned |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -376,7 +377,7 @@ built only with Stil.
 - The showcase's code blocks can be focused, so keyboard users can scroll
   them. This was the one axe finding.
 
-## Phase 7: Time and planning
+## Phase 7: Time and planning ✅ Done
 
 Goal: a calendar, a week planner and an agenda that are easy to understand,
 calm to use and look like the rest of Stil. What makes them stand out is
@@ -432,6 +433,92 @@ showing at a glance how busy a period is and where the free time is.
 
 **Not in the first version:** recurring events (the app expands them into
 occurrences) and time zone conversion (the calendar shows the times it gets).
+
+## Phase 8: Language and localization
+
+Goal: one setting makes every Stil component speak the app's language,
+the app can translate its own texts with the same package, and users can
+switch language themselves. Today about 100 built-in texts
+(`PreviousText`, `FreeText`, `EmptyText` and so on, in 42 components) are
+English defaults that an app has to override one by one. Dates, times and
+week days already follow `CultureInfo`.
+
+**Ideas that set it apart:**
+
+- **Nordic languages built in:** English, Swedish, Norwegian (Bokmål),
+  Danish and Finnish ship in the package, so a Nordic app needs no
+  translation work.
+- **Zero config:** the texts follow `CultureInfo.CurrentUICulture`. An app
+  that already sets its culture gets translated components without touching
+  Stil.
+- **Parameters still win:** a text set on a component always beats the
+  translation, so existing apps keep working.
+- **App texts without resx:** the app's own texts live in plain JSON files
+  and are read through the standard `IStringLocalizer<T>`. There is no
+  Stil-specific API to learn, and code written against it keeps working
+  with resx if the app ever moves away from Stil.
+- **One package:** everything ships in `Stil`. The only new dependency is
+  Microsoft's small `Microsoft.Extensions.Localization`, which comes along
+  transitively.
+
+**Plan:**
+
+- [ ] `IStilLocalizer`, with a default implementation backed by embedded
+  JSON files for en, sv, nb, da and fi. JSON instead of resx means no
+  satellite assemblies, which keeps WebAssembly and trimming simple. The
+  text parameters default to `null` and fall back to the localizer. Format
+  texts such as `HoursFormat` and `BookedFormat` are included.
+  - `AddStil(o => …)` can add or replace languages, or plug in the app's own
+    `IStringLocalizer` resources.
+  - The keys are documented, and a test checks that every built-in language
+    has every key (like the icon test).
+- [ ] `AddStilLocalization()`, an opt-in JSON-based `IStringLocalizer` for
+  the app's own texts:
+  - It reads files such as `Locales/sv.json`, from disk on the server and
+    from `wwwroot` or embedded resources in WebAssembly (the same loader as
+    Stil's own texts).
+  - Keys can be shared (`sv.json`) or per type (`Pages.Home.sv.json` for
+    `IStringLocalizer<Home>`). Lookups fall back from the specific culture
+    to the parent culture (`sv-FI` to `sv`) and then to a default language.
+  - A missing key shows the key itself, and logs a warning in development.
+  - Format arguments work as usual (`L["Hello {0}", name]`).
+  - Apps use `@inject IStringLocalizer<Home> L` and `@L["Save"]` as in the
+    ASP.NET Core docs.
+- [ ] `StilLanguageSelector`: a menu of the app's cultures (`Cultures`),
+  each shown by its own name ("Svenska", "Suomi"). No flags, because flags
+  are countries, not languages.
+  - Server and static SSR: it posts to `MapStilCulture()`, which sets the
+    standard ASP.NET Core culture cookie and redirects back, so it works
+    without interactivity.
+  - WebAssembly: it stores the choice and reloads, and a startup helper
+    applies it before the app renders.
+- [ ] Culture checks: numbers, dates and times follow the culture in every
+  form field, in the data grid's cells and filters, and in the charts' axes
+  and summaries.
+- [ ] Right-to-left: everything works under `dir="rtl"`.
+  - The CSS uses logical properties; replace the last two physical ones (in
+    `form.css` and `overlay.css`).
+  - `stil.js` mirrors the left and right arrow keys in tabs, the calendar
+    grid and horizontal menus.
+  - Directional icons (chevrons, arrows) flip.
+  - An RTL section in the HTML showcase and the demo, with Playwright
+    baselines.
+- [ ] The language selector in the docs site and the demo, translated demo
+  texts through `AddStilLocalization()`, a docs page on localization, and a
+  `Culture` option in `dotnet new stil-app` that sets up the localizer and
+  a `Locales` folder.
+- [ ] bUnit tests for the fallback order (parameter, then app texts, then
+  built-in language, then English) and for the selector in each render
+  mode. Unit tests for the JSON localizer: shared and per-type files,
+  culture fallback, missing keys, format arguments and invalid JSON.
+
+**Not in the first version:**
+
+- Languages beyond the five built-in ones (apps add them through
+  `AddStil`).
+- Plural rules: use separate keys or format strings.
+- Reloading JSON files while the app runs.
+- Translating the docs site itself.
 
 ---
 
