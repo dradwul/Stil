@@ -86,4 +86,5 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 - A documentation site with live examples, API tables and a theme builder.
 - A guide for migrating from Bootstrap.
 
-[Unreleased]: https://github.com/dradwul/Stil/commits/main
+[Unreleased]: https://github.com/dradwul/Stil/compare/v0.1.0-preview.1...HEAD
+[0.1.0-preview.1]: https://github.com/dradwul/Stil/releases/tag/v0.1.0-preview.1
