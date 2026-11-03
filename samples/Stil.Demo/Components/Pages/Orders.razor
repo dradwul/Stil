@@ -2,6 +2,8 @@
 @inject OrderStore Store
 @inject IStilDialogService Dialogs
 @inject IStilToastService Toasts
+@using Microsoft.JSInterop
+@inject IJSRuntime JS
 
 <PageTitle>Orders · Stil for Blazor</PageTitle>
 
@@ -25,7 +27,8 @@
 <StilDataGrid TItem="Order" Items="_orders" Filterable PageSize="10" PageSizeOptions="[10, 25, 50]"
               SelectionMode="StilSelectionMode.Multiple" @bind-SelectedItems="_selected" ItemKey="o => o.Id"
               RowClass="@(o => o.Status == OrderStatus.Cancelled ? "stil-text-muted" : null)" Caption="Orders, newest first"
-              ShowExport ExportFileName="orders.csv">
+              ShowExport ExportFileName="orders.csv" ResizableColumns ReorderableColumns ShowColumnChooser
+              Layout="_layout" LayoutChanged="SaveLayoutAsync">
     <Toolbar>
         <span class="stil-text-muted">@(_selected.Count == 0 ? "Select orders to act on several at once." : $"{_selected.Count} selected")</span>
         @if (_selected.Count > 0)
@@ -35,7 +38,7 @@
         }
     </Toolbar>
     <Columns>
-        <StilDataGridColumn Property="o => o.Id" Title="Order" InitialSort="StilSortDirection.Descending" Width="7rem">
+        <StilDataGridColumn Property="o => o.Id" Title="Order" InitialSort="StilSortDirection.Descending" Width="7rem" Frozen="StilFrozen.Start" Hideable="false">
             <Template>#@context.Id</Template>
         </StilDataGridColumn>
         <StilDataGridColumn Property="o => o.Customer" />
@@ -49,7 +52,7 @@
             <Template>@(context.Express ? "Express" : "")</Template>
         </StilDataGridColumn>
         <StilDataGridColumn Property="o => o.Amount" Title="Amount (€)" Format="N2" Align="StilTextAlign.End" Aggregate="StilAggregate.Sum" />
-        <StilDataGridTemplateColumn Title="Actions" Align="StilTextAlign.End">
+        <StilDataGridTemplateColumn Title="Actions" Align="StilTextAlign.End" Frozen="StilFrozen.End" Hideable="false" Reorderable="false" Resizable="false">
             <StilDropdown Text="⋯" AriaLabel="@($"Actions for order {context.Id}")" Appearance="StilButtonAppearance.Ghost"
                           Variant="StilVariant.Secondary" Size="StilSize.Small" AlignEnd IconOnly>
                 <StilDropdownItem OnClick="() => Edit(context)">Edit</StilDropdownItem>
@@ -93,6 +96,31 @@
     private Order _draft = new();
 
     protected override void OnInitialized() => _orders = Store.All();
+
+    // The column layout (order, widths, hidden columns, sort) is kept in the browser, so it survives a reload.
+    private const string LayoutKey = "stil-demo-orders-layout";
+    private StilDataGridLayout? _layout;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        var json = await JS.InvokeAsync<string?>("localStorage.getItem", LayoutKey);
+        if (!string.IsNullOrEmpty(json))
+        {
+            _layout = System.Text.Json.JsonSerializer.Deserialize<StilDataGridLayout>(json);
+            StateHasChanged();
+        }
+    }
+
+    private async Task SaveLayoutAsync(StilDataGridLayout layout)
+    {
+        _layout = layout;
+        await JS.InvokeVoidAsync("localStorage.setItem", LayoutKey, System.Text.Json.JsonSerializer.Serialize(layout));
+    }
 
     private int Count(OrderStatus status) => _orders.Count(o => o.Status == status);
 
