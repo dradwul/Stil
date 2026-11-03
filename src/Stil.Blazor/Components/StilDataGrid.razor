@@ -10,12 +10,12 @@
     @Columns
 </CascadingValue>
 
-<div @attributes="RootAttributes" class="@Classes("stil-data-grid")" aria-busy="@StilCssClasses.AriaBool(_loading)">
-    @if (Toolbar is not null || ShowExport || ShowColumnChooser || ShowGroupChooser || Grouped)
+<div @attributes="RootAttributes" class="@Classes("stil-data-grid", IsTree ? "stil-tree-grid" : null)" aria-busy="@StilCssClasses.AriaBool(_loading)">
+    @if (Toolbar is not null || ShowExport || ShowColumnChooser || (ShowGroupChooser && !IsTree) || Grouped)
     {
         <div class="stil-data-grid-toolbar">
             @Toolbar
-            @if (ShowGroupChooser)
+            @if (ShowGroupChooser && !IsTree)
             {
                 <StilPopover Text="@Localize(GroupByText, "DataGrid.GroupBy")" Title="@Localize(GroupByText, "DataGrid.GroupBy")" Size="StilSize.Small"
                              class="stil-data-grid-grouping">
@@ -92,7 +92,7 @@
 
     <div class="@ScrollClass" style="@ScrollStyle" tabindex="@(Height is null ? null : 0)"
          role="@(Height is null ? null : "region")" aria-label="@(Height is null ? null : Caption ?? "Table")">
-        <table class="@TableClass" @ref="_table">
+        <table class="@TableClass" role="@(IsTree ? "treegrid" : null)" @ref="_table">
             @if (!string.IsNullOrWhiteSpace(Caption))
             {
                 <caption>@Caption</caption>
@@ -168,7 +168,7 @@
             <tbody>
                 @if (_editing && _editIsNew)
                 {
-                    @EditRow(_editItem!)
+                    @EditRow(_editItem!, null)
                 }
                 @if (Virtualize)
                 {
@@ -203,7 +203,7 @@
                             var column = _visible[i];
                             if (column.HasAggregate)
                             {
-                                <td class="@column.CellClass" data-stil-frozen="@column.FrozenValue">@column.FormatTotal(_aggregates.GetValueOrDefault(column.ColumnKey))</td>
+                                <td class="@column.CellClass" data-stil-frozen="@column.FrozenValue">@column.FormatTotal(IsTree ? TreeTotal(column, null) : _aggregates.GetValueOrDefault(column.ColumnKey))</td>
                             }
                             else if (i == 0)
                             {
@@ -578,10 +578,11 @@
             _sortDirection = column.InitialSortDirection;
             _ = InvokeAsync(RefreshAsync);
         }
-        else if ((column.HasAggregate || _groupBy.Contains(column.ColumnKey)) && !_reloadQueued)
+        else if ((column.HasAggregate || _groupBy.Contains(column.ColumnKey)) && !_reloadQueued && !IsTree)
         {
             // The columns register after the first load, which therefore had no totals to compute
             // and no columns to group by. Reload once all of them are in: after the current render.
+            // (A tree grid computes its totals when it renders them.)
             _reloadQueued = true;
             _ = InvokeAsync(async () =>
             {
@@ -617,6 +618,11 @@
 
     protected override async Task OnParametersSetAsync()
     {
+        if (IsTree && ItemsProvider is not null)
+        {
+            throw new InvalidOperationException("A StilTreeGrid takes its top-level rows from Items; load children with LoadChildren.");
+        }
+
         if (Layout is not null && !ReferenceEquals(Layout, _appliedLayout))
         {
             ApplyLayout(Layout);
@@ -665,6 +671,7 @@
             _groupsStale = true;
         }
 
+        _treeStale = true;
         if (Virtualize)
         {
             if (_virtualize is not null)
@@ -672,6 +679,14 @@
                 await _virtualize.RefreshDataAsync();
             }
 
+            StateHasChanged();
+            return;
+        }
+
+        if (IsTree)
+        {
+            // The tree is in memory: no loading state.
+            ShowTree();
             StateHasChanged();
             return;
         }
@@ -779,7 +794,11 @@
     {
         var columns = _visible.Where(c => c.CanExport).ToList();
         var rows = new List<TItem>();
-        if (ItemsProvider is null)
+        if (IsTree)
+        {
+            rows.AddRange(TreeExportRows());
+        }
+        else if (ItemsProvider is null)
         {
             rows.AddRange(Items is null ? [] : ApplyFiltersAndSorting(Items.AsQueryable()));
         }
@@ -818,12 +837,19 @@
         }
     }
 
-    private IQueryable<TItem> ApplyFiltersAndSorting(IQueryable<TItem> query)
+    private IQueryable<TItem> ApplyFilters(IQueryable<TItem> query)
     {
         foreach (var (column, value) in _filters)
         {
             query = column.ApplyFilter(query, value);
         }
+
+        return query;
+    }
+
+    private IQueryable<TItem> ApplyFiltersAndSorting(IQueryable<TItem> query)
+    {
+        query = ApplyFilters(query);
 
         // Grouped rows are sorted by their groups first, so each group's rows come together.
         var groups = GroupColumns;
@@ -842,6 +868,11 @@
 
     private async ValueTask<ItemsProviderResult<Entry>> ProvideVirtualizedAsync(ItemsProviderRequest request)
     {
+        if (IsTree)
+        {
+            return ProvideTree(request.StartIndex, request.Count);
+        }
+
         if (Grouped)
         {
             if (_groupsStale)
@@ -992,8 +1023,13 @@
         }
     }
 
-    private async Task OnRowKeyDownAsync(KeyboardEventArgs e, TItem item)
+    private async Task OnRowKeyDownAsync(KeyboardEventArgs e, TItem item, TreeRow? node)
     {
+        if (node is not null && await OnTreeKeyDownAsync(e, node))
+        {
+            return;
+        }
+
         if (EditMode == StilDataGridEditMode.Row && e.Key is "Enter" or "F2")
         {
             await BeginEditAsync(item);
@@ -1041,12 +1077,16 @@
 
     // ----- Rendering -----------------------------------------------------------------------
 
-    private RenderFragment Row(TItem item) => IsEditing(item) ? EditRow(_editItem!) : @<tr @key="KeyOf(item)" class="@RowClass?.Invoke(item)"
+    private RenderFragment Row(TItem item, TreeRow? node) => IsEditing(item) ? EditRow(_editItem!, node) : @<tr @key="KeyOf(item)" class="@RowClass?.Invoke(item)"
+                                                    style="@LevelStyle(node)" aria-level="@node?.Level" aria-setsize="@node?.SetSize" aria-posinset="@node?.Position"
+                                                    aria-expanded="@(node is { HasChildren: true } ? (node.Expanded ? "true" : "false") : null)"
+                                                    aria-busy="@(node is not null && _loadingRows.Contains(node.Key) ? "true" : null)"
                                                     aria-selected="@(SelectionMode == StilSelectionMode.None ? null : (IsSelected(item) ? "true" : "false"))"
-                                                    tabindex="@(Interactive || EditMode == StilDataGridEditMode.Row ? 0 : (int?)null)"
+                                                    tabindex="@(node is not null ? TreeTabIndex(node) : Interactive || EditMode == StilDataGridEditMode.Row ? 0 : (int?)null)"
+                                                    @onfocus="@(node is null ? null : () => OnTreeRowFocus(node))"
                                                     @onclick="() => OnRowClickedAsync(item)"
                                                     @ondblclick="@(EditMode == StilDataGridEditMode.Row ? () => BeginEditAsync(item) : null)"
-                                                    @onkeydown="e => OnRowKeyDownAsync(e, item)">
+                                                    @onkeydown="e => OnRowKeyDownAsync(e, item, node)">
         @if (SelectionMode == StilSelectionMode.Multiple)
         {
             <td class="stil-data-grid-select" data-stil-frozen="@SelectFrozen" @onclick:stopPropagation="true" @onkeydown:stopPropagation="true">
@@ -1059,13 +1099,14 @@
             var editable = EditMode == StilDataGridEditMode.Cell && column.CanEdit && !column.IsCommand;
             <td @key="column.ColumnKey" class="@column.CellClass" data-stil-frozen="@column.FrozenValue" data-stil-editable="@(editable ? "" : null)"
                 @onclick="@(editable ? () => BeginCellEditAsync(item, column) : null)"
-                @onclick:stopPropagation="column.IsCommand" @onkeydown:stopPropagation="column.IsCommand">@column.RenderCell(item)</td>
+                @onclick:stopPropagation="column.IsCommand" @onkeydown:stopPropagation="column.IsCommand">@Cell(column, CellContent(item, column, node), node)</td>
         }
     </tr>;
 
     // A row being edited: Stil fields in the edited columns, in the row's EditContext.
-    private RenderFragment EditRow(TItem item) => @<CascadingValue Value="_editContext">
-        <tr @key="@(_editIsNew ? _newRowKey : KeyOf(item))" class="stil-data-grid-editing" @onkeydown="OnEditKeyDownAsync">
+    private RenderFragment EditRow(TItem item, TreeRow? node) => @<CascadingValue Value="_editContext">
+        <tr @key="@(_editIsNew ? _newRowKey : KeyOf(item))" class="stil-data-grid-editing" @onkeydown="OnEditKeyDownAsync"
+            style="@LevelStyle(node)" aria-level="@(node?.Level ?? (IsTree ? 1 : null))">
             @if (SelectionMode == StilSelectionMode.Multiple)
             {
                 <td class="stil-data-grid-select" data-stil-frozen="@SelectFrozen"></td>
@@ -1075,17 +1116,50 @@
                 @if (IsEdited(column))
                 {
                     <td @key="column.ColumnKey" class="@column.CellClass" data-stil-frozen="@column.FrozenValue" data-stil-editor
-                        @onfocusout="OnEditorFocusOutAsync">@column.RenderEditor(item)</td>
+                        @onfocusout="OnEditorFocusOutAsync">@Cell(column, column.RenderEditor(item), node)</td>
                 }
                 else
                 {
-                    <td @key="column.ColumnKey" class="@column.CellClass" data-stil-frozen="@column.FrozenValue">@column.RenderCell(item)</td>
+                    <td @key="column.ColumnKey" class="@column.CellClass" data-stil-frozen="@column.FrozenValue">@Cell(column, CellContent(item, column, node), node)</td>
                 }
             }
         </tr>
     </CascadingValue>;
 
-    private RenderFragment EntryRow(Entry entry) => entry.Group is null ? Row(entry.Item) : GroupHeader(entry.Group);
+    private RenderFragment EntryRow(Entry entry) => entry.Group is null ? Row(entry.Item, entry.Node) : GroupHeader(entry.Group);
+
+    // A row with children shows the totals of the rows below it in the columns with an Aggregate.
+    private RenderFragment CellContent(TItem item, StilDataGridColumnBase<TItem> column, TreeRow? node) =>
+        node is { Leaves: not null } && column.HasAggregate
+            ? builder => builder.AddContent(0, column.FormatTotal(TreeTotal(column, node)))
+            : column.RenderCell(item);
+
+    // In a tree grid the first column holds the expand toggle, indented by the row's level.
+    private RenderFragment Cell(StilDataGridColumnBase<TItem> column, RenderFragment content, TreeRow? node) =>
+        IsTree && _visible.Count > 0 && ReferenceEquals(column, _visible[0]) ? TreeCell(content, node) : content;
+
+    private RenderFragment TreeCell(RenderFragment content, TreeRow? node) => @<span class="stil-tree-grid-cell">
+        @if (node is { HasChildren: true } && _loadingRows.Contains(node.Key))
+        {
+            <span class="stil-tree-grid-toggle">
+                <span class="stil-spinner stil-spinner-sm" role="status"><span class="stil-visually-hidden">@Localize(LoadingText, "Common.Loading")</span></span>
+            </span>
+        }
+        else if (node is { HasChildren: true })
+        {
+            <span class="stil-tree-grid-toggle" aria-hidden="true"
+                  @onclick="() => SetRowExpandedAsync(node.Item, !node.Expanded)" @onclick:stopPropagation="true">
+                <StilIcon Name="@StilIcons.ChevronRight" />
+            </span>
+        }
+        else
+        {
+            <span class="stil-tree-grid-toggle" aria-hidden="true"></span>
+        }
+        @content
+    </span>;
+
+    private static string? LevelStyle(TreeRow? node) => node is null ? null : $"--_level: {node.Level - 1}";
 
     // A group's header row: a button that expands and collapses it, with the group's value and
     // row count, followed by the group's totals under their columns.
@@ -1130,8 +1204,8 @@
 
     // ----- Grouping ----------------------------------------------------------------------------
 
-    // A row of the table body: a group header (Group) or a data row (Item).
-    private readonly record struct Entry(GroupRow? Group, TItem Item);
+    // A row of the table body: a group header (Group) or a data row (Item), in a tree grid with its Node.
+    private readonly record struct Entry(GroupRow? Group, TItem Item, TreeRow? Node = null);
 
     private sealed record GroupKey(string Id);
 
@@ -1154,7 +1228,7 @@
     // A group header to show, or a range of rows (by index among all sorted rows) to load.
     private readonly record struct PlanItem(GroupRow Group, bool Header, int Start = 0, int Count = 0);
 
-    private List<StilDataGridColumnBase<TItem>> GroupColumns => _groupBy
+    private List<StilDataGridColumnBase<TItem>> GroupColumns => IsTree ? [] : _groupBy
         .Select(key => _columns.FirstOrDefault(c => c.ColumnKey == key && c.CanGroup))
         .OfType<StilDataGridColumnBase<TItem>>()
         .ToList();
@@ -1766,6 +1840,13 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (_focusRowPending)
+        {
+            _focusRowPending = false;
+            _module ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Stil/stil.js");
+            await _module.InvokeVoidAsync("focusRow", _table);
+        }
+
         if (_focusEditor && _editing)
         {
             _focusEditor = false;
