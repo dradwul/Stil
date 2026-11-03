@@ -8,6 +8,12 @@
     box-sizing: border-box;
 }
 
+/* A page that puts .stil-scope on <body> is styled by Stil edge to edge, so the browser's 8px
+   margin would show a stripe of the page background around the app. */
+:where(body.stil-scope) {
+    margin: 0;
+}
+
 :where(.stil-scope) :where(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, figure, blockquote, pre, table) {
     margin-block: 0 var(--stil-space-4);
 }

@@ -12,9 +12,10 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 
 ### Fixed
 
-- **Stil.Templates**: apps made with `dotnet new stil-app` no longer show a
-  light edge around the page in dark mode (the browser's default body
-  margin).
+- **Stil CSS**: `body.stil-scope` has no margin, so an app with a dark theme
+  no longer shows a light edge around the page (the browser's default 8px
+  body margin). This also fixes apps made with `dotnet new stil-app`, the
+  demo and the docs site.
 
 ## [0.1.0-preview.1] - 2026-10-30
 

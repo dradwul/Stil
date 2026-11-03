@@ -1,11 +1,6 @@
 /* Your app's styles. Stil's rules are in cascade layers, so the rules here always win over Stil.
    Use Stil's tokens (var(--stil-…)) to follow the theme and the color mode. */
 
-/* The theme provider fills the window, so no light edge shows around a dark app. */
-body {
-    margin: 0;
-}
-
 .app-shell {
     min-height: 100vh;
 }
