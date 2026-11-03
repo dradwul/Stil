@@ -41,7 +41,8 @@ jobs:
         run: dotnet build Stil.sln --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test Stil.sln --configuration Release --no-build
+        # The GitHubActions logger shows each failed test as an annotation on the run.
+        run: dotnet test Stil.sln --configuration Release --no-build --logger GitHubActions
 
       # The packages are built and checked here; release.yml publishes them from a version tag.
       - name: Pack

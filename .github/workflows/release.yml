@@ -94,7 +94,7 @@ jobs:
         run: |
           dotnet restore Stil.sln
           dotnet build Stil.sln --configuration Release --no-restore -p:Version="$VERSION"
-          dotnet test Stil.sln --configuration Release --no-build
+          dotnet test Stil.sln --configuration Release --no-build --logger GitHubActions
 
       - name: Pack
         env:
