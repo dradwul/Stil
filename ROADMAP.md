@@ -19,7 +19,7 @@ something usable.
 | 8 | Language and localization | ✅ Done |
 | 9 | Forms 2: popover, time, slider, wizard, rating, color, masks | ✅ Done |
 | 10 | Layout and media: skeleton, splitter, carousel, image cropper, PDF viewer | ✅ Done |
-| 11 | Data grid 2, in five parts: totals and export ✅, column layout ✅, grouping ✅, inline editing ✅, tree grid | In progress |
+| 11 | Data grid 2, in five parts: totals and export ✅, column layout ✅, grouping ✅, inline editing ✅, tree grid ✅ | Done |
 | 12 | Capture and records: scanner, QR codes, signature, activity log, chat | Planned |
 | 13 | Boards and workspace: kanban, command palette, recurring events, Gantt | Planned |
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | Planned |
@@ -64,7 +64,7 @@ end, so they never keep a phase open.
     masked and PIN inputs, popover, stepper and wizard.
   - Layout and media: skeleton, splitter, carousel, image cropper, camera
     and PDF viewer.
-  - 744 bUnit tests.
+  - 754 bUnit tests.
 - **Stil.Charts:** SVG line, area, bar, donut and sparkline charts that
   follow the theme, with 68 bUnit tests.
 - **Stil.Templates:** `dotnet new stil-app`.
@@ -679,7 +679,7 @@ viewer.
 - The camera was checked in code and tests only: the preview browser has no
   camera. The fallback (choose a photo) is covered by a test.
 
-## Phase 11: Data grid 2
+## Phase 11: Data grid 2 ✅ Done
 
 Goal: the data grid features that larger apps expect, without making the
 simple grid harder to use. The phase is split into five parts that each end
@@ -779,18 +779,25 @@ fields of the edited columns, so a required property that the grid does not
 show cannot block a save. The item is edited in place, and Cancel puts its
 public properties back from a copy taken when editing started.
 
-### Phase 11.5: Tree grid
+### Phase 11.5: Tree grid ✅ Done
 
-- [ ] `StilTreeGrid<TItem>`: the data grid's columns, sorting and formats
+- [x] `StilTreeGrid<TItem>`: the data grid's columns, sorting and formats
   for items with children (`ChildrenSelector`), with expand and collapse in
   the first column.
-- [ ] The WAI-ARIA treegrid pattern: `aria-level`, `aria-expanded`, and the
+- [x] The WAI-ARIA treegrid pattern: `aria-level`, `aria-expanded`, and the
   arrow keys to move, expand and collapse.
-- [ ] Children loaded on demand (`LoadChildren`), with a loading state.
-- [ ] Aggregates (11.1) that roll up from children to parents.
+- [x] Children loaded on demand (`LoadChildren`), with a loading state.
+- [x] Aggregates (11.1) that roll up from children to parents.
 
 **Done when:** the demo shows a cost-centre budget as a tree grid where
-departments roll up into divisions.
+departments roll up into divisions. ✅ (The Budget page, with 10 bUnit tests.)
+
+**Changes from the plan:** `StilTreeGrid` derives from `StilDataGrid`, so
+it also filters (a match keeps the rows above and below it), edits and
+exports. A parent's totals cover the rows below it that have no children of
+their own, so its own values do not count twice. It has no grouping or
+`ItemsProvider`; `LoadChildren` loads from a server instead. Playwright
+checks of the treegrid were left out for now.
 
 ## Phase 12: Capture and records
 
