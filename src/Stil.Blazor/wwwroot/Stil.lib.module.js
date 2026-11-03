@@ -7,6 +7,9 @@
 const load = () => import('./stil.js');
 
 function registerEvents(blazor) {
+    blazor?.registerCustomEventType?.('stilsplit', { createEventArgs: event => ({ size: event.detail?.size ?? 0 }) });
+    blazor?.registerCustomEventType?.('stilslide', { createEventArgs: event => ({ index: event.detail?.index ?? 0 }) });
+    blazor?.registerCustomEventType?.('stilcropzoom', { createEventArgs: event => ({ zoom: event.detail?.zoom ?? 1 }) });
     blazor?.registerCustomEventType?.('stiltoggle', {
         browserEventName: 'toggle',
         // <details> has open; a popover reports its new state.

@@ -1,0 +1,60 @@
+@inherits StilComponentBase
+
+@* Placeholder shapes while content loads. They are hidden from screen readers; put them in an
+   element with aria-busy="true", or set Label to announce the loading. The shimmer stops when the
+   user prefers reduced motion. *@
+<span @attributes="AdditionalAttributes" class="@Classes("stil-skeleton-group")" aria-busy="@(Label is null ? null : "true")">
+    @if (Label is not null)
+    {
+        <span class="stil-visually-hidden" role="status">@Localize(Label.Length == 0 ? null : Label, "Common.Loading")</span>
+    }
+    @if (Shape == StilSkeletonShape.Text)
+    {
+        @for (var i = 0; i < Math.Max(1, Lines); i++)
+        {
+            // The last of several lines is shorter, like the end of a paragraph.
+            <span class="stil-skeleton stil-skeleton-text" aria-hidden="true" style="@(Lines > 1 && i == Lines - 1 ? "width: 60%" : WidthStyle)"></span>
+        }
+    }
+    else
+    {
+        <span class="@ShapeClass" aria-hidden="true" style="@ShapeStyle"></span>
+    }
+</span>
+
+@code {
+    /// <summary>Rect (default), Text (lines of text) or Circle (an avatar).</summary>
+    [Parameter]
+    public StilSkeletonShape Shape { get; set; }
+
+    /// <summary>The number of text lines. The last of several is shorter.</summary>
+    [Parameter]
+    public int Lines { get; set; } = 1;
+
+    /// <summary>A CSS width, for example "12rem" or "40%". The default fills the line.</summary>
+    [Parameter]
+    public string? Width { get; set; }
+
+    /// <summary>A CSS height for Rect, for example "8rem". The default is 1rem.</summary>
+    [Parameter]
+    public string? Height { get; set; }
+
+    /// <summary>The diameter of a Circle. The default is 2.5rem.</summary>
+    [Parameter]
+    public string? Size { get; set; }
+
+    /// <summary>
+    /// Announces the loading to screen readers: set it to a text, or to "" for the localized
+    /// "Loading…". Leave it unset when a parent already says that it is loading.
+    /// </summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    private string? WidthStyle => Width is null ? null : $"width: {Width}";
+
+    private string ShapeClass => Shape == StilSkeletonShape.Circle ? "stil-skeleton stil-skeleton-circle" : "stil-skeleton";
+
+    private string? ShapeStyle => Shape == StilSkeletonShape.Circle
+        ? Size is null ? null : $"--stil-skeleton-size: {Size}"
+        : string.Join("; ", new[] { WidthStyle, Height is null ? null : $"height: {Height}" }.Where(s => s is not null)) is { Length: > 0 } style ? style : null;
+}

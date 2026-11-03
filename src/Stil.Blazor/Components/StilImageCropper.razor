@@ -1,0 +1,145 @@
+@inherits StilComponentBase
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+@* Crops an image to a fixed aspect ratio: the image moves (drag or the arrow keys) and zooms (the
+   slider, the wheel, + and -) behind a frame, and can be turned. CropAsync returns the framed
+   part. Needs an interactive render mode. *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-cropper", Round ? "stil-cropper-round" : null)" style="@RatioStyle">
+    <div class="stil-cropper-stage" tabindex="0" role="img" aria-label="@Localize(Label, "Cropper.Area")" @ref="_stage"
+         @attributes="StageAttributes">
+        @if (!string.IsNullOrEmpty(Source))
+        {
+            <img class="stil-cropper-image" src="@Source" alt="" draggable="false" @key="Source" />
+        }
+        <div class="stil-cropper-frame"></div>
+    </div>
+    <div class="stil-cropper-tools">
+        <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost" IconOnly Size="StilSize.Small"
+                    aria-label="@Localize(null, "Cropper.ZoomOut")" OnClick="() => ZoomAsync(_zoom / 1.2)"><StilIcon Name="@StilIcons.Minus" /></StilButton>
+        <input type="range" class="stil-slider" min="1" max="4" step="0.05" value="@Css(_zoom)" style="@FillStyle"
+               aria-label="@Localize(null, "Cropper.Zoom")" @oninput="OnZoomInputAsync" />
+        <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost" IconOnly Size="StilSize.Small"
+                    aria-label="@Localize(null, "Cropper.ZoomIn")" OnClick="() => ZoomAsync(_zoom * 1.2)"><StilIcon Name="@StilIcons.Plus" /></StilButton>
+        @if (AllowRotate)
+        {
+            <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline" Size="StilSize.Small" OnClick="RotateAsync">
+                @Localize(null, "Cropper.Rotate")
+            </StilButton>
+        }
+    </div>
+</div>
+
+@code {
+    private ElementReference _stage;
+    private IJSObjectReference? _module;
+    private string? _initialized;
+    private double _zoom = 1;
+
+    /// <summary>The image to crop: a URL or a data URL (for example from StilCameraCapture or an uploaded file).</summary>
+    [Parameter, EditorRequired]
+    public string? Source { get; set; }
+
+    /// <summary>Width divided by height of the result. The default is 1 (square).</summary>
+    [Parameter]
+    public double AspectRatio { get; set; } = 1;
+
+    /// <summary>Shows a round frame, for avatars. The result is still a square image; show it round with CSS.</summary>
+    [Parameter]
+    public bool Round { get; set; }
+
+    /// <summary>Shows a button that turns the image a quarter. The default is true.</summary>
+    [Parameter]
+    public bool AllowRotate { get; set; } = true;
+
+    /// <summary>The width of the result in pixels; the height follows AspectRatio. The default is 512.</summary>
+    [Parameter]
+    public int OutputWidth { get; set; } = 512;
+
+    /// <summary>image/png (default), image/jpeg or image/webp.</summary>
+    [Parameter]
+    public string OutputType { get; set; } = "image/png";
+
+    /// <summary>The quality of image/jpeg and image/webp, from 0 to 1. The default is 0.9.</summary>
+    [Parameter]
+    public double Quality { get; set; } = 0.9;
+
+    /// <summary>The accessible name of the crop area. The default is the localized instructions.</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    private string RatioStyle => $"--stil-cropper-ratio: {Css(AspectRatio)}";
+
+    private string FillStyle => $"--_fill: {Css((_zoom - 1) / 3 * 100)}%";
+
+    private static string Css(double value) => value.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
+
+    // The zoom handler, added as an attribute (Razor cannot bind @onstilcropzoom in this assembly).
+    private IReadOnlyDictionary<string, object> StageAttributes => new Dictionary<string, object>
+    {
+        ["onstilcropzoom"] = EventCallback.Factory.Create<StilCropZoomEventArgs>(this, e => _zoom = e.Zoom),
+    };
+
+    /// <summary>Draws the framed part of the image, or returns null when there is no image yet.</summary>
+    public async Task<StilImageData?> CropAsync()
+    {
+        if (_module is null || string.IsNullOrEmpty(Source))
+        {
+            return null;
+        }
+
+        var width = Math.Max(1, OutputWidth);
+        var height = Math.Max(1, (int)Math.Round(width / AspectRatio));
+        var dataUrl = await _module.InvokeAsync<string?>("cropImage", _stage, width, height, OutputType, Quality);
+        return string.IsNullOrEmpty(dataUrl) ? null : new StilImageData(dataUrl, width, height);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (string.IsNullOrEmpty(Source) || _initialized == Source)
+        {
+            return;
+        }
+
+        _initialized = Source;
+        _zoom = 1;
+        _module ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Stil/stil.js");
+        await _module.InvokeVoidAsync("initCropper", _stage);
+    }
+
+    private Task OnZoomInputAsync(ChangeEventArgs e) =>
+        double.TryParse(e.Value?.ToString(), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var zoom)
+            ? ZoomAsync(zoom)
+            : Task.CompletedTask;
+
+    private async Task ZoomAsync(double zoom)
+    {
+        _zoom = Math.Clamp(zoom, 1, 4);
+        if (_module is not null)
+        {
+            await _module.InvokeVoidAsync("setCropperZoom", _stage, _zoom);
+        }
+    }
+
+    private async Task RotateAsync()
+    {
+        if (_module is not null)
+        {
+            await _module.InvokeVoidAsync("rotateCropper", _stage, 90);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_module is not null)
+        {
+            try
+            {
+                await _module.DisposeAsync();
+            }
+            catch (JSDisconnectedException)
+            {
+            }
+        }
+    }
+}

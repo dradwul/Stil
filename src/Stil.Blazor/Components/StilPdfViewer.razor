@@ -1,0 +1,107 @@
+@inherits StilComponentBase
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+@* A PDF in the browser's own viewer, inside a Stil frame with a toolbar: download, open in a new
+   tab and print. Where the browser cannot show PDFs (most phones), it says so and keeps the
+   download and open links. Put your own renderer in ChildContent to replace the browser's viewer;
+   Stil ships no PDF code of its own. *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-pdf")" style="@HeightStyle">
+    <div class="stil-pdf-toolbar">
+        <span class="stil-pdf-title">@(Title ?? FileName)</span>
+        <a class="stil-btn stil-btn-ghost stil-btn-secondary stil-btn-sm" href="@Source" download="@(FileName ?? "")">
+            <StilIcon Name="@StilIcons.Download" /> @Localize(null, "Pdf.Download")
+        </a>
+        <a class="stil-btn stil-btn-ghost stil-btn-secondary stil-btn-sm" href="@Source" target="_blank" rel="noopener">
+            <StilIcon Name="@StilIcons.External" /> @Localize(null, "Pdf.Open")
+        </a>
+        @if (ShowPrint && ChildContent is null && _supported != false)
+        {
+            <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost" Size="StilSize.Small" OnClick="PrintAsync">
+                @Localize(null, "Pdf.Print")
+            </StilButton>
+        }
+    </div>
+    @if (ChildContent is not null)
+    {
+        @ChildContent
+    }
+    else if (_supported == false)
+    {
+        <p class="stil-pdf-fallback">@Localize(null, "Pdf.Fallback")</p>
+    }
+    else
+    {
+        <iframe class="stil-pdf-frame" src="@Source" title="@(Title ?? Localize(null, "Pdf.Frame"))" @ref="_frame"></iframe>
+    }
+</div>
+
+@code {
+    private ElementReference _frame;
+    private IJSObjectReference? _module;
+    private bool? _supported;
+
+    /// <summary>The PDF's URL. Print works when it is on the app's own origin.</summary>
+    [Parameter, EditorRequired]
+    public string Source { get; set; } = "";
+
+    /// <summary>The title in the toolbar, also the frame's accessible name.</summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>The name of a downloaded file, for example "invoice-1042.pdf".</summary>
+    [Parameter]
+    public string? FileName { get; set; }
+
+    /// <summary>A CSS height for the viewer. The default is 36rem.</summary>
+    [Parameter]
+    public string? Height { get; set; }
+
+    /// <summary>Shows a print button. The default is true.</summary>
+    [Parameter]
+    public bool ShowPrint { get; set; } = true;
+
+    /// <summary>Your own renderer (for example with page thumbnails and search) instead of the browser's viewer.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string? HeightStyle => Height is null ? null : $"--stil-pdf-height: {Height}";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || ChildContent is not null)
+        {
+            return;
+        }
+
+        _module ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Stil/stil.js");
+        _supported = await _module.InvokeAsync<bool>("pdfViewerEnabled");
+        if (_supported == false)
+        {
+            StateHasChanged();
+        }
+    }
+
+    private async Task PrintAsync()
+    {
+        if (_module is not null && !await _module.InvokeAsync<bool>("printFrame", _frame))
+        {
+            // Another origin: the browser does not let the page print it, so open it instead.
+            await JS.InvokeVoidAsync("open", Source, "_blank", "noopener");
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_module is not null)
+        {
+            try
+            {
+                await _module.DisposeAsync();
+            }
+            catch (JSDisconnectedException)
+            {
+            }
+        }
+    }
+}

@@ -1,0 +1,122 @@
+@inherits StilComponentBase
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+@using Microsoft.AspNetCore.Components.Forms
+
+@* Takes a photo with the device camera: a live preview, a button that takes the picture, and one
+   that switches between the front and back camera. Where there is no camera, or the user does not
+   allow it, the user chooses a photo instead. OnCapture gets the image, for example for a
+   StilImageCropper. Needs an interactive render mode. *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-camera")">
+    @if (_available != false)
+    {
+        <video class="stil-camera-preview" @ref="_video" autoplay muted playsinline aria-label="@Localize(null, "Camera.Preview")"></video>
+        <div class="stil-cluster">
+            <StilButton Disabled="_available != true" OnClick="CaptureAsync"><StilIcon Name="@StilIcons.Camera" /> @Localize(TakeText, "Camera.Take")</StilButton>
+            <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline" Disabled="_available != true" OnClick="SwitchAsync">
+                @Localize(null, "Camera.Switch")
+            </StilButton>
+        </div>
+    }
+    else
+    {
+        <p class="stil-text-muted stil-mb-2">@Localize(null, "Camera.Unavailable")</p>
+        <label class="stil-btn stil-btn-outline stil-btn-secondary">
+            <StilIcon Name="@StilIcons.Upload" /> @Localize(null, "Camera.Choose")
+            <InputFile class="stil-visually-hidden" accept="image/*" capture="environment" OnChange="OnFileAsync" />
+        </label>
+    }
+</div>
+
+@code {
+    private ElementReference _video;
+    private IJSObjectReference? _module;
+    private bool? _available;
+    private bool _back;
+
+    /// <summary>Raised with the photo, as a JPEG, or the chosen file.</summary>
+    [Parameter]
+    public EventCallback<StilImageData> OnCapture { get; set; }
+
+    /// <summary>Starts with the back camera (on a phone) instead of the front one.</summary>
+    [Parameter]
+    public bool BackCamera { get; set; }
+
+    /// <summary>The largest chosen file, in bytes, when there is no camera. The default is 10 MB.</summary>
+    [Parameter]
+    public long MaxFileSize { get; set; } = 10_000_000;
+
+    /// <summary>The capture button's text. The default is the localized "Take photo".</summary>
+    [Parameter]
+    public string? TakeText { get; set; }
+
+    protected override void OnInitialized() => _back = BackCamera;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await StartAsync();
+        }
+    }
+
+    private async Task StartAsync()
+    {
+        _module ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Stil/stil.js");
+        _available = await _module.InvokeAsync<bool>("startCamera", _video, _back ? "environment" : "user");
+        StateHasChanged();
+    }
+
+    private async Task SwitchAsync()
+    {
+        _back = !_back;
+        await StartAsync();
+    }
+
+    private async Task CaptureAsync()
+    {
+        if (_module is null)
+        {
+            return;
+        }
+
+        var dataUrl = await _module.InvokeAsync<string?>("captureCamera", _video, "image/jpeg", 0.9);
+        if (!string.IsNullOrEmpty(dataUrl))
+        {
+            var size = await _module.InvokeAsync<int[]>("videoSize", _video);
+            await OnCapture.InvokeAsync(new StilImageData(dataUrl, size[0], size[1]));
+        }
+    }
+
+    private async Task OnFileAsync(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (!file.ContentType.StartsWith("image/", StringComparison.Ordinal) || file.Size > MaxFileSize)
+        {
+            return;
+        }
+
+        await using var stream = file.OpenReadStream(MaxFileSize);
+        using var buffer = new MemoryStream();
+        await stream.CopyToAsync(buffer);
+        var dataUrl = $"data:{file.ContentType};base64,{Convert.ToBase64String(buffer.ToArray())}";
+        await OnCapture.InvokeAsync(new StilImageData(dataUrl, 0, 0));
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_module is null)
+        {
+            return;
+        }
+
+        try
+        {
+            await _module.InvokeVoidAsync("stopCamera", _video);
+            await _module.DisposeAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+    }
+}

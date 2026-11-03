@@ -143,5 +143,36 @@
     "Back": "Tillbaka",
     "Next": "Nästa",
     "Finish": "Slutför"
+  },
+  "Splitter": {
+    "Label": "Ändra storlek på panelerna"
+  },
+  "Carousel": {
+    "Previous": "Föregående bild",
+    "Next": "Nästa bild",
+    "Pause": "Pausa",
+    "Slide": "bild",
+    "SlideFormat": "{0} av {1}"
+  },
+  "Cropper": {
+    "Area": "Beskärningsyta. Dra eller använd piltangenterna för att flytta bilden, + och - för att zooma.",
+    "Zoom": "Zoom",
+    "ZoomIn": "Zooma in",
+    "ZoomOut": "Zooma ut",
+    "Rotate": "Rotera"
+  },
+  "Camera": {
+    "Preview": "Kamerans förhandsvisning",
+    "Take": "Ta foto",
+    "Switch": "Byt kamera",
+    "Unavailable": "Kameran är inte tillgänglig. Välj ett foto i stället.",
+    "Choose": "Välj ett foto"
+  },
+  "Pdf": {
+    "Download": "Ladda ned",
+    "Open": "Öppna i en ny flik",
+    "Print": "Skriv ut",
+    "Fallback": "Den här webbläsaren kan inte visa PDF-filen här. Ladda ned den eller öppna den i en ny flik.",
+    "Frame": "PDF-dokument"
   }
 }

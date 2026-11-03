@@ -1,0 +1,78 @@
+@inherits StilComponentBase
+
+@* Two panes with a separator between them (the WAI-ARIA window splitter pattern). stil.js
+   (loaded automatically) resizes them by dragging, with the arrow keys, Home, End and Enter
+   (collapse and restore), so it also works in static SSR; with @bind-Size the app can save the
+   size. Nest splitters for more panes. *@
+<div @attributes="RootAttributes" class="@Classes("stil-splitter", Vertical ? "stil-splitter-vertical" : null)" style="@SizeStyle">
+    <div class="stil-splitter-pane" id="@FirstId">@First</div>
+    <div class="stil-splitter-handle" role="separator" tabindex="0" aria-orientation="@(Vertical ? "horizontal" : "vertical")"
+         aria-controls="@FirstId" aria-label="@Localize(Label, "Splitter.Label")"
+         aria-valuenow="@Css(_size)" aria-valuemin="@Css(Min)" aria-valuemax="@Css(Max)"></div>
+    <div class="stil-splitter-pane">@Second</div>
+</div>
+
+@code {
+    private readonly string _id = StilIds.Next("splitter");
+    private double _size;
+
+    /// <summary>The first pane: the left one, or the top one when Vertical.</summary>
+    [Parameter]
+    public RenderFragment? First { get; set; }
+
+    /// <summary>The second pane, which takes the rest of the space.</summary>
+    [Parameter]
+    public RenderFragment? Second { get; set; }
+
+    /// <summary>Stacks the panes, with a horizontal separator between them.</summary>
+    [Parameter]
+    public bool Vertical { get; set; }
+
+    /// <summary>The first pane's size in percent. Supports two-way binding (@bind-Size), for example to save it. The default is 50.</summary>
+    [Parameter]
+    public double Size { get; set; } = 50;
+
+    [Parameter]
+    public EventCallback<double> SizeChanged { get; set; }
+
+    /// <summary>The smallest size of the first pane, in percent; Enter collapses it to this. The default is 10.</summary>
+    [Parameter]
+    public double Min { get; set; } = 10;
+
+    /// <summary>The largest size of the first pane, in percent. The default is 90.</summary>
+    [Parameter]
+    public double Max { get; set; } = 90;
+
+    /// <summary>The separator's accessible name. The default is the localized "Resize panes".</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    private string FirstId => $"{_id}-first";
+
+    private string SizeStyle => $"--stil-splitter-size: {Css(_size)}";
+
+    private static string Css(double value) => value.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
+
+    // The consumer's attributes plus the stilsplit handler. Razor cannot bind @onstilsplit inside
+    // the assembly that declares it, so the handler is added as an attribute.
+    private IReadOnlyDictionary<string, object> RootAttributes
+    {
+        get
+        {
+            var attributes = AdditionalAttributes is null
+                ? new Dictionary<string, object>()
+                : AdditionalAttributes.Where(a => a.Key != "class").ToDictionary();
+            attributes["onstilsplit"] = EventCallback.Factory.Create<StilSplitEventArgs>(this, OnSplitAsync);
+            return attributes;
+        }
+    }
+
+    protected override void OnParametersSet() => _size = Math.Clamp(Size, Min, Max);
+
+    private async Task OnSplitAsync(StilSplitEventArgs e)
+    {
+        _size = Math.Clamp(e.Size, Min, Max);
+        Size = _size;
+        await SizeChanged.InvokeAsync(_size);
+    }
+}

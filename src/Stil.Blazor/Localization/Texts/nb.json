@@ -143,5 +143,36 @@
     "Back": "Tilbake",
     "Next": "Neste",
     "Finish": "Fullfør"
+  },
+  "Splitter": {
+    "Label": "Endre størrelse på panelene"
+  },
+  "Carousel": {
+    "Previous": "Forrige bilde",
+    "Next": "Neste bilde",
+    "Pause": "Pause",
+    "Slide": "bilde",
+    "SlideFormat": "{0} av {1}"
+  },
+  "Cropper": {
+    "Area": "Beskjæringsområde. Dra eller bruk piltastene for å flytte bildet, + og - for å zoome.",
+    "Zoom": "Zoom",
+    "ZoomIn": "Zoom inn",
+    "ZoomOut": "Zoom ut",
+    "Rotate": "Roter"
+  },
+  "Camera": {
+    "Preview": "Forhåndsvisning fra kameraet",
+    "Take": "Ta bilde",
+    "Switch": "Bytt kamera",
+    "Unavailable": "Kameraet er ikke tilgjengelig. Velg et bilde i stedet.",
+    "Choose": "Velg et bilde"
+  },
+  "Pdf": {
+    "Download": "Last ned",
+    "Open": "Åpne i ny fane",
+    "Print": "Skriv ut",
+    "Fallback": "Denne nettleseren kan ikke vise PDF-filen her. Last den ned eller åpne den i ny fane.",
+    "Frame": "PDF-dokument"
   }
 }

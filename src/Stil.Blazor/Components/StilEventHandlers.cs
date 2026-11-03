@@ -40,6 +40,24 @@ public sealed class StilWeekEditEventArgs : EventArgs
     public int End { get; set; }
 }
 
+/// <summary>Arguments of the <c>@onstilsplit</c> event: a splitter's first pane is now this size, in percent.</summary>
+public sealed class StilSplitEventArgs : EventArgs
+{
+    public double Size { get; set; }
+}
+
+/// <summary>Arguments of the <c>@onstilslide</c> event: the index of the slide a carousel now shows.</summary>
+public sealed class StilSlideEventArgs : EventArgs
+{
+    public int Index { get; set; }
+}
+
+/// <summary>Arguments of the <c>@onstilcropzoom</c> event: the zoom of an image cropper after the wheel or a key changed it.</summary>
+public sealed class StilCropZoomEventArgs : EventArgs
+{
+    public double Zoom { get; set; }
+}
+
 /// <summary>
 /// Custom events registered by Stil.lib.module.js. <c>@onstiltoggle</c> fires on a &lt;details&gt;
 /// element's toggle event and reports whether it is now open. <c>@onstilcalendaredge</c> and
@@ -48,6 +66,9 @@ public sealed class StilWeekEditEventArgs : EventArgs
 [EventHandler("onstiltoggle", typeof(StilToggleEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
 [EventHandler("onstilcalendaredge", typeof(StilCalendarEdgeEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
 [EventHandler("onstilweekedit", typeof(StilWeekEditEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
+[EventHandler("onstilsplit", typeof(StilSplitEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
+[EventHandler("onstilslide", typeof(StilSlideEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
+[EventHandler("onstilcropzoom", typeof(StilCropZoomEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
 public static class StilEventHandlers
 {
 }

@@ -143,5 +143,36 @@
     "Back": "Back",
     "Next": "Next",
     "Finish": "Finish"
+  },
+  "Splitter": {
+    "Label": "Resize panes"
+  },
+  "Carousel": {
+    "Previous": "Previous slide",
+    "Next": "Next slide",
+    "Pause": "Pause",
+    "Slide": "slide",
+    "SlideFormat": "{0} of {1}"
+  },
+  "Cropper": {
+    "Area": "Crop area. Drag or use the arrow keys to move the image, + and - to zoom.",
+    "Zoom": "Zoom",
+    "ZoomIn": "Zoom in",
+    "ZoomOut": "Zoom out",
+    "Rotate": "Rotate"
+  },
+  "Camera": {
+    "Preview": "Camera preview",
+    "Take": "Take photo",
+    "Switch": "Switch camera",
+    "Unavailable": "The camera is not available. Choose a photo instead.",
+    "Choose": "Choose a photo"
+  },
+  "Pdf": {
+    "Download": "Download",
+    "Open": "Open in a new tab",
+    "Print": "Print",
+    "Fallback": "This browser cannot show the PDF here. Download it or open it in a new tab.",
+    "Frame": "PDF document"
   }
 }

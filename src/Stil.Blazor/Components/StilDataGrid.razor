@@ -93,7 +93,7 @@
                 }
                 else if (_page.Count == 0)
                 {
-                    @MessageRow(_loading ? null : EmptyContent, _loading ? Localize(LoadingText, "Common.Loading") : Localize(EmptyText, "DataGrid.Empty"))
+                    @(_loading ? LoadingRow : MessageRow(EmptyContent, Localize(EmptyText, "DataGrid.Empty")))
                 }
                 else
                 {
@@ -666,6 +666,11 @@
         {
             <td class="@column.CellClass">@column.RenderCell(item)</td>
         }
+    </tr>;
+
+    // While the first rows load: skeleton lines, and the loading text for screen readers.
+    private RenderFragment LoadingRow => @<tr>
+        <td colspan="@Math.Max(1, _columns.Count + (SelectionMode == StilSelectionMode.Multiple ? 1 : 0))" class="stil-data-grid-message" aria-busy="true"><span class="stil-visually-hidden" role="status">@Localize(LoadingText, "Common.Loading")</span><StilSkeleton Shape="StilSkeletonShape.Text" Lines="3" /></td>
     </tr>;
 
     private RenderFragment MessageRow(RenderFragment? content, string text) => @<tr>

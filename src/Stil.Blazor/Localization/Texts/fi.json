@@ -143,5 +143,36 @@
     "Back": "Takaisin",
     "Next": "Seuraava",
     "Finish": "Valmis"
+  },
+  "Splitter": {
+    "Label": "Muuta paneelien kokoa"
+  },
+  "Carousel": {
+    "Previous": "Edellinen kuva",
+    "Next": "Seuraava kuva",
+    "Pause": "Tauko",
+    "Slide": "kuva",
+    "SlideFormat": "{0}/{1}"
+  },
+  "Cropper": {
+    "Area": "Rajausalue. Siirrä kuvaa vetämällä tai nuolinäppäimillä, zoomaa + ja - -näppäimillä.",
+    "Zoom": "Zoomaus",
+    "ZoomIn": "Lähennä",
+    "ZoomOut": "Loitonna",
+    "Rotate": "Kierrä"
+  },
+  "Camera": {
+    "Preview": "Kameran esikatselu",
+    "Take": "Ota kuva",
+    "Switch": "Vaihda kameraa",
+    "Unavailable": "Kamera ei ole käytettävissä. Valitse kuva sen sijaan.",
+    "Choose": "Valitse kuva"
+  },
+  "Pdf": {
+    "Download": "Lataa",
+    "Open": "Avaa uudessa välilehdessä",
+    "Print": "Tulosta",
+    "Fallback": "Tämä selain ei voi näyttää PDF-tiedostoa tässä. Lataa se tai avaa se uudessa välilehdessä.",
+    "Frame": "PDF-asiakirja"
   }
 }

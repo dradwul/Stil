@@ -124,3 +124,11 @@ public enum StilAlign
     Baseline,
     Stretch
 }
+
+/// <summary>The shape of a <see cref="StilSkeleton"/>.</summary>
+public enum StilSkeletonShape
+{
+    Rect,
+    Text,
+    Circle
+}

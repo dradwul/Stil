@@ -361,6 +361,34 @@ wrapper work as for the other fields.
 | `StilWizard` / `StilWizardStep` | `@bind-Step` | `OnFinish`, `AllowStepClick`, `BackText`/`NextText`/`FinishText`; a step has `Title`, `Description`, `HeadingLevel` and `Validate`. Inside an `EditForm`, Next validates only the current step's fields. |
 | `StilStepper` | | `Steps` (`StilStepItem`: Title, Description, State), `Current`, `OnStepClick`, `Label`. |
 
+### Layout and media
+
+```razor
+<StilSplitter @bind-Size="listWidth" Min="20" Max="80">
+    <First><MessageList /></First>
+    <Second>
+        @if (loading) { <StilSkeleton Shape="StilSkeletonShape.Text" Lines="4" Label="" /> } else { <Message /> }
+    </Second>
+</StilSplitter>
+<StilCarousel Items="photos" Label="Store photos" Autoplay="TimeSpan.FromSeconds(6)">
+    <ItemTemplate Context="photo"><img src="@photo.Url" alt="@photo.Alt" /></ItemTemplate>
+</StilCarousel>
+<StilImageCropper @ref="cropper" Source="@photoUrl" Round OutputWidth="256" />
+<StilCameraCapture OnCapture="image => photoUrl = image.DataUrl" />
+<StilPdfViewer Source="files/invoice.pdf" Title="Invoice 1042" FileName="invoice-1042.pdf" />
+```
+
+| Component | Parameters |
+| --- | --- |
+| `StilSkeleton` | `Shape` (Rect, Text, Circle), `Lines`, `Width`, `Height`, `Size`, `Label` (announces loading; `""` for the localized text). The data grid shows skeleton lines while its first rows load. |
+| `StilSplitter` | `First`, `Second`, `Vertical`, `@bind-Size` (percent of the first pane), `Min`, `Max`, `Label`. Resized by stil.js with the pointer and keyboard, also in static SSR. |
+| `StilCarousel<TItem>` | `Items`, `ItemTemplate`, `Label`, `@bind-Index`, `Autoplay` (with a pause button, off under reduced motion), `ShowDots`, `Height`, texts. |
+| `StilImageCropper` | `Source`, `AspectRatio`, `Round`, `AllowRotate`, `OutputWidth`, `OutputType`, `Quality`, `Label`. `CropAsync()` returns `StilImageData` (`DataUrl`, `Bytes`, `ContentType`, `FileName(...)`, `OpenReadStream()`). |
+| `StilCameraCapture` | `OnCapture` (`StilImageData`), `BackCamera`, `MaxFileSize`, `TakeText`. Falls back to choosing a photo without a camera. |
+| `StilPdfViewer` | `Source`, `Title`, `FileName`, `Height`, `ShowPrint`, `ChildContent` (your own renderer). The browser's viewer with download, open and print; a message where the browser cannot show PDFs. |
+
+The cropper and the camera need an interactive render mode.
+
 ### KPI cards
 
 ```razor
@@ -550,6 +578,8 @@ Warning toasts use `role="alert"`; the others use `"status"`.
 | `stil-rating`, `stil-color`, `stil-pin`, `stil-datetime` | `StilRating`, `StilColorPicker`, `StilPinInput`, `StilDateTimePicker` |
 | `stil-popover` | `StilPopover` |
 | `stil-stepper`, `stil-step`, `stil-wizard` | `StilStepper`, `StilWizard` |
+| `stil-skeleton`, `stil-splitter`, `stil-carousel` | `StilSkeleton`, `StilSplitter`, `StilCarousel` |
+| `stil-cropper`, `stil-camera`, `stil-pdf` | `StilImageCropper`, `StilCameraCapture`, `StilPdfViewer` |
 | `stil-dropzone`, `stil-file-list` | `StilFileUpload` |
 | `stil-stat` | `StilStatCard` |
 | `stil-tree` | `StilTreeView` |

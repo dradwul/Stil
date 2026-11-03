@@ -1,0 +1,123 @@
+@typeparam TItem
+@inherits StilComponentBase
+
+@* Slides in a scroll-snap track, so they scroll and swipe without JavaScript (also in static SSR).
+   stil.js (loaded automatically) wires the previous, next and dot buttons and the autoplay, which
+   pauses while the pointer or focus is in the carousel, with the pause button, and when the user
+   prefers reduced motion. *@
+<section @attributes="RootAttributes" class="@Classes("stil-carousel")" aria-roledescription="carousel" aria-label="@Label"
+         data-stil-autoplay="@(Autoplay is { } delay ? ((int)delay.TotalMilliseconds).ToString(System.Globalization.CultureInfo.InvariantCulture) : null)">
+    <div class="stil-carousel-track" style="@HeightStyle" tabindex="0">
+        @for (var i = 0; i < _items.Count; i++)
+        {
+            var item = _items[i];
+            <div class="stil-carousel-slide" role="group" aria-roledescription="@Localize(SlideText, "Carousel.Slide")"
+                 aria-label="@string.Format(System.Globalization.CultureInfo.CurrentCulture, Localize(SlideFormat, "Carousel.SlideFormat"), i + 1, _items.Count)">
+                @ItemTemplate(item)
+            </div>
+        }
+    </div>
+    @if (_items.Count > 1)
+    {
+        <div class="stil-carousel-controls">
+            <button type="button" class="stil-btn stil-btn-ghost stil-btn-secondary stil-btn-sm stil-btn-icon stil-carousel-prev"
+                    aria-label="@Localize(PreviousText, "Carousel.Previous")"><StilIcon Name="@StilIcons.ChevronLeft" /></button>
+            @if (ShowDots)
+            {
+                <div class="stil-carousel-dots">
+                    @for (var i = 0; i < _items.Count; i++)
+                    {
+                        <button type="button" aria-current="@(i == Index ? "true" : "false")"
+                                aria-label="@string.Format(System.Globalization.CultureInfo.CurrentCulture, Localize(SlideFormat, "Carousel.SlideFormat"), i + 1, _items.Count)"></button>
+                    }
+                </div>
+            }
+            <button type="button" class="stil-btn stil-btn-ghost stil-btn-secondary stil-btn-sm stil-btn-icon stil-carousel-next"
+                    aria-label="@Localize(NextText, "Carousel.Next")"><StilIcon Name="@StilIcons.ChevronRight" /></button>
+            @if (Autoplay is not null)
+            {
+                <button type="button" class="stil-btn stil-btn-ghost stil-btn-secondary stil-btn-sm stil-carousel-pause" aria-pressed="false">
+                    @Localize(PauseText, "Carousel.Pause")
+                </button>
+            }
+        </div>
+    }
+</section>
+
+@code {
+    private IReadOnlyList<TItem> _items = [];
+
+    private string? HeightStyle => Height is null ? null : $"height: {Height}";
+
+    /// <summary>The slides' items.</summary>
+    [Parameter, EditorRequired]
+    public IEnumerable<TItem> Items { get; set; } = [];
+
+    /// <summary>The content of a slide, for example an image with a caption.</summary>
+    [Parameter, EditorRequired]
+    public RenderFragment<TItem> ItemTemplate { get; set; } = default!;
+
+    /// <summary>The carousel's accessible name, for example "New products".</summary>
+    [Parameter, EditorRequired]
+    public string Label { get; set; } = "";
+
+    /// <summary>The index of the shown slide, reported as the user moves. Supports two-way binding (@bind-Index).</summary>
+    [Parameter]
+    public int Index { get; set; }
+
+    [Parameter]
+    public EventCallback<int> IndexChanged { get; set; }
+
+    /// <summary>Moves to the next slide after this time, with a pause button. It never runs when the user prefers reduced motion.</summary>
+    [Parameter]
+    public TimeSpan? Autoplay { get; set; }
+
+    /// <summary>Shows a dot per slide. The default is true.</summary>
+    [Parameter]
+    public bool ShowDots { get; set; } = true;
+
+    /// <summary>A CSS height for the slides, for example "20rem". The default is the slides' own height.</summary>
+    [Parameter]
+    public string? Height { get; set; }
+
+    /// <summary>The previous button's accessible name. The default is the localized "Previous slide".</summary>
+    [Parameter]
+    public string? PreviousText { get; set; }
+
+    /// <summary>The next button's accessible name. The default is the localized "Next slide".</summary>
+    [Parameter]
+    public string? NextText { get; set; }
+
+    /// <summary>The pause button's text. The default is the localized "Pause".</summary>
+    [Parameter]
+    public string? PauseText { get; set; }
+
+    /// <summary>What a slide is called for screen readers. The default is the localized "slide".</summary>
+    [Parameter]
+    public string? SlideText { get; set; }
+
+    /// <summary>A slide's accessible name; {0} is its number and {1} the count. The default is the localized "{0} of {1}".</summary>
+    [Parameter]
+    public string? SlideFormat { get; set; }
+
+    // The consumer's attributes plus the stilslide handler (Razor cannot bind @onstilslide in this assembly).
+    private IReadOnlyDictionary<string, object> RootAttributes
+    {
+        get
+        {
+            var attributes = AdditionalAttributes is null
+                ? new Dictionary<string, object>()
+                : AdditionalAttributes.Where(a => a.Key != "class").ToDictionary();
+            attributes["onstilslide"] = EventCallback.Factory.Create<StilSlideEventArgs>(this, OnSlideAsync);
+            return attributes;
+        }
+    }
+
+    protected override void OnParametersSet() => _items = Items.ToList();
+
+    private async Task OnSlideAsync(StilSlideEventArgs e)
+    {
+        Index = e.Index;
+        await IndexChanged.InvokeAsync(e.Index);
+    }
+}

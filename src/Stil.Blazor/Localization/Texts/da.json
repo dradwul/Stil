@@ -143,5 +143,36 @@
     "Back": "Tilbage",
     "Next": "Næste",
     "Finish": "Afslut"
+  },
+  "Splitter": {
+    "Label": "Tilpas panelernes størrelse"
+  },
+  "Carousel": {
+    "Previous": "Forrige billede",
+    "Next": "Næste billede",
+    "Pause": "Pause",
+    "Slide": "billede",
+    "SlideFormat": "{0} af {1}"
+  },
+  "Cropper": {
+    "Area": "Beskæringsområde. Træk eller brug piletasterne for at flytte billedet, + og - for at zoome.",
+    "Zoom": "Zoom",
+    "ZoomIn": "Zoom ind",
+    "ZoomOut": "Zoom ud",
+    "Rotate": "Roter"
+  },
+  "Camera": {
+    "Preview": "Kameraets forhåndsvisning",
+    "Take": "Tag billede",
+    "Switch": "Skift kamera",
+    "Unavailable": "Kameraet er ikke tilgængeligt. Vælg et billede i stedet.",
+    "Choose": "Vælg et billede"
+  },
+  "Pdf": {
+    "Download": "Download",
+    "Open": "Åbn i en ny fane",
+    "Print": "Udskriv",
+    "Fallback": "Denne browser kan ikke vise PDF-filen her. Download den eller åbn den i en ny fane.",
+    "Frame": "PDF-dokument"
   }
 }
