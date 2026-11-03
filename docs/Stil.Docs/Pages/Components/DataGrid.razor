@@ -51,6 +51,18 @@
     </p>
 </DocExample>
 
+<h2 id="totals">Totals and export</h2>
+<DocExample Type="typeof(TotalsAndExport)">
+    <p>
+        <code>Aggregate</code> on a column (<code>Sum</code>, <code>Average</code>, <code>Count</code>, <code>Min</code> or
+        <code>Max</code>) adds a footer row with the total of every filtered row, not only the page, in the column's
+        <code>Format</code>. <code>AggregateValue</code> computes a total of your own, such as a weighted average.
+        <code>ShowExport</code> adds a button that downloads the filtered and sorted rows of every page as CSV;
+        <code>ExportCsvAsync()</code> returns the text. Numbers are written without thousands separators and the separator
+        is the culture's, so Excel opens the file as it is. A template column is exported when it has <code>ExportValue</code>.
+    </p>
+</DocExample>
+
 <h2 id="server-data">Server-side data</h2>
 <DocExample Type="typeof(ServerData)">
     <p>
@@ -58,7 +70,9 @@
         <code>Count</code>, <code>SortBy</code>, <code>SortDirection</code>, <code>Filters</code> and a
         <code>CancellationToken</code> that is cancelled when the grid asks again. For an <code>IQueryable</code> such as
         an EF Core <code>DbSet</code>, <code>ApplyFiltersAndSorting</code> and <code>ApplyPaging</code> build the query
-        from the columns. Call <code>RefreshAsync()</code> through <code>@@ref</code> to reload.
+        from the columns. <code>ComputeAggregates</code> computes the totals in the same way, so EF Core runs them in the
+        database; return them in the result. An export pages through the provider. Call <code>RefreshAsync()</code>
+        through <code>@@ref</code> to reload.
     </p>
 </DocExample>
 

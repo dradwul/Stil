@@ -1,0 +1,39 @@
+@* Totals under the columns, and the filtered rows of every page as CSV. *@
+<StilDataGrid TItem="Sale" Items="_sales" Filterable PageSize="5" ShowExport ExportFileName="sales.csv" Caption="Sales per store">
+    <Columns>
+        <StilDataGridColumn Property="s => s.Store" />
+        <StilDataGridColumn Property="s => s.Country" />
+        <StilDataGridColumn Property="s => s.Orders" Align="StilTextAlign.End" Aggregate="StilAggregate.Sum" Filterable="false" />
+        <StilDataGridColumn Property="s => s.Revenue" Format="N0" Align="StilTextAlign.End" Aggregate="StilAggregate.Sum" Filterable="false" />
+        <StilDataGridColumn Property="s => s.Revenue" Key="Average" Title="Average" Format="N0" Align="StilTextAlign.End"
+                            Aggregate="StilAggregate.Average" Filterable="false" Sortable="false" />
+        <StilDataGridTemplateColumn Title="Per order" Align="StilTextAlign.End" ExportValue="s => s.Revenue / s.Orders"
+                                    AggregateValue="items => PerOrder(items)">
+            @((context.Revenue / context.Orders).ToString("N0"))
+        </StilDataGridTemplateColumn>
+    </Columns>
+</StilDataGrid>
+
+@code {
+    private sealed record Sale(string Store, string Country, int Orders, decimal Revenue);
+
+    // A weighted average: total revenue per total orders, not the average of the rows.
+    private static string PerOrder(IEnumerable<Sale> sales)
+    {
+        var list = sales.ToList();
+        var orders = list.Sum(s => s.Orders);
+        return orders == 0 ? "" : (list.Sum(s => s.Revenue) / orders).ToString("N0");
+    }
+
+    private static readonly Sale[] _sales =
+    [
+        new("Fjällbacka", "Sweden", 412, 98_400),
+        new("Göteborg", "Sweden", 1_240, 301_900),
+        new("Bergen", "Norway", 690, 176_300),
+        new("Oslo", "Norway", 980, 251_200),
+        new("København", "Denmark", 870, 199_700),
+        new("Aarhus", "Denmark", 350, 79_100),
+        new("Helsinki", "Finland", 760, 188_600),
+        new("Tampere", "Finland", 290, 64_800),
+    ];
+}

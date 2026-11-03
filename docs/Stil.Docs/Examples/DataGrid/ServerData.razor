@@ -2,7 +2,7 @@
     <Columns>
         <StilDataGridColumn Property="c => c.Name" InitialSort="StilSortDirection.Ascending" />
         <StilDataGridColumn Property="c => c.City" />
-        <StilDataGridColumn Property="c => c.Orders" Align="StilTextAlign.End" Filterable="false" />
+        <StilDataGridColumn Property="c => c.Orders" Align="StilTextAlign.End" Filterable="false" Aggregate="StilAggregate.Sum" />
     </Columns>
 </StilDataGrid>
 
@@ -22,9 +22,10 @@
         var query = request.ApplyFiltersAndSorting(_table);
         var total = query.Count();
         var items = request.ApplyPaging(query).ToList();
+        var totals = request.ComputeAggregates(query);
 
         await Task.Delay(300, request.CancellationToken); // A pretend network round trip.
-        return new(items, total);
+        return new(items, total, totals);
     }
 
     private sealed record Customer(string Name, string City, int Orders);
