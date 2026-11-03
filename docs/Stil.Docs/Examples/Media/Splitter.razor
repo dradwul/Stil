@@ -1,0 +1,17 @@
+@* Drag the divider, or focus it and use the arrow keys, Home, End and Enter (collapse). *@
+<div class="stil-card" style="overflow: hidden">
+    <StilSplitter @bind-Size="_size" Min="20" Max="80" style="height: 14rem">
+        <First><p class="stil-p-3 stil-mb-0">Folders</p></First>
+        <Second>
+            <StilSplitter Vertical Size="60">
+                <First><p class="stil-p-3 stil-mb-0">Messages</p></First>
+                <Second><p class="stil-p-3 stil-mb-0">Reading pane</p></Second>
+            </StilSplitter>
+        </Second>
+    </StilSplitter>
+</div>
+<p class="stil-text-muted stil-fs-sm stil-mt-2">Folders: @_size.ToString("0")%. Save it, for example in local storage, to keep the layout.</p>
+
+@code {
+    private double _size = 30;
+}

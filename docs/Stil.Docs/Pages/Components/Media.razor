@@ -1,0 +1,61 @@
+@page "/components/media"
+@using Stil.Docs.Examples.Media
+
+<DocsHeader Title="Layout and media" Eyebrow="Components">
+    <Lead>Skeletons while content loads, resizable panes, carousels, cropping photos (also from the camera) and showing PDFs, without any third-party code.</Lead>
+</DocsHeader>
+
+<h2 id="skeleton">Skeleton</h2>
+<p>
+    <code>StilSkeleton</code> draws placeholder shapes in the layout of the content that is on its way: lines of text,
+    a circle for an avatar, or a block. The shapes are hidden from screen readers; set <code>Label</code> (or
+    <code>""</code> for the localized "Loading…") on one of them, or put them in an element with
+    <code>aria-busy="true"</code>. The shimmer stops when the user prefers reduced motion. The data grid shows skeleton
+    lines while its first rows load.
+</p>
+<DocExample Type="typeof(Skeletons)" ShowCode />
+
+<h2 id="splitter">Splitter</h2>
+<p>
+    <code>StilSplitter</code> puts two panes side by side (or on top of each other with <code>Vertical</code>) with a
+    separator between them, following the WAI-ARIA window splitter pattern: drag it, or focus it and use the arrow
+    keys, Home, End and Enter to collapse and restore the first pane. <code>@@bind-Size</code> is the first pane's
+    size in percent, so the app can save the layout. Nest splitters for more panes. The resizing is done by
+    <code>stil.js</code>, so it also works in static SSR.
+</p>
+<DocExample Type="typeof(Splitter)" ShowCode />
+
+<h2 id="carousel">Carousel</h2>
+<p>
+    <code>StilCarousel</code> shows slides in a scroll-snap track, so they scroll and swipe without JavaScript.
+    Previous, next and a dot per slide move between them, and <code>@@bind-Index</code> reports the shown slide.
+    <code>Autoplay</code> adds a pause button and pauses while the pointer or focus is in the carousel; it never runs
+    when the user prefers reduced motion.
+</p>
+<DocExample Type="typeof(Carousel)" ShowCode />
+
+<h2 id="cropper">Image cropper and camera</h2>
+<p>
+    <code>StilImageCropper</code> crops an image to an aspect ratio (<code>Round</code> for avatars): the image moves
+    and zooms behind the frame with the pointer, the wheel or the keyboard, and turns with Rotate.
+    <code>CropAsync</code> returns a <code>StilImageData</code> with the image as a data URL (to show it) and as bytes
+    (to upload or save it). <code>StilCameraCapture</code> takes a photo with the device camera, or lets the user choose
+    a photo where there is no camera. Both need an interactive render mode.
+</p>
+<DocExample Type="typeof(Avatar)" ShowCode />
+
+<h2 id="pdf">PDF viewer</h2>
+<p>
+    <code>StilPdfViewer</code> shows a PDF with the browser's own viewer inside a Stil frame, with download, open in a
+    new tab and print. Where the browser cannot show PDFs, as on most phones, it says so and keeps the links. Put your
+    own renderer in <code>ChildContent</code> for page thumbnails or search.
+</p>
+<DocExample Type="typeof(Pdf)" ShowCode />
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilSkeleton)" />
+<ApiTable Type="typeof(StilSplitter)" />
+<ApiTable Type="typeof(StilCarousel<>)" />
+<ApiTable Type="typeof(StilImageCropper)" />
+<ApiTable Type="typeof(StilCameraCapture)" />
+<ApiTable Type="typeof(StilPdfViewer)" />

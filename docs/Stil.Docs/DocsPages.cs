@@ -35,6 +35,7 @@ public static class DocsPages
             new("Navigation", "components/navigation"),
             new("Tabs, dropdowns and tooltips", "components/menus"),
             new("Dialogs, drawers and toasts", "components/dialogs"),
+            new("Layout and media", "components/media"),
             new("Progress and spinners", "components/progress"),
         ]),
         new("Data", StilIcons.Folder,

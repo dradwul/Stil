@@ -1,0 +1,20 @@
+<StilCarousel Items="_photos" Label="Store photos" Height="14rem" Autoplay="TimeSpan.FromSeconds(6)">
+    <ItemTemplate Context="photo">
+        <div style="@Background(photo.Color)" class="stil-d-flex stil-align-items-end stil-h-100 stil-p-4">
+            <span class="stil-badge">@photo.Caption</span>
+        </div>
+    </ItemTemplate>
+</StilCarousel>
+
+@code {
+    private sealed record Photo(string Caption, string Color);
+
+    private static string Background(string color) => $"background: {color}";
+
+    private static readonly Photo[] _photos =
+    [
+        new("The shop in Fjällbacka", "linear-gradient(135deg, #a5d8ff, #1c7ed6)"),
+        new("Our roastery", "linear-gradient(135deg, #ffd8a8, #e8590c)"),
+        new("Summer menu", "linear-gradient(135deg, #b2f2bb, #2f9e44)"),
+    ];
+}

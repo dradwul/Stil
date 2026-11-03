@@ -1,0 +1,26 @@
+@* Pick a photo or take one, crop it round, and get the bytes to upload. *@
+<div class="stil-cluster stil-align-items-start stil-gap-4">
+    <StilImageCropper @ref="_cropper" Source="@_source" Round OutputWidth="256" style="width: 14rem" />
+    <div class="stil-stack stil-gap-2">
+        @if (_avatar is not null)
+        {
+            <img src="@_avatar.DataUrl" alt="Your new avatar" width="72" height="72" style="border-radius: 50%" />
+            <span class="stil-text-muted stil-fs-sm">@_avatar.FileName("avatar"), @(_avatar.Bytes.Length / 1024) kB</span>
+        }
+        <StilButton OnClick="CropAsync">Use this</StilButton>
+        <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline" OnClick="() => _camera = !_camera">Camera</StilButton>
+    </div>
+</div>
+@if (_camera)
+{
+    <StilCameraCapture class="stil-mt-3" OnCapture="image => { _source = image.DataUrl; _camera = false; }" />
+}
+
+@code {
+    private StilImageCropper? _cropper;
+    private string _source = "stil-logo.svg";
+    private StilImageData? _avatar;
+    private bool _camera;
+
+    private async Task CropAsync() => _avatar = await _cropper!.CropAsync();
+}
