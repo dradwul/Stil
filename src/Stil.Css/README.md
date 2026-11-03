@@ -23,7 +23,7 @@ Use one of these options:
 - **CDN:** jsDelivr serves the files from a release tag:
 
   ```html
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/dradwul/Stil@v0.1.0-preview.3/src/Stil.Css/dist/stil.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/dradwul/Stil@v0.1.0-preview.4/src/Stil.Css/dist/stil.min.css" />
   ```
 
 - **npm:** the package is prepared as `stil-css` but not published yet.

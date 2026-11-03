@@ -32,7 +32,7 @@ library.
 
 | You want | Do this |
 | --- | --- |
-| A new Blazor app with Stil set up | `dotnet new install Stil.Templates::0.1.0-preview.3`, then `dotnet new stil-app -n MyApp` ([templates](templates/Stil.Templates/README.md)) |
+| A new Blazor app with Stil set up | `dotnet new install Stil.Templates::0.1.0-preview.4`, then `dotnet new stil-app -n MyApp` ([templates](templates/Stil.Templates/README.md)) |
 | Stil in an existing Blazor app | `dotnet add package Stil --prerelease`, then follow [Get started](src/Stil.Blazor/README.md#get-started) |
 | Charts | `dotnet add package Stil.Charts --prerelease` ([charts](src/Stil.Charts/README.md)) |
 | Only the CSS | Download `stil.min.css` from a [release](https://github.com/dradwul/Stil/releases), or link it from jsDelivr ([Stil CSS](src/Stil.Css/README.md#install)) |
