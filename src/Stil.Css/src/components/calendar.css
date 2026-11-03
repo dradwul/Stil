@@ -282,6 +282,9 @@
     text-align: center;
 }
 
+/* Days of the other months are not tinted: the muted date would lose its contrast on a busy tint. */
+.stil-calendar-mini .stil-calendar-outside { background-color: transparent; }
+
 .stil-calendar-mini .stil-calendar-date { margin: 0; font-size: var(--stil-font-size-xs); }
 .stil-calendar-mini :is(.stil-calendar-events, .stil-calendar-more, .stil-calendar-dots) { display: none; }
 .stil-calendar-range { box-shadow: inset 0 0 0 1px var(--_accent); }

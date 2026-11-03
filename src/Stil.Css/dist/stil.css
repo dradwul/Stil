@@ -3297,6 +3297,10 @@
     padding: 2px;
   }
 
+  .stil-calendar-mini .stil-calendar-outside {
+    background-color: #0000;
+  }
+
   .stil-calendar-mini .stil-calendar-date {
     font-size: var(--stil-font-size-xs);
     margin: 0;

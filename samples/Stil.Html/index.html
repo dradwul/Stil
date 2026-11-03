@@ -13,7 +13,23 @@
 <body>
     <div class="stil-scope site-container">
         <div class="site-header stil-bg-primary">
-            <img src="../../assets/stil-logo.svg" alt="Stil" width="200" height="98" class="stil-mb-4">
+            <svg class="stil-mb-4" width="200" height="98" viewBox="120 150 550 270" role="img" aria-label="Stil">
+                <defs>
+                    <linearGradient id="stil-logo-gradient" gradientUnits="userSpaceOnUse" x1="250" y1="60" x2="620" y2="745">
+                        <stop offset="0" style="stop-color: light-dark(#1f9b8a, #3cc9b3)" />
+                        <stop offset="0.45" style="stop-color: light-dark(#1c8896, #38b5c9)" />
+                        <stop offset="0.8" style="stop-color: light-dark(#25508f, #5b8de0)" />
+                        <stop offset="1" style="stop-color: light-dark(#262b78, #7b80ea)" />
+                    </linearGradient>
+                    <clipPath id="stil-logo-clip-a" clipPathUnits="userSpaceOnUse"><polygon points="-50,-50 470,-50 470,238.5 600,158.5 600,-50 900,-50 900,900 -50,900" /></clipPath>
+                    <clipPath id="stil-logo-clip-b" clipPathUnits="userSpaceOnUse"><polygon points="-50,-50 900,-50 900,900 400,900 400,596.7 290,644 290,900 -50,900" /></clipPath>
+                </defs>
+                <g transform="translate(130,150) scale(0.33333)" fill="none" stroke="url(#stil-logo-gradient)" stroke-width="78" stroke-linejoin="round">
+                    <path clip-path="url(#stil-logo-clip-a)" d="M315 100 H280 C225 100 192 130 192 190 V290 C192 350 160 392 100 405 C160 418 192 460 192 520 V590 C192 655 225 700 300 698 C390 696 530 640 530 520 V150" />
+                    <path clip-path="url(#stil-logo-clip-b)" d="M352 700 C338 610 336 520 336 440 V300 C336 215 380 175 450 140 C500 112 540 98 600 100 C650 102 678 140 678 200 V290 C678 345 720 385 762 405 C720 420 678 445 678 500 V590 C678 655 650 702 595 702 H565" />
+                </g>
+                <path style="fill: light-dark(#252c78, #e6e8eb); stroke: light-dark(#252c78, #e6e8eb)" stroke-width="7" stroke-linejoin="round" d="M446.33 298.75 453.9 292.05Q458.36 299.12 465.3 303.27Q472.25 307.43 480.31 307.43Q489.11 307.43 493.7 303.52Q498.29 299.62 498.29 292.92Q498.29 285.6 493.39 281.7Q488.49 277.79 477.83 274.82Q451.04 268.24 451.04 250.51Q451.04 239.48 458.24 233.52Q465.43 227.57 478.2 227.57Q487.5 227.57 494.88 231.04Q502.26 234.52 508.08 241.71L500.77 247.91Q496.3 241.83 490.97 238.92Q485.64 236 478.2 236Q470.39 236 465.43 239.66Q460.47 243.32 460.47 249.64Q460.47 256.09 465.06 259.87Q469.64 263.66 480.56 266.26Q493.45 269.73 500.58 275.81Q507.71 281.88 507.71 292.92Q507.71 299.74 504.24 304.95Q500.77 310.16 494.26 313.07Q487.75 315.98 479.07 315.98Q469.77 315.98 460.96 311.33Q452.16 306.68 446.33 298.75Z M532.2 314V263.66H522.28V255.97H532.2V236.75H540.64V255.97H554.03V263.66H540.64V314Z M575.79 314V255.97H584.22V314ZM573.31 237.86Q573.31 235.14 575.23 233.21Q577.16 231.29 580.01 231.29Q582.74 231.29 584.72 233.21Q586.7 235.14 586.7 237.99Q586.7 240.72 584.72 242.7Q582.74 244.68 580.01 244.68Q577.16 244.68 575.23 242.7Q573.31 240.72 573.31 237.86Z M613.06 314V223.98H621.49V314Z" />
+            </svg>
             <nav aria-label="Component sections">
                 <a href="#layout">Layout</a>
                 <a href="#typography">Typography</a>
