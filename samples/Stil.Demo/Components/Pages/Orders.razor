@@ -10,9 +10,9 @@
 <div class="stil-d-flex stil-flex-wrap stil-justify-content-between stil-align-items-center stil-gap-3 stil-mb-4">
     <div>
         <h1 class="stil-mb-1">Orders</h1>
-        <p class="stil-text-muted stil-mb-0">A CRUD page built only with Stil for Blazor: a data grid with sorting, filters, paging and selection.</p>
+        <p class="stil-text-muted stil-mb-0">A CRUD page built only with Stil for Blazor: a data grid with sorting, filters, paging, selection, grouping and editing in place.</p>
     </div>
-    <StilButton OnClick="New">New order</StilButton>
+    <StilButton OnClick="NewRowAsync">New order</StilButton>
 </div>
 
 <div class="stil-grid stil-mb-4">
@@ -24,7 +24,7 @@
                   TrendVariant="StilVariant.Success" Description="vs last month" class="stil-col-sm-6 stil-col-lg-3" />
 </div>
 
-<StilDataGrid TItem="Order" Items="_orders" Filterable PageSize="10" PageSizeOptions="[10, 25, 50]"
+<StilDataGrid @ref="_grid" TItem="Order" Items="_orders" EditMode="StilDataGridEditMode.Row" OnRowSave="SaveRowAsync" Filterable PageSize="10" PageSizeOptions="[10, 25, 50]"
               SelectionMode="StilSelectionMode.Multiple" @bind-SelectedItems="_selected" ItemKey="o => o.Id"
               RowClass="@(o => o.Status == OrderStatus.Cancelled ? "stil-text-muted" : null)" Caption="Orders, newest first"
               ShowExport ExportFileName="orders.csv" ResizableColumns ReorderableColumns ShowColumnChooser
@@ -38,7 +38,7 @@
         }
     </Toolbar>
     <Columns>
-        <StilDataGridColumn Property="o => o.Id" Title="Order" InitialSort="StilSortDirection.Descending" Width="7rem" Frozen="StilFrozen.Start" Hideable="false">
+        <StilDataGridColumn Property="o => o.Id" Title="Order" InitialSort="StilSortDirection.Descending" Width="7rem" Frozen="StilFrozen.Start" Hideable="false" Editable="false">
             <Template>#@context.Id</Template>
         </StilDataGridColumn>
         <StilDataGridColumn Property="o => o.Customer" />
@@ -52,10 +52,12 @@
             <Template>@(context.Express ? "Express" : "")</Template>
         </StilDataGridColumn>
         <StilDataGridColumn Property="o => o.Amount" Title="Amount (€)" Format="N2" Align="StilTextAlign.End" Aggregate="StilAggregate.Sum" />
+        <StilDataGridEditColumn TItem="Order" Frozen="StilFrozen.End" Reorderable="false" Resizable="false"
+                                EditLabel="@(o => $"Edit order {o.Id}")" />
         <StilDataGridTemplateColumn Title="Actions" Align="StilTextAlign.End" Frozen="StilFrozen.End" Hideable="false" Reorderable="false" Resizable="false">
             <StilDropdown Text="⋯" AriaLabel="@($"Actions for order {context.Id}")" Appearance="StilButtonAppearance.Ghost"
                           Variant="StilVariant.Secondary" Size="StilSize.Small" AlignEnd IconOnly>
-                <StilDropdownItem OnClick="() => Edit(context)">Edit</StilDropdownItem>
+                <StilDropdownItem OnClick="() => Edit(context)">Edit all fields…</StilDropdownItem>
                 <StilDropdownDivider />
                 <StilDropdownItem class="stil-text-danger" OnClick="() => DeleteAsync(context)">Delete…</StilDropdownItem>
             </StilDropdown>
@@ -135,10 +137,17 @@
         _ => StilVariant.Danger,
     };
 
-    private void New()
+    private StilDataGrid<Order> _grid = default!;
+
+    // A new order is a row at the top of the grid, edited in place; Save adds it to the store.
+    private Task NewRowAsync() => _grid.AddRowAsync(new Order { Email = "orders@example.com" });
+
+    private Task<bool> SaveRowAsync(StilDataGridEditArgs<Order> args)
     {
-        _draft = new Order();
-        _editing = true;
+        Store.Save(args.Item);
+        _orders = Store.All();
+        Toasts.Success(args.IsNew ? $"Order #{args.Item.Id} created." : $"Order #{args.Item.Id} saved.");
+        return Task.FromResult(true);
     }
 
     private void Edit(Order order)

@@ -21,11 +21,22 @@ const targets: Target[] = [
     { name: 'demo gallery', open: (page, mode) => openDemo(page, '/', mode) },
     { name: 'demo orders', open: (page, mode) => openDemo(page, '/orders', mode) },
     {
-        name: 'demo orders, new-order dialog open',
+        name: 'demo orders, new order row being edited',
         open: async (page, mode) => {
             await openDemo(page, '/orders', mode);
             await page.getByRole('button', { name: 'New order' }).click();
-            await expect(page.getByRole('dialog', { name: 'New order' })).toBeVisible();
+            await expect(page.locator('tr.stil-data-grid-editing')).toBeVisible();
+        },
+    },
+    {
+        name: 'demo orders, edit dialog open',
+        open: async (page, mode) => {
+            await openDemo(page, '/orders', mode);
+            // The row's actions menu is a <details> dropdown.
+            const menu = page.locator('details', { has: page.locator('[aria-label="Actions for order 1064"]') });
+            await menu.locator('summary').click();
+            await menu.getByText('Edit all fields…').click();
+            await expect(page.getByRole('dialog', { name: 'Edit order #1064' })).toBeVisible();
         },
     },
 ];
