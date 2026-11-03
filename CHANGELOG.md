@@ -18,8 +18,13 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   filtered and sorted rows of every page as CSV that Excel opens as it is.
   With an `ItemsProvider`, `StilDataGridRequest.ComputeAggregates` computes
   the totals in the database and the export pages through the provider.
-- **Stil CSS**: the `stil-data-grid-totals` row and `stil.js`'s
-  `downloadFile`.
+- **Stil for Blazor**: column layout in `StilDataGrid`: `ResizableColumns`,
+  `ReorderableColumns` (dragging headers), `ShowColumnChooser`, frozen start
+  and end columns (`Frozen`), and `@bind-Layout` (`StilDataGridLayout`) to
+  save and restore the order, widths, hidden columns and sort.
+- **Stil CSS**: the `stil-data-grid-totals` row, column resize handles, drag
+  markers and frozen columns, and `stil.js`'s `downloadFile`, column resizing
+  and moving (`stilcolumnresize`, `stilcolumnmove`) and `freezeColumns`.
 
 ## [0.1.0-preview.3] - 2026-11-03
 

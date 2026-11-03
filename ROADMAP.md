@@ -19,7 +19,7 @@ something usable.
 | 8 | Language and localization | ✅ Done |
 | 9 | Forms 2: popover, time, slider, wizard, rating, color, masks | ✅ Done |
 | 10 | Layout and media: skeleton, splitter, carousel, image cropper, PDF viewer | ✅ Done |
-| 11 | Data grid 2, in five parts: totals and export ✅, column layout, grouping, inline editing, tree grid | In progress |
+| 11 | Data grid 2, in five parts: totals and export ✅, column layout ✅, grouping, inline editing, tree grid | In progress |
 | 12 | Capture and records: scanner, QR codes, signature, activity log, chat | Planned |
 | 13 | Boards and workspace: kanban, command palette, recurring events, Gantt | Planned |
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | Planned |
@@ -64,7 +64,7 @@ end, so they never keep a phase open.
     masked and PIN inputs, popover, stepper and wizard.
   - Layout and media: skeleton, splitter, carousel, image cropper, camera
     and PDF viewer.
-  - 719 bUnit tests.
+  - 727 bUnit tests.
 - **Stil.Charts:** SVG line, area, bar, donut and sparkline charts that
   follow the theme, with 68 bUnit tests.
 - **Stil.Templates:** `dotnet new stil-app`.
@@ -711,20 +711,28 @@ bUnit tests; the CSV was checked in tests, not opened in Excel.)
 thousands separators, so spreadsheets read them as numbers; dates and other
 values keep the cell format.
 
-### Phase 11.2: Column layout
+### Phase 11.2: Column layout ✅ Done
 
-- [ ] Column resizing by dragging the header edge, and with the keyboard
-  (`MinWidth`, `MaxWidth`).
-- [ ] Reordering by dragging a header, and with the keyboard; `Reorderable`
-  per column.
-- [ ] Frozen (sticky) first and last columns (`Frozen="StilFrozen.Start"`),
-  which stay in view while the grid scrolls sideways.
-- [ ] A column chooser in the toolbar that shows and hides columns.
-- [ ] `@bind-Layout` (`StilDataGridLayout`: order, widths, hidden columns,
-  sort), so an app can save and restore the layout, for example per user.
+- [x] Column resizing by dragging the header edge, and with the keyboard
+  (arrow keys, Shift for bigger steps, Home and End), within `MinWidth` and
+  `MaxWidth` (`ResizableColumns`, or `Resizable` per column).
+- [x] Reordering by dragging a header (`ReorderableColumns`, or
+  `Reorderable` per column); with the keyboard in the column chooser.
+- [x] Frozen first and last columns (`Frozen="StilFrozen.Start"` or `End`),
+  which stay in view while the grid scrolls sideways; the selection column
+  stays with the frozen start columns.
+- [x] A column chooser in the toolbar (`ShowColumnChooser`) that shows, hides
+  and moves columns, and resets the layout (`Hideable` per column).
+- [x] `@bind-Layout` (`StilDataGridLayout`: order, widths, hidden columns,
+  sort), which serializes to JSON, so an app can save and restore it.
 
 **Done when:** the orders page keeps its column widths, order and hidden
-columns after a reload.
+columns after a reload. ✅ (It saves the layout in local storage; checked in
+the browser, with 8 bUnit tests.)
+
+**Changes from the plan:** moving a column with the keyboard is done in the
+column chooser (move earlier, move later) instead of on the header, so the
+header keeps its keys for sorting.
 
 ### Phase 11.3: Grouping
 
