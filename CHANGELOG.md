@@ -10,6 +10,12 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Stil.Templates**: apps made with `dotnet new stil-app` no longer show a
+  light edge around the page in dark mode (the browser's default body
+  margin).
+
 ## [0.1.0-preview.1] - 2026-10-30
 
 ### Added
