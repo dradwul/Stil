@@ -281,3 +281,40 @@ th[data-stil-drop="after"]:dir(rtl) { box-shadow: inset 3px 0 0 var(--_accent); 
     display: inline-flex;
     gap: var(--stil-space-1);
 }
+
+/* Tree grid (StilTreeGrid): <div class="stil-data-grid stil-tree-grid"> with
+   <table role="treegrid">. Its rows have aria-level and style="--_level: n" (0 at the top), and
+   a row with children has aria-expanded. The first cell indents its content by the level:
+   <td><span class="stil-tree-grid-cell"><span class="stil-tree-grid-toggle">chevron</span>Sales</span></td>
+   A row without children has an empty toggle, so the texts line up. Moving between rows with
+   the arrow keys needs script (StilTreeGrid does it in Blazor). */
+.stil-tree-grid-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--stil-space-1);
+    padding-inline-start: calc(var(--_level, 0) * var(--stil-space-5));
+}
+
+.stil-tree-grid-toggle {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 1.25em;
+    height: 1.25em;
+    border-radius: var(--stil-radius-sm);
+}
+
+.stil-tree-grid tr[aria-expanded] .stil-tree-grid-toggle { cursor: pointer; }
+
+.stil-tree-grid tr[aria-expanded] .stil-tree-grid-toggle:hover {
+    background-color: color-mix(in srgb, currentColor 15%, transparent);
+}
+
+.stil-tree-grid-toggle > :not(.stil-spinner) { transition: rotate var(--stil-duration-fast) var(--stil-easing); }
+
+.stil-tree-grid tr[aria-expanded="true"] .stil-tree-grid-toggle > :not(.stil-spinner) { rotate: 90deg; }
+.stil-tree-grid tr[aria-expanded="true"] .stil-tree-grid-toggle > :not(.stil-spinner):dir(rtl) { rotate: -90deg; }
+
+/* A row with children shows the totals of the rows below it. */
+.stil-tree-grid tbody > tr[aria-expanded] > td { font-weight: var(--stil-font-weight-bold); }

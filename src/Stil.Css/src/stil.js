@@ -33,6 +33,7 @@
 //     (data-stil-autoplay) and fire stilslide.
 //   - Data grid columns resize (.stil-data-grid-resize, stilcolumnresize) and move by dragging
 //     their header (th[data-stil-reorder], stilcolumnmove); freezeColumns keeps frozen ones in view.
+//     focusEditor and focusRow move focus to a field being edited and to a tree grid row.
 //   - initCropper, setCropperZoom, rotateCropper and cropImage crop an image; startCamera,
 //     captureCamera and stopCamera take a photo; printFrame prints an iframe.
 // Stil for Blazor loads this module automatically and also uses showDialog/closeDialog.
@@ -156,6 +157,7 @@ const handledKeys = [
     ['[role="combobox"][aria-expanded="true"]', ['ArrowDown', 'ArrowUp', 'Enter', 'Escape']],
     ['[role="combobox"]', ['ArrowDown', 'ArrowUp']],
     ['[role="treeitem"]', ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Home', 'End', ' ']],
+    ['[role="treegrid"] tr[aria-level]', ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Home', 'End']],
     ['[role="tab"]', ['ArrowLeft', 'ArrowRight', 'Home', 'End']],
 ];
 
@@ -979,4 +981,9 @@ if (typeof document !== 'undefined') init();
 // Focuses the first field of the row or cell being edited in a data grid (StilDataGrid EditMode).
 export function focusEditor(table) {
     table?.querySelector('[data-stil-editor] :is(input, select, textarea)')?.focus();
+}
+
+// Focuses the row in the tab order of a tree grid (StilTreeGrid), after the arrow keys moved it.
+export function focusRow(table) {
+    table?.querySelector('tbody > tr[aria-level][tabindex="0"]')?.focus();
 }
