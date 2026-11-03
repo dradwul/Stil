@@ -1077,15 +1077,16 @@
 
     // ----- Rendering -----------------------------------------------------------------------
 
+    // A null event handler adds no listener; the `!` on the conditional ones only quiets the compiler.
     private RenderFragment Row(TItem item, TreeRow? node) => IsEditing(item) ? EditRow(_editItem!, node) : @<tr @key="KeyOf(item)" class="@RowClass?.Invoke(item)"
                                                     style="@LevelStyle(node)" aria-level="@node?.Level" aria-setsize="@node?.SetSize" aria-posinset="@node?.Position"
                                                     aria-expanded="@(node is { HasChildren: true } ? (node.Expanded ? "true" : "false") : null)"
                                                     aria-busy="@(node is not null && _loadingRows.Contains(node.Key) ? "true" : null)"
                                                     aria-selected="@(SelectionMode == StilSelectionMode.None ? null : (IsSelected(item) ? "true" : "false"))"
                                                     tabindex="@(node is not null ? TreeTabIndex(node) : Interactive || EditMode == StilDataGridEditMode.Row ? 0 : (int?)null)"
-                                                    @onfocus="@(node is null ? null : () => OnTreeRowFocus(node))"
+                                                    @onfocus="@((node is null ? null : () => OnTreeRowFocus(node))!)"
                                                     @onclick="() => OnRowClickedAsync(item)"
-                                                    @ondblclick="@(EditMode == StilDataGridEditMode.Row ? () => BeginEditAsync(item) : null)"
+                                                    @ondblclick="@((EditMode == StilDataGridEditMode.Row ? () => BeginEditAsync(item) : null)!)"
                                                     @onkeydown="e => OnRowKeyDownAsync(e, item, node)">
         @if (SelectionMode == StilSelectionMode.Multiple)
         {
@@ -1098,7 +1099,7 @@
         {
             var editable = EditMode == StilDataGridEditMode.Cell && column.CanEdit && !column.IsCommand;
             <td @key="column.ColumnKey" class="@column.CellClass" data-stil-frozen="@column.FrozenValue" data-stil-editable="@(editable ? "" : null)"
-                @onclick="@(editable ? () => BeginCellEditAsync(item, column) : null)"
+                @onclick="@((editable ? () => BeginCellEditAsync(item, column) : null)!)"
                 @onclick:stopPropagation="column.IsCommand" @onkeydown:stopPropagation="column.IsCommand">@Cell(column, CellContent(item, column, node), node)</td>
         }
     </tr>;
