@@ -31,6 +31,8 @@
 //   - Splitters (.stil-splitter) resize by dragging or with the keyboard and fire stilsplit;
 //     carousels (.stil-carousel) get working buttons and dots, optional autoplay
 //     (data-stil-autoplay) and fire stilslide.
+//   - Data grid columns resize (.stil-data-grid-resize, stilcolumnresize) and move by dragging
+//     their header (th[data-stil-reorder], stilcolumnmove); freezeColumns keeps frozen ones in view.
 //   - initCropper, setCropperZoom, rotateCropper and cropImage crop an image; startCamera,
 //     captureCamera and stopCamera take a photo; printFrame prints an iframe.
 // Stil for Blazor loads this module automatically and also uses showDialog/closeDialog.
@@ -53,6 +55,10 @@ export function init(root = document) {
     root.addEventListener('pointermove', onSplitterPointerMove);
     root.addEventListener('pointerup', onSplitterPointerUp);
     root.addEventListener('pointercancel', onSplitterPointerUp);
+    root.addEventListener('pointerdown', onColumnPointerDown);
+    root.addEventListener('pointermove', onColumnPointerMove);
+    root.addEventListener('pointerup', onColumnPointerUp);
+    root.addEventListener('pointercancel', onColumnPointerUp);
     root.addEventListener('click', onCarouselClick);
     // scroll does not bubble, so listen in the capture phase.
     root.addEventListener('scroll', onCarouselScroll, true);
@@ -133,6 +139,7 @@ function onKeyDown(event) {
     if (moveInDropdown(event)) return;
     if (moveInCalendar(event)) return;
     if (resizeSplitter(event)) return;
+    if (resizeColumn(event)) return;
     if (event.key !== 'Escape') return;
     for (const toggle of document.querySelectorAll('[data-stil-toggle][aria-expanded="true"]')) {
         toggle.setAttribute('aria-expanded', 'false');
@@ -773,6 +780,181 @@ export function printFrame(frame) {
         return true;
     } catch {
         return false;
+    }
+}
+
+// Data grid column layout. A .stil-data-grid-resize handle in a header resizes its column by
+// dragging and with the arrow keys (10px, Shift for 50px) within data-stil-min and data-stil-max,
+// and fires a bubbling stilcolumnresize event (detail.key, detail.width in px). A header with
+// data-stil-reorder is dragged to another header to move its column, which fires stilcolumnmove
+// (detail.key, detail.before: the key of the column it goes before, or null for the end).
+let column = null;
+
+function headerWidth(th, width) {
+    const min = Number(th.dataset.stilMin ?? 40);
+    const max = Number(th.dataset.stilMax ?? 2000);
+    return Math.round(Math.min(max, Math.max(min, width)));
+}
+
+function setHeaderWidth(th, width, report) {
+    th.style.width = `${width}px`;
+    th.style.minWidth = `${width}px`;
+    th.querySelector('.stil-data-grid-resize')?.setAttribute('aria-valuenow', String(width));
+    refreezeColumns(th.closest('table'));
+    if (report) th.dispatchEvent(new CustomEvent('stilcolumnresize', { bubbles: true, detail: { key: th.dataset.stilColumn, width } }));
+}
+
+function onColumnPointerDown(event) {
+    const target = event.target instanceof Element ? event.target : null;
+    if (!target || event.button !== 0) return;
+    const handle = target.closest('.stil-data-grid-resize');
+    const th = target.closest('th[data-stil-column]');
+    if (!th) return;
+    if (handle) {
+        event.preventDefault();
+        handle.setPointerCapture(event.pointerId);
+        handle.setAttribute('data-dragging', '');
+        column = { mode: 'resize', th, handle, x: event.clientX, width: th.getBoundingClientRect().width, rtl: getComputedStyle(th).direction === 'rtl' };
+    } else if (th.hasAttribute('data-stil-reorder') && !target.closest('input, select, .stil-data-grid-resize')) {
+        column = { mode: 'pending', th, x: event.clientX, pointerId: event.pointerId };
+    }
+}
+
+function onColumnPointerMove(event) {
+    if (!column) return;
+    if (column.mode === 'resize') {
+        const delta = (event.clientX - column.x) * (column.rtl ? -1 : 1);
+        setHeaderWidth(column.th, headerWidth(column.th, column.width + delta), false);
+        return;
+    }
+    if (column.mode === 'pending' && Math.abs(event.clientX - column.x) < 6) return;
+    if (column.mode === 'pending') {
+        column.mode = 'move';
+        column.th.setAttribute('data-stil-dragging', '');
+    }
+    const headers = [...column.th.parentElement.querySelectorAll(':scope > th[data-stil-reorder]')];
+    headers.forEach(th => th.removeAttribute('data-stil-drop'));
+    const over = headers.find(th => {
+        const r = th.getBoundingClientRect();
+        return event.clientX >= r.left && event.clientX <= r.right;
+    });
+    if (!over || over === column.th) {
+        column.target = null;
+        return;
+    }
+    const r = over.getBoundingClientRect();
+    const rtl = getComputedStyle(over).direction === 'rtl';
+    const firstHalf = event.clientX < r.left + r.width / 2;
+    const before = rtl ? !firstHalf : firstHalf;
+    over.setAttribute('data-stil-drop', before ? 'before' : 'after');
+    column.target = { th: over, before };
+}
+
+function onColumnPointerUp() {
+    if (!column) return;
+    const { mode, th, handle, target } = column;
+    column = null;
+    if (mode === 'resize') {
+        handle.removeAttribute('data-dragging');
+        setHeaderWidth(th, headerWidth(th, th.getBoundingClientRect().width), true);
+        return;
+    }
+    if (mode !== 'move') return;
+    th.removeAttribute('data-stil-dragging');
+    th.parentElement.querySelectorAll('[data-stil-drop]').forEach(header => header.removeAttribute('data-stil-drop'));
+    // The header was dragged, not clicked: do not sort.
+    const swallow = click => { click.stopPropagation(); click.preventDefault(); };
+    window.addEventListener('click', swallow, { capture: true, once: true });
+    setTimeout(() => window.removeEventListener('click', swallow, { capture: true }), 0);
+    if (!target) return;
+    const headers = [...th.parentElement.querySelectorAll(':scope > th[data-stil-column]')];
+    const before = target.before ? target.th : headers[headers.indexOf(target.th) + 1] ?? null;
+    if (before === th) return;
+    th.dispatchEvent(new CustomEvent('stilcolumnmove', {
+        bubbles: true,
+        detail: { key: th.dataset.stilColumn, before: before?.dataset.stilColumn ?? null },
+    }));
+}
+
+function resizeColumn(event) {
+    const handle = event.target instanceof Element ? event.target.closest('.stil-data-grid-resize') : null;
+    if (!handle || event.target !== handle) return false;
+    const th = handle.closest('th');
+    const width = th.getBoundingClientRect().width;
+    const step = event.shiftKey ? 50 : 10;
+    const key = logicalArrow(event.key, th);
+    const next = key === 'ArrowLeft' ? width - step
+        : key === 'ArrowRight' ? width + step
+        : key === 'Home' ? 0
+        : key === 'End' ? Number.MAX_SAFE_INTEGER
+        : null;
+    if (next === null) return false;
+    event.preventDefault();
+    setHeaderWidth(th, headerWidth(th, next), true);
+    return true;
+}
+
+// Frozen columns: cells with data-stil-frozen="start" or "end" stick to that side; their offsets
+// are the widths of the frozen columns before them. Kept up to date while the table resizes,
+// together with the resize handles' aria-valuenow.
+export function freezeColumns(table) {
+    if (!table) return;
+    measureColumns(table);
+    refreezeColumns(table);
+    if (!table.stilFrozenObserver && typeof ResizeObserver !== 'undefined') {
+        table.stilFrozenObserver = new ResizeObserver(() => {
+            measureColumns(table);
+            refreezeColumns(table);
+        });
+        table.stilFrozenObserver.observe(table);
+    }
+}
+
+// Gives each resize handle its column's width and limits, as a separator that takes focus needs.
+function measureColumns(table) {
+    for (const handle of table.querySelectorAll('.stil-data-grid-resize')) {
+        const th = handle.closest('th');
+        handle.setAttribute('aria-valuenow', String(Math.round(th.getBoundingClientRect().width)));
+        handle.setAttribute('aria-valuemin', th.dataset.stilMin ?? '40');
+        handle.setAttribute('aria-valuemax', th.dataset.stilMax ?? '2000');
+    }
+}
+
+function refreezeColumns(table) {
+    const header = table?.tHead?.rows[0];
+    if (!header || !table.querySelector('[data-stil-frozen]')) return;
+    const cells = [...header.cells];
+    const offsets = new Map();
+    let start = 0;
+    cells.forEach((cell, i) => {
+        if (cell.dataset.stilFrozen !== 'start') return;
+        offsets.set(i, { side: 'start', offset: start });
+        start += cell.getBoundingClientRect().width;
+    });
+    let end = 0;
+    [...cells].reverse().forEach((cell, r) => {
+        if (cell.dataset.stilFrozen !== 'end') return;
+        offsets.set(cells.length - 1 - r, { side: 'end', offset: end });
+        end += cell.getBoundingClientRect().width;
+    });
+    const lastStart = Math.max(-1, ...[...offsets].filter(([, o]) => o.side === 'start').map(([i]) => i));
+    const firstEnd = Math.min(cells.length, ...[...offsets].filter(([, o]) => o.side === 'end').map(([i]) => i));
+    for (const row of table.rows) {
+        if (row.cells.length !== cells.length) continue;
+        [...row.cells].forEach((cell, i) => {
+            const frozen = offsets.get(i);
+            if (!frozen) {
+                // A cell that moved out of a frozen place keeps nothing of it.
+                cell.style.insetInlineStart = cell.style.insetInlineEnd = '';
+                cell.removeAttribute('data-stil-frozen-edge');
+                return;
+            }
+            cell.style.insetInlineStart = frozen.side === 'start' ? `${frozen.offset}px` : '';
+            cell.style.insetInlineEnd = frozen.side === 'end' ? `${frozen.offset}px` : '';
+            if (i === lastStart) cell.setAttribute('data-stil-frozen-edge', 'start');
+            else if (i === firstEnd) cell.setAttribute('data-stil-frozen-edge', 'end');
+            else cell.removeAttribute('data-stil-frozen-edge');
+        });
     }
 }
 

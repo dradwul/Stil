@@ -141,3 +141,78 @@ th:is([aria-sort="ascending"], [aria-sort="descending"]) > .stil-data-grid-sort 
 
 /* The export button sits at the end of the toolbar. */
 .stil-data-grid-export { margin-inline-start: auto; }
+
+/* Column layout. A header with data-stil-reorder can be dragged to another place, and a
+   .stil-data-grid-resize handle (role="separator") at its end resizes it; stil.js does both and
+   fires stilcolumnmove and stilcolumnresize. */
+:where(.stil-data-grid) th { position: relative; }
+
+.stil-data-grid-resize {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: -4px;
+    z-index: 2;
+    width: 8px;
+    cursor: col-resize;
+    touch-action: none;
+}
+
+.stil-data-grid-resize::before {
+    content: "";
+    position: absolute;
+    inset-block: 25%;
+    inset-inline-start: calc(50% - 1px);
+    width: 2px;
+    border-radius: var(--stil-radius-pill);
+    background-color: var(--stil-color-border);
+}
+
+.stil-data-grid-resize:is(:hover, :focus-visible, [data-dragging])::before {
+    inset-block: 0;
+    background-color: var(--_accent);
+}
+
+.stil-data-grid-resize:focus-visible { outline: none; }
+
+th[data-stil-reorder] { cursor: grab; }
+
+th[data-stil-dragging] { opacity: 0.6; }
+
+th[data-stil-drop="before"] { box-shadow: inset 3px 0 0 var(--_accent); }
+
+th[data-stil-drop="after"] { box-shadow: inset -3px 0 0 var(--_accent); }
+
+th[data-stil-drop="before"]:dir(rtl) { box-shadow: inset -3px 0 0 var(--_accent); }
+
+th[data-stil-drop="after"]:dir(rtl) { box-shadow: inset 3px 0 0 var(--_accent); }
+
+/* Frozen columns stay in view while the grid scrolls sideways; stil.js sets their offsets. */
+.stil-data-grid [data-stil-frozen] {
+    position: sticky;
+    z-index: 1;
+    background-color: var(--stil-color-surface);
+}
+
+.stil-data-grid thead [data-stil-frozen] { z-index: 3; }
+
+.stil-data-grid [data-stil-frozen-edge="start"] { box-shadow: inset -1px 0 0 var(--stil-color-border-strong); }
+
+.stil-data-grid [data-stil-frozen-edge="end"] { box-shadow: inset 1px 0 0 var(--stil-color-border-strong); }
+
+/* The column chooser: a list of columns with a checkbox and move buttons. */
+.stil-data-grid-chooser {
+    display: grid;
+    gap: var(--stil-space-1);
+    min-width: 14rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stil-data-grid-chooser > li {
+    display: flex;
+    align-items: center;
+    gap: var(--stil-space-2);
+}
+
+.stil-data-grid-chooser .stil-check { flex: 1; }
