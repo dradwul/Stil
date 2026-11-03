@@ -85,7 +85,10 @@
     "GroupBy": "Ryhmittele",
     "ExpandAll": "Laajenna kaikki",
     "CollapseAll": "Tiivistä kaikki",
-    "Blank": "(Tyhjä)"
+    "Blank": "(Tyhjä)",
+    "Edit": "Muokkaa",
+    "Save": "Tallenna",
+    "Cancel": "Peruuta"
   },
   "DateRange": {
     "Start": "Alkupäivä",

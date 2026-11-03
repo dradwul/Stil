@@ -4,6 +4,7 @@
 @inherits StilComponentBase
 @implements IDisposable
 @inject IJSRuntime JS
+@inject IServiceProvider Services
 
 <CascadingValue Value="this" IsFixed="true">
     @Columns
@@ -165,6 +166,10 @@
                 }
             </thead>
             <tbody>
+                @if (_editing && _editIsNew)
+                {
+                    @EditRow(_editItem!)
+                }
                 @if (Virtualize)
                 {
                     <Virtualize @ref="_virtualize" TItem="Entry" ItemsProvider="ProvideVirtualizedAsync" ItemSize="ItemSize"
@@ -173,7 +178,7 @@
                         <EmptyContent>@MessageRow(EmptyContent, Localize(EmptyText, "DataGrid.Empty"))</EmptyContent>
                     </Virtualize>
                 }
-                else if (_entries.Count == 0)
+                else if (_entries.Count == 0 && !(_editing && _editIsNew))
                 {
                     @(_loading ? LoadingRow : MessageRow(EmptyContent, Localize(EmptyText, "DataGrid.Empty")))
                 }
@@ -258,6 +263,14 @@
     private int _groupLevels;
     private bool _groupsStale = true;
     private int _rowCount;
+    private bool _editing;
+    private bool _editIsNew;
+    private TItem? _editItem;
+    private StilDataGridColumnBase<TItem>? _editColumn;
+    private EditContext? _editContext;
+    private object? _editSnapshot;
+    private bool _focusEditor;
+    private readonly object _newRowKey = new();
     private StilDataGridColumnBase<TItem>? _sortColumn;
     private StilSortDirection _sortDirection;
     private int _pageNumber = 1;
@@ -352,6 +365,25 @@
     /// <summary>The label of the totals row, in the first column when that column has no total. The default is the localized "Total".</summary>
     [Parameter]
     public string? TotalText { get; set; }
+
+    /// <summary>
+    /// Edits rows in place: Row (with a StilDataGridEditColumn, a double click, Enter or F2) or
+    /// Cell (click a cell). The columns get Stil fields that fit their type, or their EditTemplate;
+    /// the item is edited in place and validated with its data annotations.
+    /// </summary>
+    [Parameter]
+    public StilDataGridEditMode EditMode { get; set; }
+
+    /// <summary>
+    /// Saves an edited or new row (for example to a database). Return false to keep editing, for
+    /// example after a server error. Without it, edits stay on the item.
+    /// </summary>
+    [Parameter]
+    public Func<StilDataGridEditArgs<TItem>, Task<bool>>? OnRowSave { get; set; }
+
+    /// <summary>Raised when editing is cancelled, after the item's values are put back.</summary>
+    [Parameter]
+    public EventCallback<StilDataGridEditArgs<TItem>> OnRowCancel { get; set; }
 
     /// <summary>Rows per page. 0 shows all rows without a pager. The default is 10.</summary>
     [Parameter]
@@ -962,6 +994,12 @@
 
     private async Task OnRowKeyDownAsync(KeyboardEventArgs e, TItem item)
     {
+        if (EditMode == StilDataGridEditMode.Row && e.Key is "Enter" or "F2")
+        {
+            await BeginEditAsync(item);
+            return;
+        }
+
         if (Interactive && e.Key == "Enter")
         {
             await ActivateRowAsync(item);
@@ -1003,10 +1041,11 @@
 
     // ----- Rendering -----------------------------------------------------------------------
 
-    private RenderFragment Row(TItem item) => @<tr @key="KeyOf(item)" class="@RowClass?.Invoke(item)"
+    private RenderFragment Row(TItem item) => IsEditing(item) ? EditRow(_editItem!) : @<tr @key="KeyOf(item)" class="@RowClass?.Invoke(item)"
                                                     aria-selected="@(SelectionMode == StilSelectionMode.None ? null : (IsSelected(item) ? "true" : "false"))"
-                                                    tabindex="@(Interactive ? 0 : (int?)null)"
+                                                    tabindex="@(Interactive || EditMode == StilDataGridEditMode.Row ? 0 : (int?)null)"
                                                     @onclick="() => OnRowClickedAsync(item)"
+                                                    @ondblclick="@(EditMode == StilDataGridEditMode.Row ? () => BeginEditAsync(item) : null)"
                                                     @onkeydown="e => OnRowKeyDownAsync(e, item)">
         @if (SelectionMode == StilSelectionMode.Multiple)
         {
@@ -1017,9 +1056,34 @@
         }
         @foreach (var column in _visible)
         {
-            <td @key="column.ColumnKey" class="@column.CellClass" data-stil-frozen="@column.FrozenValue">@column.RenderCell(item)</td>
+            var editable = EditMode == StilDataGridEditMode.Cell && column.CanEdit && !column.IsCommand;
+            <td @key="column.ColumnKey" class="@column.CellClass" data-stil-frozen="@column.FrozenValue" data-stil-editable="@(editable ? "" : null)"
+                @onclick="@(editable ? () => BeginCellEditAsync(item, column) : null)"
+                @onclick:stopPropagation="column.IsCommand" @onkeydown:stopPropagation="column.IsCommand">@column.RenderCell(item)</td>
         }
     </tr>;
+
+    // A row being edited: Stil fields in the edited columns, in the row's EditContext.
+    private RenderFragment EditRow(TItem item) => @<CascadingValue Value="_editContext">
+        <tr @key="@(_editIsNew ? _newRowKey : KeyOf(item))" class="stil-data-grid-editing" @onkeydown="OnEditKeyDownAsync">
+            @if (SelectionMode == StilSelectionMode.Multiple)
+            {
+                <td class="stil-data-grid-select" data-stil-frozen="@SelectFrozen"></td>
+            }
+            @foreach (var column in _visible)
+            {
+                @if (IsEdited(column))
+                {
+                    <td @key="column.ColumnKey" class="@column.CellClass" data-stil-frozen="@column.FrozenValue" data-stil-editor
+                        @onfocusout="OnEditorFocusOutAsync">@column.RenderEditor(item)</td>
+                }
+                else
+                {
+                    <td @key="column.ColumnKey" class="@column.CellClass" data-stil-frozen="@column.FrozenValue">@column.RenderCell(item)</td>
+                }
+            }
+        </tr>
+    </CascadingValue>;
 
     private RenderFragment EntryRow(Entry entry) => entry.Group is null ? Row(entry.Item) : GroupHeader(entry.Group);
 
@@ -1409,6 +1473,161 @@
         await GroupByChanged.InvokeAsync(keys);
     }
 
+    // ----- Editing -----------------------------------------------------------------------------
+
+    private static readonly System.Reflection.MethodInfo CloneMethod =
+        typeof(object).GetMethod("MemberwiseClone", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+
+    /// <summary>The item being edited, or default when no row is.</summary>
+    public TItem? EditingItem => _editing ? _editItem : default;
+
+    private bool IsEditing(TItem item) =>
+        _editing && !_editIsNew && (ReferenceEquals(item, _editItem) || KeyOf(item).Equals(KeyOf(_editItem!)));
+
+    // In cell editing only the clicked cell has an editor; a new row has all of them.
+    private bool IsEdited(StilDataGridColumnBase<TItem> column) =>
+        column.CanEdit && (EditMode != StilDataGridEditMode.Cell || _editIsNew || ReferenceEquals(column, _editColumn));
+
+    private StilDataGridEditArgs<TItem> EditArgs => new(_editItem!, _editIsNew, _editColumn?.ColumnKey);
+
+    /// <summary>Starts editing a row. A row that is already being edited is saved first; false when it cannot be.</summary>
+    public Task<bool> BeginEditAsync(TItem item) => BeginAsync(item, isNew: false, column: null);
+
+    /// <summary>
+    /// Adds a new row at the top of the grid and starts editing it. Save calls OnRowSave with
+    /// IsNew, where the app adds the item to its data; Cancel removes the row.
+    /// </summary>
+    public Task<bool> AddRowAsync(TItem item) => BeginAsync(item, isNew: true, column: null);
+
+    private Task<bool> BeginCellEditAsync(TItem item, StilDataGridColumnBase<TItem> column) => BeginAsync(item, isNew: false, column);
+
+    private async Task<bool> BeginAsync(TItem item, bool isNew, StilDataGridColumnBase<TItem>? column)
+    {
+        if (_editing)
+        {
+            if (!isNew && !_editIsNew && IsEditing(item) && ReferenceEquals(column, _editColumn))
+            {
+                return true;
+            }
+
+            if (!await SaveEditAsync())
+            {
+                return false;
+            }
+        }
+
+        _editing = true;
+        _editItem = item;
+        _editIsNew = isNew;
+        _editColumn = column;
+        // Cancel puts the item's values back from a copy.
+        _editSnapshot = isNew || item is null ? null : CloneMethod.Invoke(item, null);
+        _editContext = new EditContext(item!);
+        _editContext.EnableDataAnnotationsValidation(Services);
+        _focusEditor = true;
+        StateHasChanged();
+        return true;
+    }
+
+    /// <summary>
+    /// Validates the edited fields and saves the row through OnRowSave. False when a field is not
+    /// valid or OnRowSave returns false; the row is then still being edited.
+    /// </summary>
+    public async Task<bool> SaveEditAsync()
+    {
+        if (!_editing || _editContext is null)
+        {
+            return true;
+        }
+
+        var fields = _visible.Where(c => IsEdited(c) && !c.IsCommand)
+            .Select(c => c.EditField(_editItem!))
+            .Where(field => field.HasValue)
+            .Select(field => field!.Value)
+            .ToList();
+        foreach (var field in fields)
+        {
+            _editContext.NotifyFieldChanged(field);
+        }
+
+        if (fields.Any(field => _editContext.GetValidationMessages(field).Any()))
+        {
+            StateHasChanged();
+            return false;
+        }
+
+        if (OnRowSave is { } save)
+        {
+            // Called like an EventCallback, so the component that handles it renders again (with new Items).
+            var accepted = false;
+            var args = EditArgs;
+            await EventCallback.Factory.Create(save.Target ?? this, async () => accepted = await save(args)).InvokeAsync();
+            if (!accepted)
+            {
+                StateHasChanged();
+                return false;
+            }
+        }
+
+        EndEdit();
+        await RefreshAsync();
+        return true;
+    }
+
+    /// <summary>Stops editing and puts the item's values back; a new row is removed.</summary>
+    public async Task CancelEditAsync()
+    {
+        if (!_editing)
+        {
+            return;
+        }
+
+        var args = EditArgs;
+        if (_editSnapshot is not null && _editItem is not null)
+        {
+            foreach (var property in _editItem.GetType().GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)
+                         .Where(p => p.CanRead && p.SetMethod?.IsPublic == true && p.GetIndexParameters().Length == 0))
+            {
+                property.SetValue(_editItem, property.GetValue(_editSnapshot));
+            }
+        }
+
+        EndEdit();
+        StateHasChanged();
+        await OnRowCancel.InvokeAsync(args);
+    }
+
+    private void EndEdit()
+    {
+        _editing = false;
+        _editIsNew = false;
+        _editItem = default;
+        _editColumn = null;
+        _editContext = null;
+        _editSnapshot = null;
+    }
+
+    private async Task OnEditKeyDownAsync(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape")
+        {
+            await CancelEditAsync();
+        }
+        else if (e.Key == "Enter" && EditMode == StilDataGridEditMode.Cell)
+        {
+            await SaveEditAsync();
+        }
+    }
+
+    // In cell editing, leaving the cell saves it.
+    private async Task OnEditorFocusOutAsync()
+    {
+        if (EditMode == StilDataGridEditMode.Cell && _editColumn is not null)
+        {
+            await SaveEditAsync();
+        }
+    }
+
     // ----- Column layout ---------------------------------------------------------------------
 
     /// <summary>The columns in the user's order: the saved order first, then the rest as declared.</summary>
@@ -1547,6 +1766,13 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (_focusEditor && _editing)
+        {
+            _focusEditor = false;
+            _module ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Stil/stil.js");
+            await _module.InvokeVoidAsync("focusEditor", _table);
+        }
+
         // stil.js places frozen columns and gives the resize handles their width (aria-valuenow).
         if (_visible.Any(c => c.Frozen != StilFrozen.None || IsResizable(c)))
         {

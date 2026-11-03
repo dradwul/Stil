@@ -1,0 +1,46 @@
+@* A data grid column with an Edit button per row (EditMode="StilDataGridEditMode.Row"). The row
+   being edited shows Save and Cancel in it instead. *@
+@typeparam TItem
+@inherits StilDataGridColumnBase<TItem>
+
+@code {
+    public StilDataGridEditColumn()
+    {
+        Align = StilTextAlign.End;
+        Exportable = false;
+        Hideable = false;
+    }
+
+    /// <summary>The accessible name of a row's Edit button. The default is the localized "Edit".</summary>
+    [Parameter]
+    public Func<TItem, string>? EditLabel { get; set; }
+
+    internal override string DisplayTitle => Title ?? Grid?.Localize(null, "DataGrid.Edit") ?? "Edit";
+
+    internal override string ColumnKey => Key ?? "stil-edit";
+
+    internal override bool IsCommand => true;
+
+    internal override bool CanEdit => true;
+
+    internal override bool CanExport => false;
+
+    private string Text(string key, string fallback) => Grid?.Localize(null, key) ?? fallback;
+
+    internal override RenderFragment RenderCell(TItem item) =>
+        @<StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost" Size="StilSize.Small" IconOnly
+                     aria-label="@(EditLabel?.Invoke(item) ?? Text("DataGrid.Edit", "Edit"))" OnClick="() => Grid!.BeginEditAsync(item)">
+            <StilIcon Name="@StilIcons.Pencil" />
+        </StilButton>;
+
+    internal override RenderFragment RenderEditor(TItem item) =>
+        @<span class="stil-data-grid-commands">
+            <StilButton Size="StilSize.Small" IconOnly aria-label="@Text("DataGrid.Save", "Save")" OnClick="() => Grid!.SaveEditAsync()">
+                <StilIcon Name="@StilIcons.Check" />
+            </StilButton>
+            <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost" Size="StilSize.Small" IconOnly
+                        aria-label="@Text("DataGrid.Cancel", "Cancel")" OnClick="() => Grid!.CancelEditAsync()">
+                <StilIcon Name="@StilIcons.Close" />
+            </StilButton>
+        </span>;
+}

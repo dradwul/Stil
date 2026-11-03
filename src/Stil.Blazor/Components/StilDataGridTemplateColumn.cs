@@ -12,5 +12,13 @@ public sealed class StilDataGridTemplateColumn<TItem> : StilDataGridColumnBase<T
     [Parameter, EditorRequired]
     public RenderFragment<TItem> ChildContent { get; set; } = default!;
 
+    /// <summary>The cell content of a row being edited (EditMode), for example Stil fields bound to the item.</summary>
+    [Parameter]
+    public RenderFragment<TItem>? EditTemplate { get; set; }
+
     internal override RenderFragment RenderCell(TItem item) => ChildContent(item);
+
+    internal override bool CanEdit => EditTemplate is not null;
+
+    internal override RenderFragment RenderEditor(TItem item) => EditTemplate is null ? ChildContent(item) : EditTemplate(item);
 }

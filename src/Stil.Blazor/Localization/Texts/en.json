@@ -85,7 +85,10 @@
     "GroupBy": "Group by",
     "ExpandAll": "Expand all",
     "CollapseAll": "Collapse all",
-    "Blank": "(Blank)"
+    "Blank": "(Blank)",
+    "Edit": "Edit",
+    "Save": "Save",
+    "Cancel": "Cancel"
   },
   "DateRange": {
     "Start": "From",

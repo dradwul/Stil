@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Stil.Blazor.Components;
 
@@ -123,6 +124,18 @@ public abstract class StilDataGridColumnBase<TItem> : ComponentBase, IDisposable
     internal virtual StilSortDirection InitialSortDirection => StilSortDirection.None;
 
     internal virtual bool CanGroup => false;
+
+    /// <summary>The column has an editor for a row being edited (EditMode).</summary>
+    internal virtual bool CanEdit => false;
+
+    /// <summary>A column of buttons (StilDataGridEditColumn): its clicks and keys do not reach the row.</summary>
+    internal virtual bool IsCommand => false;
+
+    /// <summary>The cell content of a row being edited.</summary>
+    internal virtual RenderFragment RenderEditor(TItem item) => RenderCell(item);
+
+    /// <summary>The field the editor changes, which the grid validates before saving.</summary>
+    internal virtual FieldIdentifier? EditField(TItem item) => null;
 
     /// <summary>The column's distinct values in a query, sorted, for grouping.</summary>
     internal virtual IReadOnlyList<object?> GroupValues(IQueryable<TItem> query, bool descending) => [];

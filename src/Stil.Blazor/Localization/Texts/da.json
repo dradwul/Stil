@@ -85,7 +85,10 @@
     "GroupBy": "Gruppér efter",
     "ExpandAll": "Udvid alle",
     "CollapseAll": "Skjul alle",
-    "Blank": "(Tom)"
+    "Blank": "(Tom)",
+    "Edit": "Rediger",
+    "Save": "Gem",
+    "Cancel": "Annuller"
   },
   "DateRange": {
     "Start": "Fra",

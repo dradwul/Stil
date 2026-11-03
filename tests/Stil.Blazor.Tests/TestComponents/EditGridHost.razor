@@ -1,0 +1,51 @@
+@* A data grid that edits orders in place, with an edit column. *@
+<StilDataGrid @ref="Grid" TItem="EditOrder" Items="Items" PageSize="0" EditMode="EditMode" ItemKey="o => o.Id"
+              OnRowSave="SaveAsync" OnRowCancel="args => Cancelled.Add(args)" Caption="Orders">
+    <Columns>
+        <StilDataGridColumn Property="o => o.Id" Title="Order" Editable="false" />
+        <StilDataGridColumn Property="o => o.Customer" />
+        <StilDataGridColumn Property="o => o.Status" />
+        <StilDataGridColumn Property="o => o.Paid" />
+        <StilDataGridColumn Property="o => o.Amount" Format="N2" />
+        <StilDataGridColumn Property="o => o.Date" Format="yyyy-MM-dd" />
+        @if (EditMode == StilDataGridEditMode.Row)
+        {
+            <StilDataGridEditColumn TItem="EditOrder" />
+        }
+    </Columns>
+</StilDataGrid>
+
+@code {
+    public StilDataGrid<EditOrder> Grid { get; private set; } = default!;
+
+    public List<StilDataGridEditArgs<EditOrder>> Saved { get; } = [];
+
+    public List<StilDataGridEditArgs<EditOrder>> Cancelled { get; } = [];
+
+    [Parameter]
+    public List<EditOrder> Items { get; set; } = [];
+
+    [Parameter]
+    public StilDataGridEditMode EditMode { get; set; } = StilDataGridEditMode.Row;
+
+    /// <summary>What OnRowSave returns.</summary>
+    [Parameter]
+    public bool Accept { get; set; } = true;
+
+    /// <summary>Saving gives the grid a new list, as an app that loads its data again does.</summary>
+    [Parameter]
+    public bool ReplaceItems { get; set; }
+
+    private Task<bool> SaveAsync(StilDataGridEditArgs<EditOrder> args)
+    {
+        Saved.Add(args);
+        if (Accept && args.IsNew)
+        {
+            var items = ReplaceItems ? Items.ToList() : Items;
+            items.Insert(0, args.Item);
+            Items = items;
+        }
+
+        return Task.FromResult(Accept);
+    }
+}

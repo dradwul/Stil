@@ -147,6 +147,24 @@ public enum StilAggregate
     Max
 }
 
+/// <summary>How the rows of a data grid are edited in place.</summary>
+public enum StilDataGridEditMode
+{
+    None,
+
+    /// <summary>A whole row at a time: an edit button (StilDataGridEditColumn), a double click, Enter or F2, with Save and Cancel.</summary>
+    Row,
+
+    /// <summary>One cell at a time: click a cell to edit it; leaving it or Enter saves, Escape cancels.</summary>
+    Cell
+}
+
+/// <summary>
+/// The row being saved or cancelled: the item (edited in place), whether it is new (AddRowAsync),
+/// and in cell editing the Key of the edited column.
+/// </summary>
+public sealed record StilDataGridEditArgs<TItem>(TItem Item, bool IsNew, string? ColumnKey = null);
+
 /// <summary>Where a data grid column is frozen, so it stays in view while the grid scrolls sideways.</summary>
 public enum StilFrozen
 {

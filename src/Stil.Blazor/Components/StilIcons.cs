@@ -32,6 +32,7 @@ public static class StilIcons
     public const string Minus = "minus";
     public const string Moon = "moon";
     public const string More = "more";
+    public const string Pencil = "pencil";
     public const string Plus = "plus";
     public const string Search = "search";
     public const string Star = "star";

@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Stil.Blazor.Components;
 
@@ -13,6 +14,7 @@ public sealed class StilDataGridColumn<TItem, TValue> : StilDataGridColumnBase<T
 {
     private Expression<Func<TItem, TValue>>? _compiledFor;
     private Func<TItem, TValue>? _getter;
+    private Action<TItem, TValue>? _setter;
 
     /// <summary>The property, for example <c>o =&gt; o.Customer</c>.</summary>
     [Parameter, EditorRequired]
@@ -36,6 +38,18 @@ public sealed class StilDataGridColumn<TItem, TValue> : StilDataGridColumnBase<T
     /// </summary>
     [Parameter]
     public bool? Filterable { get; set; }
+
+    /// <summary>
+    /// Lets the user edit the column when the grid has an EditMode. The default is true; a column
+    /// is only edited when its property can be set and its type has an editor (text, number, date,
+    /// enum or bool), or when it has an EditTemplate.
+    /// </summary>
+    [Parameter]
+    public bool Editable { get; set; } = true;
+
+    /// <summary>The editor of a row being edited, instead of the one that fits the property's type.</summary>
+    [Parameter]
+    public RenderFragment<TItem>? EditTemplate { get; set; }
 
     /// <summary>Lets the rows be grouped by this column (StilDataGrid.GroupBy). The default is true.</summary>
     [Parameter]
@@ -74,6 +88,82 @@ public sealed class StilDataGridColumn<TItem, TValue> : StilDataGridColumnBase<T
     internal override StilSortDirection InitialSortDirection => InitialSort;
 
     internal override bool CanGroup => Groupable;
+
+    private static bool IsNumber => ValueType == typeof(int) || ValueType == typeof(long) || ValueType == typeof(short)
+        || ValueType == typeof(decimal) || ValueType == typeof(double) || ValueType == typeof(float);
+
+    private static bool IsDate => ValueType == typeof(DateOnly) || ValueType == typeof(DateTime) || ValueType == typeof(DateTimeOffset);
+
+    private static bool HasEditor => typeof(TValue) == typeof(string) || typeof(TValue) == typeof(bool) || ValueType.IsEnum || IsNumber || IsDate;
+
+    internal override bool CanEdit => Editable && (EditTemplate is not null || (_setter is not null && HasEditor));
+
+    // A public, settable property or field of the item, or nothing to edit.
+    private static Action<TItem, TValue>? CompileSetter(Expression<Func<TItem, TValue>> property)
+    {
+        if (property.Body is not MemberExpression { Member: PropertyInfo { SetMethod.IsPublic: true } or FieldInfo { IsInitOnly: false, IsPublic: true } } member)
+        {
+            return null;
+        }
+
+        var value = Expression.Parameter(typeof(TValue), "value");
+        return Expression.Lambda<Action<TItem, TValue>>(Expression.Assign(member, value), property.Parameters[0], value).Compile();
+    }
+
+    // The property of one item, as () => item.Property, for the editor's binding and validation.
+    private Expression<Func<TValue>> ValueExpressionFor(TItem item) =>
+        Expression.Lambda<Func<TValue>>(new Rebinder(Property.Parameters[0], Expression.Constant(item, typeof(TItem))).Visit(Property.Body));
+
+    private sealed class Rebinder(ParameterExpression parameter, Expression replacement) : ExpressionVisitor
+    {
+        protected override Expression VisitParameter(ParameterExpression node) => node == parameter ? replacement : node;
+    }
+
+    internal override FieldIdentifier? EditField(TItem item) =>
+        Property.Body is MemberExpression ? FieldIdentifier.Create(ValueExpressionFor(item)) : null;
+
+    internal override RenderFragment RenderEditor(TItem item)
+    {
+        if (EditTemplate is not null)
+        {
+            return EditTemplate(item);
+        }
+
+        if (!CanEdit)
+        {
+            return RenderCell(item);
+        }
+
+        if (typeof(TValue) == typeof(string))
+        {
+            return Editor<StilTextBox>(item, sized: true);
+        }
+
+        if (typeof(TValue) == typeof(bool))
+        {
+            return Editor<StilSwitch>(item, sized: false);
+        }
+
+        return ValueType.IsEnum ? Editor<StilSelect<TValue>>(item, sized: true)
+            : IsNumber ? Editor<StilNumeric<TValue>>(item, sized: true)
+            : Editor<StilDatePicker<TValue>>(item, sized: true);
+    }
+
+    // A Stil field bound to the item's property, named by the column title.
+    private RenderFragment Editor<TEditor>(TItem item, bool sized) where TEditor : IComponent => builder =>
+    {
+        builder.OpenComponent<TEditor>(0);
+        builder.AddAttribute(1, "Value", _getter!(item));
+        builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<TValue>(Grid!, value => _setter!(item, value)));
+        builder.AddAttribute(3, "ValueExpression", ValueExpressionFor(item));
+        builder.AddAttribute(4, "aria-label", DisplayTitle);
+        if (sized)
+        {
+            builder.AddAttribute(5, "Size", StilSize.Small);
+        }
+
+        builder.CloseComponent();
+    };
 
     internal override IReadOnlyList<object?> GroupValues(IQueryable<TItem> query, bool descending)
     {
@@ -115,6 +205,7 @@ public sealed class StilDataGridColumn<TItem, TValue> : StilDataGridColumnBase<T
         if (!ReferenceEquals(_compiledFor, Property))
         {
             _getter = Property.Compile();
+            _setter = CompileSetter(Property);
             _compiledFor = Property;
         }
 

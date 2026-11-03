@@ -85,7 +85,10 @@
     "GroupBy": "Gruppera",
     "ExpandAll": "Visa alla",
     "CollapseAll": "Dölj alla",
-    "Blank": "(Tomt)"
+    "Blank": "(Tomt)",
+    "Edit": "Redigera",
+    "Save": "Spara",
+    "Cancel": "Avbryt"
   },
   "DateRange": {
     "Start": "Från",
