@@ -24,7 +24,8 @@
 
 <StilDataGrid TItem="Order" Items="_orders" Filterable PageSize="10" PageSizeOptions="[10, 25, 50]"
               SelectionMode="StilSelectionMode.Multiple" @bind-SelectedItems="_selected" ItemKey="o => o.Id"
-              RowClass="@(o => o.Status == OrderStatus.Cancelled ? "stil-text-muted" : null)" Caption="Orders, newest first">
+              RowClass="@(o => o.Status == OrderStatus.Cancelled ? "stil-text-muted" : null)" Caption="Orders, newest first"
+              ShowExport ExportFileName="orders.csv">
     <Toolbar>
         <span class="stil-text-muted">@(_selected.Count == 0 ? "Select orders to act on several at once." : $"{_selected.Count} selected")</span>
         @if (_selected.Count > 0)
@@ -47,7 +48,7 @@
         <StilDataGridColumn Property="o => o.Express" TrueText="Express" FalseText="Standard">
             <Template>@(context.Express ? "Express" : "")</Template>
         </StilDataGridColumn>
-        <StilDataGridColumn Property="o => o.Amount" Title="Amount (€)" Format="N2" Align="StilTextAlign.End" />
+        <StilDataGridColumn Property="o => o.Amount" Title="Amount (€)" Format="N2" Align="StilTextAlign.End" Aggregate="StilAggregate.Sum" />
         <StilDataGridTemplateColumn Title="Actions" Align="StilTextAlign.End">
             <StilDropdown Text="⋯" AriaLabel="@($"Actions for order {context.Id}")" Appearance="StilButtonAppearance.Ghost"
                           Variant="StilVariant.Secondary" Size="StilSize.Small" AlignEnd IconOnly>
