@@ -225,9 +225,9 @@ such as an EF Core `DbSet`.
 
 | Component | Parameters |
 | --- | --- |
-| `StilDataGrid<TItem>` | `Items` or `ItemsProvider`, `Columns`, `Toolbar`, `PageSize` (default 10; 0 shows every row), `PageSizeOptions`, `Filterable`, `SelectionMode` (None, Single, Multiple) with `@bind-SelectedItem` or `@bind-SelectedItems`, `ItemKey`, `OnRowClick`, `RowClass`, `Virtualize` with `Height` and `ItemSize`, `Caption`, `Striped`, `Compact`, `Bordered`, `EmptyContent`, and texts for translation (`EmptyText`, `LoadingText`, `SummaryFormat`, `FilterPlaceholder`, …). `RefreshAsync()` reloads the rows. |
-| `StilDataGridColumn<TItem, TValue>` | `Property`, `Title` (default: the property name), `Format`, `Template`, `Sortable` (default true), `Filterable` (default: the grid's), `InitialSort`, `Align`, `Width`, `Class`, `Key`, `TrueText`/`FalseText` |
-| `StilDataGridTemplateColumn<TItem>` | Custom content (`context` is the row), `Title`, `Align`, `Width`. Not sortable or filterable. |
+| `StilDataGrid<TItem>` | `Items` or `ItemsProvider`, `Columns`, `Toolbar`, `ShowExport`/`ExportFileName` (a CSV download of the filtered rows; `ExportCsvAsync()` returns the text), `TotalText`, `PageSize` (default 10; 0 shows every row), `PageSizeOptions`, `Filterable`, `SelectionMode` (None, Single, Multiple) with `@bind-SelectedItem` or `@bind-SelectedItems`, `ItemKey`, `OnRowClick`, `RowClass`, `Virtualize` with `Height` and `ItemSize`, `Caption`, `Striped`, `Compact`, `Bordered`, `EmptyContent`, and texts for translation (`EmptyText`, `LoadingText`, `SummaryFormat`, `FilterPlaceholder`, …). `RefreshAsync()` reloads the rows. |
+| `StilDataGridColumn<TItem, TValue>` | `Property`, `Title` (default: the property name), `Format`, `Aggregate` (Sum, Average, Count, Min, Max in a totals row), `AggregateValue`, `AggregateFormat`, `ExportValue`, `Exportable`, `Template`, `Sortable` (default true), `Filterable` (default: the grid's), `InitialSort`, `Align`, `Width`, `Class`, `Key`, `TrueText`/`FalseText` |
+| `StilDataGridTemplateColumn<TItem>` | Custom content (`context` is the row), `Title`, `Align`, `Width`, `AggregateValue`, `ExportValue` (exported only when set). Not sortable or filterable. |
 
 - **Sorting:** clicking a header sorts ascending, then descending, then not at
   all. The header has `aria-sort`.

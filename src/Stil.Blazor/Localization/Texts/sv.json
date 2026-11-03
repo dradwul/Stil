@@ -74,7 +74,9 @@
     "SelectAll": "Markera alla rader på sidan",
     "SelectRow": "Markera rad",
     "Yes": "Ja",
-    "No": "Nej"
+    "No": "Nej",
+    "Total": "Totalt",
+    "Export": "Exportera CSV"
   },
   "DateRange": {
     "Start": "Från",

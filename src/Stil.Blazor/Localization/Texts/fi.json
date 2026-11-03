@@ -74,7 +74,9 @@
     "SelectAll": "Valitse kaikki tämän sivun rivit",
     "SelectRow": "Valitse rivi",
     "Yes": "Kyllä",
-    "No": "Ei"
+    "No": "Ei",
+    "Total": "Yhteensä",
+    "Export": "Vie CSV"
   },
   "DateRange": {
     "Start": "Alkupäivä",

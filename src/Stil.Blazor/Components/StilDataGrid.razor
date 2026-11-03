@@ -3,15 +3,25 @@
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @inherits StilComponentBase
 @implements IDisposable
+@inject IJSRuntime JS
 
 <CascadingValue Value="this" IsFixed="true">
     @Columns
 </CascadingValue>
 
 <div @attributes="AdditionalAttributes" class="@Classes("stil-data-grid")" aria-busy="@StilCssClasses.AriaBool(_loading)">
-    @if (Toolbar is not null)
+    @if (Toolbar is not null || ShowExport)
     {
-        <div class="stil-data-grid-toolbar">@Toolbar</div>
+        <div class="stil-data-grid-toolbar">
+            @Toolbar
+            @if (ShowExport)
+            {
+                <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline" Size="StilSize.Small"
+                            class="stil-data-grid-export" Loading="_exporting" OnClick="DownloadCsvAsync">
+                    <StilIcon Name="@StilIcons.Download" /> @Localize(ExportText, "DataGrid.Export")
+                </StilButton>
+            }
+        </div>
     }
 
     <div class="@ScrollClass" style="@ScrollStyle" tabindex="@(Height is null ? null : 0)"
@@ -103,6 +113,33 @@
                     }
                 }
             </tbody>
+            @if (_columns.Any(c => c.HasAggregate))
+            {
+                <tfoot>
+                    <tr class="stil-data-grid-totals">
+                        @if (SelectionMode == StilSelectionMode.Multiple)
+                        {
+                            <td></td>
+                        }
+                        @for (var i = 0; i < _columns.Count; i++)
+                        {
+                            var column = _columns[i];
+                            if (column.HasAggregate)
+                            {
+                                <td class="@column.CellClass">@column.FormatTotal(_aggregates.GetValueOrDefault(column.ColumnKey))</td>
+                            }
+                            else if (i == 0)
+                            {
+                                <th scope="row">@Localize(TotalText, "DataGrid.Total")</th>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                        }
+                    </tr>
+                </tfoot>
+            }
         </table>
     </div>
 
@@ -140,6 +177,9 @@
     private int _total;
     private bool _loading;
     private bool _initialSortApplied;
+    private bool _exporting;
+    private bool _aggregatesQueued;
+    private IReadOnlyDictionary<string, object?> _aggregates = new Dictionary<string, object?>();
     private CancellationTokenSource? _loadCts;
     private CancellationTokenSource? _debounceCts;
     private object? _loadedItems;
@@ -163,6 +203,22 @@
     /// <summary>Content above the table, for example a search box or buttons.</summary>
     [Parameter]
     public RenderFragment? Toolbar { get; set; }
+
+    /// <summary>Shows an export button in the toolbar that downloads the filtered rows as CSV (see ExportCsvAsync).</summary>
+    [Parameter]
+    public bool ShowExport { get; set; }
+
+    /// <summary>The name of the downloaded CSV file. The default is "export.csv".</summary>
+    [Parameter]
+    public string ExportFileName { get; set; } = "export.csv";
+
+    /// <summary>The export button's text. The default is the localized "Export CSV".</summary>
+    [Parameter]
+    public string? ExportText { get; set; }
+
+    /// <summary>The label of the totals row, in the first column when that column has no total. The default is the localized "Total".</summary>
+    [Parameter]
+    public string? TotalText { get; set; }
 
     /// <summary>Rows per page. 0 shows all rows without a pager. The default is 10.</summary>
     [Parameter]
@@ -341,6 +397,17 @@
             _sortDirection = column.InitialSortDirection;
             _ = InvokeAsync(RefreshAsync);
         }
+        else if (column.HasAggregate && !_aggregatesQueued)
+        {
+            // The columns register after the first load, which therefore had no totals to compute.
+            // Reload once all of them are in: after the current render.
+            _aggregatesQueued = true;
+            _ = InvokeAsync(async () =>
+            {
+                await Task.Yield();
+                await RefreshAsync();
+            });
+        }
         else
         {
             StateHasChanged();
@@ -420,6 +487,7 @@
 
             _page = result.Items.ToList();
             _total = result.TotalCount;
+            _aggregates = result.Aggregates ?? new Dictionary<string, object?>();
         }
         catch (OperationCanceledException) when (cts.IsCancellationRequested)
         {
@@ -436,8 +504,9 @@
         StateHasChanged();
     }
 
-    private async Task<StilDataGridResult<TItem>> LoadAsync(int startIndex, int? count, CancellationToken cancellationToken)
+    private async Task<StilDataGridResult<TItem>> LoadAsync(int startIndex, int? count, CancellationToken cancellationToken, bool withAggregates = true)
     {
+        var aggregated = withAggregates ? _columns.Where(c => c.Aggregate != StilAggregate.None).Select(c => c.ColumnKey).ToList() : [];
         var request = new StilDataGridRequest<TItem>(
             startIndex,
             count,
@@ -445,7 +514,9 @@
             _sortColumn is null ? StilSortDirection.None : _sortDirection,
             _filters.Where(f => !string.IsNullOrWhiteSpace(f.Value)).ToDictionary(f => f.Key.ColumnKey, f => f.Value),
             ApplyFiltersAndSorting,
-            cancellationToken);
+            cancellationToken,
+            aggregated,
+            ComputeAggregates);
 
         if (ItemsProvider is not null)
         {
@@ -459,7 +530,68 @@
 
         var query = ApplyFiltersAndSorting(Items.AsQueryable());
         var total = query.Count();
-        return new StilDataGridResult<TItem>(request.ApplyPaging(query).ToList(), total);
+        var aggregates = new Dictionary<string, object?>(request.ComputeAggregates(query));
+        if (withAggregates)
+        {
+            foreach (var column in _columns.Where(c => c.AggregateValue is not null))
+            {
+                aggregates[column.ColumnKey] = column.AggregateValue!(query);
+            }
+        }
+
+        return new StilDataGridResult<TItem>(request.ApplyPaging(query).ToList(), total, aggregates);
+    }
+
+    private IReadOnlyDictionary<string, object?> ComputeAggregates(IQueryable<TItem> query) =>
+        _columns.Where(c => c.Aggregate != StilAggregate.None).ToDictionary(c => c.ColumnKey, c => c.ComputeAggregate(query));
+
+    /// <summary>
+    /// The filtered and sorted rows of every page as CSV, with a header row and the columns that
+    /// can be exported. Numbers have no thousands separators, so spreadsheets read them as
+    /// numbers; the separator is the culture's list separator. With an ItemsProvider the rows
+    /// are fetched in batches.
+    /// </summary>
+    public async Task<string> ExportCsvAsync(CancellationToken cancellationToken = default)
+    {
+        var columns = _columns.Where(c => c.CanExport).ToList();
+        var rows = new List<TItem>();
+        if (ItemsProvider is null)
+        {
+            rows.AddRange(Items is null ? [] : ApplyFiltersAndSorting(Items.AsQueryable()));
+        }
+        else
+        {
+            const int batch = 500;
+            while (true)
+            {
+                var result = await LoadAsync(rows.Count, batch, cancellationToken, withAggregates: false);
+                rows.AddRange(result.Items);
+                if (result.Items.Count < batch || rows.Count >= result.TotalCount)
+                {
+                    break;
+                }
+            }
+        }
+
+        return StilDataGridExport.Csv(columns, rows, System.Globalization.CultureInfo.CurrentCulture);
+    }
+
+    /// <summary>Exports the rows (see ExportCsvAsync) and lets the browser download them as ExportFileName.</summary>
+    public async Task DownloadCsvAsync()
+    {
+        _exporting = true;
+        StateHasChanged();
+        try
+        {
+            var csv = await ExportCsvAsync();
+            await using var module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Stil/stil.js");
+            // The byte order mark tells Excel the file is UTF-8.
+            await module.InvokeVoidAsync("downloadFile", ExportFileName, "text/csv;charset=utf-8", "﻿" + csv);
+        }
+        finally
+        {
+            _exporting = false;
+        }
     }
 
     private IQueryable<TItem> ApplyFiltersAndSorting(IQueryable<TItem> query)
@@ -479,10 +611,17 @@
 
     private async ValueTask<ItemsProviderResult<TItem>> ProvideVirtualizedAsync(ItemsProviderRequest request)
     {
-        var result = await LoadAsync(request.StartIndex, request.Count, request.CancellationToken);
-        if (_total != result.TotalCount)
+        // The totals cover every row, so they are computed with the first rows only.
+        var first = request.StartIndex == 0;
+        var result = await LoadAsync(request.StartIndex, request.Count, request.CancellationToken, withAggregates: first);
+        if (_total != result.TotalCount || (first && result.Aggregates is { Count: > 0 }))
         {
             _total = result.TotalCount;
+            if (first && result.Aggregates is { } aggregates)
+            {
+                _aggregates = aggregates;
+            }
+
             _ = InvokeAsync(StateHasChanged);
         }
 

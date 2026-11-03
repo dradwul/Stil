@@ -31,6 +31,53 @@ public abstract class StilDataGridColumnBase<TItem> : ComponentBase, IDisposable
     [Parameter]
     public string? Class { get; set; }
 
+    /// <summary>Totals the column in a footer row: Sum, Average, Count, Min or Max.</summary>
+    [Parameter]
+    public StilAggregate Aggregate { get; set; }
+
+    /// <summary>
+    /// A total of your own (for example a weighted average), computed from the filtered rows. It
+    /// is used instead of Aggregate when the grid has Items; an ItemsProvider returns it itself.
+    /// </summary>
+    [Parameter]
+    public Func<IEnumerable<TItem>, object?>? AggregateValue { get; set; }
+
+    /// <summary>A format string for the total. The default is the column's Format.</summary>
+    [Parameter]
+    public string? AggregateFormat { get; set; }
+
+    /// <summary>
+    /// The value written in a CSV export. Columns bound to a property export their value without
+    /// it; a template column is only exported when it is set.
+    /// </summary>
+    [Parameter]
+    public Func<TItem, object?>? ExportValue { get; set; }
+
+    /// <summary>Includes the column in a CSV export. The default is true.</summary>
+    [Parameter]
+    public bool Exportable { get; set; } = true;
+
+    internal bool HasAggregate => Aggregate != StilAggregate.None || AggregateValue is not null;
+
+    /// <summary>The format of the column's values (StilDataGridColumn.Format).</summary>
+    internal virtual string? ValueFormat => null;
+
+    internal virtual bool CanExport => Exportable && ExportValue is not null;
+
+    /// <summary>Computes Aggregate on a filtered query; columns without a property have none.</summary>
+    internal virtual object? ComputeAggregate(IQueryable<TItem> query) => null;
+
+    internal virtual string ExportText(TItem item) => StilDataGridExport.Text(ExportValue?.Invoke(item), ValueFormat, null);
+
+    internal string FormatTotal(object? value) => value switch
+    {
+        null => "",
+        IFormattable formattable when Aggregate != StilAggregate.Count && (AggregateFormat ?? ValueFormat) is { } format =>
+            formattable.ToString(format, System.Globalization.CultureInfo.CurrentCulture),
+        IFormattable formattable => formattable.ToString(null, System.Globalization.CultureInfo.CurrentCulture),
+        _ => value.ToString() ?? ""
+    };
+
     internal virtual string DisplayTitle => Title ?? "";
 
     internal virtual string ColumnKey => Key ?? Title ?? "";

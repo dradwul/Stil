@@ -1,0 +1,41 @@
+@* A data grid of orders with totals and export. *@
+<StilDataGrid @ref="Grid" TItem="GridOrder" Items="Items" ItemsProvider="ItemsProvider" PageSize="10" Filterable
+              SelectionMode="SelectionMode" ShowExport="ShowExport" ExportFileName="orders.csv" Caption="Orders">
+    <Columns>
+        <StilDataGridColumn Property="o => o.Id" Title="Order" Aggregate="StilAggregate.Count" />
+        <StilDataGridColumn Property="o => o.Customer" />
+        <StilDataGridColumn Property="o => o.Paid" />
+        <StilDataGridColumn Property="o => o.Amount" Format="N2" Aggregate="AmountAggregate" />
+        <StilDataGridTemplateColumn TItem="GridOrder" Title="Share paid" AggregateValue="PaidShare" ExportValue="o => o.Paid ? 1 : 0">
+            @(context.Paid ? "yes" : "no")
+        </StilDataGridTemplateColumn>
+        <StilDataGridTemplateColumn Title="Actions">
+            <button type="button">Edit @context.Id</button>
+        </StilDataGridTemplateColumn>
+    </Columns>
+</StilDataGrid>
+
+@code {
+    public StilDataGrid<GridOrder> Grid { get; private set; } = default!;
+
+    [Parameter]
+    public IEnumerable<GridOrder>? Items { get; set; }
+
+    [Parameter]
+    public Func<StilDataGridRequest<GridOrder>, Task<StilDataGridResult<GridOrder>>>? ItemsProvider { get; set; }
+
+    [Parameter]
+    public StilAggregate AmountAggregate { get; set; } = StilAggregate.Sum;
+
+    [Parameter]
+    public StilSelectionMode SelectionMode { get; set; }
+
+    [Parameter]
+    public bool ShowExport { get; set; }
+
+    private static object? PaidShare(IEnumerable<GridOrder> orders)
+    {
+        var list = orders.ToList();
+        return list.Count == 0 ? null : $"{list.Count(o => o.Paid) * 100 / list.Count}%";
+    }
+}

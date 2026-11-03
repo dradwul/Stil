@@ -111,6 +111,44 @@ public sealed class StilDataGridColumn<TItem, TValue> : StilDataGridColumnBase<T
         });
     }
 
+    internal override string? ValueFormat => Format;
+
+    internal override bool CanExport => Exportable;
+
+    internal override string ExportText(TItem item) => ExportValue is not null
+        ? StilDataGridExport.Text(ExportValue(item), Format, null)
+        : StilDataGridExport.Text(_getter!(item), Format, value => value ? TrueDisplay : FalseDisplay);
+
+    internal override object? ComputeAggregate(IQueryable<TItem> query)
+    {
+        switch (Aggregate)
+        {
+            case StilAggregate.Count:
+                return query.Count();
+            case StilAggregate.Min or StilAggregate.Max:
+                // Min and Max of no rows are not defined; show nothing.
+                if (!query.Any())
+                {
+                    return null;
+                }
+
+                return Aggregate == StilAggregate.Min ? query.Min(Property) : query.Max(Property);
+            case StilAggregate.Sum or StilAggregate.Average:
+                // Through decimal? or double?, which LINQ and EF Core sum for every number type.
+                var floating = ValueType == typeof(double) || ValueType == typeof(float);
+                var target = floating ? typeof(double?) : typeof(decimal?);
+                var selector = Expression.Lambda(Expression.Convert(Property.Body, target), Property.Parameters);
+                var method = typeof(Queryable).GetMethods()
+                    .Single(m => m.Name == (Aggregate == StilAggregate.Sum ? nameof(Queryable.Sum) : nameof(Queryable.Average))
+                        && m.IsGenericMethodDefinition
+                        && m.GetParameters()[1].ParameterType.GetGenericArguments()[0].GetGenericArguments()[1] == target)
+                    .MakeGenericMethod(typeof(TItem));
+                return method.Invoke(null, [query, selector]);
+            default:
+                return null;
+        }
+    }
+
     internal override IQueryable<TItem> ApplySort(IQueryable<TItem> query, bool descending) =>
         descending ? query.OrderByDescending(Property) : query.OrderBy(Property);
 

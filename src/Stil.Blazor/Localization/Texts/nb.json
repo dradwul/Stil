@@ -74,7 +74,9 @@
     "SelectAll": "Velg alle rader på denne siden",
     "SelectRow": "Velg rad",
     "Yes": "Ja",
-    "No": "Nei"
+    "No": "Nei",
+    "Total": "Totalt",
+    "Export": "Eksporter CSV"
   },
   "DateRange": {
     "Start": "Fra",

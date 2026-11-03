@@ -74,7 +74,9 @@
     "SelectAll": "Select all rows on this page",
     "SelectRow": "Select row",
     "Yes": "Yes",
-    "No": "No"
+    "No": "No",
+    "Total": "Total",
+    "Export": "Export CSV"
   },
   "DateRange": {
     "Start": "From",
