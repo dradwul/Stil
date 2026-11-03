@@ -11,11 +11,11 @@ a set of themeable Blazor components built on Stil CSS.
 
 ## Install
 
-Install the templates from nuget.org. While Stil is in preview, name the
-version; the latest is listed on [nuget.org](https://www.nuget.org/packages/Stil.Templates):
+Install the templates from nuget.org (the latest version, a preview until
+`1.0`; see [nuget.org](https://www.nuget.org/packages/Stil.Templates)):
 
 ```shell
-dotnet new install Stil.Templates::0.1.0-preview.4
+dotnet new install Stil.Templates
 ```
 
 From a clone of the repository, install the folder instead:
