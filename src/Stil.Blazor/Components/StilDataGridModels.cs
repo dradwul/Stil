@@ -21,14 +21,16 @@ public enum StilSelectionMode
 }
 
 /// <summary>
-/// What a data grid asks an ItemsProvider for: a range of rows with the current sorting and
-/// filters. For an IQueryable source (for example an EF Core DbSet), apply them with
+/// What a data grid asks an ItemsProvider for: a range of rows with the current sorting, filters
+/// and grouping. For an IQueryable source (for example an EF Core DbSet), apply them with
 /// <see cref="ApplyFiltersAndSorting"/> and <see cref="ApplyPaging"/>.
 /// </summary>
 public sealed class StilDataGridRequest<TItem>
 {
     private readonly Func<IQueryable<TItem>, IQueryable<TItem>> _apply;
     private readonly Func<IQueryable<TItem>, IReadOnlyDictionary<string, object?>> _aggregate;
+    private readonly Func<IQueryable<TItem>, IReadOnlyList<StilDataGridGroup>> _group;
+    private readonly bool _includeGroups;
 
     internal StilDataGridRequest(
         int startIndex,
@@ -39,7 +41,10 @@ public sealed class StilDataGridRequest<TItem>
         Func<IQueryable<TItem>, IQueryable<TItem>> apply,
         CancellationToken cancellationToken,
         IReadOnlyList<string>? aggregates = null,
-        Func<IQueryable<TItem>, IReadOnlyDictionary<string, object?>>? aggregate = null)
+        Func<IQueryable<TItem>, IReadOnlyDictionary<string, object?>>? aggregate = null,
+        IReadOnlyList<string>? groupBy = null,
+        Func<IQueryable<TItem>, IReadOnlyList<StilDataGridGroup>>? group = null,
+        bool includeGroups = false)
     {
         StartIndex = startIndex;
         Count = count;
@@ -50,6 +55,9 @@ public sealed class StilDataGridRequest<TItem>
         CancellationToken = cancellationToken;
         Aggregates = aggregates ?? [];
         _aggregate = aggregate ?? (_ => new Dictionary<string, object?>());
+        GroupBy = groupBy ?? [];
+        _group = group ?? (_ => []);
+        _includeGroups = includeGroups;
     }
 
     /// <summary>The index of the first row to return.</summary>
@@ -73,6 +81,12 @@ public sealed class StilDataGridRequest<TItem>
     /// </summary>
     public IReadOnlyList<string> Aggregates { get; }
 
+    /// <summary>
+    /// The Keys of the columns the rows are grouped by, outermost first. ApplyFiltersAndSorting
+    /// sorts by them first, so each group's rows come together.
+    /// </summary>
+    public IReadOnlyList<string> GroupBy { get; }
+
     /// <summary>Cancelled when the grid asks again before this request has finished.</summary>
     public CancellationToken CancellationToken { get; }
 
@@ -87,6 +101,15 @@ public sealed class StilDataGridRequest<TItem>
     public IReadOnlyDictionary<string, object?> ComputeAggregates(IQueryable<TItem> query) =>
         Aggregates.Count == 0 ? new Dictionary<string, object?>() : _aggregate(query);
 
+    /// <summary>
+    /// Computes the groups (StilDataGridResult.Groups) on a filtered query: each group's values,
+    /// row count and totals, using the columns' Property expressions, so EF Core runs them in the
+    /// database (a few queries per group). Pass the query after ApplyFiltersAndSorting and before
+    /// paging. Empty when the rows are not grouped, or when the grid only needs rows.
+    /// </summary>
+    public IReadOnlyList<StilDataGridGroup> ComputeGroups(IQueryable<TItem> query) =>
+        GroupBy.Count == 0 || !_includeGroups ? [] : _group(query);
+
     /// <summary>Applies StartIndex and Count (Skip and Take).</summary>
     public IQueryable<TItem> ApplyPaging(IQueryable<TItem> query)
     {
@@ -96,10 +119,22 @@ public sealed class StilDataGridRequest<TItem>
 }
 
 /// <summary>
-/// The rows for one data grid request, the total number of rows after filtering, and the totals
-/// of the columns with an Aggregate, by column Key.
+/// The rows for one data grid request, the total number of rows after filtering, the totals of
+/// the columns with an Aggregate (by column Key), and, when the rows are grouped, the groups.
 /// </summary>
-public sealed record StilDataGridResult<TItem>(IReadOnlyList<TItem> Items, int TotalCount, IReadOnlyDictionary<string, object?>? Aggregates = null);
+public sealed record StilDataGridResult<TItem>(
+    IReadOnlyList<TItem> Items,
+    int TotalCount,
+    IReadOnlyDictionary<string, object?>? Aggregates = null,
+    IReadOnlyList<StilDataGridGroup>? Groups = null);
+
+/// <summary>
+/// One group of a grouped data grid. Path holds the group's values, from the outermost grouped
+/// column to this group's, so its level is Path.Count - 1. A grid's groups are listed depth first
+/// (each group before its subgroups) in the order of the rows, with the number of rows in the
+/// group and its totals by column Key.
+/// </summary>
+public sealed record StilDataGridGroup(IReadOnlyList<object?> Path, int Count, IReadOnlyDictionary<string, object?>? Aggregates = null);
 
 /// <summary>How a data grid column is totalled in the footer row.</summary>
 public enum StilAggregate

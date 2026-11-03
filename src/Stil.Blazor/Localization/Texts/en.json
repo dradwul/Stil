@@ -81,7 +81,11 @@
     "ResetColumns": "Reset columns",
     "ResizeFormat": "Resize {0}",
     "MoveEarlierFormat": "Move {0} earlier",
-    "MoveLaterFormat": "Move {0} later"
+    "MoveLaterFormat": "Move {0} later",
+    "GroupBy": "Group by",
+    "ExpandAll": "Expand all",
+    "CollapseAll": "Collapse all",
+    "Blank": "(Blank)"
   },
   "DateRange": {
     "Start": "From",

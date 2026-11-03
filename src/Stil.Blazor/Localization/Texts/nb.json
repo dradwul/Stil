@@ -81,7 +81,11 @@
     "ResetColumns": "Tilbakestill kolonner",
     "ResizeFormat": "Endre bredde på {0}",
     "MoveEarlierFormat": "Flytt {0} fremover",
-    "MoveLaterFormat": "Flytt {0} bakover"
+    "MoveLaterFormat": "Flytt {0} bakover",
+    "GroupBy": "Grupper etter",
+    "ExpandAll": "Utvid alle",
+    "CollapseAll": "Skjul alle",
+    "Blank": "(Tom)"
   },
   "DateRange": {
     "Start": "Fra",

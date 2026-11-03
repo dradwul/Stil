@@ -37,6 +37,10 @@ public sealed class StilDataGridColumn<TItem, TValue> : StilDataGridColumnBase<T
     [Parameter]
     public bool? Filterable { get; set; }
 
+    /// <summary>Lets the rows be grouped by this column (StilDataGrid.GroupBy). The default is true.</summary>
+    [Parameter]
+    public bool Groupable { get; set; } = true;
+
     /// <summary>Sort the grid by this column when it first loads.</summary>
     [Parameter]
     public StilSortDirection InitialSort { get; set; }
@@ -68,6 +72,28 @@ public sealed class StilDataGridColumn<TItem, TValue> : StilDataGridColumnBase<T
         && (ValueType == typeof(string) || ValueType == typeof(bool) || ValueType.IsEnum);
 
     internal override StilSortDirection InitialSortDirection => InitialSort;
+
+    internal override bool CanGroup => Groupable;
+
+    internal override IReadOnlyList<object?> GroupValues(IQueryable<TItem> query, bool descending)
+    {
+        var values = query.Select(Property).Distinct();
+        var self = Expression.Parameter(typeof(TValue), "v");
+        var identity = Expression.Lambda<Func<TValue, TValue>>(self, self);
+        return (descending ? values.OrderByDescending(identity) : values.OrderBy(identity)).AsEnumerable().Cast<object?>().ToList();
+    }
+
+    internal override IQueryable<TItem> WhereGroup(IQueryable<TItem> query, object? value) =>
+        query.Where(Expression.Lambda<Func<TItem, bool>>(
+            Expression.Equal(Property.Body, Expression.Constant(value, typeof(TValue))), Property.Parameters));
+
+    internal override string FormatGroupValue(object? value) => value switch
+    {
+        null => Grid?.Localize(null, "DataGrid.Blank") ?? "(Blank)",
+        bool flag => flag ? TrueDisplay : FalseDisplay,
+        IFormattable formattable when Format is not null => formattable.ToString(Format, CultureInfo.CurrentCulture),
+        _ => value.ToString() ?? ""
+    };
 
     internal override IReadOnlyList<(string Value, string Text)>? FilterOptions
     {
@@ -149,8 +175,9 @@ public sealed class StilDataGridColumn<TItem, TValue> : StilDataGridColumnBase<T
         }
     }
 
-    internal override IQueryable<TItem> ApplySort(IQueryable<TItem> query, bool descending) =>
-        descending ? query.OrderByDescending(Property) : query.OrderBy(Property);
+    internal override IQueryable<TItem> ApplySort(IQueryable<TItem> query, bool descending, bool thenBy = false) => thenBy
+        ? (descending ? ((IOrderedQueryable<TItem>)query).ThenByDescending(Property) : ((IOrderedQueryable<TItem>)query).ThenBy(Property))
+        : (descending ? query.OrderByDescending(Property) : query.OrderBy(Property));
 
     internal override IQueryable<TItem> ApplyFilter(IQueryable<TItem> query, string value)
     {

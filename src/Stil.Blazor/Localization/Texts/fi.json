@@ -81,7 +81,11 @@
     "ResetColumns": "Palauta sarakkeet",
     "ResizeFormat": "Muuta sarakkeen {0} leveyttä",
     "MoveEarlierFormat": "Siirrä {0} aiemmaksi",
-    "MoveLaterFormat": "Siirrä {0} myöhemmäksi"
+    "MoveLaterFormat": "Siirrä {0} myöhemmäksi",
+    "GroupBy": "Ryhmittele",
+    "ExpandAll": "Laajenna kaikki",
+    "CollapseAll": "Tiivistä kaikki",
+    "Blank": "(Tyhjä)"
   },
   "DateRange": {
     "Start": "Alkupäivä",

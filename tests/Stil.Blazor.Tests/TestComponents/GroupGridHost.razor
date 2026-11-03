@@ -1,0 +1,42 @@
+@* A data grid of orders that can be grouped, with an amount total. *@
+<StilDataGrid @ref="Grid" TItem="GridOrder" Items="Items" ItemsProvider="ItemsProvider" PageSize="PageSize" ShowGroupChooser
+              GroupBy="GroupBy" GroupByChanged="OnGroupByChanged" SelectionMode="SelectionMode" Virtualize="Virtualize" Height="@(Virtualize ? "20rem" : null)" Caption="Orders">
+    <Columns>
+        <StilDataGridColumn Property="o => o.Id" Title="Order" Groupable="false" />
+        <StilDataGridColumn Property="o => o.Customer" />
+        <StilDataGridColumn Property="o => o.Status" />
+        <StilDataGridColumn Property="o => o.Paid" />
+        <StilDataGridColumn Property="o => o.Amount" Format="N2" Aggregate="StilAggregate.Sum" />
+    </Columns>
+</StilDataGrid>
+
+@code {
+    public StilDataGrid<GridOrder> Grid { get; private set; } = default!;
+
+    [Parameter]
+    public IEnumerable<GridOrder>? Items { get; set; }
+
+    [Parameter]
+    public Func<StilDataGridRequest<GridOrder>, Task<StilDataGridResult<GridOrder>>>? ItemsProvider { get; set; }
+
+    [Parameter]
+    public IReadOnlyList<string>? GroupBy { get; set; }
+
+    [Parameter]
+    public int PageSize { get; set; }
+
+    [Parameter]
+    public bool Virtualize { get; set; }
+
+    [Parameter]
+    public StilSelectionMode SelectionMode { get; set; }
+
+    [Parameter]
+    public Action<IReadOnlyList<string>>? GroupByChanged { get; set; }
+
+    private void OnGroupByChanged(IReadOnlyList<string> keys)
+    {
+        GroupBy = keys;
+        GroupByChanged?.Invoke(keys);
+    }
+}

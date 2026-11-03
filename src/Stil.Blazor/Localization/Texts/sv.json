@@ -81,7 +81,11 @@
     "ResetColumns": "Återställ kolumner",
     "ResizeFormat": "Ändra bredd på {0}",
     "MoveEarlierFormat": "Flytta {0} framåt",
-    "MoveLaterFormat": "Flytta {0} bakåt"
+    "MoveLaterFormat": "Flytta {0} bakåt",
+    "GroupBy": "Gruppera",
+    "ExpandAll": "Visa alla",
+    "CollapseAll": "Dölj alla",
+    "Blank": "(Tomt)"
   },
   "DateRange": {
     "Start": "Från",

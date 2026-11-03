@@ -122,6 +122,17 @@ public abstract class StilDataGridColumnBase<TItem> : ComponentBase, IDisposable
 
     internal virtual StilSortDirection InitialSortDirection => StilSortDirection.None;
 
+    internal virtual bool CanGroup => false;
+
+    /// <summary>The column's distinct values in a query, sorted, for grouping.</summary>
+    internal virtual IReadOnlyList<object?> GroupValues(IQueryable<TItem> query, bool descending) => [];
+
+    /// <summary>The rows of a query whose value is the given group value.</summary>
+    internal virtual IQueryable<TItem> WhereGroup(IQueryable<TItem> query, object? value) => query;
+
+    /// <summary>A group value as text, formatted like the column's cells.</summary>
+    internal virtual string FormatGroupValue(object? value) => value?.ToString() ?? "";
+
     internal string? AlignClass => Align switch
     {
         StilTextAlign.Center => "stil-text-center",
@@ -136,7 +147,8 @@ public abstract class StilDataGridColumnBase<TItem> : ComponentBase, IDisposable
 
     internal abstract RenderFragment RenderCell(TItem item);
 
-    internal virtual IQueryable<TItem> ApplySort(IQueryable<TItem> query, bool descending) => query;
+    /// <summary>Sorts by the column; thenBy sorts within an earlier sort (grouping) instead of replacing it.</summary>
+    internal virtual IQueryable<TItem> ApplySort(IQueryable<TItem> query, bool descending, bool thenBy = false) => query;
 
     internal virtual IQueryable<TItem> ApplyFilter(IQueryable<TItem> query, string value) => query;
 

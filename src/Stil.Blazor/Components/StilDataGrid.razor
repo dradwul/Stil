@@ -10,10 +10,41 @@
 </CascadingValue>
 
 <div @attributes="RootAttributes" class="@Classes("stil-data-grid")" aria-busy="@StilCssClasses.AriaBool(_loading)">
-    @if (Toolbar is not null || ShowExport || ShowColumnChooser)
+    @if (Toolbar is not null || ShowExport || ShowColumnChooser || ShowGroupChooser || Grouped)
     {
         <div class="stil-data-grid-toolbar">
             @Toolbar
+            @if (ShowGroupChooser)
+            {
+                <StilPopover Text="@Localize(GroupByText, "DataGrid.GroupBy")" Title="@Localize(GroupByText, "DataGrid.GroupBy")" Size="StilSize.Small"
+                             class="stil-data-grid-grouping">
+                    <ul class="stil-data-grid-chooser">
+                        @foreach (var choice in Ordered.Where(c => c.CanGroup))
+                        {
+                            var level = _groupBy.IndexOf(choice.ColumnKey);
+                            <li>
+                                <label class="stil-check">
+                                    <input type="checkbox" class="stil-check-input" checked="@(level >= 0)" @onchange="() => ToggleGroupByAsync(choice)" />
+                                    @choice.DisplayTitle
+                                </label>
+                                @if (level >= 0 && _groupBy.Count > 1)
+                                {
+                                    <span class="stil-text-muted stil-fs-sm">@(level + 1)</span>
+                                }
+                            </li>
+                        }
+                    </ul>
+                </StilPopover>
+            }
+            @if (Grouped)
+            {
+                <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost" Size="StilSize.Small" OnClick="ExpandAllGroupsAsync">
+                    @Localize(null, "DataGrid.ExpandAll")
+                </StilButton>
+                <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost" Size="StilSize.Small" OnClick="CollapseAllGroupsAsync">
+                    @Localize(null, "DataGrid.CollapseAll")
+                </StilButton>
+            }
             @if (ShowColumnChooser)
             {
                 <StilPopover Text="@Localize(ColumnsText, "DataGrid.Columns")" Title="@Localize(ColumnsText, "DataGrid.Columns")" Size="StilSize.Small"
@@ -136,21 +167,21 @@
             <tbody>
                 @if (Virtualize)
                 {
-                    <Virtualize @ref="_virtualize" TItem="TItem" ItemsProvider="ProvideVirtualizedAsync" ItemSize="ItemSize"
-                                SpacerElement="tr" OverscanCount="10" Context="item">
-                        <ItemContent>@Row(item)</ItemContent>
+                    <Virtualize @ref="_virtualize" TItem="Entry" ItemsProvider="ProvideVirtualizedAsync" ItemSize="ItemSize"
+                                SpacerElement="tr" OverscanCount="10" Context="entry">
+                        <ItemContent>@EntryRow(entry)</ItemContent>
                         <EmptyContent>@MessageRow(EmptyContent, Localize(EmptyText, "DataGrid.Empty"))</EmptyContent>
                     </Virtualize>
                 }
-                else if (_page.Count == 0)
+                else if (_entries.Count == 0)
                 {
                     @(_loading ? LoadingRow : MessageRow(EmptyContent, Localize(EmptyText, "DataGrid.Empty")))
                 }
                 else
                 {
-                    @foreach (var item in _page)
+                    @foreach (var entry in _entries)
                     {
-                        @Row(item)
+                        @EntryRow(entry)
                     }
                 }
             </tbody>
@@ -199,7 +230,7 @@
                         }
                     </select>
                 }
-                <StilPagination Page="_pageNumber" PageChanged="GoToPageAsync" TotalItems="_total" PageSize="_pageSize"
+                <StilPagination Page="_pageNumber" PageChanged="GoToPageAsync" TotalItems="_rowCount" PageSize="_pageSize"
                                 Size="StilSize.Small" Label="@Localize(PaginationLabel, "DataGrid.Pages")" />
             </div>
         </div>
@@ -218,7 +249,15 @@
     private IJSObjectReference? _module;
     private readonly Dictionary<StilDataGridColumnBase<TItem>, string> _filters = [];
     private List<TItem> _page = [];
-    private Virtualize<TItem>? _virtualize;
+    private List<Entry> _entries = [];
+    private Virtualize<Entry>? _virtualize;
+    private List<string> _groupBy = [];
+    private IReadOnlyList<string>? _appliedGroupBy;
+    private readonly HashSet<string> _collapsed = [];
+    private List<GroupRow> _groupRows = [];
+    private int _groupLevels;
+    private bool _groupsStale = true;
+    private int _rowCount;
     private StilDataGridColumnBase<TItem>? _sortColumn;
     private StilSortDirection _sortDirection;
     private int _pageNumber = 1;
@@ -227,7 +266,7 @@
     private bool _loading;
     private bool _initialSortApplied;
     private bool _exporting;
-    private bool _aggregatesQueued;
+    private bool _reloadQueued;
     private IReadOnlyDictionary<string, object?> _aggregates = new Dictionary<string, object?>();
     private CancellationTokenSource? _loadCts;
     private CancellationTokenSource? _debounceCts;
@@ -278,6 +317,25 @@
     /// <summary>The column chooser's button text. The default is the localized "Columns".</summary>
     [Parameter]
     public string? ColumnsText { get; set; }
+
+    /// <summary>
+    /// The Keys of the columns the rows are grouped by, outermost first. Supports two-way binding
+    /// (@bind-GroupBy). Each group gets a header row with its value, its number of rows and the
+    /// totals of the columns with an Aggregate.
+    /// </summary>
+    [Parameter]
+    public IReadOnlyList<string>? GroupBy { get; set; }
+
+    [Parameter]
+    public EventCallback<IReadOnlyList<string>> GroupByChanged { get; set; }
+
+    /// <summary>Shows a Group by button in the toolbar that groups the rows by the columns the user picks.</summary>
+    [Parameter]
+    public bool ShowGroupChooser { get; set; }
+
+    /// <summary>The group chooser's button text. The default is the localized "Group by".</summary>
+    [Parameter]
+    public string? GroupByText { get; set; }
 
     /// <summary>Shows an export button in the toolbar that downloads the filtered rows as CSV (see ExportCsvAsync).</summary>
     [Parameter]
@@ -425,6 +483,8 @@
 
     private bool Paged => !Virtualize && PageSize > 0;
 
+    private bool Grouped => GroupColumns.Count > 0;
+
     private bool Interactive => SelectionMode == StilSelectionMode.Single || OnRowClick.HasDelegate;
 
     private string TableClass => string.Join(' ', new[]
@@ -444,14 +504,20 @@
     {
         get
         {
-            if (_total == 0)
+            // Every group collapsed: there are rows, but none to count on the pages.
+            if (_rowCount == 0 && _groupRows.Count > 0)
+            {
+                return "";
+            }
+
+            if (_rowCount == 0)
             {
                 return string.Format(System.Globalization.CultureInfo.CurrentCulture, Localize(SummaryFormat, "DataGrid.SummaryFormat"), 0, 0, 0);
             }
 
             var first = (_pageNumber - 1) * _pageSize + 1;
-            var last = Math.Min(_total, first + _page.Count - 1);
-            return string.Format(System.Globalization.CultureInfo.CurrentCulture, Localize(SummaryFormat, "DataGrid.SummaryFormat"), first, last, _total);
+            var last = Math.Min(_rowCount, first + _page.Count - 1);
+            return string.Format(System.Globalization.CultureInfo.CurrentCulture, Localize(SummaryFormat, "DataGrid.SummaryFormat"), first, last, _rowCount);
         }
     }
 
@@ -480,11 +546,11 @@
             _sortDirection = column.InitialSortDirection;
             _ = InvokeAsync(RefreshAsync);
         }
-        else if (column.HasAggregate && !_aggregatesQueued)
+        else if ((column.HasAggregate || _groupBy.Contains(column.ColumnKey)) && !_reloadQueued)
         {
-            // The columns register after the first load, which therefore had no totals to compute.
-            // Reload once all of them are in: after the current render.
-            _aggregatesQueued = true;
+            // The columns register after the first load, which therefore had no totals to compute
+            // and no columns to group by. Reload once all of them are in: after the current render.
+            _reloadQueued = true;
             _ = InvokeAsync(async () =>
             {
                 await Task.Yield();
@@ -529,18 +595,44 @@
             _pageSize = PageSize;
         }
 
+        var reload = false;
+        if (GroupBy is not null && !ReferenceEquals(GroupBy, _appliedGroupBy))
+        {
+            _appliedGroupBy = GroupBy;
+            if (!GroupBy.SequenceEqual(_groupBy))
+            {
+                _groupBy = GroupBy.ToList();
+                _collapsed.Clear();
+                _pageNumber = 1;
+                reload = true;
+            }
+        }
+
         // Reload when the data source itself changes (a new list or provider), not on every render.
         if (!ReferenceEquals(_loadedItems, Items) || !ReferenceEquals(_loadedProvider, ItemsProvider))
         {
             _loadedItems = Items;
             _loadedProvider = ItemsProvider;
+            reload = true;
+        }
+
+        if (reload)
+        {
             await RefreshAsync();
         }
     }
 
     /// <summary>Loads the rows again, for example after the data has changed.</summary>
-    public async Task RefreshAsync()
+    public Task RefreshAsync() => RefreshAsync(keepGroups: false);
+
+    // keepGroups: only the collapsed groups changed, so the groups need not be computed again.
+    private async Task RefreshAsync(bool keepGroups)
     {
+        if (!keepGroups)
+        {
+            _groupsStale = true;
+        }
+
         if (Virtualize)
         {
             if (_virtualize is not null)
@@ -559,6 +651,12 @@
 
         try
         {
+            if (Grouped)
+            {
+                await LoadGroupedPageAsync(cts.Token);
+                return;
+            }
+
             var count = Paged ? _pageSize : (int?)null;
             var result = await LoadAsync((_pageNumber - 1) * _pageSize, count, cts.Token);
 
@@ -575,8 +673,10 @@
             }
 
             _page = result.Items.ToList();
-            _total = result.TotalCount;
+            _entries = _page.Select(item => new Entry(null, item)).ToList();
+            _total = _rowCount = result.TotalCount;
             _aggregates = result.Aggregates ?? new Dictionary<string, object?>();
+            _groupRows = [];
         }
         catch (OperationCanceledException) when (cts.IsCancellationRequested)
         {
@@ -587,13 +687,12 @@
             if (ReferenceEquals(_loadCts, cts))
             {
                 _loading = false;
+                StateHasChanged();
             }
         }
-
-        StateHasChanged();
     }
 
-    private async Task<StilDataGridResult<TItem>> LoadAsync(int startIndex, int? count, CancellationToken cancellationToken, bool withAggregates = true)
+    private async Task<StilDataGridResult<TItem>> LoadAsync(int startIndex, int? count, CancellationToken cancellationToken, bool withAggregates = true, bool withGroups = false)
     {
         var aggregated = withAggregates ? _columns.Where(c => c.Aggregate != StilAggregate.None).Select(c => c.ColumnKey).ToList() : [];
         var request = new StilDataGridRequest<TItem>(
@@ -605,7 +704,10 @@
             ApplyFiltersAndSorting,
             cancellationToken,
             aggregated,
-            ComputeAggregates);
+            ComputeAggregates,
+            GroupColumns.Select(c => c.ColumnKey).ToList(),
+            query => ComputeGroups(query, custom: false),
+            withGroups);
 
         if (ItemsProvider is not null)
         {
@@ -628,7 +730,8 @@
             }
         }
 
-        return new StilDataGridResult<TItem>(request.ApplyPaging(query).ToList(), total, aggregates);
+        var groups = withGroups ? ComputeGroups(query, custom: true) : null;
+        return new StilDataGridResult<TItem>(request.ApplyPaging(query).ToList(), total, aggregates, groups);
     }
 
     private IReadOnlyDictionary<string, object?> ComputeAggregates(IQueryable<TItem> query) =>
@@ -690,16 +793,37 @@
             query = column.ApplyFilter(query, value);
         }
 
-        if (_sortColumn is not null && _sortDirection != StilSortDirection.None)
+        // Grouped rows are sorted by their groups first, so each group's rows come together.
+        var groups = GroupColumns;
+        for (var i = 0; i < groups.Count; i++)
         {
-            query = _sortColumn.ApplySort(query, _sortDirection == StilSortDirection.Descending);
+            query = groups[i].ApplySort(query, GroupDescending(groups[i]), thenBy: i > 0);
+        }
+
+        if (_sortColumn is not null && _sortDirection != StilSortDirection.None && !groups.Contains(_sortColumn))
+        {
+            query = _sortColumn.ApplySort(query, _sortDirection == StilSortDirection.Descending, thenBy: groups.Count > 0);
         }
 
         return query;
     }
 
-    private async ValueTask<ItemsProviderResult<TItem>> ProvideVirtualizedAsync(ItemsProviderRequest request)
+    private async ValueTask<ItemsProviderResult<Entry>> ProvideVirtualizedAsync(ItemsProviderRequest request)
     {
+        if (Grouped)
+        {
+            if (_groupsStale)
+            {
+                await LoadGroupsAsync(request.CancellationToken);
+                _ = InvokeAsync(StateHasChanged);
+            }
+
+            // Here a group header takes a row's place, so the range counts both.
+            var segments = Segments();
+            var entries = await LoadPlanAsync(RangePlan(segments, request.StartIndex, request.StartIndex + request.Count), request.CancellationToken);
+            return new ItemsProviderResult<Entry>(entries, segments.Sum(s => s.Rows ? s.Group.Group.Count : 1));
+        }
+
         // The totals cover every row, so they are computed with the first rows only.
         var first = request.StartIndex == 0;
         var result = await LoadAsync(request.StartIndex, request.Count, request.CancellationToken, withAggregates: first);
@@ -714,7 +838,7 @@
             _ = InvokeAsync(StateHasChanged);
         }
 
-        return new ItemsProviderResult<TItem>(result.Items, result.TotalCount);
+        return new ItemsProviderResult<Entry>(result.Items.Select(item => new Entry(null, item)).ToList(), result.TotalCount);
     }
 
     // ----- Sorting, filtering and paging ------------------------------------------------------
@@ -897,6 +1021,31 @@
         }
     </tr>;
 
+    private RenderFragment EntryRow(Entry entry) => entry.Group is null ? Row(entry.Item) : GroupHeader(entry.Group);
+
+    // A group's header row: a button that expands and collapses it, with the group's value and
+    // row count, followed by the group's totals under their columns.
+    private RenderFragment GroupHeader(GroupRow group) => @<tr @key="group.Key" class="stil-data-grid-group" data-stil-level="@group.Level">
+        @{
+            var collapsed = _collapsed.Contains(group.Id);
+            var span = GroupSpan;
+        }
+        <td colspan="@(span + (SelectionMode == StilSelectionMode.Multiple ? 1 : 0))" class="stil-data-grid-group-cell">
+            <button type="button" class="stil-data-grid-group-toggle" style="--_level: @group.Level" aria-expanded="@(collapsed ? "false" : "true")"
+                    @onclick="() => ToggleGroupAsync(group)" @onkeydown="e => OnGroupKeyDownAsync(e, group)">
+                <StilIcon Name="@(collapsed ? StilIcons.ChevronRight : StilIcons.ChevronDown)" />
+                <span class="stil-data-grid-group-title">@group.Column.DisplayTitle:</span>
+                @group.Column.FormatGroupValue(group.Group.Path[^1])
+                <span class="stil-data-grid-group-count">(@group.Group.Count.ToString("N0", System.Globalization.CultureInfo.CurrentCulture))</span>
+            </button>
+        </td>
+        @for (var i = span; i < _visible.Count; i++)
+        {
+            var column = _visible[i];
+            <td class="@column.CellClass">@(column.HasAggregate ? column.FormatTotal(group.Group.Aggregates?.GetValueOrDefault(column.ColumnKey)) : null)</td>
+        }
+    </tr>;
+
     // While the first rows load: skeleton lines, and the loading text for screen readers.
     private RenderFragment LoadingRow => @<tr>
         <td colspan="@Math.Max(1, _visible.Count + (SelectionMode == StilSelectionMode.Multiple ? 1 : 0))" class="stil-data-grid-message" aria-busy="true"><span class="stil-visually-hidden" role="status">@Localize(LoadingText, "Common.Loading")</span><StilSkeleton Shape="StilSkeletonShape.Text" Lines="3" /></td>
@@ -914,6 +1063,351 @@
             }
         </td>
     </tr>;
+
+    // ----- Grouping ----------------------------------------------------------------------------
+
+    // A row of the table body: a group header (Group) or a data row (Item).
+    private readonly record struct Entry(GroupRow? Group, TItem Item);
+
+    private sealed record GroupKey(string Id);
+
+    private sealed class GroupRow(StilDataGridGroup group, StilDataGridColumnBase<TItem> column, string id, int start)
+    {
+        public StilDataGridGroup Group { get; } = group;
+
+        public StilDataGridColumnBase<TItem> Column { get; } = column;
+
+        public string Id { get; } = id;
+
+        public GroupKey Key { get; } = new(id);
+
+        /// <summary>The index of the group's first row among all sorted rows.</summary>
+        public int Start { get; } = start;
+
+        public int Level => Group.Path.Count - 1;
+    }
+
+    // A group header to show, or a range of rows (by index among all sorted rows) to load.
+    private readonly record struct PlanItem(GroupRow Group, bool Header, int Start = 0, int Count = 0);
+
+    private List<StilDataGridColumnBase<TItem>> GroupColumns => _groupBy
+        .Select(key => _columns.FirstOrDefault(c => c.ColumnKey == key && c.CanGroup))
+        .OfType<StilDataGridColumnBase<TItem>>()
+        .ToList();
+
+    // Groups follow the sort direction when the grid is sorted by their column.
+    private bool GroupDescending(StilDataGridColumnBase<TItem> column) =>
+        ReferenceEquals(_sortColumn, column) && _sortDirection == StilSortDirection.Descending;
+
+    // The columns a group header's text spans: those before the first column with a total.
+    private int GroupSpan
+    {
+        get
+        {
+            var index = _visible.FindIndex(c => c.HasAggregate);
+            return index < 0 ? _visible.Count : Math.Max(1, index);
+        }
+    }
+
+    private List<StilDataGridGroup> ComputeGroups(IQueryable<TItem> query, bool custom)
+    {
+        var columns = GroupColumns;
+        var groups = new List<StilDataGridGroup>();
+        if (columns.Count > 0)
+        {
+            Add(query, 0, []);
+        }
+
+        return groups;
+
+        void Add(IQueryable<TItem> rows, int level, IReadOnlyList<object?> path)
+        {
+            var column = columns[level];
+            foreach (var value in column.GroupValues(rows, GroupDescending(column)))
+            {
+                var subset = column.WhereGroup(rows, value);
+                List<object?> groupPath = [.. path, value];
+                var aggregates = new Dictionary<string, object?>(ComputeAggregates(subset));
+                if (custom)
+                {
+                    foreach (var aggregated in _columns.Where(c => c.AggregateValue is not null))
+                    {
+                        aggregates[aggregated.ColumnKey] = aggregated.AggregateValue!(subset);
+                    }
+                }
+
+                groups.Add(new StilDataGridGroup(groupPath, subset.Count(), aggregates));
+                if (level + 1 < columns.Count)
+                {
+                    Add(subset, level + 1, groupPath);
+                }
+            }
+        }
+    }
+
+    private async Task LoadGroupsAsync(CancellationToken cancellationToken)
+    {
+        var result = await LoadAsync(0, 0, cancellationToken, withGroups: true);
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return;
+        }
+
+        _total = result.TotalCount;
+        _aggregates = result.Aggregates ?? new Dictionary<string, object?>();
+
+        var columns = GroupColumns;
+        var rows = new List<GroupRow>();
+        var offset = 0;
+        foreach (var group in result.Groups ?? [])
+        {
+            var level = group.Path.Count - 1;
+            if (level < 0 || level >= columns.Count)
+            {
+                continue;
+            }
+
+            var id = string.Join('\u001f', group.Path.Select(value => value is null ? "\u0000" : Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture)));
+            rows.Add(new GroupRow(group, columns[level], id, offset));
+            if (level == columns.Count - 1)
+            {
+                offset += group.Count;
+            }
+        }
+
+        _groupRows = rows;
+        _groupLevels = columns.Count;
+        _groupsStale = false;
+    }
+
+    // The groups as shown: each header, followed by its rows (innermost groups) or subgroups,
+    // unless it is collapsed.
+    private List<(GroupRow Group, bool Rows)> Segments()
+    {
+        var segments = new List<(GroupRow Group, bool Rows)>();
+        int? hiddenBelow = null;
+        foreach (var group in _groupRows)
+        {
+            if (hiddenBelow is { } level && group.Level > level)
+            {
+                continue;
+            }
+
+            hiddenBelow = null;
+            segments.Add((group, false));
+            if (_collapsed.Contains(group.Id))
+            {
+                hiddenBelow = group.Level;
+            }
+            else if (group.Level == _groupLevels - 1)
+            {
+                segments.Add((group, true));
+            }
+        }
+
+        return segments;
+    }
+
+    // A page counts rows only: it shows the headers between its first and last row, and repeats
+    // the headers of a group that continues from the page before.
+    private static List<PlanItem> PagePlan(List<(GroupRow Group, bool Rows)> segments, int first, int end, int total)
+    {
+        var plan = new List<PlanItem>();
+        var shown = new HashSet<GroupRow>();
+        var open = new List<GroupRow>();
+        var position = 0;
+        foreach (var (group, rows) in segments)
+        {
+            if (!rows)
+            {
+                open.RemoveRange(Math.Min(group.Level, open.Count), Math.Max(0, open.Count - group.Level));
+                open.Add(group);
+                if (first <= position && (position < end || position == total))
+                {
+                    plan.Add(new PlanItem(group, Header: true));
+                    shown.Add(group);
+                }
+
+                continue;
+            }
+
+            var from = Math.Max(first, position);
+            var to = Math.Min(end, position + group.Group.Count);
+            if (from < to)
+            {
+                foreach (var parent in open.Where(parent => !shown.Contains(parent)))
+                {
+                    plan.Add(new PlanItem(parent, Header: true));
+                    shown.Add(parent);
+                }
+
+                plan.Add(new PlanItem(group, Header: false, group.Start + from - position, to - from));
+            }
+
+            position += group.Group.Count;
+        }
+
+        return plan;
+    }
+
+    // For virtualization, where every header and row takes one place.
+    private static List<PlanItem> RangePlan(List<(GroupRow Group, bool Rows)> segments, int first, int end)
+    {
+        var plan = new List<PlanItem>();
+        var position = 0;
+        foreach (var (group, rows) in segments)
+        {
+            if (position >= end)
+            {
+                break;
+            }
+
+            if (!rows)
+            {
+                if (position >= first)
+                {
+                    plan.Add(new PlanItem(group, Header: true));
+                }
+
+                position++;
+                continue;
+            }
+
+            var from = Math.Max(first, position);
+            var to = Math.Min(end, position + group.Group.Count);
+            if (from < to)
+            {
+                plan.Add(new PlanItem(group, Header: false, group.Start + from - position, to - from));
+            }
+
+            position += group.Group.Count;
+        }
+
+        return plan;
+    }
+
+    // Loads the plan's rows, one request per run of adjacent rows, and puts the headers between them.
+    private async Task<List<Entry>> LoadPlanAsync(List<PlanItem> plan, CancellationToken cancellationToken)
+    {
+        var rows = new Dictionary<int, TItem>();
+        var slices = plan.Where(p => !p.Header).ToList();
+        for (var i = 0; i < slices.Count;)
+        {
+            var start = slices[i].Start;
+            var end = start + slices[i].Count;
+            for (i++; i < slices.Count && slices[i].Start == end; i++)
+            {
+                end += slices[i].Count;
+            }
+
+            var result = await LoadAsync(start, end - start, cancellationToken, withAggregates: false);
+            for (var r = 0; r < result.Items.Count; r++)
+            {
+                rows[start + r] = result.Items[r];
+            }
+        }
+
+        var entries = new List<Entry>();
+        foreach (var item in plan)
+        {
+            if (item.Header)
+            {
+                entries.Add(new Entry(item.Group, default!));
+                continue;
+            }
+
+            for (var index = item.Start; index < item.Start + item.Count; index++)
+            {
+                if (rows.TryGetValue(index, out var row))
+                {
+                    entries.Add(new Entry(null, row));
+                }
+            }
+        }
+
+        return entries;
+    }
+
+    private async Task LoadGroupedPageAsync(CancellationToken cancellationToken)
+    {
+        if (_groupsStale)
+        {
+            await LoadGroupsAsync(cancellationToken);
+        }
+
+        var segments = Segments();
+        _rowCount = segments.Where(s => s.Rows).Sum(s => s.Group.Group.Count);
+        int first = 0, end = _rowCount;
+        if (Paged)
+        {
+            // The page fell outside the rows (for example after collapsing): go to the last page.
+            if (_pageNumber > 1 && (_pageNumber - 1) * _pageSize >= _rowCount)
+            {
+                _pageNumber = Math.Max(1, (int)Math.Ceiling(_rowCount / (double)_pageSize));
+            }
+
+            first = (_pageNumber - 1) * _pageSize;
+            end = first + _pageSize;
+        }
+
+        var entries = await LoadPlanAsync(PagePlan(segments, first, end, _rowCount), cancellationToken);
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return;
+        }
+
+        _entries = entries;
+        _page = entries.Where(e => e.Group is null).Select(e => e.Item).ToList();
+    }
+
+    private async Task ToggleGroupAsync(GroupRow group)
+    {
+        if (!_collapsed.Remove(group.Id))
+        {
+            _collapsed.Add(group.Id);
+        }
+
+        await RefreshAsync(keepGroups: true);
+    }
+
+    private async Task OnGroupKeyDownAsync(KeyboardEventArgs e, GroupRow group)
+    {
+        var collapsed = _collapsed.Contains(group.Id);
+        if ((e.Key == "ArrowRight" && collapsed) || (e.Key == "ArrowLeft" && !collapsed))
+        {
+            await ToggleGroupAsync(group);
+        }
+    }
+
+    /// <summary>Expands every group.</summary>
+    public async Task ExpandAllGroupsAsync()
+    {
+        _collapsed.Clear();
+        await RefreshAsync(keepGroups: true);
+    }
+
+    /// <summary>Collapses every group, so only the group headers show.</summary>
+    public async Task CollapseAllGroupsAsync()
+    {
+        _collapsed.UnionWith(_groupRows.Select(g => g.Id));
+        await RefreshAsync(keepGroups: true);
+    }
+
+    private async Task ToggleGroupByAsync(StilDataGridColumnBase<TItem> column)
+    {
+        var keys = _groupBy.ToList();
+        if (!keys.Remove(column.ColumnKey))
+        {
+            keys.Add(column.ColumnKey);
+        }
+
+        _groupBy = keys;
+        _appliedGroupBy = keys;
+        _collapsed.Clear();
+        _pageNumber = 1;
+        await RefreshAsync();
+        await GroupByChanged.InvokeAsync(keys);
+    }
 
     // ----- Column layout ---------------------------------------------------------------------
 
