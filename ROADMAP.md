@@ -18,7 +18,7 @@ something usable.
 | 7 | Time and planning: calendar, week planner, agenda | ✅ Done |
 | 8 | Language and localization | ✅ Done |
 | 9 | Forms 2: popover, time, slider, wizard, rating, color, masks | ✅ Done |
-| 10 | Layout and media: skeleton, splitter, carousel, image cropper, PDF viewer | Planned |
+| 10 | Layout and media: skeleton, splitter, carousel, image cropper, PDF viewer | ✅ Done |
 | 11 | Data grid 2: grouping, editing, export, tree grid | Planned |
 | 12 | Capture and records: scanner, QR codes, signature, activity log, chat | Planned |
 | 13 | Boards and workspace: kanban, command palette, recurring events, Gantt | Planned |
@@ -28,11 +28,11 @@ A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
 end, so they never keep a phase open.
 
-## Where we are (0.1.0, Phases 0–9 done)
+## Where we are (0.1.0-preview.2, Phases 0–10 done)
 
 - **Stil CSS:** an npm package (`stil-css`, not yet published). It is built
   with Lightning CSS from partials into `dist/stil.css` and `stil.min.css`
-  (about 18 kB gzipped), plus the optional 20 kB `stil.js`. It has:
+  (about 19 kB gzipped), plus the optional `stil.js` (10 kB gzipped). It has:
   - cascade layers;
   - a full `--stil-*` token set;
   - light and dark mode;
@@ -61,7 +61,9 @@ end, so they never keep a phase open.
     and right-to-left support.
   - Forms 2: time and date-time pickers, sliders, rating, color picker,
     masked and PIN inputs, popover, stepper and wizard.
-  - 693 bUnit tests.
+  - Layout and media: skeleton, splitter, carousel, image cropper, camera
+    and PDF viewer.
+  - 707 bUnit tests.
 - **Stil.Charts:** SVG line, area, bar, donut and sparkline charts that
   follow the theme, with 68 bUnit tests.
 - **Stil.Templates:** `dotnet new stil-app`.
@@ -623,7 +625,7 @@ works at phone width.
 - The popover has no `@bind-Open`: opening it from code would need
   JavaScript. `OnToggle` reports its state.
 
-## Phase 10: Layout and media
+## Phase 10: Layout and media ✅ Done
 
 Goal: the layout pieces and media components that make an app feel
 finished. Most are small, and several (skeleton, splitter) are used by the
@@ -631,31 +633,50 @@ later phases.
 
 **Plan:**
 
-- [ ] `StilSkeleton`: placeholder shapes (text lines, a circle, a card, table
-  rows) with a calm shimmer that stops under reduced motion. The data grid,
-  cards and charts get a `Loading` look built from it.
-- [ ] `StilSplitter`: two or more panes with draggable dividers, horizontal or
-  vertical, min and max sizes, collapse to one side, keyboard resizing (the
-  WAI-ARIA window splitter pattern), and sizes that can be saved.
-- [ ] `StilCarousel`: slides with previous and next buttons, dots, swipe,
-  optional autoplay that pauses on hover and focus and never runs under
-  reduced motion. CSS scroll snap, so it also works without JavaScript.
-- [ ] `StilImageCropper`: crop and rotate an image to a fixed or free aspect
-  ratio (round for avatars), with zoom, keyboard nudging, and output as a
-  file for `StilFileUpload` or a data URL. `StilCameraCapture` takes a photo
-  with the device camera into the same flow.
-- [ ] `StilPdfViewer`: shows a PDF with the browser's own viewer inside a Stil
-  frame (toolbar with download, open in a new tab, print), with a clear
-  fallback where the browser cannot show PDFs. An app can plug in a full
-  renderer for page thumbnails and search, so Stil ships no third-party
-  code.
-- [ ] CSS (`stil-skeleton`, `stil-splitter`, `stil-carousel`, `stil-cropper`,
-  `stil-pdf`), built-in texts in the five languages, bUnit tests, docs and
-  demo sections.
+- [x] `StilSkeleton`: placeholder shapes (text lines, a circle, a block) with
+  a calm shimmer that stops under reduced motion. The data grid shows
+  skeleton lines while its first rows load.
+- [x] `StilSplitter`: two panes with a draggable separator, horizontal or
+  vertical (nest them for more), min and max sizes, Enter to collapse and
+  restore, keyboard resizing (the WAI-ARIA window splitter pattern), and
+  `@bind-Size` to save the layout. The resizing is in `stil.js`, so it also
+  works in static SSR.
+- [x] `StilCarousel`: slides with previous and next buttons, dots, swipe,
+  optional autoplay with a pause button that pauses on hover and focus and
+  never runs under reduced motion. CSS scroll snap, so it also works without
+  JavaScript.
+- [x] `StilImageCropper`: crop and turn an image to a fixed aspect ratio
+  (round for avatars), with zoom, keyboard nudging, and the result as a
+  `StilImageData` (a data URL and bytes). `StilCameraCapture` takes a photo
+  with the device camera into the same flow, or lets the user choose one.
+- [x] `StilPdfViewer`: a PDF in the browser's own viewer inside a Stil frame
+  (download, open in a new tab, print), with a clear message where the
+  browser cannot show PDFs, and `ChildContent` for an own renderer.
+- [x] CSS (`media.css`: `stil-skeleton`, `stil-splitter`, `stil-carousel`,
+  `stil-cropper`, `stil-camera`, `stil-pdf`), the `camera` and `download`
+  icons, built-in texts in the five languages, 14 bUnit tests, a docs page,
+  a demo section and a showcase section.
 
 **Done when:** the demo has a mail-like layout (splitter with a list and a
-reading pane, skeletons while loading), a product page with a carousel, and
-a profile page where an avatar is cropped and uploaded.
+reading pane, skeletons while loading), a carousel, and an avatar that is
+cropped and turned into an image to upload. ✅
+
+**Verified in the browser:** the splitter resizes with the keyboard and
+collapses with Enter, and the size is bound; the carousel's buttons and dots
+work in the demo and in plain HTML; the cropper shows a round frame and
+`CropAsync` returns a 256 × 256 PNG; the docs show a PDF in the browser's
+viewer.
+
+**Changes from the plan:**
+
+- Cards and charts have no `Loading` parameter yet; wrap `StilSkeleton` in
+  them. The data grid has it built in.
+- The cropper keeps a fixed frame and moves and zooms the image behind it,
+  the usual way for avatars, instead of a free frame. Free cropping can come
+  later.
+- The result of a round crop is a square image; show it round with CSS.
+- The camera was checked in code and tests only: the preview browser has no
+  camera. The fallback (choose a photo) is covered by a test.
 
 ## Phase 11: Data grid 2
 

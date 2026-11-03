@@ -10,6 +10,18 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 
 ## [Unreleased]
 
+### Added
+
+- **Stil CSS**: skeleton, splitter, carousel, image cropper, camera and PDF
+  frame styles (`stil-skeleton`, `stil-splitter`, `stil-carousel`,
+  `stil-cropper`, `stil-camera`, `stil-pdf`), and the `camera` and `download`
+  icons. `stil.js` resizes splitters (`stilsplit`), runs carousels
+  (`stilslide`, autoplay) and exports functions for cropping, the camera and
+  printing.
+- **Stil for Blazor**: `StilSkeleton` (also as the data grid's loading
+  state), `StilSplitter`, `StilCarousel`, `StilImageCropper` and
+  `StilCameraCapture` (both give a `StilImageData`), and `StilPdfViewer`.
+
 ## [0.1.0-preview.2] - 2026-11-03
 
 ### Fixed
