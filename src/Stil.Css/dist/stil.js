@@ -752,6 +752,16 @@ export function stopCamera(video) {
 
 // Prints the document in an iframe, such as a PDF from the same origin. Returns false when the
 // browser does not allow it (another origin), so the caller can open the file instead.
+// Saves text as a file, for example a CSV export.
+export function downloadFile(name, type, text) {
+    const url = URL.createObjectURL(new Blob([text], { type }));
+    const link = Object.assign(document.createElement('a'), { href: url, download: name });
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 // Whether the browser shows PDFs itself (false on most phones).
 export function pdfViewerEnabled() {
     return navigator.pdfViewerEnabled !== false;

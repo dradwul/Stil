@@ -2255,6 +2255,16 @@
     outline-offset: 2px;
   }
 
+  .stil-data-grid-totals > :is(td, th) {
+    border-block-start: 2px solid var(--stil-color-border-strong);
+    font-weight: var(--stil-font-weight-bold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stil-data-grid-export {
+    margin-inline-start: auto;
+  }
+
   .stil-combobox {
     position: relative;
   }
