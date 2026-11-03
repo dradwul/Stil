@@ -10,6 +10,8 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 
 ## [Unreleased]
 
+## [0.1.0-preview.3] - 2026-11-03
+
 ### Added
 
 - **Stil CSS**: skeleton, splitter, carousel, image cropper, camera and PDF
@@ -110,6 +112,7 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 - A documentation site with live examples, API tables and a theme builder.
 - A guide for migrating from Bootstrap.
 
-[Unreleased]: https://github.com/dradwul/Stil/compare/v0.1.0-preview.2...HEAD
+[Unreleased]: https://github.com/dradwul/Stil/compare/v0.1.0-preview.3...HEAD
+[0.1.0-preview.3]: https://github.com/dradwul/Stil/compare/v0.1.0-preview.2...v0.1.0-preview.3
 [0.1.0-preview.2]: https://github.com/dradwul/Stil/compare/v0.1.0-preview.1...v0.1.0-preview.2
 [0.1.0-preview.1]: https://github.com/dradwul/Stil/releases/tag/v0.1.0-preview.1
