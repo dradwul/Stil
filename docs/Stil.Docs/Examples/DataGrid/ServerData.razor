@@ -23,9 +23,10 @@
         var total = query.Count();
         var items = request.ApplyPaging(query).ToList();
         var totals = request.ComputeAggregates(query);
+        var groups = request.ComputeGroups(query); // Empty unless the grid is grouped.
 
         await Task.Delay(300, request.CancellationToken); // A pretend network round trip.
-        return new(items, total, totals);
+        return new(items, total, totals, groups);
     }
 
     private sealed record Customer(string Name, string City, int Orders);

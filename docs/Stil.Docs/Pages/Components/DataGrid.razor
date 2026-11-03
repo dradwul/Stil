@@ -76,6 +76,20 @@
     </p>
 </DocExample>
 
+<h2 id="grouping">Grouping</h2>
+<DocExample Type="typeof(Grouping)">
+    <p>
+        <code>@@bind-GroupBy</code> groups the rows by one or more columns (their Keys, outermost first), and
+        <code>ShowGroupChooser</code> adds a Group by button that lets the user pick them. Each group starts with a header
+        row that shows its value, its number of rows and the totals of the columns with an <code>Aggregate</code>. The
+        header is a button: click it, or press Enter, Space or the left and right arrow keys, to collapse and expand the
+        group; the toolbar expands and collapses all of them. Paging counts rows: a group that continues on the next page
+        shows its header again there, and the rows of a collapsed group leave the pages. Sorting by a grouped column
+        orders its groups; other sorts order the rows within each group. <code>Groupable="false"</code> keeps a column
+        out of the chooser.
+    </p>
+</DocExample>
+
 <h2 id="server-data">Server-side data</h2>
 <DocExample Type="typeof(ServerData)">
     <p>
@@ -84,7 +98,9 @@
         <code>CancellationToken</code> that is cancelled when the grid asks again. For an <code>IQueryable</code> such as
         an EF Core <code>DbSet</code>, <code>ApplyFiltersAndSorting</code> and <code>ApplyPaging</code> build the query
         from the columns. <code>ComputeAggregates</code> computes the totals in the same way, so EF Core runs them in the
-        database; return them in the result. An export pages through the provider. Call <code>RefreshAsync()</code>
+        database; return them in the result. When the rows are grouped, <code>GroupBy</code> lists the grouped columns,
+        <code>ApplyFiltersAndSorting</code> sorts by them first and <code>ComputeGroups</code> returns the groups with
+        their counts and totals (a few queries per group). An export pages through the provider. Call <code>RefreshAsync()</code>
         through <code>@@ref</code> to reload.
     </p>
 </DocExample>

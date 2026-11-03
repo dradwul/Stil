@@ -1,0 +1,26 @@
+@* Group by region, then by product, with Group by in the toolbar. Each group header shows the
+   number of rows and the group's total; click it, or use the arrow keys, to collapse it. *@
+<StilDataGrid TItem="Sale" Items="_sales" PageSize="10" ShowGroupChooser @bind-GroupBy="_groupBy" Caption="Sales">
+    <Columns>
+        <StilDataGridColumn Property="s => s.Date" Format="d MMM yyyy" Groupable="false" />
+        <StilDataGridColumn Property="s => s.Region" />
+        <StilDataGridColumn Property="s => s.Product" />
+        <StilDataGridColumn Property="s => s.Seller" />
+        <StilDataGridColumn Property="s => s.Amount" Format="N0" Align="StilTextAlign.End" Aggregate="StilAggregate.Sum" />
+    </Columns>
+</StilDataGrid>
+<p class="stil-text-muted stil-fs-sm stil-mt-2">Grouped by: @(_groupBy.Count == 0 ? "nothing" : string.Join(", then ", _groupBy)).</p>
+
+@code {
+    private IReadOnlyList<string> _groupBy = ["Region"];
+
+    private sealed record Sale(DateOnly Date, string Region, string Product, string Seller, decimal Amount);
+
+    private static readonly string[] Regions = ["North", "South", "West"];
+    private static readonly string[] Products = ["Chairs", "Desks", "Lamps"];
+    private static readonly string[] Sellers = ["Aino", "Björn", "Freja", "Mads"];
+
+    private static readonly Sale[] _sales = Enumerable.Range(0, 30)
+        .Select(i => new Sale(new DateOnly(2026, 10, 1 + i), Regions[i * 7 % 3], Products[i % 3], Sellers[i % 4], 400m + i * 37 % 11 * 150m))
+        .ToArray();
+}
