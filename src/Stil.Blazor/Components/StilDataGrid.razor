@@ -9,11 +9,45 @@
     @Columns
 </CascadingValue>
 
-<div @attributes="AdditionalAttributes" class="@Classes("stil-data-grid")" aria-busy="@StilCssClasses.AriaBool(_loading)">
-    @if (Toolbar is not null || ShowExport)
+<div @attributes="RootAttributes" class="@Classes("stil-data-grid")" aria-busy="@StilCssClasses.AriaBool(_loading)">
+    @if (Toolbar is not null || ShowExport || ShowColumnChooser)
     {
         <div class="stil-data-grid-toolbar">
             @Toolbar
+            @if (ShowColumnChooser)
+            {
+                <StilPopover Text="@Localize(ColumnsText, "DataGrid.Columns")" Title="@Localize(ColumnsText, "DataGrid.Columns")" Size="StilSize.Small"
+                             class="stil-data-grid-columns">
+                    <ul class="stil-data-grid-chooser">
+                        @{ var ordered = Ordered.ToList(); }
+                        @for (var i = 0; i < ordered.Count; i++)
+                        {
+                            var choice = ordered[i];
+                            var index = i;
+                            <li>
+                                <label class="stil-check">
+                                    <input type="checkbox" class="stil-check-input" checked="@(!_hidden.Contains(choice.ColumnKey))"
+                                           disabled="@(!CanHide(choice))" @onchange="() => ToggleColumnAsync(choice)" />
+                                    @choice.DisplayTitle
+                                </label>
+                                @if (IsReorderable(choice))
+                                {
+                                    <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost" Size="StilSize.Small" IconOnly
+                                                Disabled="index == 0" OnClick="() => MoveColumnAsync(choice, -1)" aria-label="@MoveLabel(choice, earlier: true)">
+                                        <StilIcon Name="@StilIcons.ChevronUp" />
+                                    </StilButton>
+                                    <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost" Size="StilSize.Small" IconOnly
+                                                Disabled="index == ordered.Count - 1" OnClick="() => MoveColumnAsync(choice, 1)" aria-label="@MoveLabel(choice, earlier: false)">
+                                        <StilIcon Name="@StilIcons.ChevronDown" />
+                                    </StilButton>
+                                }
+                            </li>
+                        }
+                    </ul>
+                    <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline" Size="StilSize.Small" class="stil-mt-3"
+                                OnClick="ResetLayoutAsync">@Localize(null, "DataGrid.ResetColumns")</StilButton>
+                </StilPopover>
+            }
             @if (ShowExport)
             {
                 <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline" Size="StilSize.Small"
@@ -26,7 +60,7 @@
 
     <div class="@ScrollClass" style="@ScrollStyle" tabindex="@(Height is null ? null : 0)"
          role="@(Height is null ? null : "region")" aria-label="@(Height is null ? null : Caption ?? "Table")">
-        <table class="@TableClass">
+        <table class="@TableClass" @ref="_table">
             @if (!string.IsNullOrWhiteSpace(Caption))
             {
                 <caption>@Caption</caption>
@@ -35,14 +69,17 @@
                 <tr>
                     @if (SelectionMode == StilSelectionMode.Multiple)
                     {
-                        <th scope="col" class="stil-data-grid-select">
+                        <th scope="col" class="stil-data-grid-select" data-stil-frozen="@SelectFrozen">
                             <input type="checkbox" class="stil-check-input" aria-label="@Localize(SelectAllLabel, "DataGrid.SelectAll")"
                                    checked="@AllOnPageSelected" disabled="@(_page.Count == 0)" @onchange="ToggleAllOnPageAsync" />
                         </th>
                     }
-                    @foreach (var column in _columns)
+                    @foreach (var column in _visible)
                     {
-                        <th scope="col" class="@column.AlignClass" style="@column.WidthStyle" aria-sort="@AriaSort(column)">
+                        <th @key="column.ColumnKey" scope="col" class="@column.AlignClass" style="@WidthOf(column)" aria-sort="@AriaSort(column)"
+                            data-stil-column="@column.ColumnKey" data-stil-frozen="@column.FrozenValue"
+                            data-stil-reorder="@(IsReorderable(column) ? "" : null)"
+                            data-stil-min="@(IsResizable(column) ? column.MinWidth : null)" data-stil-max="@(IsResizable(column) ? column.MaxWidth : null)">
                             @if (column.CanSort)
                             {
                                 <button type="button" class="stil-data-grid-sort" @onclick="() => SortAsync(column)">
@@ -54,19 +91,23 @@
                             {
                                 @column.DisplayTitle
                             }
+                            @if (IsResizable(column))
+                            {
+                                <span class="stil-data-grid-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="@ResizeLabel(column)"></span>
+                            }
                         </th>
                     }
                 </tr>
-                @if (_columns.Any(c => c.CanFilter))
+                @if (_visible.Any(c => c.CanFilter))
                 {
                     <tr class="stil-data-grid-filters">
                         @if (SelectionMode == StilSelectionMode.Multiple)
                         {
-                            <td></td>
+                            <td data-stil-frozen="@SelectFrozen"></td>
                         }
-                        @foreach (var column in _columns)
+                        @foreach (var column in _visible)
                         {
-                            <td>
+                            <td data-stil-frozen="@column.FrozenValue">
                                 @if (column.CanFilter)
                                 {
                                     var label = string.Format(System.Globalization.CultureInfo.CurrentCulture, Localize(FilterLabelFormat, "DataGrid.FilterLabelFormat"), column.DisplayTitle);
@@ -113,28 +154,28 @@
                     }
                 }
             </tbody>
-            @if (_columns.Any(c => c.HasAggregate))
+            @if (_visible.Any(c => c.HasAggregate))
             {
                 <tfoot>
                     <tr class="stil-data-grid-totals">
                         @if (SelectionMode == StilSelectionMode.Multiple)
                         {
-                            <td></td>
+                            <td data-stil-frozen="@SelectFrozen"></td>
                         }
-                        @for (var i = 0; i < _columns.Count; i++)
+                        @for (var i = 0; i < _visible.Count; i++)
                         {
-                            var column = _columns[i];
+                            var column = _visible[i];
                             if (column.HasAggregate)
                             {
-                                <td class="@column.CellClass">@column.FormatTotal(_aggregates.GetValueOrDefault(column.ColumnKey))</td>
+                                <td class="@column.CellClass" data-stil-frozen="@column.FrozenValue">@column.FormatTotal(_aggregates.GetValueOrDefault(column.ColumnKey))</td>
                             }
                             else if (i == 0)
                             {
-                                <th scope="row">@Localize(TotalText, "DataGrid.Total")</th>
+                                <th scope="row" data-stil-frozen="@column.FrozenValue">@Localize(TotalText, "DataGrid.Total")</th>
                             }
                             else
                             {
-                                <td></td>
+                                <td data-stil-frozen="@column.FrozenValue"></td>
                             }
                         }
                     </tr>
@@ -167,6 +208,14 @@
 
 @code {
     private readonly List<StilDataGridColumnBase<TItem>> _columns = [];
+    private List<StilDataGridColumnBase<TItem>> _visible = [];
+    private List<string> _order = [];
+    private readonly Dictionary<string, string> _widths = [];
+    private readonly HashSet<string> _hidden = [];
+    private StilDataGridLayout? _appliedLayout;
+    private string? _layoutSortKey;
+    private ElementReference _table;
+    private IJSObjectReference? _module;
     private readonly Dictionary<StilDataGridColumnBase<TItem>, string> _filters = [];
     private List<TItem> _page = [];
     private Virtualize<TItem>? _virtualize;
@@ -203,6 +252,32 @@
     /// <summary>Content above the table, for example a search box or buttons.</summary>
     [Parameter]
     public RenderFragment? Toolbar { get; set; }
+
+    /// <summary>Lets the user resize every column by dragging the edge of its header or with the keyboard. A column can override it with Resizable.</summary>
+    [Parameter]
+    public bool ResizableColumns { get; set; }
+
+    /// <summary>Lets the user move every column by dragging its header, or in the column chooser. A column can override it with Reorderable.</summary>
+    [Parameter]
+    public bool ReorderableColumns { get; set; }
+
+    /// <summary>Shows a Columns button in the toolbar that hides, shows and moves columns.</summary>
+    [Parameter]
+    public bool ShowColumnChooser { get; set; }
+
+    /// <summary>
+    /// The column layout: order, widths, hidden columns and sort. Supports two-way binding
+    /// (@bind-Layout), so an app can save the user's layout and restore it.
+    /// </summary>
+    [Parameter]
+    public StilDataGridLayout? Layout { get; set; }
+
+    [Parameter]
+    public EventCallback<StilDataGridLayout> LayoutChanged { get; set; }
+
+    /// <summary>The column chooser's button text. The default is the localized "Columns".</summary>
+    [Parameter]
+    public string? ColumnsText { get; set; }
 
     /// <summary>Shows an export button in the toolbar that downloads the filtered rows as CSV (see ExportCsvAsync).</summary>
     [Parameter]
@@ -390,7 +465,15 @@
         }
 
         _columns.Add(column);
-        if (!_initialSortApplied && _sortColumn is null && column.InitialSortDirection != StilSortDirection.None)
+        UpdateVisible();
+        if (_layoutSortKey is not null && column.ColumnKey == _layoutSortKey)
+        {
+            // The saved layout's sort, now that its column is here.
+            _layoutSortKey = null;
+            _sortColumn = column;
+            _ = InvokeAsync(RefreshAsync);
+        }
+        else if (!_initialSortApplied && _sortColumn is null && column.InitialSortDirection != StilSortDirection.None)
         {
             _initialSortApplied = true;
             _sortColumn = column;
@@ -422,6 +505,7 @@
         }
 
         _filters.Remove(column);
+        UpdateVisible();
         if (ReferenceEquals(_sortColumn, column))
         {
             _sortColumn = null;
@@ -435,6 +519,11 @@
 
     protected override async Task OnParametersSetAsync()
     {
+        if (Layout is not null && !ReferenceEquals(Layout, _appliedLayout))
+        {
+            ApplyLayout(Layout);
+        }
+
         if (_pageSize == 0 || (PageSizeOptions is null && _pageSize != PageSize))
         {
             _pageSize = PageSize;
@@ -553,7 +642,7 @@
     /// </summary>
     public async Task<string> ExportCsvAsync(CancellationToken cancellationToken = default)
     {
-        var columns = _columns.Where(c => c.CanExport).ToList();
+        var columns = _visible.Where(c => c.CanExport).ToList();
         var rows = new List<TItem>();
         if (ItemsProvider is null)
         {
@@ -654,6 +743,7 @@
 
         _pageNumber = 1;
         await RefreshAsync();
+        await NotifyLayoutAsync();
     }
 
     private string? AriaSort(StilDataGridColumnBase<TItem> column)
@@ -796,24 +886,24 @@
                                                     @onkeydown="e => OnRowKeyDownAsync(e, item)">
         @if (SelectionMode == StilSelectionMode.Multiple)
         {
-            <td class="stil-data-grid-select" @onclick:stopPropagation="true" @onkeydown:stopPropagation="true">
+            <td class="stil-data-grid-select" data-stil-frozen="@SelectFrozen" @onclick:stopPropagation="true" @onkeydown:stopPropagation="true">
                 <input type="checkbox" class="stil-check-input" aria-label="@Localize(SelectRowLabel, "DataGrid.SelectRow")" checked="@IsSelected(item)"
                        @onchange="() => ToggleRowAsync(item)" />
             </td>
         }
-        @foreach (var column in _columns)
+        @foreach (var column in _visible)
         {
-            <td class="@column.CellClass">@column.RenderCell(item)</td>
+            <td @key="column.ColumnKey" class="@column.CellClass" data-stil-frozen="@column.FrozenValue">@column.RenderCell(item)</td>
         }
     </tr>;
 
     // While the first rows load: skeleton lines, and the loading text for screen readers.
     private RenderFragment LoadingRow => @<tr>
-        <td colspan="@Math.Max(1, _columns.Count + (SelectionMode == StilSelectionMode.Multiple ? 1 : 0))" class="stil-data-grid-message" aria-busy="true"><span class="stil-visually-hidden" role="status">@Localize(LoadingText, "Common.Loading")</span><StilSkeleton Shape="StilSkeletonShape.Text" Lines="3" /></td>
+        <td colspan="@Math.Max(1, _visible.Count + (SelectionMode == StilSelectionMode.Multiple ? 1 : 0))" class="stil-data-grid-message" aria-busy="true"><span class="stil-visually-hidden" role="status">@Localize(LoadingText, "Common.Loading")</span><StilSkeleton Shape="StilSkeletonShape.Text" Lines="3" /></td>
     </tr>;
 
     private RenderFragment MessageRow(RenderFragment? content, string text) => @<tr>
-        <td colspan="@Math.Max(1, _columns.Count + (SelectionMode == StilSelectionMode.Multiple ? 1 : 0))" class="stil-data-grid-message">
+        <td colspan="@Math.Max(1, _visible.Count + (SelectionMode == StilSelectionMode.Multiple ? 1 : 0))" class="stil-data-grid-message">
             @if (content is not null)
             {
                 @content
@@ -824,6 +914,152 @@
             }
         </td>
     </tr>;
+
+    // ----- Column layout ---------------------------------------------------------------------
+
+    /// <summary>The columns in the user's order: the saved order first, then the rest as declared.</summary>
+    private IEnumerable<StilDataGridColumnBase<TItem>> Ordered => _columns
+        .Select((column, index) => (column, index, position: _order.IndexOf(column.ColumnKey)))
+        .OrderBy(c => c.position < 0 ? int.MaxValue : c.position)
+        .ThenBy(c => c.index)
+        .Select(c => c.column);
+
+    private void UpdateVisible() => _visible = Ordered.Where(c => !_hidden.Contains(c.ColumnKey)).ToList();
+
+    private bool IsResizable(StilDataGridColumnBase<TItem> column) => column.Resizable ?? ResizableColumns;
+
+    private bool IsReorderable(StilDataGridColumnBase<TItem> column) => column.Reorderable ?? ReorderableColumns;
+
+    private bool CanHide(StilDataGridColumnBase<TItem> column) =>
+        column.Hideable && (_hidden.Contains(column.ColumnKey) || _visible.Count > 1);
+
+    // The selection column stays with the frozen start columns.
+    private string? SelectFrozen => _visible.Any(c => c.Frozen == StilFrozen.Start) ? "start" : null;
+
+    private string? WidthOf(StilDataGridColumnBase<TItem> column) =>
+        _widths.TryGetValue(column.ColumnKey, out var width) ? $"width: {width}; min-width: {width}" : column.WidthStyle;
+
+    private string ResizeLabel(StilDataGridColumnBase<TItem> column) =>
+        string.Format(System.Globalization.CultureInfo.CurrentCulture, Localize(null, "DataGrid.ResizeFormat"), column.DisplayTitle);
+
+    private string MoveLabel(StilDataGridColumnBase<TItem> column, bool earlier) =>
+        string.Format(System.Globalization.CultureInfo.CurrentCulture, Localize(null, earlier ? "DataGrid.MoveEarlierFormat" : "DataGrid.MoveLaterFormat"), column.DisplayTitle);
+
+    /// <summary>The current layout, as LayoutChanged reports it.</summary>
+    public StilDataGridLayout CurrentLayout => new(
+        Ordered.Select(c => c.ColumnKey).ToList(),
+        new Dictionary<string, string>(_widths),
+        _hidden.ToList(),
+        _sortColumn?.ColumnKey,
+        _sortColumn is null ? StilSortDirection.None : _sortDirection);
+
+    private void ApplyLayout(StilDataGridLayout layout)
+    {
+        _appliedLayout = layout;
+        _order = layout.Order.ToList();
+        _widths.Clear();
+        foreach (var (key, width) in layout.Widths)
+        {
+            _widths[key] = width;
+        }
+
+        _hidden.Clear();
+        _hidden.UnionWith(layout.Hidden);
+        UpdateVisible();
+
+        if (layout.SortBy is { } sortBy && layout.SortDirection != StilSortDirection.None)
+        {
+            _initialSortApplied = true;
+            _sortDirection = layout.SortDirection;
+            var column = _columns.FirstOrDefault(c => c.ColumnKey == sortBy);
+            _sortColumn = column;
+            _layoutSortKey = column is null ? sortBy : null;
+        }
+    }
+
+    private async Task NotifyLayoutAsync()
+    {
+        _appliedLayout = CurrentLayout;
+        await LayoutChanged.InvokeAsync(_appliedLayout);
+    }
+
+    private async Task OnColumnResizeAsync(StilColumnResizeEventArgs e)
+    {
+        _widths[e.Key] = $"{Math.Round(e.Width).ToString(System.Globalization.CultureInfo.InvariantCulture)}px";
+        await NotifyLayoutAsync();
+    }
+
+    private async Task OnColumnMoveAsync(StilColumnMoveEventArgs e)
+    {
+        var keys = Ordered.Select(c => c.ColumnKey).ToList();
+        if (!keys.Remove(e.Key))
+        {
+            return;
+        }
+
+        var index = e.Before is null ? -1 : keys.IndexOf(e.Before);
+        keys.Insert(index < 0 ? keys.Count : index, e.Key);
+        _order = keys;
+        UpdateVisible();
+        await NotifyLayoutAsync();
+    }
+
+    private async Task MoveColumnAsync(StilDataGridColumnBase<TItem> column, int step)
+    {
+        var keys = Ordered.Select(c => c.ColumnKey).ToList();
+        var index = keys.IndexOf(column.ColumnKey);
+        var target = Math.Clamp(index + step, 0, keys.Count - 1);
+        keys.RemoveAt(index);
+        keys.Insert(target, column.ColumnKey);
+        _order = keys;
+        UpdateVisible();
+        await NotifyLayoutAsync();
+    }
+
+    private async Task ToggleColumnAsync(StilDataGridColumnBase<TItem> column)
+    {
+        if (!_hidden.Remove(column.ColumnKey) && CanHide(column))
+        {
+            _hidden.Add(column.ColumnKey);
+        }
+
+        UpdateVisible();
+        await NotifyLayoutAsync();
+    }
+
+    /// <summary>Puts the columns back in their declared order, widths and visibility.</summary>
+    public async Task ResetLayoutAsync()
+    {
+        _order = [];
+        _widths.Clear();
+        _hidden.Clear();
+        UpdateVisible();
+        await NotifyLayoutAsync();
+    }
+
+    // The consumer's attributes plus the column layout handlers (Razor cannot bind custom events in this assembly).
+    private IReadOnlyDictionary<string, object> RootAttributes
+    {
+        get
+        {
+            var attributes = AdditionalAttributes is null
+                ? new Dictionary<string, object>()
+                : AdditionalAttributes.Where(a => a.Key != "class").ToDictionary();
+            attributes["onstilcolumnresize"] = EventCallback.Factory.Create<StilColumnResizeEventArgs>(this, OnColumnResizeAsync);
+            attributes["onstilcolumnmove"] = EventCallback.Factory.Create<StilColumnMoveEventArgs>(this, OnColumnMoveAsync);
+            return attributes;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // stil.js places frozen columns and gives the resize handles their width (aria-valuenow).
+        if (_visible.Any(c => c.Frozen != StilFrozen.None || IsResizable(c)))
+        {
+            _module ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Stil/stil.js");
+            await _module.InvokeVoidAsync("freezeColumns", _table);
+        }
+    }
 
     public void Dispose()
     {

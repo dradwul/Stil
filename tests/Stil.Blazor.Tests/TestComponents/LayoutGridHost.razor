@@ -1,0 +1,23 @@
+@* A data grid with every column layout feature switched on. *@
+<StilDataGrid @ref="Grid" TItem="GridOrder" Items="Items" PageSize="0" ResizableColumns ReorderableColumns ShowColumnChooser
+              @bind-Layout="Layout" SelectionMode="SelectionMode" Caption="Orders">
+    <Columns>
+        <StilDataGridColumn Property="o => o.Id" Title="Order" Frozen="StilFrozen.Start" Hideable="false" Reorderable="false" />
+        <StilDataGridColumn Property="o => o.Customer" MinWidth="120" MaxWidth="400" />
+        <StilDataGridColumn Property="o => o.Status" />
+        <StilDataGridColumn Property="o => o.Amount" Resizable="false" />
+    </Columns>
+</StilDataGrid>
+
+@code {
+    public StilDataGrid<GridOrder> Grid { get; private set; } = default!;
+
+    [Parameter]
+    public IEnumerable<GridOrder>? Items { get; set; }
+
+    [Parameter]
+    public StilDataGridLayout? Layout { get; set; }
+
+    [Parameter]
+    public StilSelectionMode SelectionMode { get; set; }
+}

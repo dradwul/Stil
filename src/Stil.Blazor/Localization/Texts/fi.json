@@ -76,7 +76,12 @@
     "Yes": "Kyllä",
     "No": "Ei",
     "Total": "Yhteensä",
-    "Export": "Vie CSV"
+    "Export": "Vie CSV",
+    "Columns": "Sarakkeet",
+    "ResetColumns": "Palauta sarakkeet",
+    "ResizeFormat": "Muuta sarakkeen {0} leveyttä",
+    "MoveEarlierFormat": "Siirrä {0} aiemmaksi",
+    "MoveLaterFormat": "Siirrä {0} myöhemmäksi"
   },
   "DateRange": {
     "Start": "Alkupäivä",

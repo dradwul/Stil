@@ -76,7 +76,12 @@
     "Yes": "Yes",
     "No": "No",
     "Total": "Total",
-    "Export": "Export CSV"
+    "Export": "Export CSV",
+    "Columns": "Columns",
+    "ResetColumns": "Reset columns",
+    "ResizeFormat": "Resize {0}",
+    "MoveEarlierFormat": "Move {0} earlier",
+    "MoveLaterFormat": "Move {0} later"
   },
   "DateRange": {
     "Start": "From",

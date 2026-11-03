@@ -111,3 +111,23 @@ public enum StilAggregate
     Min,
     Max
 }
+
+/// <summary>Where a data grid column is frozen, so it stays in view while the grid scrolls sideways.</summary>
+public enum StilFrozen
+{
+    None,
+    Start,
+    End
+}
+
+/// <summary>
+/// A data grid's column layout as the user left it: the order of the columns (by Key), their widths
+/// (CSS lengths), the hidden columns and the sort. Save it (it serializes to JSON) and give it back
+/// with @bind-Layout to restore it.
+/// </summary>
+public sealed record StilDataGridLayout(
+    IReadOnlyList<string> Order,
+    IReadOnlyDictionary<string, string> Widths,
+    IReadOnlyList<string> Hidden,
+    string? SortBy = null,
+    StilSortDirection SortDirection = StilSortDirection.None);

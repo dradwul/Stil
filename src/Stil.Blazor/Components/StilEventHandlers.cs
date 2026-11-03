@@ -52,6 +52,22 @@ public sealed class StilSlideEventArgs : EventArgs
     public int Index { get; set; }
 }
 
+/// <summary>Arguments of the <c>@onstilcolumnresize</c> event: a data grid column's new width in pixels.</summary>
+public sealed class StilColumnResizeEventArgs : EventArgs
+{
+    public string Key { get; set; } = "";
+
+    public double Width { get; set; }
+}
+
+/// <summary>Arguments of the <c>@onstilcolumnmove</c> event: a column was dragged before another one (or to the end when Before is null).</summary>
+public sealed class StilColumnMoveEventArgs : EventArgs
+{
+    public string Key { get; set; } = "";
+
+    public string? Before { get; set; }
+}
+
 /// <summary>Arguments of the <c>@onstilcropzoom</c> event: the zoom of an image cropper after the wheel or a key changed it.</summary>
 public sealed class StilCropZoomEventArgs : EventArgs
 {
@@ -68,6 +84,8 @@ public sealed class StilCropZoomEventArgs : EventArgs
 [EventHandler("onstilweekedit", typeof(StilWeekEditEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
 [EventHandler("onstilsplit", typeof(StilSplitEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
 [EventHandler("onstilslide", typeof(StilSlideEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
+[EventHandler("onstilcolumnresize", typeof(StilColumnResizeEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
+[EventHandler("onstilcolumnmove", typeof(StilColumnMoveEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
 [EventHandler("onstilcropzoom", typeof(StilCropZoomEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
 public static class StilEventHandlers
 {

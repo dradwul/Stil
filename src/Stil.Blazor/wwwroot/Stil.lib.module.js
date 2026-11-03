@@ -7,6 +7,8 @@
 const load = () => import('./stil.js');
 
 function registerEvents(blazor) {
+    blazor?.registerCustomEventType?.('stilcolumnresize', { createEventArgs: event => ({ key: event.detail?.key ?? '', width: event.detail?.width ?? 0 }) });
+    blazor?.registerCustomEventType?.('stilcolumnmove', { createEventArgs: event => ({ key: event.detail?.key ?? '', before: event.detail?.before ?? null }) });
     blazor?.registerCustomEventType?.('stilsplit', { createEventArgs: event => ({ size: event.detail?.size ?? 0 }) });
     blazor?.registerCustomEventType?.('stilslide', { createEventArgs: event => ({ index: event.detail?.index ?? 0 }) });
     blazor?.registerCustomEventType?.('stilcropzoom', { createEventArgs: event => ({ zoom: event.detail?.zoom ?? 1 }) });

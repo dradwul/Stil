@@ -57,6 +57,37 @@ public abstract class StilDataGridColumnBase<TItem> : ComponentBase, IDisposable
     [Parameter]
     public bool Exportable { get; set; } = true;
 
+    /// <summary>Keeps the column at the start or end while the grid scrolls sideways.</summary>
+    [Parameter]
+    public StilFrozen Frozen { get; set; }
+
+    /// <summary>Lets the user resize the column. The default is the grid's ResizableColumns.</summary>
+    [Parameter]
+    public bool? Resizable { get; set; }
+
+    /// <summary>Lets the user move the column. The default is the grid's ReorderableColumns.</summary>
+    [Parameter]
+    public bool? Reorderable { get; set; }
+
+    /// <summary>Lets the user hide the column in the column chooser. The default is true.</summary>
+    [Parameter]
+    public bool Hideable { get; set; } = true;
+
+    /// <summary>The smallest width when resizing, in pixels. The default is 48.</summary>
+    [Parameter]
+    public int MinWidth { get; set; } = 48;
+
+    /// <summary>The largest width when resizing, in pixels.</summary>
+    [Parameter]
+    public int? MaxWidth { get; set; }
+
+    internal string? FrozenValue => Frozen switch
+    {
+        StilFrozen.Start => "start",
+        StilFrozen.End => "end",
+        _ => null
+    };
+
     internal bool HasAggregate => Aggregate != StilAggregate.None || AggregateValue is not null;
 
     /// <summary>The format of the column's values (StilDataGridColumn.Format).</summary>

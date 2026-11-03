@@ -76,7 +76,12 @@
     "Yes": "Ja",
     "No": "Nej",
     "Total": "I alt",
-    "Export": "Eksportér CSV"
+    "Export": "Eksportér CSV",
+    "Columns": "Kolonner",
+    "ResetColumns": "Nulstil kolonner",
+    "ResizeFormat": "Ændr bredden på {0}",
+    "MoveEarlierFormat": "Flyt {0} frem",
+    "MoveLaterFormat": "Flyt {0} tilbage"
   },
   "DateRange": {
     "Start": "Fra",
