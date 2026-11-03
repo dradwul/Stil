@@ -10,6 +10,17 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 
 ## [Unreleased]
 
+### Added
+
+- **Stil for Blazor**: totals and export in `StilDataGrid`. `Aggregate` on a
+  column (sum, average, count, min, max) or `AggregateValue` adds a totals
+  row over every filtered row; `ShowExport` and `ExportCsvAsync()` give the
+  filtered and sorted rows of every page as CSV that Excel opens as it is.
+  With an `ItemsProvider`, `StilDataGridRequest.ComputeAggregates` computes
+  the totals in the database and the export pages through the provider.
+- **Stil CSS**: the `stil-data-grid-totals` row and `stil.js`'s
+  `downloadFile`.
+
 ## [0.1.0-preview.3] - 2026-11-03
 
 ### Added

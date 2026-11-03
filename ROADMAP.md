@@ -19,7 +19,7 @@ something usable.
 | 8 | Language and localization | ✅ Done |
 | 9 | Forms 2: popover, time, slider, wizard, rating, color, masks | ✅ Done |
 | 10 | Layout and media: skeleton, splitter, carousel, image cropper, PDF viewer | ✅ Done |
-| 11 | Data grid 2, in five parts: totals and export, column layout, grouping, inline editing, tree grid | Planned |
+| 11 | Data grid 2, in five parts: totals and export ✅, column layout, grouping, inline editing, tree grid | In progress |
 | 12 | Capture and records: scanner, QR codes, signature, activity log, chat | Planned |
 | 13 | Boards and workspace: kanban, command palette, recurring events, Gantt | Planned |
 | 14 | Rich text and charts 2: editor, scatter, gauge, heat map, combined | Planned |
@@ -63,7 +63,7 @@ end, so they never keep a phase open.
     masked and PIN inputs, popover, stepper and wizard.
   - Layout and media: skeleton, splitter, carousel, image cropper, camera
     and PDF viewer.
-  - 707 bUnit tests.
+  - 719 bUnit tests.
 - **Stil.Charts:** SVG line, area, bar, donut and sparkline charts that
   follow the theme, with 68 bUnit tests.
 - **Stil.Templates:** `dotnet new stil-app`.
@@ -688,19 +688,27 @@ ones (group sums use the aggregates, editing uses the column layout).
 **Done when (all parts):** the demo's orders page groups by status, edits a
 row in place, exports CSV and remembers its column layout.
 
-### Phase 11.1: Totals and export
+### Phase 11.1: Totals and export ✅ Done
 
-- [ ] Aggregates per column (`Aggregate="StilAggregate.Sum"`: sum, average,
-  count, min, max, or a function of your own) in a footer row, formatted like
-  the column's cells.
-- [ ] `ExportCsvAsync()` and an optional export button in the toolbar: the
-  filtered and sorted rows (all pages), with the cells' formats, in the
-  culture's list separator, with a byte order mark so Excel opens it right.
-- [ ] Server-side data: `StilDataGridRequest` asks for the aggregates, and
-  the export can page through `ItemsProvider`.
+- [x] Aggregates per column (`Aggregate="StilAggregate.Sum"`: sum, average,
+  count, min, max, or `AggregateValue` for a total of your own) in a footer
+  row over every filtered row, formatted like the column's cells.
+- [x] `ExportCsvAsync()` and an export button in the toolbar (`ShowExport`):
+  the filtered and sorted rows of every page, in the culture's list
+  separator, with a byte order mark so Excel opens it right. Numbers have no
+  thousands separators, and text that would start a formula is defused.
+- [x] Server-side data: `StilDataGridRequest.Aggregates` lists the totals and
+  `ComputeAggregates` computes them from the columns' properties (in the
+  database with EF Core); the export pages through `ItemsProvider` 500 rows
+  at a time.
 
 **Done when:** the orders page shows the total amount under the grid and
-exports the filtered orders to a CSV that opens correctly in Excel.
+exports the filtered orders to a CSV that opens correctly in Excel. ✅ (12
+bUnit tests; the CSV was checked in tests, not opened in Excel.)
+
+**Changes from the plan:** numbers are exported without the cell format's
+thousands separators, so spreadsheets read them as numbers; dates and other
+values keep the cell format.
 
 ### Phase 11.2: Column layout
 
