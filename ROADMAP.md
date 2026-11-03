@@ -19,7 +19,7 @@ something usable.
 | 8 | Language and localization | ✅ Done |
 | 9 | Forms 2: popover, time, slider, wizard, rating, color, masks | ✅ Done |
 | 10 | Layout and media: skeleton, splitter, carousel, image cropper, PDF viewer | ✅ Done |
-| 11 | Data grid 2, in five parts: totals and export ✅, column layout ✅, grouping ✅, inline editing, tree grid | In progress |
+| 11 | Data grid 2, in five parts: totals and export ✅, column layout ✅, grouping ✅, inline editing ✅, tree grid | In progress |
 | 12 | Capture and records: scanner, QR codes, signature, activity log, chat | Planned |
 | 13 | Boards and workspace: kanban, command palette, recurring events, Gantt | Planned |
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | Planned |
@@ -64,7 +64,7 @@ end, so they never keep a phase open.
     masked and PIN inputs, popover, stepper and wizard.
   - Layout and media: skeleton, splitter, carousel, image cropper, camera
     and PDF viewer.
-  - 736 bUnit tests.
+  - 744 bUnit tests.
 - **Stil.Charts:** SVG line, area, bar, donut and sparkline charts that
   follow the theme, with 68 bUnit tests.
 - **Stil.Templates:** `dotnet new stil-app`.
@@ -757,20 +757,27 @@ sorting and resizing. Paging counts the rows that show: a group that continues
 on the next page repeats its header there, and the rows of a collapsed group
 leave the pages.
 
-### Phase 11.4: Inline editing
+### Phase 11.4: Inline editing ✅ Done
 
-- [ ] Row editing: an edit button (or double click, or Enter) turns a row's
-  cells into Stil fields (text, number, date, choice, switch, or an
-  `EditTemplate`), with Save and Cancel.
-- [ ] Validation with EditForm and data annotations per row, with the
+- [x] Row editing: an edit button (`StilDataGridEditColumn`), a double
+  click, Enter or F2 turns a row's cells into Stil fields (text, number, date,
+  choice, switch, or an `EditTemplate`), with Save and Cancel.
+- [x] Validation with an EditContext and data annotations per row, with the
   messages next to the fields; Escape cancels.
-- [ ] `OnRowSave` (return false to keep editing, for example after a server
+- [x] `OnRowSave` (return false to keep editing, for example after a server
   error) and `OnRowCancel`; a new row at the top with `AddRowAsync()`.
-- [ ] Optional cell editing (`EditMode="Cell"`): click a cell, edit, and
-  leave it to save.
+- [x] Optional cell editing (`EditMode="Cell"`): click a cell, edit, and
+  leave it (or press Enter) to save.
 
 **Done when:** the orders page edits a customer and an amount in place, with
-validation, and adds a new order as a row.
+validation, and adds a new order as a row. ✅ (Checked in the browser, with 8
+bUnit tests.)
+
+**Changes from the plan:** the row's fields share an EditContext without an
+EditForm, since a form cannot wrap table cells. The grid validates only the
+fields of the edited columns, so a required property that the grid does not
+show cannot block a save. The item is edited in place, and Cancel puts its
+public properties back from a copy taken when editing started.
 
 ### Phase 11.5: Tree grid
 

@@ -28,9 +28,14 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   the mouse and keyboard (all at once from the toolbar). Paging counts rows
   and virtualization shows the headers in place. With an `ItemsProvider`,
   `StilDataGridRequest.GroupBy` and `ComputeGroups` give the groups.
+- **Stil for Blazor**: editing in place in `StilDataGrid`: `EditMode` Row
+  (with `StilDataGridEditColumn`, a double click, Enter or F2) or Cell, Stil
+  fields for text, number, date, enum and bool columns or an `EditTemplate`,
+  validation with data annotations next to the fields, `OnRowSave` (return
+  false to keep editing), `OnRowCancel` and `AddRowAsync()` for a new row.
 - **Stil CSS**: the `stil-data-grid-totals` row, column resize handles, drag
-  markers, frozen columns and group header rows (`stil-data-grid-group`), and `stil.js`'s `downloadFile`, column resizing
-  and moving (`stilcolumnresize`, `stilcolumnmove`) and `freezeColumns`.
+  markers, frozen columns, group header rows (`stil-data-grid-group`) and rows being edited (`stil-data-grid-editing`), a `pencil` icon, and `stil.js`'s `downloadFile`, column resizing
+  and moving (`stilcolumnresize`, `stilcolumnmove`), `freezeColumns` and `focusEditor`.
 
 ## [0.1.0-preview.3] - 2026-11-03
 
