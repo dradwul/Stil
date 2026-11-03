@@ -19,7 +19,7 @@ something usable.
 | 8 | Language and localization | ✅ Done |
 | 9 | Forms 2: popover, time, slider, wizard, rating, color, masks | ✅ Done |
 | 10 | Layout and media: skeleton, splitter, carousel, image cropper, PDF viewer | ✅ Done |
-| 11 | Data grid 2: grouping, editing, export, tree grid | Planned |
+| 11 | Data grid 2, in five parts: totals and export, column layout, grouping, inline editing, tree grid | Planned |
 | 12 | Capture and records: scanner, QR codes, signature, activity log, chat | Planned |
 | 13 | Boards and workspace: kanban, command palette, recurring events, Gantt | Planned |
 | 14 | Rich text and charts 2: editor, scatter, gauge, heat map, combined | Planned |
@@ -681,27 +681,84 @@ viewer.
 ## Phase 11: Data grid 2
 
 Goal: the data grid features that larger apps expect, without making the
-simple grid harder to use.
+simple grid harder to use. The phase is split into five parts that each end
+with something usable, in this order, because later parts build on earlier
+ones (group sums use the aggregates, editing uses the column layout).
 
-**Plan:**
+**Done when (all parts):** the demo's orders page groups by status, edits a
+row in place, exports CSV and remembers its column layout.
 
-- [ ] Grouping by one or more columns, with group headers that collapse and
-  show counts and sums.
-- [ ] Column resizing and reordering by dragging (and the keyboard), sticky
-  (frozen) first and last columns, and a column chooser. The layout can be
-  saved and restored (`@bind-Layout`).
-- [ ] Inline editing: a row or a cell switches to Stil fields, validates with
-  EditForm, and raises `OnRowSave`/`OnRowCancel`.
-- [ ] Export of the filtered rows to CSV (and Excel-friendly CSV), with the
-  same formats as the cells.
-- [ ] Aggregates in a footer row (sum, average, count).
-- [ ] `StilTreeGrid<TItem>`: the data grid with expandable rows from a
-  children selector, using the WAI-ARIA treegrid pattern.
-- [ ] Server-side data (`ItemsProvider`, `StilDataGridRequest`) supports
-  grouping and aggregates.
+### Phase 11.1: Totals and export
 
-**Done when:** the demo's orders page groups by status, edits a row in place,
-exports CSV and remembers its column layout.
+- [ ] Aggregates per column (`Aggregate="StilAggregate.Sum"`: sum, average,
+  count, min, max, or a function of your own) in a footer row, formatted like
+  the column's cells.
+- [ ] `ExportCsvAsync()` and an optional export button in the toolbar: the
+  filtered and sorted rows (all pages), with the cells' formats, in the
+  culture's list separator, with a byte order mark so Excel opens it right.
+- [ ] Server-side data: `StilDataGridRequest` asks for the aggregates, and
+  the export can page through `ItemsProvider`.
+
+**Done when:** the orders page shows the total amount under the grid and
+exports the filtered orders to a CSV that opens correctly in Excel.
+
+### Phase 11.2: Column layout
+
+- [ ] Column resizing by dragging the header edge, and with the keyboard
+  (`MinWidth`, `MaxWidth`).
+- [ ] Reordering by dragging a header, and with the keyboard; `Reorderable`
+  per column.
+- [ ] Frozen (sticky) first and last columns (`Frozen="StilFrozen.Start"`),
+  which stay in view while the grid scrolls sideways.
+- [ ] A column chooser in the toolbar that shows and hides columns.
+- [ ] `@bind-Layout` (`StilDataGridLayout`: order, widths, hidden columns,
+  sort), so an app can save and restore the layout, for example per user.
+
+**Done when:** the orders page keeps its column widths, order and hidden
+columns after a reload.
+
+### Phase 11.3: Grouping
+
+- [ ] Grouping by one or more columns (`@bind-GroupBy`, or a group menu in
+  the header), with group headers that show the value and the count.
+- [ ] Group headers collapse and expand with the mouse and keyboard; all
+  groups at once from the toolbar.
+- [ ] Group sums from the column aggregates (11.1) in each group header or
+  footer.
+- [ ] Paging counts groups' rows, and virtualization works with groups.
+- [ ] Server-side data: `StilDataGridRequest` carries the grouping, and
+  `ItemsProvider` can return groups with their counts and sums.
+
+**Done when:** the orders page groups by status with the count and the total
+amount per status.
+
+### Phase 11.4: Inline editing
+
+- [ ] Row editing: an edit button (or double click, or Enter) turns a row's
+  cells into Stil fields (text, number, date, choice, switch, or an
+  `EditTemplate`), with Save and Cancel.
+- [ ] Validation with EditForm and data annotations per row, with the
+  messages next to the fields; Escape cancels.
+- [ ] `OnRowSave` (return false to keep editing, for example after a server
+  error) and `OnRowCancel`; a new row at the top with `AddRowAsync()`.
+- [ ] Optional cell editing (`EditMode="Cell"`): click a cell, edit, and
+  leave it to save.
+
+**Done when:** the orders page edits a customer and an amount in place, with
+validation, and adds a new order as a row.
+
+### Phase 11.5: Tree grid
+
+- [ ] `StilTreeGrid<TItem>`: the data grid's columns, sorting and formats
+  for items with children (`ChildrenSelector`), with expand and collapse in
+  the first column.
+- [ ] The WAI-ARIA treegrid pattern: `aria-level`, `aria-expanded`, and the
+  arrow keys to move, expand and collapse.
+- [ ] Children loaded on demand (`LoadChildren`), with a loading state.
+- [ ] Aggregates (11.1) that roll up from children to parents.
+
+**Done when:** the demo shows a cost-centre budget as a tree grid where
+departments roll up into divisions.
 
 ## Phase 12: Capture and records
 
