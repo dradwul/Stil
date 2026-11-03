@@ -1,0 +1,62 @@
+@page "/budget"
+
+<PageTitle>Budget · Stil for Blazor</PageTitle>
+
+<div class="stil-mb-4">
+    <h1 class="stil-mb-1">Budget</h1>
+    <p class="stil-text-muted stil-mb-0">A cost-centre budget as a tree grid: departments roll up into divisions.</p>
+</div>
+
+<StilTreeGrid @ref="_grid" TItem="CostCentre" Items="_divisions" ChildrenSelector="c => c.Children" ExpandedLevels="1"
+              ItemKey="c => c.Code" Filterable ShowExport ExportFileName="budget.csv" Caption="Budget 2027, in euros"
+              RowClass="@(c => c.Remaining < 0 ? "stil-text-danger" : null)">
+    <Toolbar>
+        <StilButton Size="StilSize.Small" Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost" OnClick="() => _grid.ExpandAllAsync()">Expand all</StilButton>
+        <StilButton Size="StilSize.Small" Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost" OnClick="() => _grid.CollapseAllAsync()">Collapse all</StilButton>
+    </Toolbar>
+    <Columns>
+        <StilDataGridColumn Property="c => c.Name" Title="Cost centre" />
+        <StilDataGridColumn Property="c => c.Code" />
+        <StilDataGridColumn Property="c => c.Owner" />
+        <StilDataGridColumn Property="c => c.Budget" Format="N0" Aggregate="StilAggregate.Sum" Align="StilTextAlign.End" />
+        <StilDataGridColumn Property="c => c.Actual" Format="N0" Aggregate="StilAggregate.Sum" Align="StilTextAlign.End" />
+        <StilDataGridColumn Property="c => c.Remaining" Format="N0" Aggregate="StilAggregate.Sum" Align="StilTextAlign.End" />
+    </Columns>
+</StilTreeGrid>
+
+@code {
+    private StilTreeGrid<CostCentre> _grid = default!;
+
+    private sealed record CostCentre(string Code, string Name, string Owner, decimal Budget = 0, decimal Actual = 0, List<CostCentre>? Children = null)
+    {
+        public decimal Remaining => Budget - Actual;
+    }
+
+    private readonly List<CostCentre> _divisions =
+    [
+        new("100", "Sales", "Maja Lind", Children:
+        [
+            new("110", "Nordic sales", "Erik Holm", 1_200_000, 1_050_000),
+            new("120", "Export", "Sara Berg", 800_000, 860_000),
+            new("130", "Marketing", "Jonas Ek", Children:
+            [
+                new("131", "Campaigns", "Jonas Ek", 450_000, 390_000),
+                new("132", "Events", "Lina Ström", 150_000, 170_000),
+            ]),
+        ]),
+        new("200", "Operations", "Anders Nyberg", Children:
+        [
+            new("210", "Facilities", "Karin Dahl", 900_000, 870_000),
+            new("220", "IT", "Oskar Lund", Children:
+            [
+                new("221", "Servers", "Oskar Lund", 300_000, 240_000),
+                new("222", "Laptops", "Emma Sjö", 200_000, 210_000),
+            ]),
+        ]),
+        new("300", "Finance", "Ida Wall", Children:
+        [
+            new("310", "Accounting", "Per Ahl", 400_000, 380_000),
+            new("320", "Legal", "Nora Falk", 250_000, 120_000),
+        ]),
+    ];
+}
