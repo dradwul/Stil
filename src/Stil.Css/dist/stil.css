@@ -2355,6 +2355,40 @@
     flex: 1;
   }
 
+  .stil-data-grid-group > td {
+    background-color: var(--stil-color-surface-muted);
+    font-weight: var(--stil-font-weight-bold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stil-data-grid-group-toggle {
+    align-items: center;
+    gap: var(--stil-space-2);
+    border-radius: var(--stil-radius-sm);
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+    background: none;
+    border: 0;
+    margin: 0;
+    margin-inline-start: calc(var(--_level, 0) * var(--stil-space-5));
+    padding: 0;
+    display: inline-flex;
+    position: sticky;
+    inset-inline-start: var(--stil-space-2);
+  }
+
+  .stil-data-grid-group-toggle:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: 2px;
+  }
+
+  :is(.stil-data-grid-group-title, .stil-data-grid-group-count) {
+    color: var(--stil-color-text-muted);
+    font-weight: var(--stil-font-weight-normal);
+  }
+
   .stil-combobox {
     position: relative;
   }

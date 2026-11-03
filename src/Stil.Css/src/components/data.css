@@ -216,3 +216,40 @@ th[data-stil-drop="after"]:dir(rtl) { box-shadow: inset 3px 0 0 var(--_accent); 
 }
 
 .stil-data-grid-chooser .stil-check { flex: 1; }
+
+/* Group headers (StilDataGrid with GroupBy): <tr class="stil-data-grid-group"> with a toggle
+   button (aria-expanded) that shows the group's value and row count, followed by the group's
+   totals under their columns. --_level indents subgroups. */
+.stil-data-grid-group > td {
+    background-color: var(--stil-color-surface-muted);
+    font-weight: var(--stil-font-weight-bold);
+    font-variant-numeric: tabular-nums;
+}
+
+.stil-data-grid-group-toggle {
+    position: sticky;
+    inset-inline-start: var(--stil-space-2);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--stil-space-2);
+    margin: 0;
+    margin-inline-start: calc(var(--_level, 0) * var(--stil-space-5));
+    padding: 0;
+    border: 0;
+    border-radius: var(--stil-radius-sm);
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+}
+
+.stil-data-grid-group-toggle:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: 2px;
+}
+
+:is(.stil-data-grid-group-title, .stil-data-grid-group-count) {
+    color: var(--stil-color-text-muted);
+    font-weight: var(--stil-font-weight-normal);
+}
