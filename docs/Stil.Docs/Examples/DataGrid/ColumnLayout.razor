@@ -1,0 +1,30 @@
+@* Drag a header's edge to resize it, drag a header to move it, and use Columns to hide or move
+   columns with the keyboard. Order and Total stay in view while the grid scrolls sideways. *@
+<StilDataGrid TItem="Invoice" Items="_invoices" PageSize="5" ResizableColumns ReorderableColumns ShowColumnChooser
+              @bind-Layout="_layout" Caption="Invoices">
+    <Columns>
+        <StilDataGridColumn Property="i => i.Number" Title="Invoice" Frozen="StilFrozen.Start" Hideable="false" Reorderable="false" />
+        <StilDataGridColumn Property="i => i.Customer" MinWidth="140" />
+        <StilDataGridColumn Property="i => i.Reference" />
+        <StilDataGridColumn Property="i => i.Issued" Format="d MMM yyyy" />
+        <StilDataGridColumn Property="i => i.Due" Format="d MMM yyyy" />
+        <StilDataGridColumn Property="i => i.Total" Format="N2" Align="StilTextAlign.End" Frozen="StilFrozen.End" Reorderable="false" />
+    </Columns>
+</StilDataGrid>
+<p class="stil-text-muted stil-fs-sm stil-mt-2">
+    Layout: @(_layout is null ? "the declared one" : $"{string.Join(", ", _layout.Order)}; hidden: {(_layout.Hidden.Count == 0 ? "none" : string.Join(", ", _layout.Hidden))}").
+    Save it (it serializes to JSON) to keep it for the user.
+</p>
+
+@code {
+    private StilDataGridLayout? _layout;
+
+    private sealed record Invoice(int Number, string Customer, string Reference, DateOnly Issued, DateOnly Due, decimal Total);
+
+    private static readonly string[] Customers = ["Fjällbacka Café", "Norrsken AB", "Solvik Bageri", "Hvalsø Cykler"];
+
+    private static readonly Invoice[] _invoices = Enumerable.Range(1, 12)
+        .Select(i => new Invoice(2400 + i, Customers[i % Customers.Length],
+            $"PO-{7310 + i * 3}", new DateOnly(2026, 10, i), new DateOnly(2026, 11, i), 1200m + i * 317.5m))
+        .ToArray();
+}

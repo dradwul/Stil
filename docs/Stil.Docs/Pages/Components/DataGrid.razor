@@ -63,6 +63,19 @@
     </p>
 </DocExample>
 
+<h2 id="column-layout">Column layout</h2>
+<DocExample Type="typeof(ColumnLayout)">
+    <p>
+        <code>ResizableColumns</code> lets the user drag the edge of a header, or focus it and use the arrow keys
+        (<code>MinWidth</code> and <code>MaxWidth</code> set the limits). <code>ReorderableColumns</code> lets them drag a
+        header to another place, and <code>ShowColumnChooser</code> adds a Columns button that hides, shows and moves
+        columns, also with the keyboard. <code>Frozen</code> keeps a column at the start or end while the grid scrolls
+        sideways. A column can opt out with <code>Resizable</code>, <code>Reorderable</code> and <code>Hideable</code>.
+        <code>@@bind-Layout</code> gives the layout (order, widths, hidden columns and sort) as a
+        <code>StilDataGridLayout</code>, which the app can save, for example per user, and give back.
+    </p>
+</DocExample>
+
 <h2 id="server-data">Server-side data</h2>
 <DocExample Type="typeof(ServerData)">
     <p>
