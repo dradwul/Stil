@@ -90,6 +90,20 @@
     </p>
 </DocExample>
 
+<h2 id="editing">Editing in place</h2>
+<DocExample Type="typeof(Editing)">
+    <p>
+        <code>EditMode="StilDataGridEditMode.Row"</code> edits a whole row: a <code>StilDataGridEditColumn</code> adds an
+        edit button, and a double click, Enter or F2 on a row also starts editing. The columns get Stil fields that fit
+        their type (text, number, date, enum and bool), or their <code>EditTemplate</code>; <code>Editable="false"</code>
+        keeps a column as it is. The item is edited in place and its data annotations are checked for the edited fields,
+        with the messages next to them. Save calls <code>OnRowSave</code>, which returns false to keep editing, for example
+        after a server error; Cancel or Escape puts the values back and raises <code>OnRowCancel</code>.
+        <code>AddRowAsync(item)</code> adds a new row at the top, with <code>IsNew</code> in the save arguments.
+        <code>StilDataGridEditMode.Cell</code> edits one cell at a time: click it, then leave it or press Enter to save.
+    </p>
+</DocExample>
+
 <h2 id="server-data">Server-side data</h2>
 <DocExample Type="typeof(ServerData)">
     <p>
@@ -124,3 +138,4 @@
 <ApiTable Type="typeof(StilDataGrid<>)" />
 <ApiTable Type="typeof(StilDataGridColumn<,>)" />
 <ApiTable Type="typeof(StilDataGridTemplateColumn<>)" />
+<ApiTable Type="typeof(StilDataGridEditColumn<>)" />

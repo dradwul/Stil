@@ -1,0 +1,71 @@
+@using System.ComponentModel.DataAnnotations
+@* Edit a row with its pencil button, a double click, Enter or F2; Escape cancels. Switch to cell
+   editing to edit one cell at a time. Add product puts a new row at the top. *@
+<div class="stil-cluster stil-gap-3 stil-mb-3">
+    <StilButton Size="StilSize.Small" OnClick="AddAsync"><StilIcon Name="@StilIcons.Plus" /> Add product</StilButton>
+    <StilSwitch @bind-Value="_cells" Label="Cell editing" />
+</div>
+<StilDataGrid @ref="_grid" TItem="Product" Items="_products" PageSize="5" ItemKey="p => p.Sku" Caption="Products"
+              EditMode="@(_cells ? StilDataGridEditMode.Cell : StilDataGridEditMode.Row)" OnRowSave="SaveAsync">
+    <Columns>
+        <StilDataGridColumn Property="p => p.Sku" Title="SKU" Editable="false" />
+        <StilDataGridColumn Property="p => p.Name" />
+        <StilDataGridColumn Property="p => p.Category" />
+        <StilDataGridColumn Property="p => p.Price" Format="N2" Align="StilTextAlign.End" />
+        <StilDataGridColumn Property="p => p.InStock" Title="In stock" />
+        @if (!_cells)
+        {
+            <StilDataGridEditColumn TItem="Product" EditLabel="@(p => $"Edit {p.Name}")" />
+        }
+    </Columns>
+</StilDataGrid>
+<p class="stil-text-muted stil-fs-sm stil-mt-2">@_message</p>
+
+@code {
+    private StilDataGrid<Product> _grid = default!;
+    private bool _cells;
+    private string _message = "Nothing saved yet.";
+    private int _nextSku = 1007;
+
+    private enum Category { Chairs, Desks, Lamps }
+
+    private sealed class Product
+    {
+        public int Sku { get; set; }
+
+        [Required(ErrorMessage = "Enter a name.")]
+        public string? Name { get; set; }
+
+        public Category Category { get; set; }
+
+        [Range(1, 50_000, ErrorMessage = "Enter a price from 1 to 50,000.")]
+        public decimal Price { get; set; }
+
+        public bool InStock { get; set; }
+    }
+
+    private readonly List<Product> _products =
+    [
+        new() { Sku = 1001, Name = "Oak chair", Category = Category.Chairs, Price = 1490m, InStock = true },
+        new() { Sku = 1002, Name = "Standing desk", Category = Category.Desks, Price = 6900m, InStock = true },
+        new() { Sku = 1003, Name = "Reading lamp", Category = Category.Lamps, Price = 890m },
+        new() { Sku = 1004, Name = "Stool", Category = Category.Chairs, Price = 590m, InStock = true },
+        new() { Sku = 1005, Name = "Corner desk", Category = Category.Desks, Price = 4200m },
+        new() { Sku = 1006, Name = "Pendant lamp", Category = Category.Lamps, Price = 1290m, InStock = true },
+    ];
+
+    private Task AddAsync() => _grid.AddRowAsync(new Product { Sku = _nextSku });
+
+    // Save to a database here; return false to keep the row in editing, for example after an error.
+    private Task<bool> SaveAsync(StilDataGridEditArgs<Product> args)
+    {
+        if (args.IsNew)
+        {
+            _products.Insert(0, args.Item);
+            _nextSku++;
+        }
+
+        _message = args.IsNew ? $"Added {args.Item.Name}." : $"Saved {args.Item.Name}{(args.ColumnKey is null ? "" : $" ({args.ColumnKey})")}.";
+        return Task.FromResult(true);
+    }
+}
