@@ -41,6 +41,7 @@ public static class DocsPages
         new("Data", StilIcons.Folder,
         [
             new("Data grid", "components/data-grid"),
+            new("Tree grid", "components/tree-grid"),
             new("Tree view", "components/tree-view"),
             new("Calendar and planner", "components/calendar"),
             new("Stat cards", "components/stat-cards"),

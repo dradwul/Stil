@@ -468,6 +468,7 @@ Recurring events and time zones are up to the app.
 | `StilLanguageSelector` | `Cultures` (for example `["en", "sv", "fi"]`), `Current`, `IconOnly`, `Label`, `Variant`, `Appearance`, `Size`, `AlignEnd`, `DropUp`. A language menu; see [Localization](#localization). |
 | `StilPagination` | `@bind-Page` (1-based), `PageCount` or `TotalItems` + `PageSize`, `MaxVisiblePages` (default 7, with ellipses), `ShowFirstLast`, `HrefTemplate` (links, for example `"orders?page={0}"`), `Size`, `Label`, `PreviousText`/`NextText`/`FirstText`/`LastText` |
 | `StilNavGroup` | `Title`, `Icon`, `@bind-Expanded`, `StilNavLink` children. A collapsible group in a vertical `StilNav`; it opens by itself when one of its links is the current page. |
+| `StilTreeGrid<TItem>` | The data grid's columns and parameters (no grouping or `ItemsProvider`) plus `ChildrenSelector`, `LoadChildren` (on demand, with a spinner), `HasChildren`, `ExpandedLevels`, `ExpandAsync()`, `CollapseAsync()`, `ExpandAllAsync()`, `CollapseAllAsync()`. Rows with children show the totals of the rows below them. The WAI-ARIA treegrid pattern. |
 | `StilTreeView<TItem>` | `Items`, `ChildrenSelector`, `ItemText` or `ItemTemplate`, `ItemIcon`, `@bind-SelectedItem`, `@bind-ExpandedItems`, `ExpandAll`, `ItemKey`, `Label`. The WAI-ARIA tree pattern: arrow keys, Home and End move, Right and Left expand and collapse. |
 | `StilDrawer` | Like `StilDialog` (`@bind-Open`, `Title`, `Footer`, …) plus `Position` (Start, End) and `Width`. A side panel for navigation, filters or details. |
 
@@ -571,7 +572,7 @@ Warning toasts use `role="alert"`; the others use `"status"`.
 | `stil-badge`, `stil-avatar` | `StilBadge`, `StilAvatar` |
 | `stil-list`, `stil-list-item` | `StilList`, `StilListItem` |
 | `stil-table` | `StilTable` with `StilColumn` |
-| `stil-data-grid` | `StilDataGrid` with `StilDataGridColumn` and `StilDataGridTemplateColumn` |
+| `stil-data-grid` | `StilDataGrid` with `StilDataGridColumn` and `StilDataGridTemplateColumn`; with `stil-tree-grid`, `StilTreeGrid` |
 | `stil-combobox`, `stil-multi-select`, `stil-chip` | `StilAutocomplete`, `StilMultiSelect` |
 | `stil-date-range` | `StilDateRangePicker` |
 | `stil-slider`, `stil-range` | `StilSlider`, `StilRangeSlider` |

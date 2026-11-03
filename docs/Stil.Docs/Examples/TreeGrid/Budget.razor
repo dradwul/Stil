@@ -1,0 +1,39 @@
+@* Departments roll up into divisions: the division rows show the totals of the rows below them. *@
+<StilTreeGrid @ref="_grid" TItem="CostCentre" Items="_divisions" ChildrenSelector="c => c.Children" ExpandedLevels="1"
+              ItemKey="c => c.Name" Filterable Caption="Budget 2027">
+    <Toolbar>
+        <StilButton Size="StilSize.Small" Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost" OnClick="() => _grid.ExpandAllAsync()">Expand all</StilButton>
+        <StilButton Size="StilSize.Small" Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost" OnClick="() => _grid.CollapseAllAsync()">Collapse all</StilButton>
+    </Toolbar>
+    <Columns>
+        <StilDataGridColumn Property="c => c.Name" Title="Cost centre" />
+        <StilDataGridColumn Property="c => c.Budget" Format="N0" Aggregate="StilAggregate.Sum" Align="StilTextAlign.End" />
+        <StilDataGridColumn Property="c => c.Actual" Format="N0" Aggregate="StilAggregate.Sum" Align="StilTextAlign.End" />
+        <StilDataGridColumn Property="c => c.Remaining" Format="N0" Aggregate="StilAggregate.Sum" Align="StilTextAlign.End" />
+    </Columns>
+</StilTreeGrid>
+
+@code {
+    private StilTreeGrid<CostCentre> _grid = default!;
+
+    private sealed record CostCentre(string Name, decimal Budget = 0, decimal Actual = 0, List<CostCentre>? Children = null)
+    {
+        public decimal Remaining => Budget - Actual;
+    }
+
+    private readonly List<CostCentre> _divisions =
+    [
+        new("Sales", Children:
+        [
+            new("Nordic sales", 1_200_000, 1_050_000),
+            new("Export", 800_000, 860_000),
+            new("Marketing", Children: [new("Campaigns", 450_000, 390_000), new("Events", 150_000, 170_000)]),
+        ]),
+        new("Operations", Children:
+        [
+            new("Facilities", 900_000, 870_000),
+            new("IT", Children: [new("Servers", 300_000, 240_000), new("Laptops", 200_000, 210_000)]),
+        ]),
+        new("Finance", Children: [new("Accounting", 400_000, 380_000), new("Legal", 250_000, 120_000)]),
+    ];
+}

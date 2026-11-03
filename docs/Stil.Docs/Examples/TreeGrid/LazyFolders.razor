@@ -1,0 +1,25 @@
+@* Folders load their contents the first time they are expanded. *@
+<StilTreeGrid TItem="Entry" Items="_root" LoadChildren="LoadAsync" HasChildren="e => e.IsFolder" ItemKey="e => e.Path" Caption="Files">
+    <Columns>
+        <StilDataGridColumn Property="e => e.Name" />
+        <StilDataGridColumn Property="e => e.Size" Title="Size (kB)" Format="N0" Aggregate="StilAggregate.Sum" Align="StilTextAlign.End" />
+    </Columns>
+</StilTreeGrid>
+
+@code {
+    private sealed record Entry(string Path, bool IsFolder, int Size = 0)
+    {
+        public string Name => Path[(Path.LastIndexOf('/') + 1)..];
+    }
+
+    private readonly List<Entry> _root = [new("/docs", true), new("/images", true), new("/readme.md", false, 4)];
+
+    // A database or API call in a real app.
+    private static async Task<IEnumerable<Entry>> LoadAsync(Entry folder)
+    {
+        await Task.Delay(600);
+        return folder.Path == "/docs"
+            ? [new("/docs/guides", true), new("/docs/budget.xlsx", false, 120), new("/docs/plan.pdf", false, 340)]
+            : [new($"{folder.Path}/a.png", false, 210), new($"{folder.Path}/b.png", false, 180)];
+    }
+}

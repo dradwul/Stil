@@ -1,0 +1,42 @@
+@page "/components/tree-grid"
+@using Stil.Docs.Examples.TreeGrid
+
+<DocsHeader Title="Tree grid" Eyebrow="Data">
+    <Lead>Rows with rows below them, in columns: budgets, org charts, bills of materials and folders.</Lead>
+</DocsHeader>
+
+<p>
+    <code>StilTreeGrid</code> is a <a href="components/data-grid">data grid</a> for items with children. It takes the same
+    columns, with their sorting, filters, formats, editing and totals; sorting orders the rows under each parent. It
+    follows the WAI-ARIA treegrid pattern: the grid is one tab stop, Up and Down move between rows, Right expands a row
+    or moves to its first child, Left collapses it or moves to its parent, and Home and End jump to the first and last
+    row. For a plain list of nested items, use the <a href="components/tree-view">tree view</a>.
+</p>
+
+<h2 id="totals">Totals that roll up</h2>
+<DocExample Type="typeof(Budget)">
+    <p>
+        <code>Items</code> are the top-level rows and <code>ChildrenSelector</code> returns a row's children.
+        A row with children shows, in each column with an <code>Aggregate</code>, the total of the rows below it that have
+        no children of their own; the footer adds up all of those. <code>ExpandedLevels</code> chooses how many levels
+        start expanded, and <code>ExpandAllAsync</code> and <code>CollapseAllAsync</code> open and close every row.
+        A filter keeps the matching rows with all rows below them, and opens the rows above them.
+    </p>
+</DocExample>
+
+<h2 id="load-on-demand">Children loaded on demand</h2>
+<DocExample Type="typeof(LazyFolders)">
+    <p>
+        <code>LoadChildren</code> loads a row's children the first time it is expanded, while the row shows a spinner.
+        <code>HasChildren</code> tells which rows get an expand toggle before their children are known; a row whose loaded
+        children are none shows as a leaf. With both <code>ChildrenSelector</code> and <code>LoadChildren</code>, a
+        selector that returns null means "not loaded yet".
+    </p>
+</DocExample>
+
+<h2 id="api">API</h2>
+<p>
+    The tree grid also has the data grid's parameters, except grouping and <code>ItemsProvider</code>. It shows every
+    row without a pager by default (<code>PageSize</code> 0).
+</p>
+<ApiTable Type="typeof(StilTreeGrid<>)" />

@@ -33,9 +33,15 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   fields for text, number, date, enum and bool columns or an `EditTemplate`,
   validation with data annotations next to the fields, `OnRowSave` (return
   false to keep editing), `OnRowCancel` and `AddRowAsync()` for a new row.
+- **Stil for Blazor**: `StilTreeGrid<TItem>`, a data grid for items with
+  children (`ChildrenSelector`, or `LoadChildren` on demand with a spinner).
+  Columns, sorting (per parent), filters (matches keep the rows above and
+  below them), editing and export work as in `StilDataGrid`; rows with
+  children show the totals of the rows below them. The WAI-ARIA treegrid
+  pattern with the arrow keys, Home and End.
 - **Stil CSS**: the `stil-data-grid-totals` row, column resize handles, drag
-  markers, frozen columns, group header rows (`stil-data-grid-group`) and rows being edited (`stil-data-grid-editing`), a `pencil` icon, and `stil.js`'s `downloadFile`, column resizing
-  and moving (`stilcolumnresize`, `stilcolumnmove`), `freezeColumns` and `focusEditor`.
+  markers, frozen columns, group header rows (`stil-data-grid-group`) and rows being edited (`stil-data-grid-editing`), tree grids (`stil-tree-grid`), a `pencil` icon, and `stil.js`'s `downloadFile`, column resizing
+  and moving (`stilcolumnresize`, `stilcolumnmove`), `freezeColumns`, `focusEditor` and `focusRow`.
 
 ## [0.1.0-preview.3] - 2026-11-03
 
