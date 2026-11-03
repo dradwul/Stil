@@ -28,7 +28,7 @@
               SelectionMode="StilSelectionMode.Multiple" @bind-SelectedItems="_selected" ItemKey="o => o.Id"
               RowClass="@(o => o.Status == OrderStatus.Cancelled ? "stil-text-muted" : null)" Caption="Orders, newest first"
               ShowExport ExportFileName="orders.csv" ResizableColumns ReorderableColumns ShowColumnChooser
-              Layout="_layout" LayoutChanged="SaveLayoutAsync">
+              Layout="_layout" LayoutChanged="SaveLayoutAsync" ShowGroupChooser @bind-GroupBy="_groupBy">
     <Toolbar>
         <span class="stil-text-muted">@(_selected.Count == 0 ? "Select orders to act on several at once." : $"{_selected.Count} selected")</span>
         @if (_selected.Count > 0)
@@ -100,6 +100,9 @@
     // The column layout (order, widths, hidden columns, sort) is kept in the browser, so it survives a reload.
     private const string LayoutKey = "stil-demo-orders-layout";
     private StilDataGridLayout? _layout;
+
+    // Grouped by status, with the number of orders and the total amount per status.
+    private IReadOnlyList<string> _groupBy = ["Status"];
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

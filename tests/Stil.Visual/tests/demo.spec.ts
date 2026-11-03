@@ -67,7 +67,9 @@ for (const mode of MODES) {
     test.describe(`demo orders, ${mode}`, { tag: '@visual' }, () => {
         test('page', async ({ page }) => {
             await openDemo(page, '/orders', mode);
-            await expect(page.locator('.stil-data-grid tbody tr')).toHaveCount(10);
+            // Grouped by status: the first page is ten pending orders under their group header.
+            await expect(page.locator('.stil-data-grid tbody tr:not(.stil-data-grid-group)')).toHaveCount(10);
+            await expect(page.locator('.stil-data-grid-group')).toHaveCount(1);
             await expect(page).toHaveScreenshot(`orders-${mode}.png`, { fullPage: true });
         });
 
@@ -75,6 +77,7 @@ for (const mode of MODES) {
             await openDemo(page, '/orders', mode);
             const grid = page.locator('.stil-data-grid');
             const header = grid.locator('th', { has: page.getByRole('button', { name: 'Customer' }) });
+            await expect(grid.locator('.stil-data-grid-group')).toHaveCount(1);
             await header.getByRole('button', { name: 'Customer' }).click();
             await expect(header).toHaveAttribute('aria-sort', 'ascending');
             await page.mouse.move(0, 0);
