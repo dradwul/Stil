@@ -976,3 +976,8 @@ export function closeDialog(dialog) {
 }
 
 if (typeof document !== 'undefined') init();
+
+// Focuses the first field of the row or cell being edited in a data grid (StilDataGrid EditMode).
+export function focusEditor(table) {
+    table?.querySelector('[data-stil-editor] :is(input, select, textarea)')?.focus();
+}

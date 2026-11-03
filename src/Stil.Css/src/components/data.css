@@ -195,6 +195,9 @@ th[data-stil-drop="after"]:dir(rtl) { box-shadow: inset 3px 0 0 var(--_accent); 
 
 .stil-data-grid thead [data-stil-frozen] { z-index: 3; }
 
+/* An open dropdown in a frozen cell stays above the frozen cells of the rows below. */
+.stil-data-grid [data-stil-frozen]:has(details[open]) { z-index: 4; }
+
 .stil-data-grid [data-stil-frozen-edge="start"] { box-shadow: inset -1px 0 0 var(--stil-color-border-strong); }
 
 .stil-data-grid [data-stil-frozen-edge="end"] { box-shadow: inset 1px 0 0 var(--stil-color-border-strong); }
@@ -252,4 +255,29 @@ th[data-stil-drop="after"]:dir(rtl) { box-shadow: inset 3px 0 0 var(--_accent); 
 :is(.stil-data-grid-group-title, .stil-data-grid-group-count) {
     color: var(--stil-color-text-muted);
     font-weight: var(--stil-font-weight-normal);
+}
+
+/* Editing in place (StilDataGrid EditMode): the row being edited is <tr class="stil-data-grid-editing">,
+   with Stil fields in its [data-stil-editor] cells; in cell editing, [data-stil-editable] cells
+   start editing when clicked. .stil-data-grid-commands holds the Save and Cancel buttons. */
+.stil-data-grid-editing > td {
+    padding-block: var(--stil-space-1);
+    vertical-align: top;
+    background-color: color-mix(in srgb, var(--_accent) 6%, var(--stil-color-surface));
+}
+
+.stil-data-grid-editing .stil-field {
+    min-width: 6rem;
+    margin: 0;
+}
+
+.stil-data-grid-editing .stil-field-error { white-space: normal; }
+
+.stil-data-grid [data-stil-editable] { cursor: text; }
+
+.stil-data-grid [data-stil-editable]:hover { box-shadow: inset 0 0 0 1px var(--stil-color-border-strong); }
+
+.stil-data-grid-commands {
+    display: inline-flex;
+    gap: var(--stil-space-1);
 }
