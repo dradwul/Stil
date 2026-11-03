@@ -42,6 +42,8 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 - **Stil CSS**: the `stil-data-grid-totals` row, column resize handles, drag
   markers, frozen columns, group header rows (`stil-data-grid-group`) and rows being edited (`stil-data-grid-editing`), tree grids (`stil-tree-grid`), a `pencil` icon, and `stil.js`'s `downloadFile`, column resizing
   and moving (`stilcolumnresize`, `stilcolumnmove`), `freezeColumns`, `focusEditor` and `focusRow`.
+- **Stil CSS**: every GitHub release has `stil.css`, `stil.min.css` and
+  `stil.js` attached.
 
 ## [0.1.0-preview.3] - 2026-11-03
 

@@ -257,7 +257,8 @@ else publishes.
 The workflow takes the version from the tag. It checks `dist/`, builds,
 tests, packs, sets the template's default `Stil` version to the tag (so new
 apps reference the release), checks the packages, pushes them with their
-symbol packages, and creates a GitHub release with the packages attached.
+symbol packages, and creates a GitHub release with the packages and the Stil
+CSS files (`stil.css`, `stil.min.css`, `stil.js`) attached.
 A version that is already on nuget.org is skipped, so a failed run can be
 retried. Published versions cannot be deleted from nuget.org, only unlisted.
 
