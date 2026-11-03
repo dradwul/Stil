@@ -7,24 +7,24 @@ a set of themeable Blazor components built on Stil CSS.
 | --- | --- | --- |
 | Stil for Blazor App | `stil-app` | A Blazor Web App with Stil set up: a navbar, a color-mode switch, a theme, dialogs and toasts, and optional sample pages. |
 
-> **Status:** early preview (`0.1.0`, not on NuGet). Requires the .NET 10 SDK.
+> **Status:** early preview (`0.1.x`, prereleases on NuGet). Requires the .NET 10 SDK.
 
 ## Install
 
-From a clone of the repository:
+Install the templates from nuget.org. While Stil is in preview, name the
+version; the latest is listed on [nuget.org](https://www.nuget.org/packages/Stil.Templates):
+
+```shell
+dotnet new install Stil.Templates::0.1.0-preview.3
+```
+
+From a clone of the repository, install the folder instead:
 
 ```shell
 dotnet new install templates/Stil.Templates/content/StilApp
 ```
 
-Or pack it first and install the package:
-
-```shell
-dotnet pack templates/Stil.Templates -o artifacts
-dotnet new install artifacts/Stil.Templates.0.1.0.nupkg
-```
-
-To remove it again, run `dotnet new uninstall Stil.Templates` (or the folder path).
+To remove them again, run `dotnet new uninstall Stil.Templates` (or the folder path).
 
 ## Create an app
 
@@ -34,13 +34,9 @@ cd Contoso.Shop
 dotnet run
 ```
 
-The app references the `Stil` package, which is not on nuget.org. Pack
-`src/Stil.Blazor` into a local folder and add that folder as a package source:
-
-```shell
-dotnet pack src/Stil.Blazor -o ~/stil-feed
-dotnet nuget add source ~/stil-feed --name stil-local
-```
+The app references the `Stil` version the templates were released with
+(`--StilVersion` picks another). To try an unreleased build of `Stil`, see
+[Try a local build in another app](https://github.com/dradwul/Stil#try-a-local-build-in-another-app).
 
 ## Options
 

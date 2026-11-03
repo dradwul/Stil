@@ -16,17 +16,17 @@ coming from Bootstrap, see the [migration guide](MIGRATING-FROM-BOOTSTRAP.md).
 
 Use one of these options:
 
-- **npm:** run `npm install stil-css`, then import `stil-css`
-  (`dist/stil.css`) or `stil-css/min`. The package is prepared under that
-  name but not yet published.
-- **CDN:** once the npm package is published, jsDelivr serves it:
+- **Download:** every [GitHub release](https://github.com/dradwul/Stil/releases)
+  has `stil.css`, `stil.min.css` and `stil.js` attached. You can also copy
+  [`dist/stil.css`](dist/stil.css) or [`dist/stil.min.css`](dist/stil.min.css)
+  from the repository.
+- **CDN:** jsDelivr serves the files from a release tag:
 
   ```html
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/stil-css@0.1.0/dist/stil.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/dradwul/Stil@v0.1.0-preview.3/src/Stil.Css/dist/stil.min.css" />
   ```
 
-- **Copy the file:** [`dist/stil.css`](dist/stil.css) or
-  [`dist/stil.min.css`](dist/stil.min.css).
+- **npm:** the package is prepared as `stil-css` but not published yet.
 - **Blazor/.NET:** the `Stil` NuGet package serves the files as
   `_content/Stil/stil.css`, `stil.min.css` and `stil.js`. See
   [Stil for Blazor](../Stil.Blazor/README.md).

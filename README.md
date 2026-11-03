@@ -24,9 +24,21 @@ CSS without clashing. You change the look by overriding a small set of CSS
 custom properties (design tokens). You do not need to rebuild or fork the
 library.
 
-> **Status:** early preview (`0.1.x`). Class names, token
-> names and component APIs may still change before `1.0`. See the
+> **Status:** early preview (`0.1.x`, prereleases on NuGet). Class names,
+> token names and component APIs may still change before `1.0`. See the
 > [roadmap](ROADMAP.md).
+
+## Install
+
+| You want | Do this |
+| --- | --- |
+| A new Blazor app with Stil set up | `dotnet new install Stil.Templates::0.1.0-preview.3`, then `dotnet new stil-app -n MyApp` ([templates](templates/Stil.Templates/README.md)) |
+| Stil in an existing Blazor app | `dotnet add package Stil --prerelease`, then follow [Get started](src/Stil.Blazor/README.md#get-started) |
+| Charts | `dotnet add package Stil.Charts --prerelease` ([charts](src/Stil.Charts/README.md)) |
+| Only the CSS | Download `stil.min.css` from a [release](https://github.com/dradwul/Stil/releases), or link it from jsDelivr ([Stil CSS](src/Stil.Css/README.md#install)) |
+
+All packages require .NET 10. The latest version is on
+[nuget.org](https://www.nuget.org/packages/Stil).
 
 ## Quick look
 
@@ -107,9 +119,13 @@ and `stil.min.css`, so the .NET build does not need Node.js.
 ## Develop
 
 Requires the [.NET 10 SDK](https://dotnet.microsoft.com/download), plus
-Node.js 20 or later if you change the CSS.
+Node.js 20 or later if you change the CSS. The compiled CSS in
+`src/Stil.Css/dist/` is committed, so building and testing the .NET projects
+needs no Node.js.
 
 ```shell
+git clone https://github.com/dradwul/Stil.git
+cd Stil
 dotnet build Stil.sln
 dotnet test Stil.sln
 ```
@@ -163,6 +179,29 @@ dotnet pack src/Stil.Blazor -o artifacts
 dotnet pack src/Stil.Charts -o artifacts
 dotnet pack templates/Stil.Templates -o artifacts
 ```
+
+### Try a local build in another app
+
+Pack with a version of its own, add the folder as a package source once, and
+reference that version from your app. Run the first two commands from the
+repository root:
+
+```shell
+dotnet pack src/Stil.Blazor -o artifacts -p:Version=0.1.0-local.1
+dotnet nuget add source "$PWD/artifacts" --name stil-local
+```
+
+```shell
+dotnet add package Stil --version 0.1.0-local.1
+```
+
+NuGet caches a package by its version, so give every new pack a new version
+(`0.1.0-local.2`, …). Or clear the cache with
+`dotnet nuget locals global-packages --clear`. To stop using the folder, run
+`dotnet nuget remove source stil-local`.
+
+To test the stylesheet in any web page without a package, link
+`src/Stil.Css/dist/stil.css` directly, or open the plain-HTML showcase.
 
 ## Contributing
 

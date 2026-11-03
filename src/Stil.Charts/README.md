@@ -11,13 +11,17 @@ sparkline charts.
 - Every chart has an accessible name, a generated description of the data and
   a data table, so screen reader users get the same information.
 
-> **Status:** early preview (`0.1.0`, not on NuGet). Requires .NET 10 and the
-> `Stil` package. APIs may still change before `1.0`.
+> **Status:** early preview (`0.1.x`, prereleases on NuGet). Requires .NET 10
+> and the `Stil` package. APIs may still change before `1.0`.
 
 ## Get started
 
-1. Reference the package next to `Stil`, and add the namespace to
+1. Install the package next to `Stil`, and add the namespace to
    `_Imports.razor`:
+
+   ```shell
+   dotnet add package Stil.Charts --prerelease
+   ```
 
    ```razor
    @using Stil.Charts
