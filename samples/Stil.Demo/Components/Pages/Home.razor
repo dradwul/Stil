@@ -360,6 +360,69 @@
     </div>
 </section>
 
+<section class="demo-section" aria-labelledby="media">
+    <h2 id="media">Layout and media</h2>
+    <p>Drag the divider (or focus it and use the arrow keys, Home, End and Enter), reload to see the skeletons, and crop an avatar.</p>
+    <div class="demo-mail stil-card">
+        <StilSplitter @bind-Size="_mailSplit" Min="25" Max="75" style="height: 18rem">
+            <First>
+                <ul class="stil-list stil-list-flush stil-mb-0" aria-label="Inbox">
+                    @foreach (var mail in _mails)
+                    {
+                        <li class="stil-list-item"><button type="button" class="stil-btn stil-btn-ghost stil-btn-secondary stil-w-100 stil-justify-content-start" @onclick="() => OpenMail(mail)">@mail.Subject</button></li>
+                    }
+                </ul>
+            </First>
+            <Second>
+                <div class="stil-p-4" aria-busy="@(_mailLoading ? "true" : "false")">
+                    @if (_mailLoading)
+                    {
+                        <StilSkeleton Shape="StilSkeletonShape.Text" Width="40%" Label="" />
+                        <StilSkeleton Shape="StilSkeletonShape.Text" Lines="4" class="stil-mt-3" />
+                    }
+                    else
+                    {
+                        <h3 class="stil-fs-md">@_openMail.Subject</h3>
+                        <p class="stil-mb-0">@_openMail.Body</p>
+                    }
+                </div>
+            </Second>
+        </StilSplitter>
+    </div>
+    <p class="stil-text-muted stil-fs-sm stil-mt-2">List width: @_mailSplit.ToString("0")%</p>
+
+    <div class="stil-grid stil-mt-4">
+        <div class="stil-col-md-6">
+            <h3>Carousel</h3>
+            <StilCarousel Items="_slides" Label="Seasons" Height="12rem" @bind-Index="_slide">
+                <ItemTemplate Context="slide">
+                    <div class="demo-slide" style="@SlideStyle(slide)"><span>@slide.Title</span></div>
+                </ItemTemplate>
+            </StilCarousel>
+        </div>
+        <div class="stil-col-md-6">
+            <h3>Avatar</h3>
+            <div class="stil-cluster stil-align-items-start">
+                <StilImageCropper @ref="_cropper" Source="@_avatarSource" Round OutputWidth="256" style="width: 12rem" />
+                <div class="stil-stack stil-gap-2">
+                    @if (_avatar is not null)
+                    {
+                        <img src="@_avatar" alt="Your avatar" width="64" height="64" class="demo-avatar" />
+                    }
+                    <StilButton OnClick="UseAvatarAsync">Use as avatar</StilButton>
+                    <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline" OnClick="() => _showCamera = !_showCamera">
+                        @(_showCamera ? "Hide camera" : "Use the camera")
+                    </StilButton>
+                </div>
+            </div>
+            @if (_showCamera)
+            {
+                <StilCameraCapture class="stil-mt-3" OnCapture="image => { _avatarSource = image.DataUrl; _showCamera = false; }" />
+            }
+        </div>
+    </div>
+</section>
+
 <section class="demo-section" aria-labelledby="trees">
     <h2 id="trees">Tree view and navigation groups</h2>
     <div class="stil-grid">
@@ -673,6 +736,55 @@
     private string? _personalNumber;
     private string? _code;
     private int _wizardStep;
+    private double _mailSplit = 35;
+    private bool _mailLoading;
+    private int _slide;
+    private StilImageCropper? _cropper;
+    private string _avatarSource = "stil-logo.svg";
+    private string? _avatar;
+    private bool _showCamera;
+
+    private static readonly DemoMail[] _mails =
+    [
+        new("Order #1048 shipped", "Your order left our warehouse in Borås this morning and arrives on Thursday."),
+        new("Invoice for October", "The invoice for October is attached. Payment is due on 30 November."),
+        new("New login from Oslo", "We noticed a sign-in from a new device. If it was you, there is nothing to do."),
+    ];
+
+    private DemoMail _openMail = _mails[0];
+
+    private static readonly DemoSlide[] _slides =
+    [
+        new("Winter", "linear-gradient(135deg, #a5d8ff, #1c7ed6)"),
+        new("Spring", "linear-gradient(135deg, #b2f2bb, #2f9e44)"),
+        new("Summer", "linear-gradient(135deg, #ffec99, #f08c00)"),
+        new("Autumn", "linear-gradient(135deg, #ffc9c9, #c92a2a)"),
+    ];
+
+    private sealed record DemoMail(string Subject, string Body);
+
+    private sealed record DemoSlide(string Title, string Color);
+
+    private static string SlideStyle(DemoSlide slide) => $"background: {slide.Color}";
+
+    // Opening a message shows skeletons for a moment, as a slow load would.
+    private async Task OpenMail(DemoMail mail)
+    {
+        _mailLoading = true;
+        StateHasChanged();
+        await Task.Delay(800);
+        _openMail = mail;
+        _mailLoading = false;
+    }
+
+    private async Task UseAvatarAsync()
+    {
+        if (_cropper is not null && await _cropper.CropAsync() is { } image)
+        {
+            _avatar = image.DataUrl;
+            Toasts.Success($"{image.Width}×{image.Height} {image.ContentType}, {image.Bytes.Length / 1024.0:0.#} kB. In an app, upload image.Bytes.", "Avatar cropped");
+        }
+    }
     private readonly WizardSignUp _wizard = new();
     private int _rtlPage = 2;
     private string? _rtlName = "ليلى";

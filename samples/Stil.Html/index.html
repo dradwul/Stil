@@ -61,6 +61,7 @@
                 <a href="#progress">Progress</a>
                 <a href="#spinner">Spinner</a>
                 <a href="#toasts">Toasts</a>
+                <a href="#media">Layout and media</a>
                 <a href="#rtl">Right to left</a>
                 <a href="#utilities">Utilities</a>
                 <div class="theme-picker">
@@ -1671,6 +1672,65 @@
                         </div>
                         <button type="button" class="stil-close" aria-label="Close" onclick="this.parentElement.remove()"></button>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="component-group" id="media">
+            <h1>Layout and media</h1>
+            <p>Skeletons while content loads, resizable panes, a carousel and a PDF frame. With <code>stil.js</code> the splitter resizes by dragging and with the keyboard, and the carousel buttons and dots work; without it the carousel still scrolls and swipes.</p>
+
+            <h2>Skeleton</h2>
+            <div class="example">
+                <div class="stil-cluster stil-align-items-start stil-gap-3" aria-busy="true">
+                    <span class="stil-visually-hidden" role="status">Loading…</span>
+                    <span class="stil-skeleton stil-skeleton-circle" aria-hidden="true"></span>
+                    <div class="stil-flex-1" aria-hidden="true">
+                        <span class="stil-skeleton stil-skeleton-text" style="width: 40%"></span>
+                        <span class="stil-skeleton stil-skeleton-text"></span>
+                        <span class="stil-skeleton stil-skeleton-text" style="width: 60%"></span>
+                    </div>
+                </div>
+            </div>
+
+            <h2>Splitter</h2>
+            <div class="example">
+                <div class="stil-splitter stil-card" style="--stil-splitter-size: 35; height: 10rem">
+                    <div class="stil-splitter-pane stil-p-3" id="split-folders">Folders</div>
+                    <div class="stil-splitter-handle" role="separator" tabindex="0" aria-label="Resize panes" aria-controls="split-folders" aria-orientation="vertical" aria-valuenow="35" aria-valuemin="20" aria-valuemax="80"></div>
+                    <div class="stil-splitter-pane stil-p-3">Messages</div>
+                </div>
+            </div>
+
+            <h2>Carousel</h2>
+            <div class="example">
+                <section class="stil-carousel" aria-roledescription="carousel" aria-label="Seasons">
+                    <div class="stil-carousel-track" style="height: 8rem" tabindex="0">
+                        <div class="stil-carousel-slide stil-bg-primary stil-p-4" role="group" aria-roledescription="slide" aria-label="1 of 3">Winter</div>
+                        <div class="stil-carousel-slide stil-bg-success stil-p-4" role="group" aria-roledescription="slide" aria-label="2 of 3">Spring</div>
+                        <div class="stil-carousel-slide stil-bg-warning stil-p-4" role="group" aria-roledescription="slide" aria-label="3 of 3">Summer</div>
+                    </div>
+                    <div class="stil-carousel-controls">
+                        <button class="stil-btn stil-btn-ghost stil-btn-secondary stil-btn-sm stil-btn-icon stil-carousel-prev" type="button" aria-label="Previous slide"><span class="stil-icon stil-icon-chevron-left" aria-hidden="true"></span></button>
+                        <div class="stil-carousel-dots">
+                            <button type="button" aria-label="1 of 3" aria-current="true"></button>
+                            <button type="button" aria-label="2 of 3" aria-current="false"></button>
+                            <button type="button" aria-label="3 of 3" aria-current="false"></button>
+                        </div>
+                        <button class="stil-btn stil-btn-ghost stil-btn-secondary stil-btn-sm stil-btn-icon stil-carousel-next" type="button" aria-label="Next slide"><span class="stil-icon stil-icon-chevron-right" aria-hidden="true"></span></button>
+                    </div>
+                </section>
+            </div>
+
+            <h2>PDF frame</h2>
+            <div class="example">
+                <div class="stil-pdf">
+                    <div class="stil-pdf-toolbar">
+                        <span class="stil-pdf-title">Invoice 1042</span>
+                        <a class="stil-btn stil-btn-ghost stil-btn-secondary stil-btn-sm" href="#media" download><span class="stil-icon stil-icon-download" aria-hidden="true"></span> Download</a>
+                        <a class="stil-btn stil-btn-ghost stil-btn-secondary stil-btn-sm" href="#media"><span class="stil-icon stil-icon-external" aria-hidden="true"></span> Open in a new tab</a>
+                    </div>
+                    <p class="stil-pdf-fallback">This browser cannot show the PDF here. Download it or open it in a new tab.</p>
                 </div>
             </div>
         </section>
