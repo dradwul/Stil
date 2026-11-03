@@ -22,8 +22,14 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   `ReorderableColumns` (dragging headers), `ShowColumnChooser`, frozen start
   and end columns (`Frozen`), and `@bind-Layout` (`StilDataGridLayout`) to
   save and restore the order, widths, hidden columns and sort.
+- **Stil for Blazor**: grouping in `StilDataGrid`: `@bind-GroupBy` (one or
+  more columns) and `ShowGroupChooser`, with group headers that show the
+  value, the row count and the column totals, and collapse and expand with
+  the mouse and keyboard (all at once from the toolbar). Paging counts rows
+  and virtualization shows the headers in place. With an `ItemsProvider`,
+  `StilDataGridRequest.GroupBy` and `ComputeGroups` give the groups.
 - **Stil CSS**: the `stil-data-grid-totals` row, column resize handles, drag
-  markers and frozen columns, and `stil.js`'s `downloadFile`, column resizing
+  markers, frozen columns and group header rows (`stil-data-grid-group`), and `stil.js`'s `downloadFile`, column resizing
   and moving (`stilcolumnresize`, `stilcolumnmove`) and `freezeColumns`.
 
 ## [0.1.0-preview.3] - 2026-11-03

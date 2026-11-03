@@ -19,7 +19,7 @@ something usable.
 | 8 | Language and localization | ✅ Done |
 | 9 | Forms 2: popover, time, slider, wizard, rating, color, masks | ✅ Done |
 | 10 | Layout and media: skeleton, splitter, carousel, image cropper, PDF viewer | ✅ Done |
-| 11 | Data grid 2, in five parts: totals and export ✅, column layout ✅, grouping, inline editing, tree grid | In progress |
+| 11 | Data grid 2, in five parts: totals and export ✅, column layout ✅, grouping ✅, inline editing, tree grid | In progress |
 | 12 | Capture and records: scanner, QR codes, signature, activity log, chat | Planned |
 | 13 | Boards and workspace: kanban, command palette, recurring events, Gantt | Planned |
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | Planned |
@@ -64,7 +64,7 @@ end, so they never keep a phase open.
     masked and PIN inputs, popover, stepper and wizard.
   - Layout and media: skeleton, splitter, carousel, image cropper, camera
     and PDF viewer.
-  - 727 bUnit tests.
+  - 736 bUnit tests.
 - **Stil.Charts:** SVG line, area, bar, donut and sparkline charts that
   follow the theme, with 68 bUnit tests.
 - **Stil.Templates:** `dotnet new stil-app`.
@@ -734,20 +734,28 @@ the browser, with 8 bUnit tests.)
 column chooser (move earlier, move later) instead of on the header, so the
 header keeps its keys for sorting.
 
-### Phase 11.3: Grouping
+### Phase 11.3: Grouping ✅ Done
 
-- [ ] Grouping by one or more columns (`@bind-GroupBy`, or a group menu in
-  the header), with group headers that show the value and the count.
-- [ ] Group headers collapse and expand with the mouse and keyboard; all
-  groups at once from the toolbar.
-- [ ] Group sums from the column aggregates (11.1) in each group header or
-  footer.
-- [ ] Paging counts groups' rows, and virtualization works with groups.
-- [ ] Server-side data: `StilDataGridRequest` carries the grouping, and
-  `ItemsProvider` can return groups with their counts and sums.
+- [x] Grouping by one or more columns (`@bind-GroupBy`, or the group chooser
+  in the toolbar, `ShowGroupChooser`), with group headers that show the
+  value and the count.
+- [x] Group headers collapse and expand with the mouse and keyboard (Enter,
+  Space, the left and right arrow keys); all groups at once from the toolbar.
+- [x] Group sums from the column aggregates (11.1) in each group header,
+  under their columns.
+- [x] Paging counts groups' rows, and virtualization works with groups.
+- [x] Server-side data: `StilDataGridRequest` carries the grouping
+  (`GroupBy`), and `ItemsProvider` can return groups with their counts and
+  sums (`ComputeGroups`).
 
 **Done when:** the orders page groups by status with the count and the total
-amount per status.
+amount per status. ✅ (Checked in the browser, with 9 bUnit tests.)
+
+**Changes from the plan:** the group menu is in the toolbar
+(`ShowGroupChooser`), not in each header, so the headers keep their keys for
+sorting and resizing. Paging counts the rows that show: a group that continues
+on the next page repeats its header there, and the rows of a collapsed group
+leave the pages.
 
 ### Phase 11.4: Inline editing
 
