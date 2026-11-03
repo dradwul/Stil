@@ -22,7 +22,8 @@ something usable.
 | 11 | Data grid 2, in five parts: totals and export ✅, column layout, grouping, inline editing, tree grid | In progress |
 | 12 | Capture and records: scanner, QR codes, signature, activity log, chat | Planned |
 | 13 | Boards and workspace: kanban, command palette, recurring events, Gantt | Planned |
-| 14 | Rich text and charts 2: editor, scatter, gauge, heat map, combined | Planned |
+| 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | Planned |
+| V2 | Version 2, Stil Sites: section blocks, page model, a visual page builder, content | Planned (after 1.0) |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -838,13 +839,26 @@ grids.
 **Done when:** the demo has a task board, a command palette and a resource
 schedule for meeting rooms.
 
-## Phase 14: Rich text and charts 2
+## Phase 14: Markdown, rich text and charts 2
 
 Goal: writing formatted text and showing more kinds of data, both in the Stil
-look and without large dependencies.
+look and without large dependencies. Markdown comes first: it is smaller, it
+is easier to store, compare and search than HTML, and the rich text editor
+reuses its toolbar.
 
 **Plan:**
 
+- [ ] `Stil.Markdown`, a package of its own on top of Markdig (BSD licence,
+  the standard .NET Markdown library), so the core `Stil` package stays
+  free of dependencies, as `Stil.Charts` does:
+  - `StilMarkdown`: renders Markdown safely (raw HTML off, safe links) with
+    Stil's typography: headings, lists, tables, code blocks, quotes, task
+    lists. It works in static SSR.
+  - `StilMarkdownEditor`: a text area with a Stil toolbar (bold, italic,
+    heading, lists, link, code, quote) and keyboard shortcuts, and a preview
+    beside it or in a tab. `@bind-Value`, EditForm validation (required, max
+    length), and images through `StilFileUpload` (the app stores them and
+    returns the URL).
 - [ ] `StilRichTextEditor`: bold, italic, headings, lists, links, quotes and
   code, with a Stil toolbar and keyboard shortcuts, on top of
   `contenteditable`. The output is sanitized HTML (an allow-list of tags), or
@@ -861,9 +875,78 @@ look and without large dependencies.
   - Combined charts: bars and a line in one chart, with a second value axis.
 - [ ] Docs, demo sections and bUnit tests.
 
-**Done when:** the demo's order page has notes written in the editor, and its
-dashboard shows a gauge, a heat map of orders per hour, and revenue as bars
+**Done when:** the demo's order page has notes written in Markdown, a
+product description written in the rich text editor, and its dashboard shows a gauge, a heat map of orders per hour, and revenue as bars
 with a margin line.
+
+---
+
+## Version 2: Stil Sites (after 1.0)
+
+Goal: Stil builds whole websites, not only apps and dashboards: marketing
+pages, product sites and content pages, made from Stil blocks and edited
+visually. Few Blazor libraries offer this. It is a product rather than a
+component, so it comes in four steps that are each useful on their own, and it
+starts once phases 11–14 are done and `1.0` has a stable API.
+
+Blocks and the page model (V2.1, V2.2) belong in `Stil`. The builder and the
+content tools (V2.3, V2.4) are a package of their own (`Stil.Builder`), so the
+core stays a component library.
+
+### Phase V2.1: Section blocks
+
+- [ ] Ready-made page sections in CSS and Blazor: hero, feature grid, pricing
+  table, testimonials, logo cloud, call to action, FAQ (on the accordion),
+  stats band, team, contact, footer, a header with a mega menu, a blog list
+  and an article layout.
+- [ ] Each block follows the theme and dark mode, works in static SSR, loads
+  fast (no JavaScript where none is needed), and meets WCAG AA.
+- [ ] A starter template (`dotnet new stil-site`) for a product site.
+
+**Done when:** a product site with a home, pricing, blog and contact page can
+be built from the blocks without custom CSS.
+
+### Phase V2.2: Page model
+
+- [ ] Pages as data: a list of blocks with their settings, stored as JSON.
+  `StilPage` renders a page from it, and blocks describe their settings so
+  editors can be generated.
+- [ ] SEO and sharing: title, description, Open Graph and canonical links
+  (`StilSeo`), a sitemap and robots endpoint, and structured data for
+  articles.
+- [ ] A theme per site (`StilTheme` stored with the pages), and pages per
+  language with the localization from Phase 8.
+
+**Done when:** the starter site's pages come from JSON in a database and
+score well in a Lighthouse SEO check.
+
+### Phase V2.3: The builder
+
+- [ ] A visual editor in `Stil.Builder`: a canvas with the page, blocks dragged
+  in from a library and reordered, and a settings panel generated from each
+  block's settings (text, Markdown, images, colors, links).
+- [ ] Undo and redo, a desktop and phone preview, drafts and publishing, and
+  a history of published versions.
+- [ ] Storage through `IStilPageStore`, which the app implements (a database,
+  files or a headless CMS); Stil ships an in-memory and a file store.
+- [ ] Built with Stil's own components: splitter, wizard, popover, image
+  cropper and the Markdown editor.
+
+**Done when:** someone who does not code can build and publish the starter
+site's home page in the builder.
+
+### Phase V2.4: Content
+
+- [ ] A media library: upload, crop, alt texts and reuse of images.
+- [ ] A form builder: contact and sign-up forms from fields, with submissions
+  in the activity log (Phase 12) and e-mail through a service the app plugs in.
+- [ ] Blog posts and pages written in Markdown, with authors, tags and
+  publishing dates.
+
+**Done when:** the starter site has a blog and a contact form that are run
+entirely from the builder.
+
+---
 
 ## Ideas for later (no phase yet)
 
