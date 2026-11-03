@@ -10,6 +10,7 @@ public static class StilIcons
 {
     public const string ArrowLeft = "arrow-left";
     public const string ArrowRight = "arrow-right";
+    public const string Camera = "camera";
     public const string Check = "check";
     public const string ChevronDown = "chevron-down";
     public const string ChevronLeft = "chevron-left";
@@ -19,6 +20,7 @@ public static class StilIcons
     public const string ChevronsRight = "chevrons-right";
     public const string Close = "close";
     public const string Danger = "danger";
+    public const string Download = "download";
     public const string External = "external";
     public const string File = "file";
     public const string Filter = "filter";

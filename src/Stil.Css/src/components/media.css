@@ -1,0 +1,305 @@
+/* Skeleton: placeholder shapes while content loads. Put them in an element with aria-busy="true"
+   and a visually hidden "Loading…"; the shapes themselves are aria-hidden.
+   <span class="stil-skeleton stil-skeleton-text" style="width: 60%"></span>
+   <span class="stil-skeleton stil-skeleton-circle" style="--stil-skeleton-size: 2.5rem"></span>
+   <span class="stil-skeleton" style="height: 8rem"></span> */
+.stil-skeleton {
+    display: block;
+    width: 100%;
+    height: 1rem;
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface-muted);
+    background-image: linear-gradient(90deg,
+        transparent 0,
+        color-mix(in srgb, var(--stil-color-surface) 60%, transparent) 50%,
+        transparent 100%);
+    background-repeat: no-repeat;
+    background-size: 40% 100%;
+    animation: stil-skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+.stil-skeleton-text {
+    height: 0.75em;
+    margin-block: 0.375em;
+    border-radius: var(--stil-radius-sm);
+}
+
+.stil-skeleton-circle {
+    --stil-skeleton-size: 2.5rem;
+    flex: none;
+    width: var(--stil-skeleton-size);
+    height: var(--stil-skeleton-size);
+    border-radius: 50%;
+}
+
+@keyframes stil-skeleton-shimmer {
+    from { background-position: -40% 0; }
+    to { background-position: 140% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stil-skeleton { animation: none; background-image: none; }
+}
+
+/* Splitter: two panes with a draggable separator. --stil-splitter-size is the first pane's size
+   in percent. stil.js makes the separator draggable and keyboard-resizable (the WAI-ARIA window
+   splitter pattern) and fires stilsplit (detail.size) when it changes.
+   <div class="stil-splitter" style="--stil-splitter-size: 35">
+     <div class="stil-splitter-pane">…</div>
+     <div class="stil-splitter-handle" role="separator" tabindex="0" aria-valuenow="35" aria-valuemin="15" aria-valuemax="85" aria-controls="…"></div>
+     <div class="stil-splitter-pane">…</div>
+   </div> */
+.stil-splitter {
+    --stil-splitter-size: 50;
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.stil-splitter-vertical { flex-direction: column; }
+
+.stil-splitter-pane {
+    min-width: 0;
+    min-height: 0;
+    overflow: auto;
+}
+
+.stil-splitter-pane:first-child { flex: 0 0 calc(var(--stil-splitter-size) * 1%); }
+
+.stil-splitter-pane:last-child { flex: 1 1 0; }
+
+.stil-splitter-handle {
+    position: relative;
+    flex: none;
+    width: 0.5rem;
+    margin-inline: -0.25rem;
+    z-index: 1;
+    cursor: col-resize;
+    touch-action: none;
+}
+
+.stil-splitter-vertical > .stil-splitter-handle {
+    width: auto;
+    height: 0.5rem;
+    margin: -0.25rem 0;
+    cursor: row-resize;
+}
+
+/* The visible line, thicker on hover, while dragging and with keyboard focus. */
+.stil-splitter-handle::before {
+    content: "";
+    position: absolute;
+    inset: 0 calc(50% - 0.5px);
+    background-color: var(--stil-color-border);
+    transition: background-color var(--stil-duration-fast) var(--stil-easing), inset var(--stil-duration-fast) var(--stil-easing);
+}
+
+.stil-splitter-vertical > .stil-splitter-handle::before { inset: calc(50% - 0.5px) 0; }
+
+.stil-splitter-handle:is(:hover, :focus-visible, [data-dragging])::before {
+    inset-inline: calc(50% - 2px);
+    background-color: var(--_accent);
+}
+
+.stil-splitter-vertical > .stil-splitter-handle:is(:hover, :focus-visible, [data-dragging])::before {
+    inset: calc(50% - 2px) 0;
+}
+
+.stil-splitter-handle:focus-visible { outline: none; }
+
+/* Carousel: slides in a horizontal scroll-snap track, so it scrolls and swipes without
+   JavaScript. stil.js wires the previous, next and dot buttons and autoplay.
+   <section class="stil-carousel" aria-roledescription="carousel" aria-label="Products">
+     <div class="stil-carousel-track" tabindex="0"><div class="stil-carousel-slide" role="group" aria-roledescription="slide" aria-label="1 of 3">…</div>…</div>
+     <div class="stil-carousel-controls"><button class="stil-carousel-prev">…</button><div class="stil-carousel-dots"><button aria-current="true">…</button>…</div><button class="stil-carousel-next">…</button></div>
+   </section> */
+.stil-carousel { position: relative; }
+
+.stil-carousel-track {
+    display: flex;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    border-radius: var(--stil-radius-lg);
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+}
+
+.stil-carousel-track::-webkit-scrollbar { display: none; }
+
+/* The track takes focus (tabindex="0"), so the arrow keys scroll it. */
+.stil-carousel-track:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stil-carousel-track { scroll-behavior: auto; }
+}
+
+.stil-carousel-slide {
+    flex: 0 0 100%;
+    min-width: 0;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+
+.stil-carousel-slide > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.stil-carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--stil-space-3);
+    margin-block-start: var(--stil-space-2);
+}
+
+.stil-carousel-dots {
+    display: flex;
+    gap: var(--stil-space-1);
+}
+
+.stil-carousel-dots > button {
+    width: 0.625rem;
+    height: 0.625rem;
+    padding: 0;
+    border: 1px solid var(--stil-color-border-strong);
+    border-radius: 50%;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.stil-carousel-dots > button[aria-current="true"] {
+    border-color: var(--_accent);
+    background-color: var(--_accent);
+}
+
+.stil-carousel-dots > button:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+}
+
+/* Image cropper: the image moves and zooms behind a fixed frame. stil.js handles dragging,
+   zooming and the keyboard, and draws the result (cropImage).
+   <div class="stil-cropper" style="--stil-cropper-ratio: 1">
+     <div class="stil-cropper-stage" tabindex="0" aria-label="Crop area"><img class="stil-cropper-image" src="…" alt=""><div class="stil-cropper-frame"></div></div>
+   </div> */
+.stil-cropper {
+    --stil-cropper-ratio: 1;
+    display: grid;
+    gap: var(--stil-space-2);
+    max-width: 24rem;
+}
+
+.stil-cropper-stage {
+    position: relative;
+    aspect-ratio: var(--stil-cropper-ratio);
+    overflow: hidden;
+    border-radius: var(--stil-radius-md);
+    background-color: #000;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+}
+
+.stil-cropper-stage:active { cursor: grabbing; }
+
+.stil-cropper-stage:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+}
+
+.stil-cropper-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    max-width: none;
+    transform-origin: center;
+    pointer-events: none;
+}
+
+/* The frame covers the stage; the area outside a round frame is dimmed. */
+.stil-cropper-frame {
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.85);
+    pointer-events: none;
+}
+
+.stil-cropper-round .stil-cropper-frame {
+    border-radius: 50%;
+    box-shadow: 0 0 0 100vmax rgb(0 0 0 / 0.55), inset 0 0 0 2px rgb(255 255 255 / 0.85);
+}
+
+.stil-cropper-tools {
+    display: flex;
+    align-items: center;
+    gap: var(--stil-space-2);
+}
+
+.stil-cropper-tools > .stil-slider { flex: 1; }
+
+/* Camera: a live preview and a capture button. */
+.stil-camera {
+    display: grid;
+    gap: var(--stil-space-2);
+    max-width: 32rem;
+}
+
+.stil-camera-preview {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--stil-radius-md);
+    background-color: #000;
+    object-fit: cover;
+}
+
+/* PDF viewer: a toolbar over the browser's own viewer. */
+.stil-pdf {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-lg);
+    background-color: var(--stil-color-surface);
+}
+
+.stil-pdf-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--stil-space-2);
+    padding: var(--stil-space-2) var(--stil-space-3);
+    border-block-end: 1px solid var(--stil-color-border);
+}
+
+.stil-pdf-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    font-weight: var(--stil-font-weight-bold);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.stil-pdf-frame {
+    display: block;
+    width: 100%;
+    height: var(--stil-pdf-height, 36rem);
+    border: 0;
+    background-color: var(--stil-color-surface-muted);
+}
+
+.stil-pdf-fallback {
+    padding: var(--stil-space-5);
+    color: var(--stil-color-text-muted);
+    text-align: center;
+}
+
+/* A group of skeleton shapes (as StilSkeleton renders them). */
+.stil-skeleton-group { display: block; }

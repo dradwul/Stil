@@ -2856,6 +2856,313 @@
     padding-inline-end: var(--stil-space-7);
   }
 
+  .stil-skeleton {
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface-muted);
+    background-image: linear-gradient(90deg,
+        transparent 0,
+        color-mix(in srgb, var(--stil-color-surface) 60%, transparent) 50%,
+        transparent 100%);
+    background-repeat: no-repeat;
+    background-size: 40% 100%;
+    width: 100%;
+    height: 1rem;
+    animation: 1.6s ease-in-out infinite stil-skeleton-shimmer;
+    display: block;
+  }
+
+  .stil-skeleton-text {
+    border-radius: var(--stil-radius-sm);
+    height: .75em;
+    margin-block: .375em;
+  }
+
+  .stil-skeleton-circle {
+    --stil-skeleton-size: 2.5rem;
+    width: var(--stil-skeleton-size);
+    height: var(--stil-skeleton-size);
+    border-radius: 50%;
+    flex: none;
+  }
+
+  @keyframes stil-skeleton-shimmer {
+    from {
+      background-position: -40% 0;
+    }
+
+    to {
+      background-position: 140% 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stil-skeleton {
+      background-image: none;
+      animation: none;
+    }
+  }
+
+  .stil-splitter {
+    --stil-splitter-size: 50;
+    min-height: 0;
+    display: flex;
+    overflow: hidden;
+  }
+
+  .stil-splitter-vertical {
+    flex-direction: column;
+  }
+
+  .stil-splitter-pane {
+    min-width: 0;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .stil-splitter-pane:first-child {
+    flex: 0 0 calc(var(--stil-splitter-size) * 1%);
+  }
+
+  .stil-splitter-pane:last-child {
+    flex: 1 1 0;
+  }
+
+  .stil-splitter-handle {
+    z-index: 1;
+    cursor: col-resize;
+    touch-action: none;
+    flex: none;
+    width: .5rem;
+    margin-inline: -.25rem;
+    position: relative;
+  }
+
+  .stil-splitter-vertical > .stil-splitter-handle {
+    cursor: row-resize;
+    width: auto;
+    height: .5rem;
+    margin: -.25rem 0;
+  }
+
+  .stil-splitter-handle:before {
+    content: "";
+    background-color: var(--stil-color-border);
+    transition: background-color var(--stil-duration-fast) var(--stil-easing), inset var(--stil-duration-fast) var(--stil-easing);
+    position: absolute;
+    inset: 0 calc(50% - .5px);
+  }
+
+  .stil-splitter-vertical > .stil-splitter-handle:before {
+    inset: calc(50% - .5px) 0;
+  }
+
+  .stil-splitter-handle:is(:hover, :focus-visible, [data-dragging]):before {
+    background-color: var(--_accent);
+    inset-inline: calc(50% - 2px);
+  }
+
+  .stil-splitter-vertical > .stil-splitter-handle:is(:hover, :focus-visible, [data-dragging]):before {
+    inset: calc(50% - 2px) 0;
+  }
+
+  .stil-splitter-handle:focus-visible {
+    outline: none;
+  }
+
+  .stil-carousel {
+    position: relative;
+  }
+
+  .stil-carousel-track {
+    overscroll-behavior-x: contain;
+    border-radius: var(--stil-radius-lg);
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    display: flex;
+    overflow-x: auto;
+  }
+
+  .stil-carousel-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .stil-carousel-track:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stil-carousel-track {
+      scroll-behavior: auto;
+    }
+  }
+
+  .stil-carousel-slide {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    flex: 0 0 100%;
+    min-width: 0;
+  }
+
+  .stil-carousel-slide > img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .stil-carousel-controls {
+    justify-content: center;
+    align-items: center;
+    gap: var(--stil-space-3);
+    margin-block-start: var(--stil-space-2);
+    display: flex;
+  }
+
+  .stil-carousel-dots {
+    gap: var(--stil-space-1);
+    display: flex;
+  }
+
+  .stil-carousel-dots > button {
+    border: 1px solid var(--stil-color-border-strong);
+    cursor: pointer;
+    background-color: #0000;
+    border-radius: 50%;
+    width: .625rem;
+    height: .625rem;
+    padding: 0;
+  }
+
+  .stil-carousel-dots > button[aria-current="true"] {
+    border-color: var(--_accent);
+    background-color: var(--_accent);
+  }
+
+  .stil-carousel-dots > button:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+  }
+
+  .stil-cropper {
+    --stil-cropper-ratio: 1;
+    gap: var(--stil-space-2);
+    max-width: 24rem;
+    display: grid;
+  }
+
+  .stil-cropper-stage {
+    aspect-ratio: var(--stil-cropper-ratio);
+    border-radius: var(--stil-radius-md);
+    cursor: grab;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    background-color: #000;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stil-cropper-stage:active {
+    cursor: grabbing;
+  }
+
+  .stil-cropper-stage:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+  }
+
+  .stil-cropper-image {
+    transform-origin: center;
+    pointer-events: none;
+    max-width: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+  }
+
+  .stil-cropper-frame {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 0 2px #ffffffd9;
+  }
+
+  .stil-cropper-round .stil-cropper-frame {
+    border-radius: 50%;
+    box-shadow: 0 0 0 100vmax #0000008c, inset 0 0 0 2px #ffffffd9;
+  }
+
+  .stil-cropper-tools {
+    align-items: center;
+    gap: var(--stil-space-2);
+    display: flex;
+  }
+
+  .stil-cropper-tools > .stil-slider {
+    flex: 1;
+  }
+
+  .stil-camera {
+    gap: var(--stil-space-2);
+    max-width: 32rem;
+    display: grid;
+  }
+
+  .stil-camera-preview {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--stil-radius-md);
+    object-fit: cover;
+    background-color: #000;
+    width: 100%;
+  }
+
+  .stil-pdf {
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-lg);
+    background-color: var(--stil-color-surface);
+    flex-direction: column;
+    display: flex;
+    overflow: hidden;
+  }
+
+  .stil-pdf-toolbar {
+    align-items: center;
+    gap: var(--stil-space-2);
+    padding: var(--stil-space-2) var(--stil-space-3);
+    border-block-end: 1px solid var(--stil-color-border);
+    flex-wrap: wrap;
+    display: flex;
+  }
+
+  .stil-pdf-title {
+    min-width: 0;
+    font-weight: var(--stil-font-weight-bold);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .stil-pdf-frame {
+    width: 100%;
+    height: var(--stil-pdf-height, 36rem);
+    background-color: var(--stil-color-surface-muted);
+    border: 0;
+    display: block;
+  }
+
+  .stil-pdf-fallback {
+    padding: var(--stil-space-5);
+    color: var(--stil-color-text-muted);
+    text-align: center;
+  }
+
+  .stil-skeleton-group {
+    display: block;
+  }
+
   .stil-tree, .stil-tree-group {
     margin: 0;
     padding: 0;
@@ -3916,6 +4223,10 @@
     --_icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
   }
 
+  .stil-icon-camera {
+    --_icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 8h3l2-3h6l2 3h3v11H4z'/%3E%3Ccircle cx='12' cy='13' r='3.5'/%3E%3C/svg%3E");
+  }
+
   .stil-icon-check {
     --_icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E");
   }
@@ -3950,6 +4261,10 @@
 
   .stil-icon-danger {
     --_icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M9 9l6 6M15 9l-6 6'/%3E%3C/svg%3E");
+  }
+
+  .stil-icon-download {
+    --_icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 4v11M7 10l5 5 5-5M5 20h14'/%3E%3C/svg%3E");
   }
 
   .stil-icon-external {

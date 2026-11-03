@@ -28,6 +28,11 @@
 //     it or above it (data-stil-placement="top"), and follow it on scroll and resize.
 //   - data-stil-mask="0000 00 00-0000" on an input formats it while typing (0 digit, A letter,
 //     * any character, the rest literals).
+//   - Splitters (.stil-splitter) resize by dragging or with the keyboard and fire stilsplit;
+//     carousels (.stil-carousel) get working buttons and dots, optional autoplay
+//     (data-stil-autoplay) and fire stilslide.
+//   - initCropper, setCropperZoom, rotateCropper and cropImage crop an image; startCamera,
+//     captureCamera and stopCamera take a photo; printFrame prints an iframe.
 // Stil for Blazor loads this module automatically and also uses showDialog/closeDialog.
 
 const initialized = Symbol.for('stil.initialized');
@@ -44,6 +49,15 @@ export function init(root = document) {
     root.addEventListener('pointermove', onPointerMove);
     root.addEventListener('pointerup', onPointerUp);
     root.addEventListener('pointercancel', cancelDrag);
+    root.addEventListener('pointerdown', onSplitterPointerDown);
+    root.addEventListener('pointermove', onSplitterPointerMove);
+    root.addEventListener('pointerup', onSplitterPointerUp);
+    root.addEventListener('pointercancel', onSplitterPointerUp);
+    root.addEventListener('click', onCarouselClick);
+    // scroll does not bubble, so listen in the capture phase.
+    root.addEventListener('scroll', onCarouselScroll, true);
+    root.addEventListener('scrollend', onCarouselScroll, true);
+    setInterval(advanceCarousels, 500);
     root.addEventListener('input', onMaskInput, true);
     addEventListener('scroll', placeOpenPopovers, { capture: true, passive: true });
     addEventListener('resize', placeOpenPopovers);
@@ -118,6 +132,7 @@ function onKeyDown(event) {
     if (preventHandledKey(event)) return;
     if (moveInDropdown(event)) return;
     if (moveInCalendar(event)) return;
+    if (resizeSplitter(event)) return;
     if (event.key !== 'Escape') return;
     for (const toggle of document.querySelectorAll('[data-stil-toggle][aria-expanded="true"]')) {
         toggle.setAttribute('aria-expanded', 'false');
@@ -439,6 +454,317 @@ export function applyMask(mask, value, deleting = false) {
     return result;
 }
 
+
+// Splitters (.stil-splitter > .stil-splitter-handle[role="separator"]): drag the handle, or use
+// the arrow keys (5% a step), Home and End (the limits) and Enter (collapse to the minimum and
+// back). The first pane's size, in percent, is --stil-splitter-size on the splitter and
+// aria-valuenow on the handle; a bubbling stilsplit event (detail.size) reports each change.
+let split = null;
+
+function splitterOf(handle) {
+    const splitter = handle.closest('.stil-splitter');
+    return {
+        splitter,
+        vertical: splitter.classList.contains('stil-splitter-vertical'),
+        min: Number(handle.getAttribute('aria-valuemin') ?? 0),
+        max: Number(handle.getAttribute('aria-valuemax') ?? 100),
+    };
+}
+
+function setSplit(handle, size, report) {
+    const { splitter, min, max } = splitterOf(handle);
+    const value = Math.round(Math.min(max, Math.max(min, size)) * 10) / 10;
+    splitter.style.setProperty('--stil-splitter-size', String(value));
+    handle.setAttribute('aria-valuenow', String(value));
+    if (report) handle.dispatchEvent(new CustomEvent('stilsplit', { bubbles: true, detail: { size: value } }));
+}
+
+function onSplitterPointerDown(event) {
+    const handle = event.target instanceof Element ? event.target.closest('.stil-splitter-handle') : null;
+    if (!handle || event.button !== 0) return;
+    event.preventDefault();
+    handle.setPointerCapture(event.pointerId);
+    handle.setAttribute('data-dragging', '');
+    split = { handle, pointerId: event.pointerId };
+}
+
+function onSplitterPointerMove(event) {
+    if (!split || event.pointerId !== split.pointerId) return;
+    const { splitter, vertical } = splitterOf(split.handle);
+    const rect = splitter.getBoundingClientRect();
+    const rtl = !vertical && getComputedStyle(splitter).direction === 'rtl';
+    const size = vertical
+        ? (event.clientY - rect.top) / rect.height * 100
+        : (rtl ? rect.right - event.clientX : event.clientX - rect.left) / rect.width * 100;
+    setSplit(split.handle, size, false);
+}
+
+function onSplitterPointerUp(event) {
+    if (!split || event.pointerId !== split.pointerId) return;
+    const { handle } = split;
+    split = null;
+    handle.removeAttribute('data-dragging');
+    setSplit(handle, Number(handle.getAttribute('aria-valuenow')), true);
+}
+
+function resizeSplitter(event) {
+    const handle = event.target instanceof Element ? event.target.closest('.stil-splitter-handle') : null;
+    if (!handle || event.target !== handle || event.altKey || event.ctrlKey || event.metaKey) return false;
+    const { vertical, min, max } = splitterOf(handle);
+    const current = Number(handle.getAttribute('aria-valuenow') ?? 50);
+    const key = vertical ? event.key : logicalArrow(event.key, handle);
+    const step = 5;
+    let size;
+    switch (key) {
+        case vertical ? 'ArrowUp' : 'ArrowLeft': size = current - step; break;
+        case vertical ? 'ArrowDown' : 'ArrowRight': size = current + step; break;
+        case 'Home': size = min; break;
+        case 'End': size = max; break;
+        case 'Enter':
+            if (current > min) {
+                handle.dataset.stilRestore = String(current);
+                size = min;
+            } else {
+                size = Number(handle.dataset.stilRestore ?? (min + max) / 2);
+            }
+            break;
+        default: return false;
+    }
+    event.preventDefault();
+    setSplit(handle, size, true);
+    return true;
+}
+
+// Carousels (.stil-carousel): .stil-carousel-prev and .stil-carousel-next move one slide, the
+// buttons in .stil-carousel-dots go to their slide, and the dot of the shown slide gets
+// aria-current. A bubbling stilslide event (detail.index) reports the shown slide.
+// data-stil-autoplay="6000" moves on every 6 seconds, except while the pointer or focus is in the
+// carousel, while its .stil-carousel-pause button is pressed, and under reduced motion.
+function slidesOf(carousel) {
+    const track = carousel.querySelector('.stil-carousel-track');
+    return { track, slides: track ? [...track.querySelectorAll(':scope > .stil-carousel-slide')] : [] };
+}
+
+function shownSlide(carousel) {
+    const { track } = slidesOf(carousel);
+    return track && track.clientWidth > 0 ? Math.round(Math.abs(track.scrollLeft) / track.clientWidth) : 0;
+}
+
+function showSlide(carousel, index) {
+    const { track, slides } = slidesOf(carousel);
+    if (slides.length === 0) return;
+    const target = (index + slides.length) % slides.length;
+    const rtl = getComputedStyle(track).direction === 'rtl';
+    track.scrollTo({ left: (rtl ? -1 : 1) * target * track.clientWidth });
+    carousel.stilShownAt = Date.now();
+    // Not every browser fires scroll events during a smooth scroll; check once it has ended.
+    setTimeout(() => updateCarousel(carousel), 600);
+}
+
+function onCarouselClick(event) {
+    const target = event.target instanceof Element ? event.target : null;
+    const carousel = target?.closest('.stil-carousel');
+    if (!carousel) return;
+    if (target.closest('.stil-carousel-prev')) showSlide(carousel, shownSlide(carousel) - 1);
+    else if (target.closest('.stil-carousel-next')) showSlide(carousel, shownSlide(carousel) + 1);
+    else if (target.closest('.stil-carousel-pause')) {
+        const pause = target.closest('.stil-carousel-pause');
+        pause.setAttribute('aria-pressed', String(pause.getAttribute('aria-pressed') !== 'true'));
+    } else {
+        const dot = target.closest('.stil-carousel-dots > button');
+        if (dot) showSlide(carousel, [...dot.parentElement.children].indexOf(dot));
+    }
+}
+
+function onCarouselScroll(event) {
+    const track = event.target;
+    if (!(track instanceof Element) || !track.matches('.stil-carousel-track')) return;
+    updateCarousel(track.closest('.stil-carousel'));
+}
+
+// Marks the dot of the shown slide and reports it, once per change.
+function updateCarousel(carousel) {
+    if (!carousel) return;
+    const index = shownSlide(carousel);
+    if (carousel.stilIndex === index) return;
+    carousel.stilIndex = index;
+    carousel.querySelectorAll('.stil-carousel-dots > button').forEach((dot, i) =>
+        dot.setAttribute('aria-current', String(i === index)));
+    carousel.dispatchEvent(new CustomEvent('stilslide', { bubbles: true, detail: { index } }));
+}
+
+function advanceCarousels() {
+    if (document.hidden || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    for (const carousel of document.querySelectorAll('.stil-carousel[data-stil-autoplay]')) {
+        const delay = Number(carousel.dataset.stilAutoplay) || 6000;
+        const paused = carousel.matches(':hover, :focus-within')
+            || carousel.querySelector('.stil-carousel-pause[aria-pressed="true"]');
+        carousel.stilShownAt ??= Date.now();
+        if (paused) carousel.stilShownAt = Date.now();
+        else if (Date.now() - carousel.stilShownAt >= delay) showSlide(carousel, shownSlide(carousel) + 1);
+    }
+}
+
+// Image cropper (.stil-cropper-stage with a .stil-cropper-image): the image covers the stage and
+// can be moved (drag, arrow keys), zoomed (wheel, + and -, setCropperZoom) and turned
+// (rotateCropper). cropImage draws the framed part to a data URL.
+const croppers = new WeakMap();
+
+export function initCropper(stage) {
+    const image = stage?.querySelector('.stil-cropper-image');
+    if (!image) return;
+    const start = () => {
+        croppers.set(stage, { image, x: 0, y: 0, zoom: 1, rotation: 0 });
+        drawCropper(stage);
+    };
+    if (image.complete && image.naturalWidth > 0) start();
+    else image.addEventListener('load', start, { once: true });
+    if (stage.stilCropperBound) return;
+    stage.stilCropperBound = true;
+
+    let pan = null;
+    stage.addEventListener('pointerdown', event => {
+        const state = croppers.get(stage);
+        if (!state || event.button !== 0) return;
+        stage.setPointerCapture(event.pointerId);
+        pan = { id: event.pointerId, x: event.clientX - state.x, y: event.clientY - state.y };
+    });
+    stage.addEventListener('pointermove', event => {
+        const state = croppers.get(stage);
+        if (!pan || !state || event.pointerId !== pan.id) return;
+        state.x = event.clientX - pan.x;
+        state.y = event.clientY - pan.y;
+        drawCropper(stage);
+    });
+    stage.addEventListener('pointerup', () => { pan = null; });
+    stage.addEventListener('pointercancel', () => { pan = null; });
+    stage.addEventListener('wheel', event => {
+        const state = croppers.get(stage);
+        if (!state) return;
+        event.preventDefault();
+        setCropperZoom(stage, state.zoom * (event.deltaY < 0 ? 1.1 : 1 / 1.1), true);
+    }, { passive: false });
+    stage.addEventListener('keydown', event => {
+        const state = croppers.get(stage);
+        if (!state) return;
+        const step = event.shiftKey ? 40 : 10;
+        const moves = { ArrowLeft: [step, 0], ArrowRight: [-step, 0], ArrowUp: [0, step], ArrowDown: [0, -step] };
+        if (moves[event.key]) {
+            state.x += moves[event.key][0];
+            state.y += moves[event.key][1];
+            drawCropper(stage);
+        } else if (event.key === '+' || event.key === '=') {
+            setCropperZoom(stage, state.zoom * 1.1, true);
+        } else if (event.key === '-') {
+            setCropperZoom(stage, state.zoom / 1.1, true);
+        } else {
+            return;
+        }
+        event.preventDefault();
+    });
+}
+
+// The scale at which the (turned) image just covers the stage.
+function coverScale(stage, state) {
+    const { naturalWidth: w, naturalHeight: h } = state.image;
+    const turned = state.rotation % 180 !== 0;
+    return Math.max(stage.clientWidth / (turned ? h : w), stage.clientHeight / (turned ? w : h));
+}
+
+function drawCropper(stage) {
+    const state = croppers.get(stage);
+    if (!state) return;
+    const scale = coverScale(stage, state) * state.zoom;
+    const turned = state.rotation % 180 !== 0;
+    const width = (turned ? state.image.naturalHeight : state.image.naturalWidth) * scale;
+    const height = (turned ? state.image.naturalWidth : state.image.naturalHeight) * scale;
+    // Keep the frame covered: the image may not move further than its overhang.
+    const limitX = Math.max(0, (width - stage.clientWidth) / 2);
+    const limitY = Math.max(0, (height - stage.clientHeight) / 2);
+    state.x = Math.min(limitX, Math.max(-limitX, state.x));
+    state.y = Math.min(limitY, Math.max(-limitY, state.y));
+    state.image.style.transform =
+        `translate(-50%, -50%) translate(${state.x}px, ${state.y}px) rotate(${state.rotation}deg) scale(${scale})`;
+}
+
+export function setCropperZoom(stage, zoom, report = false) {
+    const state = croppers.get(stage);
+    if (!state) return;
+    state.zoom = Math.min(4, Math.max(1, zoom));
+    drawCropper(stage);
+    if (report) stage.dispatchEvent(new CustomEvent('stilcropzoom', { bubbles: true, detail: { zoom: state.zoom } }));
+}
+
+export function rotateCropper(stage, degrees = 90) {
+    const state = croppers.get(stage);
+    if (!state) return;
+    state.rotation = (state.rotation + degrees + 360) % 360;
+    drawCropper(stage);
+}
+
+export function cropImage(stage, width, height, type = 'image/png', quality = 0.92) {
+    const state = croppers.get(stage);
+    if (!state) return null;
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext('2d');
+    const k = width / stage.clientWidth;
+    const scale = coverScale(stage, state) * state.zoom * k;
+    context.translate(width / 2 + state.x * k, height / 2 + state.y * k);
+    context.rotate(state.rotation * Math.PI / 180);
+    context.scale(scale, scale);
+    context.drawImage(state.image, -state.image.naturalWidth / 2, -state.image.naturalHeight / 2);
+    return canvas.toDataURL(type, quality);
+}
+
+// Camera: a live preview in a <video>, and a still from it.
+export async function startCamera(video, facingMode = 'user') {
+    if (!video || !navigator.mediaDevices?.getUserMedia) return false;
+    stopCamera(video);
+    try {
+        video.srcObject = await navigator.mediaDevices.getUserMedia({ video: { facingMode }, audio: false });
+        await video.play();
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+export function captureCamera(video, type = 'image/jpeg', quality = 0.9) {
+    if (!video?.videoWidth) return null;
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    return canvas.toDataURL(type, quality);
+}
+
+export function videoSize(video) {
+    return [video?.videoWidth ?? 0, video?.videoHeight ?? 0];
+}
+
+export function stopCamera(video) {
+    video?.srcObject?.getTracks?.().forEach(track => track.stop());
+    if (video) video.srcObject = null;
+}
+
+// Prints the document in an iframe, such as a PDF from the same origin. Returns false when the
+// browser does not allow it (another origin), so the caller can open the file instead.
+// Whether the browser shows PDFs itself (false on most phones).
+export function pdfViewerEnabled() {
+    return navigator.pdfViewerEnabled !== false;
+}
+
+export function printFrame(frame) {
+    try {
+        frame.contentWindow.focus();
+        frame.contentWindow.print();
+        return true;
+    } catch {
+        return false;
+    }
+}
 
 // Opens a <dialog> as a modal. When it closes (Escape, a form with method="dialog", close()),
 // dotNetRef.OnDialogClosed is called, so a Blazor component can update its state.

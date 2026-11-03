@@ -118,6 +118,11 @@ classes: `aria-current="page"`, `aria-selected="true"`,
 | One-time code | `<input class="stil-pin">` drawn as cells; set `--stil-pin-length` |
 | Popover | `<div class="stil-popover" popover>` opened by a `popovertarget` button; `stil-popover-title`. stil.js places it next to the button (`data-stil-placement="top"` for above). |
 | Stepper | `<ol class="stil-stepper">` > `stil-step` (`stil-step-done`, `stil-step-error`, `aria-current="step"`) > `stil-step-marker` + `stil-step-text` (`stil-step-title`, `stil-step-description`); `stil-wizard` and `stil-wizard-actions` around a form in steps |
+| Skeleton | `stil-skeleton` (a block), `stil-skeleton-text` (a line) and `stil-skeleton-circle` (`--stil-skeleton-size`), in an element with `aria-busy="true"`. The shimmer stops under reduced motion. |
+| Splitter | `stil-splitter` (`stil-splitter-vertical`, `--stil-splitter-size` in percent) > `stil-splitter-pane`, `stil-splitter-handle` (`role="separator"`), `stil-splitter-pane` |
+| Carousel | `stil-carousel` > `stil-carousel-track` (scroll snap) > `stil-carousel-slide`, and `stil-carousel-controls` with `stil-carousel-prev`, `stil-carousel-dots`, `stil-carousel-next` and an optional `stil-carousel-pause` |
+| Image cropper, camera | `stil-cropper` (`stil-cropper-round`, `--stil-cropper-ratio`) > `stil-cropper-stage` > `stil-cropper-image` + `stil-cropper-frame`, and `stil-cropper-tools`; `stil-camera` > `stil-camera-preview` |
+| PDF | `stil-pdf` > `stil-pdf-toolbar` (`stil-pdf-title`) + `stil-pdf-frame` (an iframe, `--stil-pdf-height`) or `stil-pdf-fallback` |
 | Date range | `<fieldset class="stil-date-range">` with a legend and `stil-date-range-inputs` around two fields |
 | File upload | `stil-dropzone` (`data-dragover="true"` while dragging) > `stil-dropzone-input` (the file input, laid over the zone), `stil-dropzone-icon`, `stil-dropzone-text`, `stil-dropzone-button`; `stil-file-list` > `stil-file-list-item` with `stil-file-list-name` and `stil-file-list-size` |
 | Stat card | `stil-card stil-stat` with `stil-stat-header` (`stil-stat-label`, `stil-stat-icon`), `stil-stat-value`, and `stil-stat-footer` with a `stil-stat-trend` badge (`data-trend="up"` or `"down"`) and `stil-stat-description` |
@@ -148,7 +153,7 @@ full page built only with Stil, open
 
 ## Optional JavaScript
 
-Stil works without JavaScript. The optional `dist/stil.js` module, 20 kB with
+Stil works without JavaScript. The optional `dist/stil.js` module, 34 kB (10 kB gzipped) with
 no dependencies, adds a few behaviours:
 
 ```html
@@ -189,6 +194,20 @@ no dependencies, adds a few behaviours:
   and follow it on scroll and resize.
 - `data-stil-mask="000 00"` on an input formats it while typing: `0` is a digit,
   `A` a letter, `*` any character, and the rest are literals that are filled in.
+- A splitter's `stil-splitter-handle` (`role="separator"`) resizes the first
+  pane by dragging, with the arrow keys (5% a step), Home, End and Enter
+  (collapse and restore), within its `aria-valuemin` and `aria-valuemax`. It
+  sets `--stil-splitter-size` and fires a bubbling `stilsplit` event
+  (`detail.size`).
+- A carousel's `stil-carousel-prev`, `stil-carousel-next` and dot buttons move
+  between the slides, and the dot of the shown slide gets `aria-current`; a
+  bubbling `stilslide` event (`detail.index`) reports it.
+  `data-stil-autoplay="6000"` moves on every 6 seconds, except while the
+  pointer or focus is in the carousel, while its `stil-carousel-pause` button is
+  pressed and under reduced motion.
+- Exports for scripts: `initCropper`, `setCropperZoom`, `rotateCropper` and
+  `cropImage` (an image cropper), `startCamera`, `captureCamera` and
+  `stopCamera` (a photo from the camera), and `printFrame` (print an iframe).
 - A language link, `<a href="?culture=sv" data-stil-culture="sv">`, stores the
   language in the ASP.NET Core culture cookie (`.AspNetCore.Culture`) and in
   local storage (`stil-culture`), then reloads the page.
