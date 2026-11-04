@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" data-stil-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fonts · Stil CSS</title>
+    <link rel="stylesheet" href="../../src/Stil.Css/dist/stil.css">
+
+    <!-- The fonts compared below, from cdnfonts.com. Check each font's license before you use it. -->
+    <link href="https://fonts.cdnfonts.com/css/lexend" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/br-cobane" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/br-segma" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/br-sonoma" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/br-shape" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/blowreph" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/averral" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/taster" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/sukplena" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/zagist" rel="stylesheet">
+    <style>
+        /* A font set on a wrapper: the token for the components, font-family for the text. */
+        .specimen { font-family: var(--stil-font-family); }
+    </style>
+</head>
+<body class="stil-scope">
+    <main class="stil-container stil-py-5">
+        <h1>Fonts</h1>
+        <p class="stil-text-muted">
+            The same Stil card in each font. A font is one token, <code>--stil-font-family</code>; load the font and set
+            the token on <code>:root</code> or on any wrapper.
+        </p>
+        <div class="stil-cluster stil-mb-4">
+            <label class="stil-form-label stil-mb-0" for="mode">Color mode</label>
+            <select id="mode" class="stil-select stil-select-sm stil-w-auto">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+            </select>
+        </div>
+
+        <div class="stil-grid" id="specimens"></div>
+    </main>
+
+    <template id="specimen">
+        <section class="stil-card stil-col-md-6 stil-col-xl-4 specimen">
+            <p class="stil-text-muted stil-mb-1" data-name></p>
+            <h2 class="stil-card-title">Order #1042 är levererad</h2>
+            <p>Quick brown foxes jump over the lazy dog. Åäö ÆØ 0123456789 €1 250,00.</p>
+            <div class="stil-field stil-mb-3">
+                <label class="stil-form-label">Customer</label>
+                <input class="stil-input" value="Nordvik Supply AB">
+            </div>
+            <table class="stil-table stil-table-sm stil-mb-3">
+                <thead><tr><th>Item</th><th class="stil-text-end">Total</th></tr></thead>
+                <tbody>
+                    <tr><td>Office chairs</td><td class="stil-text-end">12 400</td></tr>
+                    <tr><td>Desk lamps</td><td class="stil-text-end">3 180</td></tr>
+                </tbody>
+            </table>
+            <div class="stil-cluster">
+                <button class="stil-btn stil-btn-primary">Save</button>
+                <button class="stil-btn stil-btn-outline stil-btn-secondary">Cancel</button>
+                <span class="stil-badge stil-badge-success">Delivered</span>
+            </div>
+        </section>
+    </template>
+
+    <script>
+        const fonts = ['Lexend', 'BR Cobane', 'BR Segma', 'BR Sonoma', 'BR Shape', 'BLOWREPH', 'Averral', 'Taster', 'Sukplena', 'Zagist'];
+        const template = document.getElementById('specimen');
+        for (const font of fonts) {
+            const card = template.content.firstElementChild.cloneNode(true);
+            card.style.setProperty('--stil-font-family', `'${font}', sans-serif`);
+            card.querySelector('[data-name]').textContent = font + (font === 'Lexend' ? ' (default)' : '');
+            document.getElementById('specimens').append(card);
+        }
+        document.getElementById('mode').addEventListener('change', e => document.documentElement.dataset.stilTheme = e.target.value);
+    </script>
+</body>
+</html>

@@ -338,7 +338,15 @@ The defaults are in [`src/tokens.css`](src/tokens.css).
 Stil uses **Lexend** if your page loads it, for example with
 `<link href="https://fonts.cdnfonts.com/css/lexend" rel="stylesheet">`.
 Otherwise it falls back to `sans-serif`. The stylesheet never
-fetches fonts on its own.
+fetches fonts on its own. For another font, load it and set the token:
+
+```html
+<link href="https://fonts.cdnfonts.com/css/br-cobane" rel="stylesheet">
+<style>:root { --stil-font-family: 'BR Cobane', sans-serif; }</style>
+```
+
+[`samples/Stil.Html/fonts.html`](../../samples/Stil.Html/fonts.html) shows the
+same card in Lexend and nine other fonts from cdnfonts.com.
 
 ### Accessibility check
 
