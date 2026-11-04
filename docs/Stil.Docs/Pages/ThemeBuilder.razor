@@ -10,6 +10,11 @@
     <Lead>Pick your colors, font and corners, see them on real components in light and dark mode, then copy the CSS or C#.</Lead>
 </DocsHeader>
 
+@if (WebFont?.StylesheetUrl is { } fontUrl)
+{
+    <HeadContent><link rel="stylesheet" href="@fontUrl" /></HeadContent>
+}
+
 <div class="docs-theme-builder">
     <div class="docs-theme-controls stil-stack">
         <StilSelect TValue="string" Value="_preset" ValueChanged="ApplyPresetAsync" Items="Presets.Keys" Label="Start from" />
@@ -24,7 +29,7 @@
             </div>
         }
 
-        <StilSelect TValue="string" @bind-Value="_font" Items="Fonts.Keys" Label="Font" />
+        <StilSelect TValue="string" @bind-Value="_font" Items="FontNames" Label="Font" />
 
         <div class="stil-field">
             <label class="stil-label" for="radius">Corner radius: @(_radius.ToString("0.###", CultureInfo.InvariantCulture))rem</label>
@@ -98,6 +103,14 @@
         ["Monospace"] = "ui-monospace, 'Cascadia Code', Consolas, monospace",
     };
 
+    // Every font in StilFonts after Lexend; the preview loads the one you pick, like <StilHead /> does.
+    private static readonly Dictionary<string, (StilFont Font, string Code)> WebFonts = typeof(StilFonts)
+        .GetProperties()
+        .Where(p => p.PropertyType == typeof(StilFont) && p.Name != nameof(StilFonts.Lexend))
+        .ToDictionary(p => ((StilFont)p.GetValue(null)!).Family, p => ((StilFont)p.GetValue(null)!, $"StilFonts.{p.Name}"));
+
+    private static readonly List<string> FontNames = [.. Fonts.Keys, .. WebFonts.Keys];
+
     private static readonly StilThemeMode[] PreviewModes = [StilThemeMode.Light, StilThemeMode.Dark];
 
     private const double DefaultRadius = 0.25;
@@ -150,7 +163,7 @@
             _preset = "";
         }
 
-        if (FontQuery is not null && Fonts.ContainsKey(FontQuery))
+        if (FontQuery is not null && FontNames.Contains(FontQuery))
         {
             _font = FontQuery;
         }
@@ -202,7 +215,9 @@
         }
     }
 
-    private string? FontValue => Fonts[_font];
+    private StilFont? WebFont => WebFonts.TryGetValue(_font, out var font) ? font.Font : null;
+
+    private string? FontValue => WebFont?.FontFamily ?? Fonts[_font];
 
     private bool RadiusChanged => Math.Abs(_radius - DefaultRadius) > 0.001;
 
@@ -263,7 +278,13 @@
                 return "/* The defaults: nothing to override. */";
             }
 
-            var css = new StringBuilder(":root {\n");
+            var css = new StringBuilder();
+            if (WebFont?.StylesheetUrl is { } url)
+            {
+                css.Append(CultureInfo.InvariantCulture, $"/* Load the font in <head>: <link href=\"{url}\" rel=\"stylesheet\"> */\n");
+            }
+
+            css.Append(":root {\n");
             foreach (var (token, value) in declarations)
             {
                 css.Append(CultureInfo.InvariantCulture, $"    {token}: {value};\n");
@@ -283,7 +304,11 @@
                 lines.Add($"    options.Theme.{color.Property} = \"{color.Value}\";");
             }
 
-            if (FontValue is { } font)
+            if (WebFonts.TryGetValue(_font, out var webFont))
+            {
+                lines.Add($"    options.Font = {webFont.Code};");
+            }
+            else if (FontValue is { } font)
             {
                 lines.Add($"    options.Theme.FontFamily = \"{font}\";");
             }

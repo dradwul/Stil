@@ -573,6 +573,29 @@ The logo keeps Didact Gothic: its text is drawn as outlines. The Playwright
 baselines are unchanged, because the tests block external fonts and render
 with the fallback font.
 
+## Detour: Choosing a font ✅ Done
+
+A small change outside the phase plan: pick the app's font when you create it
+or in `AddStil()`, from a short list or any font on cdnfonts.com or Google
+Fonts.
+
+- [x] `StilFont` (a family and its stylesheet), with `StilFont.CdnFonts("…")`
+  and `StilFont.Google("…")`, and `StilFonts`: Lexend, BR Cobane, BR Segma,
+  BR Sonoma, BR Shape, Averral, Sukplena, and the display fonts BLOWREPH,
+  Taster and Zagist. A new ready-made font is one line in `StilFonts`; the
+  theme builder lists it by itself.
+- [x] `options.Font`: `<StilHead />` links the stylesheet and sets
+  `--stil-font-family`. A theme's `FontFamily` still wins.
+- [x] `dotnet new stil-app --Font …` (Lexend by default, `system` for none)
+  and `--GoogleFont "…"`.
+- [x] The theme builder previews the fonts; `samples/Stil.Html/fonts.html`
+  shows them side by side.
+- [x] The docs: the theming page, the Blazor, CSS and template READMEs.
+
+The stylesheet still never fetches fonts itself. Each font's license is on
+cdnfonts.com; some are free for personal use only, so the docs say to check
+it.
+
 ---
 
 ## Phase 9: Forms 2 ✅ Done

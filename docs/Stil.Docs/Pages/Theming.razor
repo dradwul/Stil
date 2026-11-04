@@ -55,8 +55,32 @@
     <code>sans-serif</code>. The stylesheet never fetches fonts itself. Set <code>--stil-font-family</code>
     (or <code>StilTheme.FontFamily</code>) to use another font.
 </p>
+<p>
+    In Blazor, <code>options.Font</code> picks a web font for the whole app: <code>&lt;StilHead /&gt;</code> links its
+    stylesheet and sets <code>--stil-font-family</code>. <code>StilFonts</code> has ready-made fonts from cdnfonts.com
+    (Lexend, BR Cobane, BR Segma, BR Sonoma, BR Shape, Averral, Sukplena, and the display fonts BLOWREPH, Taster and
+    Zagist). <code>StilFont.CdnFonts</code> takes any other font there by its name, and <code>StilFont.Google</code> any
+    Google font. The <a href="theme-builder">theme builder</a> previews them, and <code>dotnet new stil-app</code> takes
+    <code>--Font</code> and <code>--GoogleFont</code>.
+</p>
+<CodeBlock Language="csharp" Code="@FontSnippet" />
+<p>
+    The page then loads the font from that site, which sees your visitors' IP addresses. Check each font's license on
+    cdnfonts.com before you use it in a product; some are free for personal use only. To host a font yourself, pass your
+    own stylesheet: <code>new StilFont("My Font", "fonts/my-font.css")</code>.
+</p>
 
 @code {
+    private const string FontSnippet = """
+        // using Stil.Blazor;
+        builder.Services.AddStil(options => options.Font = StilFonts.BrCobane);
+
+        // Any font from cdnfonts.com, by its name (or its slug, the last part of its address there):
+        options.Font = StilFont.CdnFonts("Gilroy");
+        // Any Google font, in the 400 and 600 weights Stil uses:
+        options.Font = StilFont.Google("Open Sans");
+        """;
+
     private const string CSharpSnippet = """
         builder.Services.AddStil(options =>
         {
