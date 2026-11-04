@@ -206,9 +206,14 @@
 }
 
 /* Progress: <div class="stil-progress" role="progressbar" aria-valuenow="40" …>
-     <div class="stil-progress-bar" style="width: 40%"></div></div> */
+     <div class="stil-progress-bar" style="--stil-progress-value: 40%"></div></div>
+   With the value shown: <div class="stil-progress-bar" style="--stil-progress-value: 40%">
+     <span class="stil-progress-label">40%</span></div>. The label is centered on the whole
+   track; its text takes the bar's text color over the bar and the normal text color past it.
+   (style="width: 40%" on the bar also works, but the label then needs the property too.) */
 
 .stil-progress {
+    position: relative;
     display: flex;
     height: 0.75rem;
     overflow: hidden;
@@ -229,7 +234,25 @@
     background-color: var(--_bg);
     color: var(--_fg);
     white-space: nowrap;
+    width: var(--stil-progress-value, 0%);
     transition: width var(--stil-duration-md) var(--stil-easing);
+}
+
+/* The bar is not positioned, so the label spans the track and is not clipped by the bar. */
+.stil-progress-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to right, var(--_fg) var(--stil-progress-value, 0%), var(--stil-color-text) 0);
+    background-clip: text;
+    color: transparent;
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-progress-label:dir(rtl) {
+    background-image: linear-gradient(to left, var(--_fg) var(--stil-progress-value, 0%), var(--stil-color-text) 0);
 }
 
 /* Spinner: <span class="stil-spinner" role="status"><span class="stil-visually-hidden">Loading…</span></span> */

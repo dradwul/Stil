@@ -2,7 +2,12 @@
 
 <div role="progressbar" aria-label="@Label" aria-valuemin="0" aria-valuemax="@Format(Max)" aria-valuenow="@Format(Clamped)"
      @attributes="AdditionalAttributes" class="@CssClass">
-    <div class="@BarClass" style="width: @Format(Percent)%">@(ShowValue ? $"{Math.Round(Percent)}%" : null)</div>
+    <div class="@BarClass" style="--stil-progress-value: @Format(Percent)%">
+        @if (ShowValue)
+        {
+            <span class="stil-progress-label">@Math.Round(Percent)%</span>
+        }
+    </div>
 </div>
 
 @code {
@@ -18,7 +23,7 @@
     [Parameter]
     public string? Label { get; set; }
 
-    /// <summary>Shows the percentage inside the bar (use with Size="Large").</summary>
+    /// <summary>Shows the percentage, centered on the bar; it reads on both the filled and the empty part.</summary>
     [Parameter]
     public bool ShowValue { get; set; }
 

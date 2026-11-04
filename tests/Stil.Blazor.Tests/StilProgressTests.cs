@@ -25,7 +25,7 @@ public class StilProgressTests
         var bar = progress.QuerySelector(".stil-progress-bar");
         Assert.NotNull(bar);
         Assert.Equal(["stil-progress-bar"], bar.ClassList);
-        Assert.Equal("width: 40%", bar.GetAttribute("style"));
+        Assert.Equal("--stil-progress-value: 40%", bar.GetAttribute("style"));
         Assert.Equal("", bar.TextContent);
     }
 
@@ -41,12 +41,12 @@ public class StilProgressTests
         var progress = cut.Find(".stil-progress");
         Assert.Equal("8", progress.GetAttribute("aria-valuemax"));
         Assert.Equal("3", progress.GetAttribute("aria-valuenow"));
-        Assert.Equal("width: 37.5%", cut.Find(".stil-progress-bar").GetAttribute("style"));
+        Assert.Equal("--stil-progress-value: 37.5%", cut.Find(".stil-progress-bar").GetAttribute("style"));
     }
 
     [Theory]
-    [InlineData(150, "100", "width: 100%")]
-    [InlineData(-20, "0", "width: 0%")]
+    [InlineData(150, "100", "--stil-progress-value: 100%")]
+    [InlineData(-20, "0", "--stil-progress-value: 0%")]
     public void ClampsValueBetweenZeroAndMax(double value, string expectedNow, string expectedStyle)
     {
         using var context = new BunitContext();
@@ -71,7 +71,7 @@ public class StilProgressTests
 
             Assert.Equal("1.25", cut.Find(".stil-progress").GetAttribute("aria-valuenow"));
             Assert.Equal("2.5", cut.Find(".stil-progress").GetAttribute("aria-valuemax"));
-            Assert.Equal("width: 50%", cut.Find(".stil-progress-bar").GetAttribute("style"));
+            Assert.Equal("--stil-progress-value: 50%", cut.Find(".stil-progress-bar").GetAttribute("style"));
         }
         finally
         {
@@ -89,7 +89,7 @@ public class StilProgressTests
             .Add(component => component.Max, 0));
 
         Assert.Equal("0", cut.Find(".stil-progress").GetAttribute("aria-valuenow"));
-        Assert.Equal("width: 0%", cut.Find(".stil-progress-bar").GetAttribute("style"));
+        Assert.Equal("--stil-progress-value: 0%", cut.Find(".stil-progress-bar").GetAttribute("style"));
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public class StilProgressTests
             .Add(component => component.Value, 5)
             .Add(component => component.Max, -10));
 
-        Assert.Equal("width: 0%", cut.Find(".stil-progress-bar").GetAttribute("style"));
+        Assert.Equal("--stil-progress-value: 0%", cut.Find(".stil-progress-bar").GetAttribute("style"));
     }
 
     [Theory]

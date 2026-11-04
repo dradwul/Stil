@@ -19,6 +19,12 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   other variants) is a soft gray, `#3d3d3d`, instead of black. On colors
   where that gray would fall below 4.5:1 it darkens just enough, so the text
   still meets WCAG AA.
+- **Stil CSS**: a progress bar's value (`stil-progress-label` inside the bar)
+  is centered on the whole track, and its text changes color where the bar
+  ends, so it reads on both parts. The bar takes its width from
+  `--stil-progress-value`; `style="width: …"` still works.
+- **Stil for Blazor**: `StilProgress` with `ShowValue` uses that label, also
+  at the medium size.
 
 ### Added
 

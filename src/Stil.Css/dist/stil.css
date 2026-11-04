@@ -1970,6 +1970,7 @@
     height: .75rem;
     font-size: var(--stil-font-size-xs);
     display: flex;
+    position: relative;
     overflow: hidden;
   }
 
@@ -1983,11 +1984,28 @@
     background-color: var(--_bg);
     color: var(--_fg);
     white-space: nowrap;
+    width: var(--stil-progress-value, 0%);
     transition: width var(--stil-duration-md) var(--stil-easing);
     justify-content: center;
     align-items: center;
     display: flex;
     overflow: hidden;
+  }
+
+  .stil-progress-label {
+    background: linear-gradient(to right, var(--_fg) var(--stil-progress-value, 0%), var(--stil-color-text) 0);
+    color: #0000;
+    font-weight: var(--stil-font-weight-bold);
+    background-clip: text;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    position: absolute;
+    inset: 0;
+  }
+
+  .stil-progress-label:dir(rtl) {
+    background-image: linear-gradient(to left, var(--_fg) var(--stil-progress-value, 0%), var(--stil-color-text) 0);
   }
 
   @keyframes stil-spin {
