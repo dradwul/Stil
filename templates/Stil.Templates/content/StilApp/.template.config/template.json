@@ -57,6 +57,61 @@
       "type": "computed",
       "value": "(Primary != \"\")"
     },
+    "Font": {
+      "type": "parameter",
+      "description": "The app's font, from cdnfonts.com (check its license there). It is set with AddStil() in Program.cs. --GoogleFont takes any Google font instead.",
+      "datatype": "choice",
+      "choices": [
+        { "choice": "lexend", "description": "Lexend, Stil's default" },
+        { "choice": "br-cobane", "description": "BR Cobane" },
+        { "choice": "br-segma", "description": "BR Segma" },
+        { "choice": "br-sonoma", "description": "BR Sonoma" },
+        { "choice": "br-shape", "description": "BR Shape" },
+        { "choice": "averral", "description": "Averral" },
+        { "choice": "sukplena", "description": "Sukplena" },
+        { "choice": "blowreph", "description": "BLOWREPH (display font)" },
+        { "choice": "taster", "description": "Taster (display font)" },
+        { "choice": "zagist", "description": "Zagist (display font)" },
+        { "choice": "system", "description": "The operating system's font; nothing is downloaded" }
+      ],
+      "defaultValue": "lexend"
+    },
+    "FontValue": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "StilFonts.Lexend",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          { "condition": "(Font == \"br-cobane\")", "value": "StilFonts.BrCobane" },
+          { "condition": "(Font == \"br-segma\")", "value": "StilFonts.BrSegma" },
+          { "condition": "(Font == \"br-sonoma\")", "value": "StilFonts.BrSonoma" },
+          { "condition": "(Font == \"br-shape\")", "value": "StilFonts.BrShape" },
+          { "condition": "(Font == \"averral\")", "value": "StilFonts.Averral" },
+          { "condition": "(Font == \"sukplena\")", "value": "StilFonts.Sukplena" },
+          { "condition": "(Font == \"blowreph\")", "value": "StilFonts.Blowreph" },
+          { "condition": "(Font == \"taster\")", "value": "StilFonts.Taster" },
+          { "condition": "(Font == \"zagist\")", "value": "StilFonts.Zagist" },
+          { "condition": "", "value": "StilFonts.Lexend" }
+        ]
+      }
+    },
+    "GoogleFont": {
+      "type": "parameter",
+      "description": "Any Google font by its family name, for example \"Inter\" or \"Open Sans\". It replaces --Font.",
+      "datatype": "text",
+      "defaultValue": "",
+      "replaces": "STIL_GOOGLE_FONT"
+    },
+    "HasGoogleFont": {
+      "type": "computed",
+      "value": "(GoogleFont != \"\")"
+    },
+    "HasCdnFont": {
+      "type": "computed",
+      "value": "(GoogleFont == \"\" && Font != \"system\")"
+    },
     "ColorMode": {
       "type": "parameter",
       "description": "The color mode the app starts in. Users can change it with the switch in the navbar.",

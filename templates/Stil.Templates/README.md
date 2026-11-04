@@ -45,6 +45,8 @@ The app references the `Stil` version the templates were released with
 | `--Interactivity` | `Server`, `None` | `Server` | `Server` makes the whole app interactive (Interactive Server). `None` gives static server rendering only. |
 | `--IncludeSampleContent` | `true`, `false` | `true` | Adds a dashboard with KPI cards (`StilStatCard`) and a `StilDataGrid`, and a form page with an `EditForm` and validation. With `false` the app has one empty Home page. |
 | `--Primary` | a CSS color, for example `#7048e8` | Stil's teal (`#34dbbf`) | The brand color. It is set with `AddStil()` in `Program.cs`, so it applies to the whole app. |
+| `--Font` | `lexend`, `br-cobane`, `br-segma`, `br-sonoma`, `br-shape`, `averral`, `sukplena`, `blowreph`, `taster`, `zagist`, `system` | `lexend` | The font, from cdnfonts.com (check its license there). It is set with `options.Font` in `Program.cs`. `system` downloads nothing and uses the operating system's font. |
+| `--GoogleFont` | a Google font, for example `"Open Sans"` | none | Any Google font by its family name. It replaces `--Font`. |
 | `--ColorMode` | `light`, `dark`, `auto` | `auto` | The color mode the app starts in. `auto` follows the operating system. Users can change it with the switch in the navbar. |
 | `--Culture` | `en`, `sv`, `nb`, `da`, `fi` | `en` | The default language, for visitors whose browser asks for none of the offered ones. Users can change it with the language selector in the navbar. Stil's components have built-in texts in all five; the app's own texts are in `Locales/*.json` (English and Swedish to start with) and are read with `IStringLocalizer<T>`. |
 | `--StilVersion` | a version | `0.1.0` | The version of the `Stil` package to reference. |

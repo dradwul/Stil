@@ -37,7 +37,7 @@ const cases = [
         name: 'Contoso.Default',
         options: [],
         expect: {
-            'Program.cs': ['builder.Services.AddStil();', 'AddInteractiveServerComponents', 'AddSingleton<OrderStore>'],
+            'Program.cs': ['options.Font = StilFonts.Lexend;', 'AddInteractiveServerComponents', 'AddSingleton<OrderStore>'],
             'Components/App.razor': ['<StilHead />', '<Routes @rendermode="InteractiveServer" />'],
             'Components/Layout/MainLayout.razor': ['StilThemeMode.Auto', '<StilDialogHost />', '<StilToastHost />', 'CollapseBelow'],
             'Components/Pages/Home.razor': ['<StilDataGrid', '<StilStatCard', 'Filterable'],
@@ -60,7 +60,7 @@ const cases = [
     },
     {
         name: 'StaticApp',
-        options: ['--Interactivity', 'None'],
+        options: ['--Interactivity', 'None', '--Font', 'system'],
         expect: {
             'Program.cs': ['builder.Services.AddRazorComponents();', 'app.MapRazorComponents<App>();'],
             'Components/App.razor': ['<Routes />', '<HeadOutlet />'],
@@ -69,7 +69,7 @@ const cases = [
             'Components/Pages/NewOrder.razor': ['[SupplyParameterFromForm]', 'FormName="new-order"'],
         },
         forbidden: {
-            'Program.cs': ['Interactive'],
+            'Program.cs': ['Interactive', 'StilFonts.Lexend'],
             'Components/App.razor': ['InteractiveServer'],
             'Components/Layout/MainLayout.razor': ['StilDialogHost', 'blazor-error-ui'],
             'wwwroot/app.css': ['blazor-error-ui'],
@@ -77,9 +77,9 @@ const cases = [
     },
     {
         name: 'ThemedApp',
-        options: ['--Primary', '#7048e8', '--ColorMode', 'dark', '--Culture', 'sv'],
+        options: ['--Primary', '#7048e8', '--ColorMode', 'dark', '--Culture', 'sv', '--Font', 'br-cobane'],
         expect: {
-            'Program.cs': ['options.Theme = new() { Primary = "#7048e8" }'],
+            'Program.cs': ['options.Theme = new() { Primary = "#7048e8" }', 'options.Font = StilFonts.BrCobane;'],
             'Components/Layout/MainLayout.razor': ['StilThemeMode.Dark', 'StilLanguageSelector'],
             'AppCultures.cs': ['public const string Default = "sv";'],
             'Locales/sv.json': ['Ny beställning'],
@@ -87,16 +87,17 @@ const cases = [
     },
     {
         name: 'StaticEmptyApp',
-        options: ['--Interactivity', 'None', '--IncludeSampleContent', 'false', '--ColorMode', 'light'],
+        options: ['--Interactivity', 'None', '--IncludeSampleContent', 'false', '--ColorMode', 'light', '--GoogleFont', 'Open Sans'],
         expect: {
             'Components/Layout/MainLayout.razor': ['StilThemeMode.Light', '@formname="color-mode"'],
+            'Program.cs': ['options.Font = StilFont.Google("Open Sans");'],
         },
         absent: ['Data'],
     },
 ];
 
 // Text that must never be left in a generated app: template directives and placeholders.
-const leftovers = ['#if', '#endif', '##else', 'STIL_PRIMARY_COLOR', 'STIL_PACKAGE_VERSION', 'localhost:5500', 'localhost:5501', 'StilApp', 'My Stil App'];
+const leftovers = ['#if', '#endif', '##else', 'STIL_PRIMARY_COLOR', 'STIL_GOOGLE_FONT', 'STIL_PACKAGE_VERSION', 'localhost:5500', 'localhost:5501', 'StilApp', 'My Stil App'];
 
 function sleep(ms) {
     Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
