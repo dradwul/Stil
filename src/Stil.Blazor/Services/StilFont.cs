@@ -64,19 +64,28 @@ public static class StilFonts
     public static StilFont BrSegma { get; } = StilFont.CdnFonts("BR Segma");
     public static StilFont BrSonoma { get; } = StilFont.CdnFonts("BR Sonoma");
     public static StilFont BrShape { get; } = StilFont.CdnFonts("BR Shape");
+
+    /// <summary>Averral. It has no € sign; the fallback font draws it.</summary>
     public static StilFont Averral { get; } = StilFont.CdnFonts("Averral");
+
+    /// <summary>Sukplena. It has no å, ä, ö, æ, ø or €; the fallback font draws them.</summary>
     public static StilFont Sukplena { get; } = StilFont.CdnFonts("Sukplena");
+
+    public static StilFont TasaExplorer { get; } = StilFont.CdnFonts("TASA Explorer");
+    public static StilFont Halcom { get; } = StilFont.CdnFonts("Halcom");
+    public static StilFont Utara { get; } = StilFont.CdnFonts("Utara");
+    public static StilFont Geologica { get; } = StilFont.CdnFonts("Geologica");
 
     /// <summary>A display font, for headings and short texts more than for body text.</summary>
     public static StilFont Blowreph { get; } = StilFont.CdnFonts("BLOWREPH");
 
-    /// <summary>A display font, for headings and short texts more than for body text.</summary>
+    /// <summary>A display font, for headings and short texts more than for body text. It has no € sign.</summary>
     public static StilFont Taster { get; } = StilFont.CdnFonts("Taster");
 
-    /// <summary>A display font, for headings and short texts more than for body text.</summary>
-    public static StilFont Zagist { get; } = StilFont.CdnFonts("Zagist");
+    /// <summary>A display font, for headings and short texts more than for body text. It has no € sign.</summary>
+    public static StilFont WarmStories { get; } = StilFont.CdnFonts("WARM STORIES");
 
     /// <summary>Every font above, Lexend first.</summary>
     public static IReadOnlyList<StilFont> All { get; } =
-        [Lexend, BrCobane, BrSegma, BrSonoma, BrShape, Averral, Sukplena, Blowreph, Taster, Zagist];
+        [Lexend, BrCobane, BrSegma, BrSonoma, BrShape, Averral, Sukplena, TasaExplorer, Halcom, Utara, Geologica, Blowreph, Taster, WarmStories];
 }

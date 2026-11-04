@@ -15,8 +15,8 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 - **Stil for Blazor**: `options.Font` in `AddStil()` gives the whole app a web
   font; `<StilHead />` links its stylesheet and sets `--stil-font-family`.
   `StilFonts` has ready-made fonts from cdnfonts.com (Lexend, BR Cobane,
-  BR Segma, BR Sonoma, BR Shape, Averral, Sukplena, BLOWREPH, Taster and
-  Zagist); `StilFont.CdnFonts("…")` takes any other font there and
+  BR Segma, BR Sonoma, BR Shape, Averral, Sukplena, TASA Explorer, Halcom,
+  Utara, Geologica, BLOWREPH, Taster and WARM STORIES); `StilFont.CdnFonts("…")` takes any other font there and
   `StilFont.Google("…")` any Google font.
 - **Stil.Templates**: `--Font` picks one of those fonts (`lexend` by default,
   or `system` for none) and `--GoogleFont` any Google font. New apps now load

@@ -581,8 +581,8 @@ Fonts.
 
 - [x] `StilFont` (a family and its stylesheet), with `StilFont.CdnFonts("…")`
   and `StilFont.Google("…")`, and `StilFonts`: Lexend, BR Cobane, BR Segma,
-  BR Sonoma, BR Shape, Averral, Sukplena, and the display fonts BLOWREPH,
-  Taster and Zagist. A new ready-made font is one line in `StilFonts`; the
+  BR Sonoma, BR Shape, Averral, Sukplena, TASA Explorer, Halcom, Utara,
+  Geologica, and the display fonts BLOWREPH, Taster and WARM STORIES. A new ready-made font is one line in `StilFonts`; the
   theme builder lists it by itself.
 - [x] `options.Font`: `<StilHead />` links the stylesheet and sets
   `--stil-font-family`. A theme's `FontFamily` still wins.

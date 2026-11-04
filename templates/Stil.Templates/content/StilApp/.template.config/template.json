@@ -69,9 +69,13 @@
         { "choice": "br-shape", "description": "BR Shape" },
         { "choice": "averral", "description": "Averral" },
         { "choice": "sukplena", "description": "Sukplena" },
+        { "choice": "tasa-explorer", "description": "TASA Explorer" },
+        { "choice": "halcom", "description": "Halcom" },
+        { "choice": "utara", "description": "Utara" },
+        { "choice": "geologica", "description": "Geologica" },
         { "choice": "blowreph", "description": "BLOWREPH (display font)" },
         { "choice": "taster", "description": "Taster (display font)" },
-        { "choice": "zagist", "description": "Zagist (display font)" },
+        { "choice": "warm-stories", "description": "WARM STORIES (display font)" },
         { "choice": "system", "description": "The operating system's font; nothing is downloaded" }
       ],
       "defaultValue": "lexend"
@@ -90,9 +94,13 @@
           { "condition": "(Font == \"br-shape\")", "value": "StilFonts.BrShape" },
           { "condition": "(Font == \"averral\")", "value": "StilFonts.Averral" },
           { "condition": "(Font == \"sukplena\")", "value": "StilFonts.Sukplena" },
+          { "condition": "(Font == \"tasa-explorer\")", "value": "StilFonts.TasaExplorer" },
+          { "condition": "(Font == \"halcom\")", "value": "StilFonts.Halcom" },
+          { "condition": "(Font == \"utara\")", "value": "StilFonts.Utara" },
+          { "condition": "(Font == \"geologica\")", "value": "StilFonts.Geologica" },
           { "condition": "(Font == \"blowreph\")", "value": "StilFonts.Blowreph" },
           { "condition": "(Font == \"taster\")", "value": "StilFonts.Taster" },
-          { "condition": "(Font == \"zagist\")", "value": "StilFonts.Zagist" },
+          { "condition": "(Font == \"warm-stories\")", "value": "StilFonts.WarmStories" },
           { "condition": "", "value": "StilFonts.Lexend" }
         ]
       }
