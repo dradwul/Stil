@@ -10,9 +10,11 @@ const css = ['tokens.css', 'derived.css'].map(file => readFileSync(join(sourceDi
 
 // The derived-color formulas below mirror src/derived.css. If a constant changes there, change it here.
 const FG_THRESHOLD = 0.1791; // luminance where black and white text give equal contrast
+const FG_DARK = 0.0466; // linear luminance of the dark text, #3d3d3d
+const FG_RATIO = 4.6; // the contrast the dark text keeps, darkening toward black when it must
 const ACCENT_MAX_LIGHT = 0.15; // accent luminance cap in light mode
 const ACCENT_MIN_DARK = 1 - 0.7; // accent luminance floor in dark mode
-for (const constant of ['(0.1791 -', '0.15 / (', '0.7 / (']) {
+for (const constant of ['(0.1791 -', '/ 4.6 - 0.05, 0.0466)', '0.15 / (', '0.7 / (']) {
     if (!css.includes(constant)) {
         fail(`derived.css no longer contains "${constant}". Update tools/check-contrast.mjs to match.`);
     }
@@ -76,7 +78,13 @@ console.log(`All ${checks} contrast checks passed.`);
 // --- Formulas (mirroring stil.css) -------------------------------------------------------
 
 function autoForeground(background) {
-    return luminance(background) < FG_THRESHOLD ? [1, 1, 1] : [0, 0, 0];
+    const l = luminance(background);
+    if (l < FG_THRESHOLD) {
+        return [1, 1, 1];
+    }
+
+    const gray = fromLinear(Math.min(FG_DARK, Math.max(0, (l + 0.05) / FG_RATIO - 0.05)));
+    return [gray, gray, gray];
 }
 
 function accent(primary, mode) {

@@ -7,8 +7,9 @@
  */
 
 :root {
-    /* Brand and semantic colors. Text on them is picked automatically (black or white,
-       whichever contrasts more); set --stil-color-{variant}-contrast to override. */
+    /* Brand and semantic colors. Text on them is picked automatically: white, or a soft
+       dark gray (#3d3d3d) that darkens only where AA needs it; set
+       --stil-color-{variant}-contrast to override. */
     --stil-color-primary: #34dbbf;
     --stil-color-secondary: #a6dbd2;
     --stil-color-success: #34db58;

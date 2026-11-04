@@ -5,8 +5,10 @@
  * not on :root, so a theme set on any ancestor reaches them. A component sets --_bg to its
  * color (and --_contrast to an optional override); these rules turn that into:
  *
- *   --_fg      Text on --_bg. White below the WCAG luminance crossover (0.1791), black above
- *              it, which always gives at least 4.58:1.
+ *   --_fg      Text on --_bg. White below the WCAG luminance crossover (0.1791). Above it, a
+ *              soft dark gray, #3d3d3d (linear luminance 0.0466), where that still gives
+ *              4.6:1; on the darker colors just above the crossover, the gray darkens toward
+ *              black as far as 4.6:1 needs. It always gives at least 4.58:1.
  *   --_ink     --_bg adjusted to be readable as text or a border on the neutral surfaces.
  *   --_accent  The same adjustment applied to the primary color, for links, focus rings and
  *              selected states. Set --stil-color-accent to override.
@@ -18,9 +20,12 @@
 
 :where([class^="stil-"], [class*=" stil-"], .stil-scope a) {
     --_fg: var(--_contrast, color(from var(--_bg) srgb-linear
-        clamp(0, (0.1791 - (0.2126 * r + 0.7152 * g + 0.0722 * b)) * 100000, 1)
-        clamp(0, (0.1791 - (0.2126 * r + 0.7152 * g + 0.0722 * b)) * 100000, 1)
-        clamp(0, (0.1791 - (0.2126 * r + 0.7152 * g + 0.0722 * b)) * 100000, 1)));
+        max(clamp(0, (0.1791 - (0.2126 * r + 0.7152 * g + 0.0722 * b)) * 100000, 1),
+            clamp(0, (0.2126 * r + 0.7152 * g + 0.0722 * b + 0.05) / 4.6 - 0.05, 0.0466))
+        max(clamp(0, (0.1791 - (0.2126 * r + 0.7152 * g + 0.0722 * b)) * 100000, 1),
+            clamp(0, (0.2126 * r + 0.7152 * g + 0.0722 * b + 0.05) / 4.6 - 0.05, 0.0466))
+        max(clamp(0, (0.1791 - (0.2126 * r + 0.7152 * g + 0.0722 * b)) * 100000, 1),
+            clamp(0, (0.2126 * r + 0.7152 * g + 0.0722 * b + 0.05) / 4.6 - 0.05, 0.0466))));
 
     --_ink: light-dark(
         color(from var(--_bg) srgb-linear

@@ -15,6 +15,10 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 - **Stil CSS**: the default font is BR Shape (`--stil-font-family`), used
   when the page loads it from `https://fonts.cdnfonts.com/css/br-shape`;
   otherwise `sans-serif`. Lexend is still in `StilFonts`.
+- **Stil CSS**: dark text on colored backgrounds (buttons, badges, alerts and
+  other variants) is a soft gray, `#3d3d3d`, instead of black. On colors
+  where that gray would fall below 4.5:1 it darkens just enough, so the text
+  still meets WCAG AA.
 
 ### Added
 
