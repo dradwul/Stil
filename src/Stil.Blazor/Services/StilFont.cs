@@ -58,12 +58,14 @@ public sealed partial record StilFont(string Family, string? StylesheetUrl, stri
 /// </summary>
 public static class StilFonts
 {
-    /// <summary>Lexend, Stil's default font.</summary>
+    /// <summary>BR Shape, Stil's default font.</summary>
+    public static StilFont BrShape { get; } = StilFont.CdnFonts("BR Shape");
+
+    /// <summary>Lexend, Stil's earlier default font.</summary>
     public static StilFont Lexend { get; } = StilFont.CdnFonts("Lexend");
     public static StilFont BrCobane { get; } = StilFont.CdnFonts("BR Cobane");
     public static StilFont BrSegma { get; } = StilFont.CdnFonts("BR Segma");
     public static StilFont BrSonoma { get; } = StilFont.CdnFonts("BR Sonoma");
-    public static StilFont BrShape { get; } = StilFont.CdnFonts("BR Shape");
 
     /// <summary>Averral. It has no € sign; the fallback font draws it.</summary>
     public static StilFont Averral { get; } = StilFont.CdnFonts("Averral");
@@ -85,7 +87,7 @@ public static class StilFonts
     /// <summary>A display font, for headings and short texts more than for body text. It has no € sign.</summary>
     public static StilFont WarmStories { get; } = StilFont.CdnFonts("WARM STORIES");
 
-    /// <summary>Every font above, Lexend first.</summary>
+    /// <summary>Every font above, BR Shape first.</summary>
     public static IReadOnlyList<StilFont> All { get; } =
-        [Lexend, BrCobane, BrSegma, BrSonoma, BrShape, Averral, Sukplena, TasaExplorer, Halcom, Utara, Geologica, Blowreph, Taster, WarmStories];
+        [BrShape, Lexend, BrCobane, BrSegma, BrSonoma, Averral, Sukplena, TasaExplorer, Halcom, Utara, Geologica, Blowreph, Taster, WarmStories];
 }

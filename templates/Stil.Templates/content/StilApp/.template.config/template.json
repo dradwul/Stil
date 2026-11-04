@@ -62,11 +62,11 @@
       "description": "The app's font, from cdnfonts.com (check its license there). It is set with AddStil() in Program.cs. --GoogleFont takes any Google font instead.",
       "datatype": "choice",
       "choices": [
-        { "choice": "lexend", "description": "Lexend, Stil's default" },
+        { "choice": "br-shape", "description": "BR Shape, Stil's default" },
+        { "choice": "lexend", "description": "Lexend" },
         { "choice": "br-cobane", "description": "BR Cobane" },
         { "choice": "br-segma", "description": "BR Segma" },
         { "choice": "br-sonoma", "description": "BR Sonoma" },
-        { "choice": "br-shape", "description": "BR Shape" },
         { "choice": "averral", "description": "Averral" },
         { "choice": "sukplena", "description": "Sukplena" },
         { "choice": "tasa-explorer", "description": "TASA Explorer" },
@@ -78,20 +78,20 @@
         { "choice": "warm-stories", "description": "WARM STORIES (display font)" },
         { "choice": "system", "description": "The operating system's font; nothing is downloaded" }
       ],
-      "defaultValue": "lexend"
+      "defaultValue": "br-shape"
     },
     "FontValue": {
       "type": "generated",
       "generator": "switch",
-      "replaces": "StilFonts.Lexend",
+      "replaces": "StilFonts.BrShape",
       "parameters": {
         "evaluator": "C++",
         "datatype": "string",
         "cases": [
+          { "condition": "(Font == \"lexend\")", "value": "StilFonts.Lexend" },
           { "condition": "(Font == \"br-cobane\")", "value": "StilFonts.BrCobane" },
           { "condition": "(Font == \"br-segma\")", "value": "StilFonts.BrSegma" },
           { "condition": "(Font == \"br-sonoma\")", "value": "StilFonts.BrSonoma" },
-          { "condition": "(Font == \"br-shape\")", "value": "StilFonts.BrShape" },
           { "condition": "(Font == \"averral\")", "value": "StilFonts.Averral" },
           { "condition": "(Font == \"sukplena\")", "value": "StilFonts.Sukplena" },
           { "condition": "(Font == \"tasa-explorer\")", "value": "StilFonts.TasaExplorer" },
@@ -101,7 +101,7 @@
           { "condition": "(Font == \"blowreph\")", "value": "StilFonts.Blowreph" },
           { "condition": "(Font == \"taster\")", "value": "StilFonts.Taster" },
           { "condition": "(Font == \"warm-stories\")", "value": "StilFonts.WarmStories" },
-          { "condition": "", "value": "StilFonts.Lexend" }
+          { "condition": "", "value": "StilFonts.BrShape" }
         ]
       }
     },

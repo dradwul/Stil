@@ -586,7 +586,7 @@ Fonts.
   theme builder lists it by itself.
 - [x] `options.Font`: `<StilHead />` links the stylesheet and sets
   `--stil-font-family`. A theme's `FontFamily` still wins.
-- [x] `dotnet new stil-app --Font …` (Lexend by default, `system` for none)
+- [x] `dotnet new stil-app --Font …` (BR Shape by default, `system` for none)
   and `--GoogleFont "…"`.
 - [x] The theme builder previews the fonts; `samples/Stil.Html/fonts.html`
   shows them side by side.

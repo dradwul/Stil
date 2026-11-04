@@ -10,7 +10,7 @@ public sealed class StilOptions
     /// A web font for the whole app, for example <c>StilFonts.BrCobane</c>, <c>StilFont.CdnFonts("…")</c>
     /// or <c>StilFont.Google("Inter")</c>. <c>&lt;StilHead /&gt;</c> links its stylesheet and sets
     /// <c>--stil-font-family</c>; <see cref="StilTheme.FontFamily"/> still wins when both are set.
-    /// Without it, Stil uses Lexend when the page loads it, and otherwise <c>sans-serif</c>.
+    /// Without it, Stil uses BR Shape when the page loads it, and otherwise <c>sans-serif</c>.
     /// </summary>
     public StilFont? Font { get; set; }
 

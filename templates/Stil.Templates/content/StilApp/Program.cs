@@ -28,7 +28,7 @@ builder.Services.AddStil(options =>
     options.Font = StilFont.Google("STIL_GOOGLE_FONT");
 #elif (HasCdnFont)
     // Another font: StilFonts.BrCobane, StilFont.CdnFonts("…") from cdnfonts.com, or StilFont.Google("…").
-    options.Font = StilFonts.Lexend;
+    options.Font = StilFonts.BrShape;
 #else
     // A web font, for example StilFonts.BrCobane, StilFont.CdnFonts("…") or StilFont.Google("…"):
     // options.Font = StilFonts.BrCobane;

@@ -69,12 +69,12 @@
     </template>
 
     <script>
-        const fonts = ['Lexend', 'BR Cobane', 'BR Segma', 'BR Sonoma', 'BR Shape', 'BLOWREPH', 'Averral', 'Taster', 'Sukplena', 'TASA Explorer', 'Halcom', 'Utara', 'Geologica', 'WARM STORIES'];
+        const fonts = ['BR Shape', 'Lexend', 'BR Cobane', 'BR Segma', 'BR Sonoma', 'BLOWREPH', 'Averral', 'Taster', 'Sukplena', 'TASA Explorer', 'Halcom', 'Utara', 'Geologica', 'WARM STORIES'];
         const template = document.getElementById('specimen');
         for (const font of fonts) {
             const card = template.content.firstElementChild.cloneNode(true);
             card.style.setProperty('--stil-font-family', `'${font}', sans-serif`);
-            card.querySelector('[data-name]').textContent = font + (font === 'Lexend' ? ' (default)' : '');
+            card.querySelector('[data-name]').textContent = font + (font === 'BR Shape' ? ' (default)' : '');
             document.getElementById('specimens').append(card);
         }
         document.getElementById('mode').addEventListener('change', e => document.documentElement.dataset.stilTheme = e.target.value);

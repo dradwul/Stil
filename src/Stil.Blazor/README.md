@@ -633,7 +633,7 @@ builder.Services.AddStil(options => options.Font = StilFonts.BrCobane);
 // options.Font = StilFont.Google("Open Sans");
 ```
 
-`StilFonts` has Lexend, BR Cobane, BR Segma, BR Sonoma, BR Shape, Averral,
+`StilFonts` has BR Shape (the default), Lexend, BR Cobane, BR Segma, BR Sonoma, Averral,
 Sukplena, TASA Explorer, Halcom, Utara and Geologica, and the display fonts
 BLOWREPH, Taster and WARM STORIES, all from
 cdnfonts.com. Check a font's license there before you use it in a product;

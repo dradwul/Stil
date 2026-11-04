@@ -335,8 +335,8 @@ same form when you override them, or the override applies to both modes:
 
 The defaults are in [`src/tokens.css`](src/tokens.css).
 
-Stil uses **Lexend** if your page loads it, for example with
-`<link href="https://fonts.cdnfonts.com/css/lexend" rel="stylesheet">`.
+Stil uses **BR Shape** if your page loads it, for example with
+`<link href="https://fonts.cdnfonts.com/css/br-shape" rel="stylesheet">`.
 Otherwise it falls back to `sans-serif`. The stylesheet never
 fetches fonts on its own. For another font, load it and set the token:
 
@@ -346,7 +346,7 @@ fetches fonts on its own. For another font, load it and set the token:
 ```
 
 [`samples/Stil.Html/fonts.html`](../../samples/Stil.Html/fonts.html) shows the
-same card in Lexend and nine other fonts from cdnfonts.com.
+same card in BR Shape and the other fonts in `StilFonts`, all from cdnfonts.com.
 
 ### Accessibility check
 

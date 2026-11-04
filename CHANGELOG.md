@@ -10,6 +10,12 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 
 ## [Unreleased]
 
+### Changed
+
+- **Stil CSS**: the default font is BR Shape (`--stil-font-family`), used
+  when the page loads it from `https://fonts.cdnfonts.com/css/br-shape`;
+  otherwise `sans-serif`. Lexend is still in `StilFonts`.
+
 ### Added
 
 - **Stil for Blazor**: `options.Font` in `AddStil()` gives the whole app a web
@@ -18,9 +24,9 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   BR Segma, BR Sonoma, BR Shape, Averral, Sukplena, TASA Explorer, Halcom,
   Utara, Geologica, BLOWREPH, Taster and WARM STORIES); `StilFont.CdnFonts("…")` takes any other font there and
   `StilFont.Google("…")` any Google font.
-- **Stil.Templates**: `--Font` picks one of those fonts (`lexend` by default,
+- **Stil.Templates**: `--Font` picks one of those fonts (`br-shape` by default,
   or `system` for none) and `--GoogleFont` any Google font. New apps now load
-  Lexend.
+  BR Shape.
 - **Stil CSS**: `samples/Stil.Html/fonts.html` compares the fonts.
 - **Docs**: the theme builder previews the cdnfonts.com fonts and writes
   `options.Font` in its C#.
