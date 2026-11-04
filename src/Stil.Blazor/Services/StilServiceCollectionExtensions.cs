@@ -15,6 +15,7 @@ public static class StilServiceCollectionExtensions
     {
         var options = new StilOptions();
         configure?.Invoke(options);
+        options.Font?.Validate();
 
         services.TryAddSingleton(options);
         services.TryAddScoped<IStilDialogService, StilDialogService>();

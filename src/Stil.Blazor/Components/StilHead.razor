@@ -1,14 +1,27 @@
 @inject StilOptions Options
 
-@* Put <StilHead /> in the <head> of App.razor: it adds the stylesheet and the global theme. *@
+@* Put <StilHead /> in the <head> of App.razor: it adds the stylesheet, the font and the global theme. *@
 <link rel="stylesheet" href="@Assets[Minified ? "_content/Stil/stil.min.css" : "_content/Stil/stil.css"]" />
-@if (Options.Theme.HasOverrides)
+@if (Options.Font?.StylesheetUrl is { } fontUrl)
 {
-    @((MarkupString)$"<style>:root {{ {Options.Theme.ToCssDeclarations()} }}</style>")
+    <link rel="stylesheet" href="@fontUrl" />
+}
+@if (Declarations is { Length: > 0 } declarations)
+{
+    @((MarkupString)$"<style>:root {{ {declarations} }}</style>")
 }
 
 @code {
     /// <summary>Use the minified stylesheet. The default is true.</summary>
     [Parameter]
     public bool Minified { get; set; } = true;
+
+    protected override void OnParametersSet() => Options.Font?.Validate();
+
+    // The font comes first, so a FontFamily in the theme wins.
+    private string Declarations => string.Join(' ', new[]
+    {
+        Options.Font is { } font ? $"--stil-font-family: {font.FontFamily};" : null,
+        Options.Theme.HasOverrides ? Options.Theme.ToCssDeclarations() : null,
+    }.Where(d => d is not null));
 }

@@ -621,6 +621,24 @@ Text on colored components, link colors and focus rings are derived from the
 tokens and stay WCAG AA readable. Put `StilDialogHost` and `StilToastHost`
 inside the provider so dialogs and toasts follow its theme.
 
+### Fonts
+
+`options.Font` gives the whole app a web font. `<StilHead />` links its
+stylesheet and sets `--stil-font-family` (`using Stil.Blazor;`):
+
+```csharp
+builder.Services.AddStil(options => options.Font = StilFonts.BrCobane);
+// Any font from cdnfonts.com by its name, or any Google font:
+// options.Font = StilFont.CdnFonts("Gilroy");
+// options.Font = StilFont.Google("Open Sans");
+```
+
+`StilFonts` has Lexend, BR Cobane, BR Segma, BR Sonoma, BR Shape, Averral and
+Sukplena, and the display fonts BLOWREPH, Taster and Zagist, all from
+cdnfonts.com. Check a font's license there before you use it in a product;
+some are free for personal use only. For a font you host yourself, use
+`new StilFont("My Font", "fonts/my-font.css")`.
+
 You can also override tokens in CSS. Stil's rules are in cascade layers, so
 your CSS always wins. See the
 [theming guide and full token list](https://github.com/dradwul/Stil/tree/main/src/Stil.Css#theming).

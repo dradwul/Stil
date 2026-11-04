@@ -78,4 +78,50 @@ public class StilHeadTests
         Assert.Contains("<link rel=\"stylesheet\" href=\"_content/Stil/stil.min.css\" />", html);
         Assert.Contains("<style>:root { --stil-font-family: \"Inter\", sans-serif; }</style>", html);
     }
+
+    [Fact]
+    public void LinksTheFontAndSetsTheFontFamily()
+    {
+        using var context = new BunitContext();
+        context.Services.AddStil(options => options.Font = StilFonts.BrCobane);
+
+        var cut = context.Render<StilHead>();
+
+        var links = cut.FindAll("link");
+        Assert.Equal("https://fonts.cdnfonts.com/css/br-cobane", links[1].GetAttribute("href"));
+        Assert.Equal(":root { --stil-font-family: 'BR Cobane', sans-serif; }", cut.Find("style").TextContent);
+    }
+
+    [Fact]
+    public void ThemeFontFamilyWinsOverTheFont()
+    {
+        using var context = new BunitContext();
+        context.Services.AddStil(options =>
+        {
+            options.Font = StilFont.Google("Open Sans");
+            options.Theme.FontFamily = "system-ui";
+        });
+
+        var cut = context.Render<StilHead>();
+
+        Assert.Equal("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap", cut.FindAll("link")[1].GetAttribute("href"));
+        Assert.Equal(":root { --stil-font-family: 'Open Sans', sans-serif; --stil-font-family: system-ui; }", cut.Find("style").TextContent);
+    }
+
+    [Theory]
+    [InlineData("Inter'; }", null)]
+    [InlineData("Inter", "http://example.com/font.css")]
+    public void RejectsAFontThatCouldBreakThePage(string family, string? url)
+    {
+        var services = new ServiceCollection();
+
+        Assert.Throws<InvalidOperationException>(() => services.AddStil(options => options.Font = new StilFont(family, url)));
+    }
+
+    [Fact]
+    public void CdnFontsSlugDefaultsToTheFamilyName()
+    {
+        Assert.Equal("https://fonts.cdnfonts.com/css/br-sonoma", StilFont.CdnFonts("BR Sonoma").StylesheetUrl);
+        Assert.Equal("https://fonts.cdnfonts.com/css/custom", StilFont.CdnFonts("Some Font", "custom").StylesheetUrl);
+    }
 }
