@@ -2491,6 +2491,149 @@
     font-weight: var(--stil-font-weight-bold);
   }
 
+  .stil-log {
+    gap: var(--stil-space-3);
+    display: grid;
+  }
+
+  .stil-log-toolbar {
+    gap: var(--stil-space-2);
+    flex-wrap: wrap;
+    display: flex;
+  }
+
+  .stil-log-toolbar > .stil-input {
+    flex: 12rem;
+  }
+
+  .stil-log-toolbar > .stil-select {
+    width: auto;
+  }
+
+  .stil-log-scroll {
+    overflow-anchor: auto;
+    overflow-y: auto;
+  }
+
+  .stil-log-group + .stil-log-group, .stil-log-day-row:not(:first-child) {
+    margin-block-start: var(--stil-space-4);
+  }
+
+  .stil-log-day {
+    margin: 0 0 var(--stil-space-1);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+    font-weight: var(--stil-font-weight-bold);
+  }
+
+  .stil-log-list, .stil-timeline {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .stil-log-entry, .stil-timeline-entry {
+    --_marker: 1.75rem;
+    gap: var(--stil-space-3);
+    padding-block: var(--stil-space-2);
+    display: flex;
+    position: relative;
+  }
+
+  .stil-log-list > .stil-log-entry:not(:last-child):before, .stil-timeline-entry:not(:last-child):before {
+    content: "";
+    inset-block: calc(var(--stil-space-2) + var(--_marker)) calc(-1 * var(--stil-space-2));
+    background-color: var(--stil-color-border);
+    width: 2px;
+    position: absolute;
+    inset-inline-start: calc(var(--_marker) / 2 - 1px);
+  }
+
+  .stil-log-marker {
+    --_bg: var(--stil-color-border-strong);
+    width: var(--_marker);
+    height: var(--_marker);
+    background-color: var(--_bg);
+    color: var(--_fg);
+    border-radius: 50%;
+    flex: none;
+    place-items: center;
+    font-size: .875em;
+    display: grid;
+    position: relative;
+  }
+
+  .stil-log-marker:empty {
+    width: .75rem;
+    height: .75rem;
+    margin-inline: calc((var(--_marker) - .75rem) / 2);
+    margin-block: calc((var(--_marker) - .75rem) / 2);
+  }
+
+  .stil-log-body {
+    flex: 1;
+    min-width: 0;
+    padding-block-start: .2rem;
+  }
+
+  .stil-log-head {
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--stil-space-1) var(--stil-space-3);
+    flex-wrap: wrap;
+    display: flex;
+  }
+
+  .stil-log-title {
+    font-weight: var(--stil-font-weight-bold);
+  }
+
+  .stil-log-time, .stil-log-meta, .stil-log-empty {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+  }
+
+  .stil-log-time {
+    white-space: nowrap;
+  }
+
+  .stil-log-empty {
+    margin: 0;
+  }
+
+  .stil-log-details {
+    font-size: var(--stil-font-size-sm);
+    margin-block-start: var(--stil-space-1);
+  }
+
+  .stil-log-entry-new {
+    animation: 2.4s ease-out stil-log-new;
+  }
+
+  @keyframes stil-log-new {
+    from {
+      background-color: color-mix(in srgb, var(--_accent) 18%, transparent);
+    }
+  }
+
+  .stil-timeline-entry {
+    --_marker: 1.25rem;
+    padding-block: var(--stil-space-1);
+    font-size: var(--stil-font-size-sm);
+  }
+
+  .stil-timeline-entry:not(:last-child):before {
+    inset-block: calc(var(--stil-space-1) + var(--_marker)) calc(-1 * var(--stil-space-1));
+  }
+
+  .stil-timeline .stil-log-title {
+    font-weight: var(--stil-font-weight-normal);
+  }
+
+  .stil-timeline .stil-log-body {
+    padding-block-start: 0;
+  }
+
   .stil-combobox {
     position: relative;
   }
@@ -4719,32 +4862,32 @@
     --_icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.5L21.5 20h-19z'/%3E%3Cpath d='M12 10v4M12 17h.01'/%3E%3C/svg%3E");
   }
 
-  .stil-btn-primary, .stil-alert-primary, .stil-badge-primary, .stil-toast-primary, .stil-event-primary {
+  .stil-btn-primary, .stil-alert-primary, .stil-badge-primary, .stil-toast-primary, .stil-event-primary, .stil-log-marker-primary {
     --_bg: var(--stil-color-primary);
     --_contrast: var(--stil-color-primary-contrast);
   }
 
-  .stil-btn-secondary, .stil-alert-secondary, .stil-badge-secondary, .stil-toast-secondary, .stil-event-secondary {
+  .stil-btn-secondary, .stil-alert-secondary, .stil-badge-secondary, .stil-toast-secondary, .stil-event-secondary, .stil-log-marker-secondary {
     --_bg: var(--stil-color-secondary);
     --_contrast: var(--stil-color-secondary-contrast);
   }
 
-  .stil-btn-success, .stil-alert-success, .stil-badge-success, .stil-toast-success, .stil-event-success {
+  .stil-btn-success, .stil-alert-success, .stil-badge-success, .stil-toast-success, .stil-event-success, .stil-log-marker-success {
     --_bg: var(--stil-color-success);
     --_contrast: var(--stil-color-success-contrast);
   }
 
-  .stil-btn-danger, .stil-alert-danger, .stil-badge-danger, .stil-toast-danger, .stil-event-danger {
+  .stil-btn-danger, .stil-alert-danger, .stil-badge-danger, .stil-toast-danger, .stil-event-danger, .stil-log-marker-danger {
     --_bg: var(--stil-color-danger);
     --_contrast: var(--stil-color-danger-contrast);
   }
 
-  .stil-btn-warning, .stil-alert-warning, .stil-badge-warning, .stil-toast-warning, .stil-event-warning {
+  .stil-btn-warning, .stil-alert-warning, .stil-badge-warning, .stil-toast-warning, .stil-event-warning, .stil-log-marker-warning {
     --_bg: var(--stil-color-warning);
     --_contrast: var(--stil-color-warning-contrast);
   }
 
-  .stil-btn-info, .stil-alert-info, .stil-badge-info, .stil-toast-info, .stil-event-info {
+  .stil-btn-info, .stil-alert-info, .stil-badge-info, .stil-toast-info, .stil-event-info, .stil-log-marker-info {
     --_bg: var(--stil-color-info);
     --_contrast: var(--stil-color-info-contrast);
   }

@@ -1,3 +1,4 @@
+| Activity log | `stil-log` > `stil-log-toolbar` and `stil-log-scroll` > `stil-log-group` (`stil-log-day`, `stil-log-list` > `stil-log-entry`). An entry has a `stil-log-marker` (`stil-log-marker-{variant}`; a small dot when empty) and a `stil-log-body` (`stil-log-head` with `stil-log-title` and `stil-log-time`, `stil-log-meta`, `stil-log-details`). `stil-log-entry-new` highlights a new entry. `stil-timeline` > `stil-timeline-entry` is the compact form. |
 # Stil CSS
 
 Stil CSS is a themeable, framework-independent CSS class library. It is a

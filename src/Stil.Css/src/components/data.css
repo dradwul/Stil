@@ -318,3 +318,144 @@ th[data-stil-drop="after"]:dir(rtl) { box-shadow: inset 3px 0 0 var(--_accent); 
 
 /* A row with children shows the totals of the rows below it. */
 .stil-tree-grid tbody > tr[aria-expanded] > td { font-weight: var(--stil-font-weight-bold); }
+
+/* Activity log: entries grouped by day, newest first, each with a marker on a line.
+   <div class="stil-log">
+     <div class="stil-log-toolbar">…search and filters…</div>
+     <div class="stil-log-scroll">
+       <section class="stil-log-group"><h3 class="stil-log-day">Today</h3>
+         <ol class="stil-log-list"><li class="stil-log-entry">
+           <span class="stil-log-marker stil-log-marker-success"></span>
+           <div class="stil-log-body"><div class="stil-log-head"><span class="stil-log-title">Checked in</span>
+             <time class="stil-log-time">5 minutes ago</time></div><div class="stil-log-meta">Maja Lind · Visit</div></div>
+         </li></ol></section></div></div>
+   A marker without an icon is a small dot; stil-log-marker-{variant} colors it. stil-log-entry-new
+   highlights a new entry for a moment. The timeline (stil-timeline > stil-timeline-entry) is the
+   compact form. */
+
+.stil-log {
+    display: grid;
+    gap: var(--stil-space-3);
+}
+
+.stil-log-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--stil-space-2);
+}
+
+.stil-log-toolbar > .stil-input { flex: 1 1 12rem; }
+.stil-log-toolbar > .stil-select { width: auto; }
+
+/* With a max-height the log scrolls; the browser keeps the entry in view when new ones arrive above. */
+.stil-log-scroll {
+    overflow-y: auto;
+    overflow-anchor: auto;
+}
+
+.stil-log-group + .stil-log-group,
+.stil-log-day-row:not(:first-child) { margin-block-start: var(--stil-space-4); }
+
+.stil-log-day {
+    margin: 0 0 var(--stil-space-1);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-log-list,
+.stil-timeline {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stil-log-entry,
+.stil-timeline-entry {
+    --_marker: 1.75rem;
+    position: relative;
+    display: flex;
+    gap: var(--stil-space-3);
+    padding-block: var(--stil-space-2);
+}
+
+/* The line from one marker to the next. */
+.stil-log-list > .stil-log-entry:not(:last-child)::before,
+.stil-timeline-entry:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    inset-block: calc(var(--stil-space-2) + var(--_marker)) calc(-1 * var(--stil-space-2));
+    inset-inline-start: calc(var(--_marker) / 2 - 1px);
+    width: 2px;
+    background-color: var(--stil-color-border);
+}
+
+.stil-log-marker {
+    --_bg: var(--stil-color-border-strong);
+    position: relative;
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: var(--_marker);
+    height: var(--_marker);
+    border-radius: 50%;
+    background-color: var(--_bg);
+    color: var(--_fg);
+    font-size: 0.875em;
+}
+
+.stil-log-marker:empty {
+    width: 0.75rem;
+    height: 0.75rem;
+    margin-inline: calc((var(--_marker) - 0.75rem) / 2);
+    margin-block: calc((var(--_marker) - 0.75rem) / 2);
+}
+
+.stil-log-body {
+    flex: 1;
+    min-width: 0;
+    padding-block-start: 0.2rem;
+}
+
+.stil-log-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--stil-space-1) var(--stil-space-3);
+}
+
+.stil-log-title { font-weight: var(--stil-font-weight-bold); }
+
+.stil-log-time,
+.stil-log-meta,
+.stil-log-empty {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+}
+
+.stil-log-time { white-space: nowrap; }
+.stil-log-empty { margin: 0; }
+.stil-log-details {
+    margin-block-start: var(--stil-space-1);
+    font-size: var(--stil-font-size-sm);
+}
+
+.stil-log-entry-new { animation: stil-log-new 2.4s ease-out; }
+
+@keyframes stil-log-new {
+    from { background-color: color-mix(in srgb, var(--_accent) 18%, transparent); }
+}
+
+.stil-timeline-entry {
+    --_marker: 1.25rem;
+    padding-block: var(--stil-space-1);
+    font-size: var(--stil-font-size-sm);
+}
+
+.stil-timeline-entry:not(:last-child)::before {
+    inset-block: calc(var(--stil-space-1) + var(--_marker)) calc(-1 * var(--stil-space-1));
+}
+
+.stil-timeline .stil-log-title { font-weight: var(--stil-font-weight-normal); }
+.stil-timeline .stil-log-body { padding-block-start: 0; }

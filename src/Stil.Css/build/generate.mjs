@@ -8,7 +8,7 @@ export const variants = ['primary', 'secondary', 'success', 'danger', 'warning',
 
 // Components that take a color variant. Each gets stil-{component}-{variant} classes, generated
 // after all component rules so they override each component's default --_bg.
-const variantComponents = ['btn', 'alert', 'badge', 'toast', 'event'];
+const variantComponents = ['btn', 'alert', 'badge', 'toast', 'event', 'log-marker'];
 
 const spaceScale = { 0: '0', 1: 'var(--stil-space-1)', 2: 'var(--stil-space-2)', 3: 'var(--stil-space-3)',
     4: 'var(--stil-space-4)', 5: 'var(--stil-space-5)', 6: 'var(--stil-space-6)', 7: 'var(--stil-space-7)' };
