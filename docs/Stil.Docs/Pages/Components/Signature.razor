@@ -1,0 +1,34 @@
+@page "/components/signature"
+@using Stil.Docs.Examples.Signature
+
+<DocsHeader Title="Signature" Eyebrow="Capture">
+    <Lead>A signature drawn with a finger, pen or mouse, or typed, for check-ins, deliveries and inspections.</Lead>
+</DocsHeader>
+
+<StilAlert Variant="StilVariant.Info" Appearance="StilAlertAppearance.Subtle">
+    This is a picture of a signature to keep with a record. It is not a qualified electronic signature (such as one under
+    the EU's eIDAS rules) and does not prove who signed. For agreements that need that, use an e-signing service.
+</StilAlert>
+
+<h2 id="form">In a form</h2>
+<DocExample Type="typeof(SignedVisit)">
+    <p>
+        <code>StilSignaturePad</code> binds a <code>StilSignature</code> that is null until something is drawn or typed,
+        so <code>[Required]</code> makes the signature required. Strokes are as wide as the pen presses. Undo removes the
+        last stroke and Clear all of them. <strong>Type</strong> is the keyboard alternative: the signer types their name,
+        shown in a handwriting font. The area is 10rem high; set <code>--stil-signature-height</code> to change it. Needs
+        an interactive render mode.
+    </p>
+</DocExample>
+
+<h2 id="saving">Saving it</h2>
+<p>
+    A <code>StilSignature</code> has the <code>Strokes</code> (points with <code>X</code>, <code>Y</code> and
+    <code>Pressure</code>), or the <code>TypedName</code>, and the <code>Width</code> and <code>Height</code> of the area.
+    Store it as JSON, or as an image: <code>ToSvg(color)</code> in C# (also on the server), or
+    <code>ToPngAsync(color)</code> on the pad, which draws it in the browser at twice its size. Both are dark ink on a
+    transparent background unless you pass a color.
+</p>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilSignaturePad)" />

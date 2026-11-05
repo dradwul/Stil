@@ -1,0 +1,41 @@
+@using System.ComponentModel.DataAnnotations
+@* A form that requires a signature, drawn or typed, and shows it as SVG and PNG when sent. *@
+<EditForm Model="_visit" OnValidSubmit="SaveAsync" class="stil-form">
+    <DataAnnotationsValidator />
+    <StilSignaturePad @ref="_pad" @bind-Value="_visit.Signature" Label="Visitor's signature"
+                      Hint="I have read the safety rules for the site." />
+    <StilButton Type="submit">Check in</StilButton>
+</EditForm>
+
+@if (_svg is not null)
+{
+    <div class="stil-grid stil-mt-4">
+        <figure class="stil-col-md-6 stil-m-0">
+            <figcaption class="stil-text-muted stil-fs-sm">SVG, from C#</figcaption>
+            <div class="stil-signature-pad" style="height: auto">@((MarkupString)_svg)</div>
+        </figure>
+        <figure class="stil-col-md-6 stil-m-0">
+            <figcaption class="stil-text-muted stil-fs-sm">PNG, from the browser (black ink, here on white)</figcaption>
+            <img src="@_png" alt="The signature as a PNG" class="stil-signature-pad" style="height: auto; width: 100%; background-color: #fff" />
+        </figure>
+    </div>
+}
+
+@code {
+    private readonly Visit _visit = new();
+    private StilSignaturePad? _pad;
+    private string? _svg;
+    private string? _png;
+
+    private async Task SaveAsync()
+    {
+        _svg = _visit.Signature!.ToSvg("currentColor");
+        _png = await _pad!.ToPngAsync();
+    }
+
+    private sealed class Visit
+    {
+        [Required(ErrorMessage = "Sign to check in.")]
+        public StilSignature? Signature { get; set; }
+    }
+}

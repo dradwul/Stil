@@ -51,6 +51,7 @@ public static class DocsPages
         [
             new("QR codes and barcodes", "components/codes"),
             new("Scanning", "components/scanning"),
+            new("Signature", "components/signature"),
         ]),
     ];
 
