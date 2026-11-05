@@ -40,6 +40,14 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   static SSR and print sharply. `StilCodes` has the encoders (`QrSvg`,
   `QrModules`, `BarcodeSvg`, `BarcodeModules`, `EanCheckDigit`) for PDFs and
   label printers.
+- **Stil for Blazor**: `StilActivityLog<TItem>`, a log of what happens from
+  your items and selectors (`Time`, `Title`, `Actor`, `Type`, `Variant`,
+  `Icon`, `Details`): newest first, grouped by day, with localized relative
+  times that keep up to date, search, filters by type and person, and
+  virtualization. New entries are highlighted and announced politely.
+  `StilTimeline<TItem>` is the compact form, for an order's history.
+- **Stil CSS**: `stil-log` and `stil-timeline`, with the marker variants
+  `stil-log-marker-{variant}`.
 - **Stil for Blazor**: `StilSignaturePad` takes a signature drawn with a
   finger, pen or mouse (pressure, undo, clear) or a typed name, as a
   `StilSignature` that is null until signed, so `[Required]` works. It saves

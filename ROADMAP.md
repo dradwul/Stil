@@ -906,20 +906,25 @@ PNG; 5 bUnit tests.)
 name, with the area's size) that is null until signed. SVG comes from C#, so
 it also works on the server; PNG is drawn by the browser.
 
-### Phase 12.4: Activity log and timeline
+### Phase 12.4: Activity log and timeline ✅ Done
 
-- [ ] `StilActivityLog<TItem>`: a log of anything that happens (check-ins,
+- [x] `StilActivityLog<TItem>`: a log of anything that happens (check-ins,
   status changes, comments, system events), from `Items` and selectors like
   the calendar: `Time`, `Title`, `Actor`, `Variant`, `Icon`, `Details`.
   - Grouped by day with relative times ("2 minutes ago", localized), filters
     by type and actor, search, and virtualization for long logs.
   - Live: new entries appear at the top without the list jumping, and are
     announced politely to screen readers.
-- [ ] `StilTimeline` is the compact form, for an order's history in a side
+- [x] `StilTimeline` is the compact form, for an order's history in a side
   panel.
 
 **Done when:** an order's history shows as a timeline, and a live log takes
-new entries without jumping.
+new entries without jumping. ✅ (The docs: an order's history, and a
+reception log that takes new check-ins; 6 bUnit tests.)
+
+**Changes from the plan:** `Time` is a local `DateTime`, like the
+calendar's. The log keeps its place with the browser's scroll anchoring
+(`overflow-anchor`) rather than script. `Now` fixes the clock.
 
 ### Phase 12.5: Chat and comments
 
