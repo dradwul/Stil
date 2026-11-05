@@ -61,6 +61,17 @@
   "Code": {
     "Invalid": "This code cannot be shown."
   },
+  "Scanner": {
+    "Preview": "Camera preview for scanning",
+    "Starting": "Starting the camera…",
+    "Hint": "Point the camera at a barcode or QR code.",
+    "ScannedFormat": "Scanned: {0}",
+    "NoCamera": "The camera is not available. Type the code instead.",
+    "NoDecoder": "This browser cannot read codes with the camera. Type the code instead.",
+    "Torch": "Flashlight",
+    "Manual": "Or type the code",
+    "Code": "Code"
+  },
   "Combobox": {
     "NoResults": "No results",
     "Searching": "Searching…",

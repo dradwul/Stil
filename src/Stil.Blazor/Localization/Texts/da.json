@@ -61,6 +61,17 @@
   "Code": {
     "Invalid": "Koden kan ikke vises."
   },
+  "Scanner": {
+    "Preview": "Kameravisning til scanning",
+    "Starting": "Starter kameraet…",
+    "Hint": "Ret kameraet mod en stregkode eller QR-kode.",
+    "ScannedFormat": "Scannet: {0}",
+    "NoCamera": "Kameraet er ikke tilgængeligt. Skriv koden i stedet.",
+    "NoDecoder": "Denne browser kan ikke læse koder med kameraet. Skriv koden i stedet.",
+    "Torch": "Lommelygte",
+    "Manual": "Eller skriv koden",
+    "Code": "Kode"
+  },
   "Combobox": {
     "NoResults": "Ingen resultater",
     "Searching": "Søger…",

@@ -61,6 +61,17 @@
   "Code": {
     "Invalid": "Koodia ei voi näyttää."
   },
+  "Scanner": {
+    "Preview": "Skannauksen kameranäkymä",
+    "Starting": "Käynnistetään kameraa…",
+    "Hint": "Osoita kameralla viivakoodia tai QR-koodia.",
+    "ScannedFormat": "Skannattu: {0}",
+    "NoCamera": "Kamera ei ole käytettävissä. Kirjoita koodi sen sijaan.",
+    "NoDecoder": "Tämä selain ei voi lukea koodeja kameralla. Kirjoita koodi sen sijaan.",
+    "Torch": "Taskulamppu",
+    "Manual": "Tai kirjoita koodi",
+    "Code": "Koodi"
+  },
   "Combobox": {
     "NoResults": "Ei tuloksia",
     "Searching": "Haetaan…",

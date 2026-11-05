@@ -1,0 +1,158 @@
+@inherits StilComponentBase
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+@* Reads barcodes and QR codes with the camera. stil.js uses the browser's BarcodeDetector, or a
+   decoder the app registers with registerScanDecoder for the other browsers; Stil ships no
+   third-party code. Where neither works, or there is no camera, the code can be typed (or come
+   from a handheld scanner) in the field under it. Needs an interactive render mode. *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-scanner")">
+    @if (_status is Status.Starting or Status.Scanning)
+    {
+        <div class="stil-scanner-view">
+            <video class="stil-scanner-preview" @ref="_video" autoplay muted playsinline aria-label="@Localize(null, "Scanner.Preview")"></video>
+            <div class="stil-scanner-frame" aria-hidden="true"></div>
+        </div>
+        <div class="stil-cluster">
+            <StilButton Size="StilSize.Small" Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline"
+                        Disabled="_status != Status.Scanning" OnClick="SwitchAsync">@Localize(null, "Camera.Switch")</StilButton>
+            @if (_torch)
+            {
+                <StilButton Size="StilSize.Small" Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline"
+                            aria-pressed="@(_torchOn ? "true" : "false")" OnClick="ToggleTorchAsync">@Localize(TorchText, "Scanner.Torch")</StilButton>
+            }
+        </div>
+    }
+    <p class="stil-scanner-status" role="status">@StatusText</p>
+    @if (ManualEntry)
+    {
+        @* "Or type the code" next to the camera; just "Code" where it is the only way in. *@
+        <StilScanInput Label="@Localize(ManualLabel, _status is Status.Starting or Status.Scanning ? "Scanner.Manual" : "Scanner.Code")" OnScan="OnScan" />
+    }
+</div>
+
+@code {
+    private enum Status { Starting, Scanning, NoCamera, NoDecoder }
+
+    private ElementReference _video;
+    private IJSObjectReference? _module;
+    private DotNetObjectReference<StilScanner>? _reference;
+    private Status _status = Status.Starting;
+    private bool _front;
+    private bool _torch;
+    private bool _torchOn;
+    private string? _lastValue;
+
+    /// <summary>Raised for each code read, from the camera or the field under it.</summary>
+    [Parameter]
+    public EventCallback<StilScanResult> OnScan { get; set; }
+
+    /// <summary>
+    /// The formats to read, as the browser names them: <c>qr_code</c>, <c>code_128</c>,
+    /// <c>ean_13</c>, <c>ean_8</c>, <c>code_39</c>, <c>upc_a</c> and so on. The default is every
+    /// format the browser reads.
+    /// </summary>
+    [Parameter]
+    public IReadOnlyList<string>? Formats { get; set; }
+
+    /// <summary>Plays a short sound for each code. The default is true.</summary>
+    [Parameter]
+    public bool Sound { get; set; } = true;
+
+    /// <summary>How long the same code is ignored after it was read, in milliseconds. The default is 1500.</summary>
+    [Parameter]
+    public int Cooldown { get; set; } = 1500;
+
+    /// <summary>Starts with the front camera instead of the back one.</summary>
+    [Parameter]
+    public bool FrontCamera { get; set; }
+
+    /// <summary>Shows a field under the camera to type the code or use a handheld scanner. The default is true.</summary>
+    [Parameter]
+    public bool ManualEntry { get; set; } = true;
+
+    /// <summary>The label of that field. The default is localized: "Or type the code", or "Code" without a camera.</summary>
+    [Parameter]
+    public string? ManualLabel { get; set; }
+
+    /// <summary>The flashlight button's text. The default is localized.</summary>
+    [Parameter]
+    public string? TorchText { get; set; }
+
+    private string StatusText => _status switch
+    {
+        Status.Starting => Localize(null, "Scanner.Starting"),
+        Status.NoCamera => Localize(null, "Scanner.NoCamera"),
+        Status.NoDecoder => Localize(null, "Scanner.NoDecoder"),
+        _ when _lastValue is not null => string.Format(TextCulture, Localize(null, "Scanner.ScannedFormat"), _lastValue),
+        _ => Localize(null, "Scanner.Hint"),
+    };
+
+    protected override void OnInitialized() => _front = FrontCamera;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await StartAsync();
+        }
+    }
+
+    private async Task StartAsync()
+    {
+        _module ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Stil/stil.js");
+        _reference ??= DotNetObjectReference.Create(this);
+        var options = new { facingMode = _front ? "user" : "environment", formats = Formats, cooldown = Cooldown, sound = Sound };
+        var result = await _module.InvokeAsync<string>("startScanner", _video, _reference, options);
+        _status = result switch
+        {
+            "scanning" => Status.Scanning,
+            "no-decoder" => Status.NoDecoder,
+            _ => Status.NoCamera,
+        };
+        _torchOn = false;
+        _torch = _status == Status.Scanning && await _module.InvokeAsync<bool>("hasTorch", _video);
+        StateHasChanged();
+    }
+
+    private async Task SwitchAsync()
+    {
+        _front = !_front;
+        _status = Status.Starting;
+        await StartAsync();
+    }
+
+    private async Task ToggleTorchAsync()
+    {
+        if (_module is not null && await _module.InvokeAsync<bool>("setTorch", _video, !_torchOn))
+        {
+            _torchOn = !_torchOn;
+        }
+    }
+
+    /// <summary>Called by stil.js for each code the camera reads.</summary>
+    [JSInvokable]
+    public async Task OnScanned(string value, string? format)
+    {
+        _lastValue = value;
+        await OnScan.InvokeAsync(new StilScanResult(value, format, StilScanSource.Camera));
+        StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_module is not null)
+        {
+            try
+            {
+                await _module.InvokeVoidAsync("stopScanner", _video);
+                await _module.DisposeAsync();
+            }
+            catch (JSDisconnectedException)
+            {
+            }
+        }
+
+        _reference?.Dispose();
+    }
+}

@@ -61,6 +61,17 @@
   "Code": {
     "Invalid": "Koden kan inte visas."
   },
+  "Scanner": {
+    "Preview": "Kameravy för skanning",
+    "Starting": "Startar kameran…",
+    "Hint": "Rikta kameran mot en streckkod eller QR-kod.",
+    "ScannedFormat": "Skannad: {0}",
+    "NoCamera": "Kameran är inte tillgänglig. Skriv koden i stället.",
+    "NoDecoder": "Den här webbläsaren kan inte läsa koder med kameran. Skriv koden i stället.",
+    "Torch": "Ficklampa",
+    "Manual": "Eller skriv koden",
+    "Code": "Kod"
+  },
   "Combobox": {
     "NoResults": "Inga träffar",
     "Searching": "Söker…",

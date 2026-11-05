@@ -1,0 +1,96 @@
+@inherits StilInputBase<string?>
+@inject IJSRuntime JS
+
+@* A text field for codes. A handheld USB or Bluetooth scanner works like a keyboard that types
+   the code fast and presses Enter; the field tells that apart from typing and raises OnScan
+   either way, so it also works without a scanner. Enter never submits the form. Without an
+   interactive render mode it is a plain text field. *@
+<StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
+    @WithAddons(Control)
+</StilField>
+
+@code {
+    private InputText? _input;
+    private IJSObjectReference? _module;
+    private DotNetObjectReference<StilScanInput>? _reference;
+
+    private RenderFragment Control => @<InputText @ref="_input" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@BoundExpression"
+                                                 placeholder="@Placeholder" autocomplete="off" spellcheck="false" enterkeyhint="done"
+                                                 autofocus="@AutoFocus"
+                                                 @attributes="ControlAttributes(StilCss)" />;
+
+    /// <summary>Raised when Enter is pressed with a code in the field, from a scanner or typed.</summary>
+    [Parameter]
+    public EventCallback<StilScanResult> OnScan { get; set; }
+
+    /// <summary>Empties the field after each code, ready for the next. The default is true.</summary>
+    [Parameter]
+    public bool ClearOnScan { get; set; } = true;
+
+    /// <summary>
+    /// The longest average time between keystrokes, in milliseconds, that counts as a scanner.
+    /// The default is 50; scanners type a key every few milliseconds, people every 100 or more.
+    /// </summary>
+    [Parameter]
+    public int MaxKeyInterval { get; set; } = 50;
+
+    /// <summary>Focuses the field when the page loads, so a scanner can be used at once.</summary>
+    [Parameter]
+    public bool AutoFocus { get; set; }
+
+    /// <summary>Text shown while the field is empty.</summary>
+    [Parameter]
+    public string? Placeholder { get; set; }
+
+    /// <summary>Small, Medium (default) or Large.</summary>
+    [Parameter]
+    public StilSize Size { get; set; }
+
+    private string StilCss => $"stil-input stil-scan-input {StilCssClasses.Size("stil-input", Size)}".TrimEnd();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && _input?.Element is { } element)
+        {
+            _module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Stil/stil.js");
+            _reference = DotNetObjectReference.Create(this);
+            await _module.InvokeVoidAsync("initScanInput", element, _reference, MaxKeyInterval);
+        }
+    }
+
+    /// <summary>Called by stil.js when Enter is pressed; returns whether to empty the field.</summary>
+    [JSInvokable]
+    public async Task<bool> OnEnter(string value, bool fromScanner)
+    {
+        var code = value.Trim();
+        if (code.Length == 0)
+        {
+            return false;
+        }
+
+        await SetValueAsync(ClearOnScan ? null : code);
+        await OnScan.InvokeAsync(new StilScanResult(code, null, fromScanner ? StilScanSource.Scanner : StilScanSource.Keyboard));
+        return ClearOnScan;
+    }
+
+    // StilInputBase is IDisposable; Blazor would skip its Dispose if this were IAsyncDisposable.
+    protected override void DisposeField()
+    {
+        _reference?.Dispose();
+        if (_module is not null)
+        {
+            _ = DisposeModuleAsync(_module);
+        }
+    }
+
+    private static async Task DisposeModuleAsync(IJSObjectReference module)
+    {
+        try
+        {
+            await module.DisposeAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+    }
+}
