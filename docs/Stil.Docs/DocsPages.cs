@@ -50,6 +50,7 @@ public static class DocsPages
         new("Capture", StilIcons.Camera,
         [
             new("QR codes and barcodes", "components/codes"),
+            new("Scanning", "components/scanning"),
         ]),
     ];
 

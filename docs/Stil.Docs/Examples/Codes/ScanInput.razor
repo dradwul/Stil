@@ -1,0 +1,13 @@
+@* A field for a handheld scanner: scan into it, or type a code and press Enter. *@
+<StilScanInput Label="Parcel" Hint="Scan the label, or type the number and press Enter." OnScan="OnScan" />
+
+@if (_last is not null)
+{
+    <p class="stil-mt-2" role="status">@_last.Value, from the @(_last.Source == StilScanSource.Scanner ? "scanner" : "keyboard")</p>
+}
+
+@code {
+    private StilScanResult? _last;
+
+    private void OnScan(StilScanResult scan) => _last = scan;
+}

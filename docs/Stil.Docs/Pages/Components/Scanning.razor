@@ -1,0 +1,78 @@
+@page "/components/scanning"
+@using Stil.Docs.Examples.Codes
+
+<DocsHeader Title="Scanning" Eyebrow="Capture">
+    <Lead>Read barcodes and QR codes with the camera, a handheld scanner or the keyboard.</Lead>
+</DocsHeader>
+
+<p>
+    Both components raise <code>OnScan</code> with a <code>StilScanResult</code>: the <code>Value</code>, the
+    <code>Format</code> the camera saw (for example <code>qr_code</code> or <code>ean_13</code>; null otherwise) and the
+    <code>Source</code> (<code>Camera</code>, <code>Scanner</code> or <code>Keyboard</code>). Every way in ends in the
+    same handler, so a check-in or delivery screen works on a phone, at a desk with a USB scanner, and with only a
+    keyboard. Both need an interactive render mode.
+</p>
+
+<h2 id="camera">With the camera</h2>
+<DocExample Type="typeof(Scanner)">
+    <p>
+        <code>StilScanner</code> shows the camera with a frame to aim at, reads every code in view, plays a short sound
+        (<code>Sound</code>) and announces the code to screen readers. The same code is ignored for
+        <code>Cooldown</code> milliseconds (1500), so holding it in view counts once. <code>Formats</code> limits what it
+        reads, and it switches cameras and turns on the flashlight where the device has one. The field under the camera
+        (<code>ManualEntry</code>) takes a typed code or a handheld scanner, and is all that shows where there is no
+        camera.
+    </p>
+</DocExample>
+
+<h3 id="decoder">Browsers without a barcode reader</h3>
+<p>
+    stil.js reads codes with the browser's <code>BarcodeDetector</code>, which Chrome and Edge have on Android, ChromeOS
+    and macOS. Safari, Firefox, and Chrome on Windows and Linux have none, and there the scanner shows only the field.
+    Stil ships no third-party code, but you can register a decoder of your own: a function that takes the
+    <code>&lt;video&gt;</code> and returns the codes in its current frame. This one uses ZXing; check its license, and
+    host the file yourself if you prefer.
+</p>
+<CodeBlock Language="javascript" Code="@DecoderSnippet" />
+<p>
+    Load it once, after Blazor, with <code>&lt;script type="module" src="scan-decoder.js"&gt;&lt;/script&gt;</code>.
+    A registered decoder is used instead of <code>BarcodeDetector</code> in every browser.
+</p>
+
+<h2 id="handheld">With a handheld scanner</h2>
+<DocExample Type="typeof(ScanInput)">
+    <p>
+        A USB or Bluetooth scanner acts as a keyboard: it types the code very fast and presses Enter.
+        <code>StilScanInput</code> raises <code>OnScan</code> on Enter and tells the two apart by how fast the keys came
+        (<code>MaxKeyInterval</code>, 50 ms on average). Enter never submits the form, and the field empties for the next
+        code (<code>ClearOnScan</code>). Put focus in it with <code>AutoFocus</code> on a screen made for scanning. It
+        takes a label, a hint and validation like any field.
+    </p>
+</DocExample>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilScanner)" />
+<ApiTable Type="typeof(StilScanInput)" />
+
+@code {
+    private const string DecoderSnippet = """
+        // wwwroot/scan-decoder.js
+        import { registerScanDecoder } from './_content/Stil/stil.js';
+        import { BrowserMultiFormatReader, BarcodeFormat } from 'https://cdn.jsdelivr.net/npm/@zxing/browser@0.2.1/+esm';
+
+        const reader = new BrowserMultiFormatReader();
+        const canvas = document.createElement('canvas');
+
+        registerScanDecoder(async video => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d', { willReadFrequently: true }).drawImage(video, 0, 0);
+            try {
+                const result = reader.decodeFromCanvas(canvas);
+                return [{ rawValue: result.getText(), format: BarcodeFormat[result.getBarcodeFormat()].toLowerCase() }];
+            } catch {
+                return []; // No code in this frame.
+            }
+        });
+        """;
+}

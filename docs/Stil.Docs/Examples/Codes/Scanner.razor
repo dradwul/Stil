@@ -1,0 +1,18 @@
+@* Reads codes with the camera, or from the field under it. The newest scan is first. *@
+<StilScanner OnScan="OnScan" />
+
+@if (_scans.Count > 0)
+{
+    <ul class="stil-list stil-mt-3">
+        @foreach (var scan in _scans)
+        {
+            <li class="stil-list-item">@scan.Value <span class="stil-text-muted">· @(scan.Format ?? scan.Source.ToString())</span></li>
+        }
+    </ul>
+}
+
+@code {
+    private readonly List<StilScanResult> _scans = [];
+
+    private void OnScan(StilScanResult scan) => _scans.Insert(0, scan);
+}
