@@ -1,0 +1,31 @@
+@* A reception's log. New entries arrive at the top; search and the filters narrow the log. *@
+<div class="stil-cluster stil-mb-3">
+    <StilButton Size="StilSize.Small" OnClick="CheckIn">Check someone in</StilButton>
+    <StilButton Size="StilSize.Small" Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline" OnClick="Deliver">Sign a delivery</StilButton>
+</div>
+<StilActivityLog Items="_entries" Time="e => e.Time" Title="e => e.Title" Actor="e => e.Actor" Type="e => e.Type"
+                 Variant="e => e.Variant" Icon="e => e.Icon" Details="e => e.Details" ItemKey="e => e.Id"
+                 Searchable Filterable Height="24rem" />
+
+@code {
+    private sealed record Entry(int Id, DateTime Time, string Title, string Actor, string Type, StilVariant? Variant = null, string? Icon = null, string? Details = null);
+
+    private static readonly string[] Visitors = ["Maja Lind", "Erik Holm", "Sara Berg", "Jonas Ek", "Lina Ström", "Oskar Lund"];
+    private int _next = 100;
+
+    private readonly List<Entry> _entries =
+    [
+        new(1, DateTime.Now.AddMinutes(-3), "Checked in", "Maja Lind", "Visit", StilVariant.Success, StilIcons.Check, "Meeting with Finance, room 4"),
+        new(2, DateTime.Now.AddMinutes(-18), "Delivery signed", "Erik Holm", "Delivery", StilVariant.Info, StilIcons.File, "3 parcels from Nordvik Supply"),
+        new(3, DateTime.Now.AddHours(-2), "Checked out", "Sara Berg", "Visit"),
+        new(4, DateTime.Now.AddHours(-4), "Fire alarm test", "System", "System", StilVariant.Warning, StilIcons.Warning),
+        new(5, DateTime.Today.AddDays(-1).AddHours(15), "Checked in", "Jonas Ek", "Visit", StilVariant.Success, StilIcons.Check),
+        new(6, DateTime.Today.AddDays(-1).AddHours(9), "Badge lost", "Lina Ström", "Visit", StilVariant.Danger, StilIcons.Danger, "Badge 1042 blocked"),
+    ];
+
+    private void CheckIn() =>
+        _entries.Add(new(_next++, DateTime.Now, "Checked in", Visitors[_next % Visitors.Length], "Visit", StilVariant.Success, StilIcons.Check));
+
+    private void Deliver() =>
+        _entries.Add(new(_next++, DateTime.Now, "Delivery signed", Visitors[_next % Visitors.Length], "Delivery", StilVariant.Info, StilIcons.File));
+}

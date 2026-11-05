@@ -1,0 +1,38 @@
+@page "/components/activity-log"
+@using Stil.Docs.Examples.ActivityLog
+
+<DocsHeader Title="Activity log and timeline" Eyebrow="Capture">
+    <Lead>What happened, when and by whom: check-ins, status changes, comments and system events.</Lead>
+</DocsHeader>
+
+<p>
+    Both read your own items through selectors, like the calendar: <code>Time</code> (local time), <code>Title</code>,
+    <code>Actor</code>, <code>Type</code>, <code>Variant</code> (the marker's color), <code>Icon</code> and
+    <code>Details</code>, or <code>DetailsTemplate</code> for richer content. Times within the last hours read
+    "5 minutes ago" in the page's language and keep up to date; hover one for the full date. <code>Now</code> fixes the
+    clock, for example in tests.
+</p>
+
+<h2 id="log">Activity log</h2>
+<DocExample Type="typeof(LiveLog)">
+    <p>
+        <code>StilActivityLog</code> lists the newest first, grouped by day. <code>Searchable</code> adds a search field,
+        and <code>Filterable</code> a filter for each of <code>Type</code> and <code>Actor</code>. When <code>Items</code>
+        get an entry with a new <code>ItemKey</code>, it is highlighted for a moment and announced to screen readers.
+        With <code>Height</code> the log scrolls, and the browser keeps what you are reading in place when new entries
+        arrive above it. For long logs, <code>Virtualize</code> renders only the rows in view (<code>ItemSize</code>,
+        64 pixels).
+    </p>
+</DocExample>
+
+<h2 id="timeline">Timeline</h2>
+<DocExample Type="typeof(OrderHistory)">
+    <p>
+        <code>StilTimeline</code> is the compact form, for a side panel: oldest first unless <code>NewestFirst</code>,
+        with the date for older entries. It has no filters, and it works in static SSR.
+    </p>
+</DocExample>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilActivityLog<>)" />
+<ApiTable Type="typeof(StilTimeline<>)" />

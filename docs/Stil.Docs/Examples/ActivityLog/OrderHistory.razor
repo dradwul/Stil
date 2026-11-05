@@ -1,0 +1,18 @@
+@* An order's history in a side panel: oldest first, as it happened. *@
+<div class="stil-card" style="max-width: 22rem">
+    <h3 class="stil-card-title">Order #1042</h3>
+    <StilTimeline Items="_history" Time="h => h.Time" Title="h => h.Title" Actor="h => h.Actor" Variant="h => h.Variant" Label="Order history" />
+</div>
+
+@code {
+    private sealed record Step(DateTime Time, string Title, string? Actor = null, StilVariant? Variant = null);
+
+    private readonly List<Step> _history =
+    [
+        new(DateTime.Today.AddDays(-3).AddHours(10.2), "Order placed", "Berglund Outdoor"),
+        new(DateTime.Today.AddDays(-3).AddHours(11), "Payment received", null, StilVariant.Success),
+        new(DateTime.Today.AddDays(-2).AddHours(8.5), "Packed", "Erik Holm"),
+        new(DateTime.Today.AddDays(-1).AddHours(14), "Shipped", "PostNord", StilVariant.Info),
+        new(DateTime.Now.AddMinutes(-40), "Delivered", "Maja Lind", StilVariant.Success),
+    ];
+}
