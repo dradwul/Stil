@@ -1,0 +1,27 @@
+@* A chat with the reception. Here the reply is simulated; in an app it comes over SignalR or similar. *@
+<StilChat Items="_messages" Time="m => m.Time" Title="m => m.Text" Actor="m => m.Author" Mine="m => m.Mine"
+          ItemKey="m => m.Id" Typing="_typing" OnSend="SendAsync" Height="22rem" />
+
+@code {
+    private sealed record Message(int Id, DateTime Time, string Author, string Text, bool Mine = false);
+
+    private int _next = 10;
+    private IReadOnlyList<string>? _typing;
+
+    private readonly List<Message> _messages =
+    [
+        new(1, DateTime.Today.AddDays(-1).AddHours(16), "Reception", "Your visitor badge is ready at the desk."),
+        new(2, DateTime.Now.AddMinutes(-12), "You", "Thanks! Is room 4 free at two?", Mine: true),
+        new(3, DateTime.Now.AddMinutes(-11), "Reception", "It is. Shall I book it?"),
+    ];
+
+    private async Task SendAsync(StilChatMessage message)
+    {
+        _messages.Add(new(_next++, DateTime.Now, "You", message.Text, Mine: true));
+        _typing = ["Reception"];
+        StateHasChanged();
+        await Task.Delay(1500);
+        _typing = null;
+        _messages.Add(new(_next++, DateTime.Now, "Reception", "Done, it's yours."));
+    }
+}

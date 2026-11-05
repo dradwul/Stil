@@ -1,0 +1,16 @@
+@* Comments on an inspection. Ctrl+Enter or the button posts. *@
+<StilComments Items="_comments" Time="c => c.Time" Title="c => c.Text" Actor="c => c.Author" ItemKey="c => c.Id" OnSend="Post" />
+
+@code {
+    private sealed record Comment(int Id, DateTime Time, string Author, string Text);
+
+    private int _next = 10;
+
+    private readonly List<Comment> _comments =
+    [
+        new(1, DateTime.Now.AddHours(-5), "Jonas Ek", "The fire door in the stairwell does not close by itself."),
+        new(2, DateTime.Now.AddHours(-2), "Karin Dahl", "Ordered a new closer. It arrives Friday.\nUntil then the door is kept shut by hand."),
+    ];
+
+    private void Post(StilChatMessage message) => _comments.Add(new(_next++, DateTime.Now, "You", message.Text));
+}

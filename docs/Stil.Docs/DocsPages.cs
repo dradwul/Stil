@@ -53,6 +53,7 @@ public static class DocsPages
             new("Scanning", "components/scanning"),
             new("Signature", "components/signature"),
             new("Activity log and timeline", "components/activity-log"),
+            new("Chat and comments", "components/chat"),
         ]),
     ];
 

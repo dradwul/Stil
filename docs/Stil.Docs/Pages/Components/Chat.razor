@@ -1,0 +1,37 @@
+@page "/components/chat"
+@using Stil.Docs.Examples.Chat
+
+<DocsHeader Title="Chat and comments" Eyebrow="Capture">
+    <Lead>A conversation or a comment thread. Stil renders it; your app carries the messages.</Lead>
+</DocsHeader>
+
+<p>
+    Both read your messages like the <a href="components/activity-log">activity log</a> reads its entries:
+    <code>Time</code>, <code>Title</code> (the text), <code>Actor</code> (who wrote it), <code>Avatar</code> (a picture,
+    or their initials) and <code>DetailsTemplate</code> for attachments or reactions. Sending raises <code>OnSend</code>
+    with a <code>StilChatMessage</code> (the text and any files); add the message to <code>Items</code> and pass it on with
+    SignalR or anything else. New messages from others are announced to screen readers. Both need an interactive
+    render mode.
+</p>
+
+<h2 id="chat">Chat</h2>
+<DocExample Type="typeof(Conversation)">
+    <p>
+        <code>StilChat</code> puts your own messages (<code>Mine</code>) on the other side in the primary color, joins
+        messages one person sends within five minutes, and separates the days. The view stays at the newest message.
+        Enter sends and Shift+Enter breaks the line (<code>SendOnEnter</code>). <code>Typing</code> lists who is typing,
+        and <code>OnTyping</code> tells you, at most every three seconds, that the user is. <code>AllowAttachments</code>
+        adds a button for files. The area is 28rem high; set <code>Height</code> to change it.
+    </p>
+</DocExample>
+
+<h2 id="comments">Comments</h2>
+<DocExample Type="typeof(Thread)">
+    <p>
+        <code>StilComments</code> is the thread form, for a ticket, an inspection or an order: everyone on the same side,
+        no bubbles, and a taller composer where Enter breaks the line and Ctrl+Enter (Cmd+Enter) posts.
+    </p>
+</DocExample>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilChat<>)" />
