@@ -19,6 +19,8 @@
 //     stilweekedit event fires (detail: action "move", "resize" or "create"; item, the event
 //     element or null; day, the index of the day column; start and end in minutes from
 //     midnight). The page saves the change and redraws: the grid puts the event back first.
+//   - A textarea with data-stil-send="enter" submits its form on Enter (Shift+Enter breaks the
+//     line); with data-stil-send="ctrl-enter", on Ctrl+Enter or Cmd+Enter.
 //   - Keys that a widget handles itself (arrows in a tree, tab list or combobox; Enter and Escape
 //     in an open combobox) do not also scroll the page, submit the form or close a dialog.
 //   - Language links (a[data-stil-culture="sv"]) store the culture in the ASP.NET Core culture
@@ -146,6 +148,7 @@ function onKeyDown(event) {
         event.preventDefault();
         return;
     }
+    if (sendFromComposer(event)) return;
     if (preventHandledKey(event)) return;
     if (moveInDropdown(event)) return;
     if (moveInCalendar(event)) return;
@@ -376,6 +379,18 @@ function cancelDrag() {
         if (d.style === null) d.item.removeAttribute('style'); else d.item.setAttribute('style', d.style);
     }
     d.ghost?.remove();
+}
+
+// Chat and comment composers: Enter (or Ctrl+Enter) sends the form the textarea is in.
+function sendFromComposer(event) {
+    const field = event.target;
+    if (!(field instanceof HTMLTextAreaElement) || !field.dataset.stilSend || event.key !== 'Enter' || event.isComposing) return false;
+    const modifier = event.ctrlKey || event.metaKey;
+    const plain = !modifier && !event.shiftKey && !event.altKey;
+    if (!(modifier || field.dataset.stilSend === 'enter' && plain)) return false;
+    event.preventDefault();
+    field.form?.requestSubmit();
+    return true;
 }
 
 function onToggle(event) {

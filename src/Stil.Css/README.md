@@ -1,3 +1,4 @@
+| Chat | `stil-chat` > `stil-chat-scroll` > `stil-chat-messages` (`stil-chat-day`, `stil-chat-list` > `stil-chat-message`, `-mine`, `-continued`, with a `stil-chat-bubble`: `stil-chat-head`, `stil-chat-author`, `stil-chat-time`, `stil-chat-text`), `stil-chat-typing` with `stil-chat-dots`, and a `stil-chat-composer` form. `stil-comments` on the same root is the thread form. |
 | Activity log | `stil-log` > `stil-log-toolbar` and `stil-log-scroll` > `stil-log-group` (`stil-log-day`, `stil-log-list` > `stil-log-entry`). An entry has a `stil-log-marker` (`stil-log-marker-{variant}`; a small dot when empty) and a `stil-log-body` (`stil-log-head` with `stil-log-title` and `stil-log-time`, `stil-log-meta`, `stil-log-details`). `stil-log-entry-new` highlights a new entry. `stil-timeline` > `stil-timeline-entry` is the compact form. |
 # Stil CSS
 
@@ -205,6 +206,8 @@ no dependencies, adds a few behaviours:
   your own passed to `registerScanDecoder` (a function that takes the `<video>`
   and returns `[{ rawValue, format }]`). `initScanInput` tells a handheld
   scanner's fast keystrokes from typing.
+- A `<textarea data-stil-send="enter">` submits its form on Enter (Shift+Enter
+  breaks the line); `data-stil-send="ctrl-enter"` on Ctrl+Enter or Cmd+Enter.
 - `initSignaturePad`, `drawSignature` and `signaturePng` draw a signature on a
   canvas with pointer events (as wide as the pen presses) and save it as a PNG.
 - `data-stil-mask="000 00"` on an input formats it while typing: `0` is a digit,

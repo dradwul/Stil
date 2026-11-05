@@ -459,3 +459,184 @@ th[data-stil-drop="after"]:dir(rtl) { box-shadow: inset 3px 0 0 var(--_accent); 
 
 .stil-timeline .stil-log-title { font-weight: var(--stil-font-weight-normal); }
 .stil-timeline .stil-log-body { padding-block-start: 0; }
+
+/* Chat and comments: messages oldest first with day separators, and a composer.
+   <div class="stil-chat">
+     <div class="stil-chat-scroll"><div class="stil-chat-messages">
+       <h3 class="stil-chat-day"><span>Today</span></h3>
+       <ol class="stil-chat-list">
+         <li class="stil-chat-message"><span class="stil-avatar …"></span><div class="stil-chat-bubble">
+           <div class="stil-chat-head"><span class="stil-chat-author">Maja</span><time class="stil-chat-time">…</time></div>
+           <div class="stil-chat-text">Hi!</div></div></li>
+         <li class="stil-chat-message stil-chat-message-mine">…</li>
+       </ol></div></div>
+     <form class="stil-chat-composer"><textarea class="stil-input" data-stil-send="enter"></textarea>
+       <div class="stil-chat-actions">…</div></form>
+   </div>
+   The scroll area keeps the newest message in view (column-reverse anchors it at the end).
+   stil-comments is the thread form: no sides and no bubbles. */
+
+.stil-chat {
+    display: grid;
+    gap: var(--stil-space-3);
+}
+
+.stil-chat-scroll {
+    display: flex;
+    flex-direction: column-reverse;
+    overflow-y: auto;
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-lg);
+    background-color: var(--stil-color-surface);
+}
+
+.stil-chat-messages { padding: var(--stil-space-3); }
+
+.stil-chat-day {
+    display: flex;
+    align-items: center;
+    gap: var(--stil-space-3);
+    margin: var(--stil-space-3) 0;
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-xs);
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-chat-day::before,
+.stil-chat-day::after {
+    content: "";
+    flex: 1;
+    border-top: 1px solid var(--stil-color-border);
+}
+
+.stil-chat-list {
+    display: grid;
+    gap: var(--stil-space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stil-chat-message {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--stil-space-2);
+    max-width: min(36rem, 85%);
+}
+
+.stil-chat-message-continued { margin-block-start: calc(-1 * var(--stil-space-1)); }
+
+.stil-chat-avatar-space {
+    flex: none;
+    width: 2rem;
+}
+
+.stil-chat-message > .stil-avatar { flex: none; }
+
+.stil-chat-bubble {
+    min-width: 0;
+    padding: var(--stil-space-2) var(--stil-space-3);
+    border-radius: var(--stil-radius-lg);
+    background-color: var(--stil-color-surface-muted);
+}
+
+.stil-chat-message-mine {
+    flex-direction: row-reverse;
+    margin-inline-start: auto;
+}
+
+.stil-chat-message-mine > .stil-chat-bubble {
+    --_bg: var(--stil-color-primary);
+    background-color: var(--_bg);
+    color: var(--_fg);
+}
+
+.stil-chat-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 var(--stil-space-2);
+    font-size: var(--stil-font-size-xs);
+}
+
+.stil-chat-author { font-weight: var(--stil-font-weight-bold); }
+.stil-chat-time { opacity: 0.75; }
+
+.stil-chat-text {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.stil-chat-typing {
+    display: flex;
+    align-items: center;
+    gap: var(--stil-space-2);
+    margin: var(--stil-space-2) 0 0;
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+}
+
+.stil-chat-dots { display: inline-flex; gap: 3px; }
+
+.stil-chat-dots > span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: currentColor;
+    animation: stil-chat-dot 1.2s ease-in-out infinite;
+}
+
+.stil-chat-dots > span:nth-child(2) { animation-delay: 0.2s; }
+.stil-chat-dots > span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes stil-chat-dot {
+    0%, 60%, 100% { opacity: 0.3; }
+    30% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stil-chat-dots > span { animation: none; }
+}
+
+.stil-chat-composer {
+    display: grid;
+    gap: var(--stil-space-2);
+}
+
+.stil-chat-composer > textarea {
+    min-height: 2.5rem;
+    resize: vertical;
+}
+
+.stil-chat-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--stil-space-2);
+}
+
+.stil-chat-files {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--stil-space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* Comments: a thread, everyone on the same side, no bubbles. */
+.stil-comments .stil-chat-scroll {
+    display: block;
+    border: 0;
+    background: none;
+}
+
+.stil-comments .stil-chat-messages { padding: 0; }
+.stil-comments .stil-chat-message { max-width: none; align-items: flex-start; }
+.stil-comments .stil-chat-message-continued { margin-block-start: 0; }
+
+.stil-comments .stil-chat-bubble {
+    padding: 0;
+    background: none;
+}
