@@ -868,20 +868,27 @@ characters with UTF-8 text; 19 bUnit tests.)
 **Changes from the plan:** a value the format cannot hold shows a short
 localized message instead of throwing, since codes often come from data.
 
-### Phase 12.2: Scanning
+### Phase 12.2: Scanning ✅ Done
 
-- [ ] `StilScanner`: reads barcodes and QR codes with the camera. It uses the
+- [x] `StilScanner`: reads barcodes and QR codes with the camera. It uses the
   browser's `BarcodeDetector` where it exists (Chromium, Android) and an
   optional decoder that the app registers elsewhere, so Stil ships no
   third-party code. Torch and camera switching, a scan sound, and
   `OnScan(code, format)`.
-- [ ] `StilScanInput`: an input that recognizes handheld barcode scanners
+- [x] `StilScanInput`: an input that recognizes handheld barcode scanners
   (fast keystrokes ending in Enter), so a USB or Bluetooth scanner works
   without a camera. It works in every browser, and also as a plain text
   field.
 
 **Done when:** a code from 12.1 scans with the camera on a phone and with a
-USB scanner on a desktop.
+USB scanner on a desktop. ✅ In a desktop browser: the scanner's fallback, and
+fast (scanner) and slow (typed) keys told apart; 6 bUnit tests. The camera
+and a USB scanner are checked on real devices by the owner.
+
+**Changes from the plan:** the scanner has a field under the camera for a
+typed code or a handheld scanner, so it also works without a camera or
+`BarcodeDetector`. The docs show a ZXing decoder for Safari, Firefox and
+desktop Chrome on Windows and Linux.
 
 ### Phase 12.3: Signature pad
 

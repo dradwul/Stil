@@ -40,6 +40,15 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   static SSR and print sharply. `StilCodes` has the encoders (`QrSvg`,
   `QrModules`, `BarcodeSvg`, `BarcodeModules`, `EanCheckDigit`) for PDFs and
   label printers.
+- **Stil for Blazor**: `StilScanner` reads barcodes and QR codes with the
+  camera (the browser's `BarcodeDetector`, or a decoder the app registers
+  with stil.js's `registerScanDecoder`), with camera switching, a flashlight
+  button, a scan sound and a field for typed codes. `StilScanInput` takes
+  codes from handheld USB and Bluetooth scanners and tells them from typing.
+  Both raise `OnScan` with a `StilScanResult`.
+- **Stil CSS**: `stil-scanner` (view, preview, aiming frame and status), and
+  in stil.js `startScanner`, `stopScanner`, `setTorch`, `hasTorch`,
+  `registerScanDecoder` and `initScanInput`.
 - **Stil CSS**: `stil-qr-code`, `stil-barcode` and `stil-code-invalid`, with
   the tokens `--stil-barcode-color` and `--stil-barcode-bg`.
 
