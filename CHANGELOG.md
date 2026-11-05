@@ -40,6 +40,13 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   static SSR and print sharply. `StilCodes` has the encoders (`QrSvg`,
   `QrModules`, `BarcodeSvg`, `BarcodeModules`, `EanCheckDigit`) for PDFs and
   label printers.
+- **Stil for Blazor**: `StilChat<TItem>` and `StilComments<TItem>`, a
+  conversation or a comment thread on the activity log's selectors: own
+  messages on the other side, runs, day separators, a composer (Enter or
+  Ctrl+Enter sends), attachments, "is typing", and polite announcements of
+  new messages. Stil renders and raises `OnSend`; the transport is the app's.
+- **Stil CSS**: `stil-chat` and `stil-comments`, and `data-stil-send` on a
+  textarea in stil.js.
 - **Stil for Blazor**: `StilActivityLog<TItem>`, a log of what happens from
   your items and selectors (`Time`, `Title`, `Actor`, `Type`, `Variant`,
   `Icon`, `Details`): newest first, grouped by day, with localized relative

@@ -926,9 +926,9 @@ reception log that takes new check-ins; 6 bUnit tests.)
 calendar's. The log keeps its place with the browser's scroll anchoring
 (`overflow-anchor`) rather than script. `Now` fixes the clock.
 
-### Phase 12.5: Chat and comments
+### Phase 12.5: Chat and comments ✅ Done
 
-- [ ] `StilChat` and `StilComments`: a conversation or a comment thread on
+- [x] `StilChat` and `StilComments`: a conversation or a comment thread on
   top of the activity log's data model, with avatars, own and others'
   messages, day separators, a composer (Enter sends, Shift+Enter breaks the
   line), attachments through `StilFileUpload`, and "is typing". Transport is
@@ -936,6 +936,14 @@ calendar's. The log keeps its place with the browser's scroll anchoring
   `OnSend`.
 
 **Done when:** two browser windows chat through the demo's own transport.
+✅ In part: the docs chat with a simulated reply (typing, then an answer),
+sent with Enter in the browser; 4 bUnit tests. Two windows over a real
+transport come with the check-in demo (12.6).
+
+**Changes from the plan:** `Title` is the message text, so the same items
+work in the log and the chat. `StilComments` is `StilChat` in thread form,
+where Ctrl+Enter posts. Attachments use Blazor's `InputFile` behind an
+"Attach" button rather than the full `StilFileUpload` drop zone.
 
 ### Phase 12.6: Check-in demo
 
