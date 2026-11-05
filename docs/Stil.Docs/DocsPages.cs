@@ -47,6 +47,10 @@ public static class DocsPages
             new("Stat cards", "components/stat-cards"),
             new("Charts", "components/charts"),
         ]),
+        new("Capture", StilIcons.Camera,
+        [
+            new("QR codes and barcodes", "components/codes"),
+        ]),
     ];
 
     public static IEnumerable<DocsPage> All => Sections.SelectMany(s => s.Pages);

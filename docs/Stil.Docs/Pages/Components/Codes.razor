@@ -1,0 +1,53 @@
+@page "/components/codes"
+@using Stil.Docs.Examples.Codes
+
+<DocsHeader Title="QR codes and barcodes" Eyebrow="Capture">
+    <Lead>Codes for badges, parcels, tickets and products, drawn as SVG in C#.</Lead>
+</DocsHeader>
+
+<p>
+    <code>StilQrCode</code> and <code>StilBarcode</code> draw their code on the server, with no JavaScript and no
+    third-party code, so they show in static SSR, scale without blur and print sharply. A code is dark on light in both
+    color modes, because scanners expect that; set <code>--stil-barcode-color</code> and <code>--stil-barcode-bg</code>
+    to change it, but keep the contrast high. Each code is an image named by its value, or by <code>Label</code>. A
+    value the format cannot hold shows a short message instead.
+</p>
+
+<h2 id="qr">QR codes</h2>
+<DocExample Type="typeof(QrCodes)">
+    <p>
+        <code>Value</code> is any text: a link, an ID or a vCard. Digits and upper-case text make the smallest codes.
+        <code>ErrorCorrection</code> (Low, Medium, Quartile, High) sets how much of the code can be damaged and still
+        read; more makes a denser code. <code>Size</code> sets the width and height; the default is 10rem.
+    </p>
+</DocExample>
+
+<h2 id="barcodes">Barcodes</h2>
+<DocExample Type="typeof(Barcodes)">
+    <p>
+        <code>Format</code> is <code>Code128</code> (any printable ASCII, the default), <code>Ean13</code> or
+        <code>Ean8</code>. EAN takes the digits with or without the check digit; without it, the check digit is added,
+        and a wrong one is refused. <code>ShowText</code> prints the value under the bars, and <code>Width</code> sets
+        the width; the height follows.
+    </p>
+</DocExample>
+
+<h2 id="without-a-component">Without a component</h2>
+<DocExample Type="typeof(CodesFromCode)">
+    <p>
+        <code>StilCodes</code> has the encoders: <code>QrSvg</code> and <code>BarcodeSvg</code> return an SVG document
+        (black on white unless you pass colors), and <code>QrModules</code> and <code>BarcodeModules</code> return the
+        modules, for a PDF library or a label printer. <code>EanCheckDigit</code> computes an EAN check digit.
+    </p>
+</DocExample>
+
+<h2 id="printing">Printing and scanning</h2>
+<ul>
+    <li>Keep the light margin around a code: it is part of the code (four modules for QR, ten for barcodes).</li>
+    <li>Print at least 2 cm wide for a QR code and 3.5 cm for a barcode, and test with the scanners you use.</li>
+    <li>For codes that get dirty or worn, use <code>ErrorCorrection="StilQrErrorCorrection.High"</code>.</li>
+</ul>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilQrCode)" />
+<ApiTable Type="typeof(StilBarcode)" />

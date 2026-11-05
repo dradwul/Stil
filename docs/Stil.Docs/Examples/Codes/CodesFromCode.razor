@@ -1,0 +1,21 @@
+@* The same encoders without a component: an SVG to put on a PDF, in an e-mail or on a label. *@
+<StilTextArea @bind-Value="_value" Label="Text" Rows="2" />
+<p class="stil-text-muted stil-fs-sm stil-mt-2">@(_svg is null ? "Too long for a QR code." : $"{_svg.Length:N0} characters of SVG")</p>
+
+@code {
+    private string _value = "BEGIN:VCARD\nFN:Maja Lind\nTEL:+46701234567\nEND:VCARD";
+
+    private string? _svg => Svg(_value);
+
+    private static string? Svg(string value)
+    {
+        try
+        {
+            return StilCodes.QrSvg(value, StilQrErrorCorrection.Medium, color: "#000", background: "#fff");
+        }
+        catch (ArgumentException)
+        {
+            return null;
+        }
+    }
+}
