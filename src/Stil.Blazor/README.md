@@ -1,3 +1,5 @@
+| `StilActivityLog<TItem>` | `Items` with `Time`, `Title`, `Actor`, `Type`, `Variant`, `Icon`, `Details` / `DetailsTemplate`; `ItemKey`, `Searchable`, `Filterable`, `Height`, `Virtualize` (`ItemSize`), `Now`. Newest first, grouped by day, relative times; new entries are highlighted and announced. |
+| `StilTimeline<TItem>` | The same selectors, compact and oldest first (`NewestFirst`), `Label`. Works in static SSR. |
 # Stil for Blazor
 
 Stil for Blazor is a set of themeable Blazor components built on

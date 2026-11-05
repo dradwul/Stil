@@ -3,6 +3,24 @@
     "Close": "Sulje",
     "Loading": "Ladataan…"
   },
+  "ActivityLog": {
+    "JustNow": "Juuri nyt",
+    "MinuteAgo": "1 minuutti sitten",
+    "MinutesAgoFormat": "{0} minuuttia sitten",
+    "HourAgo": "1 tunti sitten",
+    "HoursAgoFormat": "{0} tuntia sitten",
+    "Yesterday": "Eilen",
+    "Search": "Hae lokista",
+    "AllTypes": "Kaikki tyypit",
+    "AllActors": "Kaikki",
+    "Empty": "Mitään ei ole vielä tapahtunut.",
+    "NoMatches": "Yksikään tapahtuma ei vastaa.",
+    "NewFormat": "Uusi: {0}",
+    "NewManyFormat": "{0} uutta tapahtumaa",
+    "Log": "Toimintaloki",
+    "Type": "Tyyppi",
+    "Actor": "Henkilö"
+  },
   "Agenda": {
     "Tomorrow": "Huomenna",
     "Empty": "Ei suunniteltua.",

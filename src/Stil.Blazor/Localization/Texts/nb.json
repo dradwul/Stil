@@ -3,6 +3,24 @@
     "Close": "Lukk",
     "Loading": "Laster…"
   },
+  "ActivityLog": {
+    "JustNow": "Akkurat nå",
+    "MinuteAgo": "For 1 minutt siden",
+    "MinutesAgoFormat": "For {0} minutter siden",
+    "HourAgo": "For 1 time siden",
+    "HoursAgoFormat": "For {0} timer siden",
+    "Yesterday": "I går",
+    "Search": "Søk i loggen",
+    "AllTypes": "Alle typer",
+    "AllActors": "Alle",
+    "Empty": "Ingenting har skjedd ennå.",
+    "NoMatches": "Ingen hendelser passer.",
+    "NewFormat": "Ny: {0}",
+    "NewManyFormat": "{0} nye hendelser",
+    "Log": "Aktivitetslogg",
+    "Type": "Type",
+    "Actor": "Person"
+  },
   "Agenda": {
     "Tomorrow": "I morgen",
     "Empty": "Ingenting planlagt.",

@@ -3,6 +3,24 @@
     "Close": "Stäng",
     "Loading": "Laddar…"
   },
+  "ActivityLog": {
+    "JustNow": "Nyss",
+    "MinuteAgo": "För 1 minut sedan",
+    "MinutesAgoFormat": "För {0} minuter sedan",
+    "HourAgo": "För 1 timme sedan",
+    "HoursAgoFormat": "För {0} timmar sedan",
+    "Yesterday": "I går",
+    "Search": "Sök i loggen",
+    "AllTypes": "Alla typer",
+    "AllActors": "Alla",
+    "Empty": "Inget har hänt än.",
+    "NoMatches": "Inga händelser matchar.",
+    "NewFormat": "Ny: {0}",
+    "NewManyFormat": "{0} nya händelser",
+    "Log": "Aktivitetslogg",
+    "Type": "Typ",
+    "Actor": "Person"
+  },
   "Agenda": {
     "Tomorrow": "I morgon",
     "Empty": "Inget planerat.",

@@ -3,6 +3,24 @@
     "Close": "Close",
     "Loading": "Loading…"
   },
+  "ActivityLog": {
+    "JustNow": "Just now",
+    "MinuteAgo": "1 minute ago",
+    "MinutesAgoFormat": "{0} minutes ago",
+    "HourAgo": "1 hour ago",
+    "HoursAgoFormat": "{0} hours ago",
+    "Yesterday": "Yesterday",
+    "Search": "Search the log",
+    "AllTypes": "All types",
+    "AllActors": "Everyone",
+    "Empty": "Nothing has happened yet.",
+    "NoMatches": "No entries match.",
+    "NewFormat": "New: {0}",
+    "NewManyFormat": "{0} new entries",
+    "Log": "Activity log",
+    "Type": "Type",
+    "Actor": "Person"
+  },
   "Agenda": {
     "Tomorrow": "Tomorrow",
     "Empty": "Nothing planned.",

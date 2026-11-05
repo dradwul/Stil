@@ -1,0 +1,240 @@
+@typeparam TItem
+@inherits StilActivityBase<TItem>
+@implements IDisposable
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+
+@* A log of what happens: newest first, grouped by day, with relative times that keep up to date.
+   It can filter by type and person and search. New entries (new keys in Items) appear at the top,
+   are highlighted for a moment and announced politely; with Height set, the list scrolls and the
+   browser keeps what you are reading in place. Virtualize renders only the rows in view. *@
+@{ Filter(); }
+<div @attributes="AdditionalAttributes" class="@Classes("stil-log")">
+    @if (Searchable || ShowFilters)
+    {
+        <div class="stil-log-toolbar">
+            @if (Searchable)
+            {
+                <input type="search" class="stil-input stil-input-sm" value="@_search" @oninput="OnSearch"
+                       placeholder="@Localize(SearchText, "ActivityLog.Search")" aria-label="@Localize(SearchText, "ActivityLog.Search")" />
+            }
+            @if (Filterable && Type is not null)
+            {
+                <select class="stil-select stil-select-sm" aria-label="@Localize(null, "ActivityLog.Type")" @onchange="e => _type = Selected(e)">
+                    <option value="" selected="@(_type is null)">@Localize(null, "ActivityLog.AllTypes")</option>
+                    @foreach (var type in Options(Type))
+                    {
+                        <option value="@type" selected="@(_type == type)">@type</option>
+                    }
+                </select>
+            }
+            @if (Filterable && Actor is not null)
+            {
+                <select class="stil-select stil-select-sm" aria-label="@Localize(null, "ActivityLog.Actor")" @onchange="e => _actor = Selected(e)">
+                    <option value="" selected="@(_actor is null)">@Localize(null, "ActivityLog.AllActors")</option>
+                    @foreach (var actor in Options(Actor))
+                    {
+                        <option value="@actor" selected="@(_actor == actor)">@actor</option>
+                    }
+                </select>
+            }
+        </div>
+    }
+
+    <div class="stil-log-scroll" style="@(Height is null ? null : $"max-height: {Height}")"
+         tabindex="@(Height is null ? null : "0")" role="@(Height is null ? null : "region")"
+         aria-label="@(Height is null ? null : Localize(Label, "ActivityLog.Log"))">
+        @if (Visible.Count == 0)
+        {
+            <p class="stil-log-empty">@(Items?.Any() == true ? Localize(NoMatchesText, "ActivityLog.NoMatches") : Localize(EmptyText, "ActivityLog.Empty"))</p>
+        }
+        else if (Virtualize)
+        {
+            <div class="stil-log-rows" role="list" aria-label="@Localize(Label, "ActivityLog.Log")">
+                <Virtualize Items="Rows" ItemSize="ItemSize" Context="row">
+                    @if (row.Item is { } item)
+                    {
+                        <div role="listitem" class="@EntryClass(item)">@EntryContent(item)</div>
+                    }
+                    else
+                    {
+                        <div role="listitem" class="stil-log-day-row"><h3 class="stil-log-day">@DayName(row.Day)</h3></div>
+                    }
+                </Virtualize>
+            </div>
+        }
+        else
+        {
+            @foreach (var day in Visible.GroupBy(i => TimeOf(i).Date))
+            {
+                <section class="stil-log-group" @key="day.Key" aria-label="@DayName(day.Key)">
+                    <h3 class="stil-log-day">@DayName(day.Key)</h3>
+                    <ol class="stil-log-list">
+                        @foreach (var item in day)
+                        {
+                            <li class="@EntryClass(item)" @key="KeyOf(item)">@EntryContent(item)</li>
+                        }
+                    </ol>
+                </section>
+            }
+        }
+    </div>
+    <div class="stil-visually-hidden" role="status">@_announcement</div>
+</div>
+
+@code {
+    private readonly HashSet<object> _seen = [];
+    private HashSet<object> _new = [];
+    private bool _started;
+    private string? _announcement;
+    private string _search = "";
+    private string? _type;
+    private string? _actor;
+    private Timer? _timer;
+
+    /// <summary>A key that identifies an entry, so new ones can be told from old. The default is the item itself.</summary>
+    [Parameter]
+    public Func<TItem, object>? ItemKey { get; set; }
+
+    /// <summary>Shows a search field that matches the title, person, type and details.</summary>
+    [Parameter]
+    public bool Searchable { get; set; }
+
+    /// <summary>Shows a filter for each of Type and Actor that is set.</summary>
+    [Parameter]
+    public bool Filterable { get; set; }
+
+    /// <summary>The highest the log grows, as a CSS length, before it scrolls. Needed for Virtualize.</summary>
+    [Parameter]
+    public string? Height { get; set; }
+
+    /// <summary>Renders only the rows in view, for long logs. Needs Height.</summary>
+    [Parameter]
+    public bool Virtualize { get; set; }
+
+    /// <summary>The height of a row in pixels, for Virtualize. The default is 64.</summary>
+    [Parameter]
+    public float ItemSize { get; set; } = 64;
+
+    /// <summary>The accessible name of the log. The default is the localized "Activity log".</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>The search field's placeholder and name. The default is localized.</summary>
+    [Parameter]
+    public string? SearchText { get; set; }
+
+    /// <summary>The text shown when there are no entries. The default is localized.</summary>
+    [Parameter]
+    public string? EmptyText { get; set; }
+
+    /// <summary>The text shown when no entry matches the search or filters. The default is localized.</summary>
+    [Parameter]
+    public string? NoMatchesText { get; set; }
+
+    private bool ShowFilters => Filterable && (Type is not null || Actor is not null);
+
+    private List<TItem> Visible { get; set; } = [];
+
+    private List<(DateTime Day, TItem? Item)> Rows { get; set; } = [];
+
+    protected override void OnParametersSet()
+    {
+        var items = Items?.ToList() ?? [];
+        var fresh = items.Where(i => !_seen.Contains(KeyOf(i))).ToList();
+        if (_started && fresh.Count > 0)
+        {
+            _new = [.. fresh.Select(KeyOf)];
+            _announcement = fresh.Count == 1
+                ? string.Format(TextCulture, Localize(null, "ActivityLog.NewFormat"), TitleOf(fresh[0]))
+                : string.Format(TextCulture, Localize(null, "ActivityLog.NewManyFormat"), fresh.Count);
+        }
+
+        foreach (var item in fresh)
+        {
+            _seen.Add(KeyOf(item));
+        }
+
+        _started = true;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        // Keep "5 minutes ago" true while the page is open.
+        if (firstRender && Now is null)
+        {
+            _timer = new Timer(_ => InvokeAsync(StateHasChanged), null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
+        }
+    }
+
+    // Runs at the start of every render, so a search or filter change shows at once.
+    private void Filter()
+    {
+        var search = _search.Trim();
+        Visible = (Items ?? [])
+            .Where(i => _type is null || Type?.Invoke(i) == _type)
+            .Where(i => _actor is null || Actor?.Invoke(i) == _actor)
+            .Where(i => search.Length == 0 || Matches(i, search))
+            .OrderByDescending(TimeOf)
+            .ToList();
+
+        Rows = [];
+        if (Virtualize)
+        {
+            foreach (var day in Visible.GroupBy(i => TimeOf(i).Date))
+            {
+                Rows.Add((day.Key, default));
+                Rows.AddRange(day.Select(i => (day.Key, (TItem?)i)));
+            }
+        }
+    }
+
+    private bool Matches(TItem item, string search) =>
+        new[] { TitleOf(item), Actor?.Invoke(item), Type?.Invoke(item), Details?.Invoke(item) }
+            .Any(text => text?.Contains(search, StringComparison.CurrentCultureIgnoreCase) == true);
+
+    private IEnumerable<string> Options(Func<TItem, string?> selector) =>
+        (Items ?? []).Select(selector).OfType<string>().Where(s => s.Length > 0).Distinct().Order(StringComparer.CurrentCulture);
+
+    private static string? Selected(ChangeEventArgs e) => e.Value?.ToString() is { Length: > 0 } value ? value : null;
+
+    private void OnSearch(ChangeEventArgs e) => _search = e.Value?.ToString() ?? "";
+
+    private object KeyOf(TItem item) => ItemKey?.Invoke(item) ?? item!;
+
+    private string EntryClass(TItem item) => _new.Contains(KeyOf(item)) ? "stil-log-entry stil-log-entry-new" : "stil-log-entry";
+
+    private string? MetaOf(TItem item)
+    {
+        var parts = new[] { Actor?.Invoke(item), Type?.Invoke(item) }.Where(p => !string.IsNullOrWhiteSpace(p)).ToArray();
+        return parts.Length == 0 ? null : string.Join(" · ", parts);
+    }
+
+    private RenderFragment EntryContent(TItem item) => @<text>
+        <span class="@MarkerClass(item)" aria-hidden="true">
+            @if (Icon?.Invoke(item) is { Length: > 0 } icon)
+            {
+                <StilIcon Name="@icon" />
+            }
+        </span>
+        <div class="stil-log-body">
+            <div class="stil-log-head">
+                <span class="stil-log-title">@TitleOf(item)</span>
+                <time class="stil-log-time" datetime="@MachineTime(TimeOf(item))" title="@FullTime(TimeOf(item))">@RelativeTime(TimeOf(item))</time>
+            </div>
+            @if (MetaOf(item) is { } meta)
+            {
+                <div class="stil-log-meta">@meta</div>
+            }
+            @if (Details?.Invoke(item) is { Length: > 0 } details)
+            {
+                <div class="stil-log-details">@details</div>
+            }
+            @if (DetailsTemplate is not null)
+            {
+                <div class="stil-log-details">@DetailsTemplate(item)</div>
+            }
+        </div>
+    </text>;
+
+    public void Dispose() => _timer?.Dispose();
+}

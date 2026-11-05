@@ -1,0 +1,58 @@
+@typeparam TItem
+@inherits StilActivityBase<TItem>
+
+@* The compact form of the activity log, for an order's history in a side panel: a line with a
+   marker per entry, oldest first unless NewestFirst. Times today are relative ("5 minutes ago"),
+   older ones show the date. Works in static SSR. *@
+<ol @attributes="AdditionalAttributes" class="@Classes("stil-timeline")" aria-label="@Label">
+    @foreach (var item in Ordered)
+    {
+        <li class="stil-timeline-entry">
+            <span class="@MarkerClass(item)" aria-hidden="true">
+                @if (Icon?.Invoke(item) is { Length: > 0 } icon)
+                {
+                    <StilIcon Name="@icon" />
+                }
+            </span>
+            <div class="stil-log-body">
+                <span class="stil-log-title">@TitleOf(item)</span>
+                <div class="stil-log-meta">
+                    <time datetime="@MachineTime(TimeOf(item))" title="@FullTime(TimeOf(item))">@ShortTime(TimeOf(item))</time>
+                    @if (Actor?.Invoke(item) is { Length: > 0 } actor)
+                    {
+                        <span> · @actor</span>
+                    }
+                </div>
+                @if (Details?.Invoke(item) is { Length: > 0 } details)
+                {
+                    <div class="stil-log-details">@details</div>
+                }
+                @if (DetailsTemplate is not null)
+                {
+                    <div class="stil-log-details">@DetailsTemplate(item)</div>
+                }
+            </div>
+        </li>
+    }
+</ol>
+
+@code {
+    /// <summary>Lists the newest entry first. The default is the oldest first, as a history reads.</summary>
+    [Parameter]
+    public bool NewestFirst { get; set; }
+
+    /// <summary>The accessible name of the timeline, for example "Order history".</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    private IEnumerable<TItem> Ordered => NewestFirst
+        ? (Items ?? []).OrderByDescending(TimeOf)
+        : (Items ?? []).OrderBy(TimeOf);
+
+    // Relative today, then the day and time ("3 November, 14:05" in the page's culture), with the
+    // year for other years.
+    private string ShortTime(DateTime time) =>
+        time.Date == CurrentTime.Date ? RelativeTime(time)
+        : time.Year == CurrentTime.Year ? $"{time.ToString(TextCulture.DateTimeFormat.MonthDayPattern, TextCulture)}, {time.ToString("t", TextCulture)}"
+        : time.ToString("g", TextCulture);
+}

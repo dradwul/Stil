@@ -3,6 +3,24 @@
     "Close": "Luk",
     "Loading": "Indlæser…"
   },
+  "ActivityLog": {
+    "JustNow": "Lige nu",
+    "MinuteAgo": "For 1 minut siden",
+    "MinutesAgoFormat": "For {0} minutter siden",
+    "HourAgo": "For 1 time siden",
+    "HoursAgoFormat": "For {0} timer siden",
+    "Yesterday": "I går",
+    "Search": "Søg i loggen",
+    "AllTypes": "Alle typer",
+    "AllActors": "Alle",
+    "Empty": "Der er ikke sket noget endnu.",
+    "NoMatches": "Ingen hændelser passer.",
+    "NewFormat": "Ny: {0}",
+    "NewManyFormat": "{0} nye hændelser",
+    "Log": "Aktivitetslog",
+    "Type": "Type",
+    "Actor": "Person"
+  },
   "Agenda": {
     "Tomorrow": "I morgen",
     "Empty": "Intet planlagt.",
