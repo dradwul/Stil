@@ -3428,6 +3428,41 @@
     display: block;
   }
 
+  .stil-scanner {
+    gap: var(--stil-space-2);
+    max-width: 32rem;
+    display: grid;
+  }
+
+  .stil-scanner-view {
+    border-radius: var(--stil-radius-md);
+    background-color: #000;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stil-scanner-preview {
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    width: 100%;
+    display: block;
+  }
+
+  .stil-scanner-frame {
+    border-radius: var(--stil-radius-lg);
+    pointer-events: none;
+    border: 3px solid #ffffffe6;
+    position: absolute;
+    inset: 20% 18%;
+    box-shadow: 0 0 0 100vmax #00000059;
+  }
+
+  .stil-scanner-status {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+    margin: 0;
+  }
+
   .stil-code-invalid {
     color: var(--stil-color-text-muted);
     font-size: var(--stil-font-size-sm);

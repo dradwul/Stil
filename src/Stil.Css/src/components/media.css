@@ -329,6 +329,49 @@
     height: auto;
 }
 
+/* Scanner: a camera view with a frame to aim with, a status line and an optional field.
+   <div class="stil-scanner">
+     <div class="stil-scanner-view"><video class="stil-scanner-preview" …></video><div class="stil-scanner-frame"></div></div>
+     <p class="stil-scanner-status" role="status">Point the camera at a code.</p>
+   </div>
+   stil.js (startScanner) reads the codes. */
+
+.stil-scanner {
+    display: grid;
+    gap: var(--stil-space-2);
+    max-width: 32rem;
+}
+
+.stil-scanner-view {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--stil-radius-md);
+    background-color: #000;
+}
+
+.stil-scanner-preview {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+}
+
+/* The area to aim at; the rest of the picture is dimmed. */
+.stil-scanner-frame {
+    position: absolute;
+    inset: 20% 18%;
+    border: 3px solid rgb(255 255 255 / 0.9);
+    border-radius: var(--stil-radius-lg);
+    box-shadow: 0 0 0 100vmax rgb(0 0 0 / 0.35);
+    pointer-events: none;
+}
+
+.stil-scanner-status {
+    margin: 0;
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+}
+
 /* Shown instead of a code whose value does not fit the format. */
 .stil-code-invalid {
     color: var(--stil-color-text-muted);

@@ -39,6 +39,9 @@
 //     focusEditor and focusRow move focus to a field being edited and to a tree grid row.
 //   - initCropper, setCropperZoom, rotateCropper and cropImage crop an image; startCamera,
 //     captureCamera and stopCamera take a photo; printFrame prints an iframe.
+//   - startScanner, stopScanner and setTorch read barcodes and QR codes from the camera with the
+//     browser's BarcodeDetector, or with a decoder the page passes to registerScanDecoder;
+//     initScanInput tells a handheld scanner's keystrokes from typing.
 // Stil for Blazor loads this module automatically and also uses showDialog/closeDialog.
 
 const initialized = Symbol.for('stil.initialized');
@@ -821,6 +824,135 @@ export function videoSize(video) {
 export function stopCamera(video) {
     video?.srcObject?.getTracks?.().forEach(track => track.stop());
     if (video) video.srcObject = null;
+}
+
+// Scanner: reads codes from the camera. It uses the browser's BarcodeDetector (Chromium on
+// Android, ChromeOS and macOS) unless the page registers a decoder of its own, for example one
+// built on a library, for the other browsers. A decoder takes the <video> and returns a promise
+// of the codes in the current frame: [{ rawValue: "…", format: "qr_code" }]. Stil ships none.
+let scanDecoder = null;
+
+export function registerScanDecoder(decode) {
+    scanDecoder = typeof decode === 'function' ? decode : null;
+}
+
+const scanners = new WeakMap();
+
+// Returns "scanning", "no-camera" or "no-decoder". Each code found calls the .NET method
+// OnScanned(value, format) once; the same code again only after the cooldown.
+export async function startScanner(video, dotnet, { facingMode = 'environment', formats = null, cooldown = 1500, sound = true } = {}) {
+    stopScanner(video);
+    let decode = scanDecoder;
+    if (!decode && 'BarcodeDetector' in globalThis) {
+        const supported = await BarcodeDetector.getSupportedFormats();
+        const wanted = formats?.length ? formats.filter(f => supported.includes(f)) : supported;
+        if (wanted.length) {
+            const detector = new BarcodeDetector({ formats: wanted });
+            decode = source => detector.detect(source);
+        }
+    }
+    if (!decode) return 'no-decoder';
+    if (!await startCamera(video, facingMode)) return 'no-camera';
+
+    const state = { stopped: false, last: '', lastTime: 0 };
+    scanners.set(video, state);
+    const tick = async () => {
+        if (state.stopped) return;
+        try {
+            if (video.readyState >= 2) {
+                for (const code of await decode(video) ?? []) {
+                    if (formats?.length && !formats.includes(code.format)) continue;
+                    const now = performance.now();
+                    if (code.rawValue === state.last && now - state.lastTime < cooldown) continue;
+                    state.last = code.rawValue;
+                    state.lastTime = now;
+                    if (sound) beep();
+                    navigator.vibrate?.(40);
+                    await dotnet.invokeMethodAsync('OnScanned', code.rawValue, code.format ?? null);
+                    break;
+                }
+            }
+        } catch {
+            // A frame that cannot be read; try the next one.
+        }
+        if (!state.stopped) state.timer = setTimeout(tick, 120);
+    };
+    tick();
+    return 'scanning';
+}
+
+export function stopScanner(video) {
+    const state = video && scanners.get(video);
+    if (state) {
+        state.stopped = true;
+        clearTimeout(state.timer);
+        scanners.delete(video);
+    }
+    stopCamera(video);
+}
+
+// The flashlight of the camera in use, where the device has one. Returns whether it worked.
+export async function setTorch(video, on) {
+    const track = video?.srcObject?.getVideoTracks?.()[0];
+    if (!track?.getCapabilities?.().torch) return false;
+    try {
+        await track.applyConstraints({ advanced: [{ torch: on }] });
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+export function hasTorch(video) {
+    return video?.srcObject?.getVideoTracks?.()[0]?.getCapabilities?.().torch === true;
+}
+
+let audio = null;
+
+function beep() {
+    try {
+        audio ??= new AudioContext();
+        const oscillator = audio.createOscillator();
+        const gain = audio.createGain();
+        oscillator.frequency.value = 1320;
+        gain.gain.setValueAtTime(0.08, audio.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + 0.12);
+        oscillator.connect(gain).connect(audio.destination);
+        oscillator.start();
+        oscillator.stop(audio.currentTime + 0.12);
+    } catch {
+        // No audio: the scan still counts.
+    }
+}
+
+// Scan inputs: a handheld USB or Bluetooth scanner types the code as fast keystrokes and ends
+// with Enter. On Enter the input calls the .NET method OnEnter(value, fromScanner): fromScanner
+// is true when the keys came at most maxInterval ms apart on average. Enter never submits the
+// form here. OnEnter returns true to clear the input.
+const scanInputs = new WeakMap();
+
+export function initScanInput(input, dotnet, maxInterval = 50) {
+    if (!input || scanInputs.has(input)) return;
+    const state = { times: [] };
+    scanInputs.set(input, state);
+    input.addEventListener('keydown', async event => {
+        const now = performance.now();
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const times = state.times;
+            const value = input.value;
+            state.times = [];
+            if (!value) return;
+            const count = times.length;
+            const fromScanner = count >= 3 && count >= value.length && (times[count - 1] - times[0]) / (count - 1) <= maxInterval;
+            if (await dotnet.invokeMethodAsync('OnEnter', value, fromScanner)) input.value = '';
+            return;
+        }
+        if (event.key.length !== 1 || event.ctrlKey || event.metaKey || event.altKey) return;
+        // A pause starts a new burst.
+        if (state.times.length && now - state.times[state.times.length - 1] > 300) state.times = [];
+        state.times.push(now);
+    });
 }
 
 // Prints the document in an iframe, such as a PDF from the same origin. Returns false when the

@@ -140,6 +140,7 @@ classes: `aria-current="page"`, `aria-selected="true"`,
 | Tooltip | `data-stil-tooltip="Text"` on any element. Add `stil-tooltip-bottom` to show it below. |
 | Progress | `stil-progress` (`stil-progress-lg`) > `stil-progress-bar` with a width |
 | QR code, barcode | `stil-qr-code` and `stil-barcode` around an `<svg>` of the code (`role="img"` and `aria-label` on the wrapper). Dark on light in both modes: `--stil-barcode-color`, `--stil-barcode-bg`. `stil-code-invalid` for a value that does not fit. |
+| Scanner | `stil-scanner` > `stil-scanner-view` (a `stil-scanner-preview` video and a `stil-scanner-frame` to aim at) and a `stil-scanner-status` line. stil.js's `startScanner` reads the codes. |
 | Spinner | `stil-spinner`, `stil-spinner-sm`. It uses the current text color. |
 | Toast | `stil-toast-container` > `stil-toast` + `stil-toast-{variant}` > `stil-toast-body` (`stil-toast-title`) + `stil-close` |
 | Event | `stil-event` + `stil-event-{variant}`, or `--stil-event-color` for your own color, with `stil-event-title` (`stil-event-time`) and `stil-event-meta`. `stil-event-draft` marks an unsaved event. |
@@ -154,7 +155,7 @@ full page built only with Stil, open
 
 ## Optional JavaScript
 
-Stil works without JavaScript. The optional `dist/stil.js` module, 47 kB (13 kB gzipped) with
+Stil works without JavaScript. The optional `dist/stil.js` module, 53 kB (15 kB gzipped) with
 no dependencies, adds a few behaviours:
 
 ```html
@@ -197,6 +198,11 @@ no dependencies, adds a few behaviours:
   `hidden`) move to the top layer and are placed next to their toggle or field,
   so a parent with `overflow` (a scrolling card, a table, a dialog) never cuts
   them off. Without stil.js they open in place, as before.
+- `startScanner`, `stopScanner`, `setTorch` and `hasTorch` read barcodes and QR
+  codes from the camera with the browser's `BarcodeDetector`, or a decoder of
+  your own passed to `registerScanDecoder` (a function that takes the `<video>`
+  and returns `[{ rawValue, format }]`). `initScanInput` tells a handheld
+  scanner's fast keystrokes from typing.
 - `data-stil-mask="000 00"` on an input formats it while typing: `0` is a digit,
   `A` a letter, `*` any character, and the rest are literals that are filled in.
 - A splitter's `stil-splitter-handle` (`role="separator"`) resizes the first
