@@ -139,6 +139,7 @@ classes: `aria-current="page"`, `aria-selected="true"`,
 | Icons | `<span class="stil-icon stil-icon-{name}" aria-hidden="true"></span>`: about 30 built-in icons (chevrons, arrows, close, menu, check, plus, minus, search, more, info, success, warning, danger, external, filter, home, sun, moon, file, folder, upload). They use the current text color and are 1em in size. The set is in [`src/icons.json`](src/icons.json). |
 | Tooltip | `data-stil-tooltip="Text"` on any element. Add `stil-tooltip-bottom` to show it below. |
 | Progress | `stil-progress` (`stil-progress-lg`) > `stil-progress-bar` with a width |
+| QR code, barcode | `stil-qr-code` and `stil-barcode` around an `<svg>` of the code (`role="img"` and `aria-label` on the wrapper). Dark on light in both modes: `--stil-barcode-color`, `--stil-barcode-bg`. `stil-code-invalid` for a value that does not fit. |
 | Spinner | `stil-spinner`, `stil-spinner-sm`. It uses the current text color. |
 | Toast | `stil-toast-container` > `stil-toast` + `stil-toast-{variant}` > `stil-toast-body` (`stil-toast-title`) + `stil-close` |
 | Event | `stil-event` + `stil-event-{variant}`, or `--stil-event-color` for your own color, with `stil-event-title` (`stil-event-time`) and `stil-event-meta`. `stil-event-draft` marks an unsaved event. |

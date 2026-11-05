@@ -47,6 +47,8 @@
     --stil-shadow-lg: 0 8px 24px #00000026;
     --stil-focus-ring-width: 2px;
     --stil-focus-ring-offset: 2px;
+    --stil-barcode-color: #000;
+    --stil-barcode-bg: #fff;
     --stil-z-dropdown: 1000;
     --stil-z-sticky: 1020;
     --stil-z-overlay: 1040;
@@ -3401,6 +3403,40 @@
 
   .stil-skeleton-group {
     display: block;
+  }
+
+  .stil-qr-code, .stil-barcode {
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-barcode-bg);
+    max-width: 100%;
+    color: var(--stil-barcode-color);
+    vertical-align: middle;
+    display: inline-block;
+  }
+
+  .stil-qr-code {
+    width: 10rem;
+  }
+
+  .stil-barcode {
+    width: 16rem;
+  }
+
+  .stil-qr-code > svg, .stil-barcode > svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .stil-code-invalid {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+  }
+
+  @media print {
+    .stil-qr-code, .stil-barcode {
+      print-color-adjust: exact;
+    }
   }
 
   .stil-tree, .stil-tree-group {

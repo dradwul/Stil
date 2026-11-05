@@ -303,3 +303,42 @@
 
 /* A group of skeleton shapes (as StilSkeleton renders them). */
 .stil-skeleton-group { display: block; }
+
+/* QR codes and barcodes: an SVG drawn by StilCodes (or any tool), one unit per module, with its
+   quiet zone inside. The light background is part of the code, so it stays in dark mode.
+   <div class="stil-qr-code" role="img" aria-label="https://example.com"><svg viewBox="0 0 29 29">…</svg></div>
+   <div class="stil-barcode" role="img" aria-label="ABC-123"><svg viewBox="0 0 101 63">…</svg></div> */
+
+.stil-qr-code,
+.stil-barcode {
+    display: inline-block;
+    max-width: 100%;
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-barcode-bg);
+    color: var(--stil-barcode-color);
+    vertical-align: middle;
+}
+
+.stil-qr-code { width: 10rem; }
+.stil-barcode { width: 16rem; }
+
+.stil-qr-code > svg,
+.stil-barcode > svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* Shown instead of a code whose value does not fit the format. */
+.stil-code-invalid {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+}
+
+@media print {
+    .stil-qr-code,
+    .stil-barcode {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+}

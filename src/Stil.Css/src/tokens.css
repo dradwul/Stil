@@ -67,6 +67,10 @@
     --stil-focus-ring-width: 2px;
     --stil-focus-ring-offset: 2px;
 
+    /* QR codes and barcodes: dark on light in both color modes, as scanners expect. */
+    --stil-barcode-color: #000;
+    --stil-barcode-bg: #fff;
+
     /* Layering */
     --stil-z-dropdown: 1000;
     --stil-z-sticky: 1020;
