@@ -40,6 +40,13 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   static SSR and print sharply. `StilCodes` has the encoders (`QrSvg`,
   `QrModules`, `BarcodeSvg`, `BarcodeModules`, `EanCheckDigit`) for PDFs and
   label printers.
+- **Stil for Blazor**: `StilSignaturePad` takes a signature drawn with a
+  finger, pen or mouse (pressure, undo, clear) or a typed name, as a
+  `StilSignature` that is null until signed, so `[Required]` works. It saves
+  as SVG (`ToSvg`, in C#) and PNG (`ToPngAsync`).
+- **Stil CSS**: `stil-signature` (pad, canvas, line, placeholder and typed
+  name), and in stil.js `initSignaturePad`, `drawSignature` and
+  `signaturePng`.
 - **Stil for Blazor**: `StilScanner` reads barcodes and QR codes with the
   camera (the browser's `BarcodeDetector`, or a decoder the app registers
   with stil.js's `registerScanDecoder`), with camera switching, a flashlight

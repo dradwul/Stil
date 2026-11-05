@@ -890,15 +890,21 @@ typed code or a handheld scanner, so it also works without a camera or
 `BarcodeDetector`. The docs show a ZXing decoder for Safari, Firefox and
 desktop Chrome on Windows and Linux.
 
-### Phase 12.3: Signature pad
+### Phase 12.3: Signature pad ✅ Done
 
-- [ ] `StilSignaturePad`: draw a signature with a finger, pen or mouse
+- [x] `StilSignaturePad`: draw a signature with a finger, pen or mouse
   (pointer events, pressure where available). `Clear`, undo, and output as
   SVG, PNG and the points, with EditForm validation ("signature required").
   A typed name is the keyboard alternative. The docs state that it is a
   drawn signature, not a qualified electronic signature.
 
 **Done when:** a form requires a signature, drawn or typed, and saves it.
+✅ (The docs example: drawn with the mouse in the browser, saved as SVG and
+PNG; 5 bUnit tests.)
+
+**Changes from the plan:** the value is a `StilSignature` (strokes or typed
+name, with the area's size) that is null until signed. SVG comes from C#, so
+it also works on the server; PNG is drawn by the browser.
 
 ### Phase 12.4: Activity log and timeline
 
