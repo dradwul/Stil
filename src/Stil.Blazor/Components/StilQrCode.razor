@@ -1,0 +1,51 @@
+@inherits StilComponentBase
+
+@* A QR code drawn as SVG on the server, so it shows in static SSR and prints sharply. Its colors
+   are --stil-barcode-color and --stil-barcode-bg: dark on light in both color modes, as scanners
+   expect. *@
+@if (Svg is { } svg)
+{
+    <div @attributes="AdditionalAttributes" class="@Classes("stil-qr-code")" role="img" aria-label="@(Label ?? Value)" style="@SizeStyle">@((MarkupString)svg)</div>
+}
+else
+{
+    <span @attributes="AdditionalAttributes" class="@Classes("stil-code-invalid")">@Localize(InvalidText, "Code.Invalid")</span>
+}
+
+@code {
+    /// <summary>The text in the code, for example a URL or an ID.</summary>
+    [Parameter, EditorRequired]
+    public string Value { get; set; } = "";
+
+    /// <summary>How much of the code can be damaged and still read. The default is Medium.</summary>
+    [Parameter]
+    public StilQrErrorCorrection ErrorCorrection { get; set; } = StilQrErrorCorrection.Medium;
+
+    /// <summary>The width and height, as a CSS length. The default is 10rem.</summary>
+    [Parameter]
+    public string? Size { get; set; }
+
+    /// <summary>The accessible name. The default is the value.</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>The text shown when the value does not fit in a QR code. The default is localized.</summary>
+    [Parameter]
+    public string? InvalidText { get; set; }
+
+    private string? Svg { get; set; }
+
+    private string? SizeStyle => Size is null ? null : $"width: {Size}";
+
+    protected override void OnParametersSet()
+    {
+        try
+        {
+            Svg = StilCodes.QrSvg(Value ?? "", ErrorCorrection, "currentColor", background: null);
+        }
+        catch (ArgumentException)
+        {
+            Svg = null;
+        }
+    }
+}

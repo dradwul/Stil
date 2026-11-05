@@ -1,0 +1,54 @@
+@inherits StilComponentBase
+
+@* A barcode drawn as SVG on the server, so it shows in static SSR and prints sharply. Its colors
+   are --stil-barcode-color and --stil-barcode-bg, like StilQrCode. *@
+@if (Svg is { } svg)
+{
+    <div @attributes="AdditionalAttributes" class="@Classes("stil-barcode")" role="img" aria-label="@(Label ?? Value)" style="@WidthStyle">@((MarkupString)svg)</div>
+}
+else
+{
+    <span @attributes="AdditionalAttributes" class="@Classes("stil-code-invalid")">@Localize(InvalidText, "Code.Invalid")</span>
+}
+
+@code {
+    /// <summary>The value: printable ASCII for Code 128, digits for EAN (the check digit is added when missing).</summary>
+    [Parameter, EditorRequired]
+    public string Value { get; set; } = "";
+
+    /// <summary>The barcode format. The default is Code 128.</summary>
+    [Parameter]
+    public StilBarcodeFormat Format { get; set; } = StilBarcodeFormat.Code128;
+
+    /// <summary>Shows the value under the bars. The default is true.</summary>
+    [Parameter]
+    public bool ShowText { get; set; } = true;
+
+    /// <summary>The width, as a CSS length; the height follows. The default is 16rem.</summary>
+    [Parameter]
+    public string? Width { get; set; }
+
+    /// <summary>The accessible name. The default is the value.</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>The text shown when the value does not fit the format. The default is localized.</summary>
+    [Parameter]
+    public string? InvalidText { get; set; }
+
+    private string? Svg { get; set; }
+
+    private string? WidthStyle => Width is null ? null : $"width: {Width}";
+
+    protected override void OnParametersSet()
+    {
+        try
+        {
+            Svg = StilCodes.BarcodeSvg(Value ?? "", Format, ShowText, "currentColor", background: null);
+        }
+        catch (ArgumentException)
+        {
+            Svg = null;
+        }
+    }
+}

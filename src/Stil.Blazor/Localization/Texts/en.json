@@ -58,6 +58,9 @@
     "LargestFormat": "Largest: {0}, {1}.",
     "SparklineFormat": "{0}: {1} values from {2} to {3}, lowest {4}, highest {5}."
   },
+  "Code": {
+    "Invalid": "This code cannot be shown."
+  },
   "Combobox": {
     "NoResults": "No results",
     "Searching": "Searching…",

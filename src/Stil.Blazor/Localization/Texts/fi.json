@@ -58,6 +58,9 @@
     "LargestFormat": "Suurin: {0}, {1}.",
     "SparklineFormat": "{0}: {1} arvoa, {2}–{3}, pienin {4}, suurin {5}."
   },
+  "Code": {
+    "Invalid": "Koodia ei voi näyttää."
+  },
   "Combobox": {
     "NoResults": "Ei tuloksia",
     "Searching": "Haetaan…",

@@ -512,6 +512,8 @@ Recurring events and time zones are up to the app.
 | Component | Parameters |
 | --- | --- |
 | `StilProgress` | `Value`, `Max` (default 100), `Label`, `ShowValue`, `Variant`, `Size` (Medium, Large) |
+| `StilQrCode` | `Value`, `ErrorCorrection` (Low, Medium, Quartile, High), `Size` (default 10rem), `Label`. An SVG drawn in C#, also in static SSR. |
+| `StilBarcode` | `Value`, `Format` (Code128, Ean13, Ean8), `ShowText`, `Width` (default 16rem), `Label`. `StilCodes` has the encoders for PDFs and label printers. |
 | `StilSpinner` | `Size` (Medium, Small), `Variant`, `Label` (for screen readers) |
 
 ### Dialogs

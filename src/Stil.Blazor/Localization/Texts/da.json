@@ -58,6 +58,9 @@
     "LargestFormat": "Størst: {0}, {1}.",
     "SparklineFormat": "{0}: {1} værdier fra {2} til {3}, lavest {4}, højest {5}."
   },
+  "Code": {
+    "Invalid": "Koden kan ikke vises."
+  },
   "Combobox": {
     "NoResults": "Ingen resultater",
     "Searching": "Søger…",
