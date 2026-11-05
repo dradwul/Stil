@@ -20,7 +20,7 @@ something usable.
 | 9 | Forms 2: popover, time, slider, wizard, rating, color, masks | ✅ Done |
 | 10 | Layout and media: skeleton, splitter, carousel, image cropper, PDF viewer | ✅ Done |
 | 11 | Data grid 2, in five parts: totals and export ✅, column layout ✅, grouping ✅, inline editing ✅, tree grid ✅ | Done |
-| 12 | Capture and records: scanner, QR codes, signature, activity log, chat | Planned |
+| 12 | Capture and records: QR codes, scanner, signature, activity log, chat | In progress |
 | 13 | Boards and workspace: kanban, command palette, recurring events, Gantt | Planned |
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | Planned |
 | V2 | Version 2, Stil Sites: section blocks, page model, a visual page builder, content | Planned (after 1.0) |
@@ -839,14 +839,36 @@ their own, so its own values do not count twice. It has no grouping or
 `ItemsProvider`; `LoadChildren` loads from a server instead. Playwright
 checks of the treegrid were left out for now.
 
-## Phase 12: Capture and records
+## Phase 12: Capture and records 🚧 In progress
 
 Goal: components for apps that register things on the spot: check-ins at a
 reception, deliveries in a warehouse, visits, inspections. Few component
 libraries cover this, and it fits Stil's focus on calm, practical business
-screens.
+screens. The phase is split into six parts that each end with something
+usable; the scanner demo needs codes to scan, and chat builds on the
+activity log's data model.
 
-**Plan:**
+**Done when (all parts):** the check-in demo works on a phone (camera), on a
+desktop with a USB scanner, and with only a keyboard.
+
+### Phase 12.1: QR codes and barcodes ✅ Done
+
+- [x] `StilQrCode` and `StilBarcode`: generate QR codes and Code 128 / EAN-13 /
+  EAN-8 barcodes as SVG in C#, with no dependency, so they render in static
+  SSR, print sharply and follow the theme.
+- [x] The encoders are public (`StilCodes`), for codes on a PDF or a label
+  printer.
+- [x] CSS (`stil-qr-code`, `stil-barcode`), built-in texts, bUnit tests and
+  docs.
+
+**Done when:** a QR code and each barcode format scan with a phone and print
+sharply. ✅ (Every format and QR level decoded with ZXing, QR up to 2 000
+characters with UTF-8 text; 19 bUnit tests.)
+
+**Changes from the plan:** a value the format cannot hold shows a short
+localized message instead of throwing, since codes often come from data.
+
+### Phase 12.2: Scanning
 
 - [ ] `StilScanner`: reads barcodes and QR codes with the camera. It uses the
   browser's `BarcodeDetector` where it exists (Chromium, Android) and an
@@ -857,14 +879,22 @@ screens.
   (fast keystrokes ending in Enter), so a USB or Bluetooth scanner works
   without a camera. It works in every browser, and also as a plain text
   field.
-- [ ] `StilQrCode` and `StilBarcode`: generate QR codes and Code 128 / EAN
-  barcodes as SVG in C#, with no dependency, so they render in static SSR,
-  print sharply and follow the theme.
+
+**Done when:** a code from 12.1 scans with the camera on a phone and with a
+USB scanner on a desktop.
+
+### Phase 12.3: Signature pad
+
 - [ ] `StilSignaturePad`: draw a signature with a finger, pen or mouse
   (pointer events, pressure where available). `Clear`, undo, and output as
   SVG, PNG and the points, with EditForm validation ("signature required").
   A typed name is the keyboard alternative. The docs state that it is a
   drawn signature, not a qualified electronic signature.
+
+**Done when:** a form requires a signature, drawn or typed, and saves it.
+
+### Phase 12.4: Activity log and timeline
+
 - [ ] `StilActivityLog<TItem>`: a log of anything that happens (check-ins,
   status changes, comments, system events), from `Items` and selectors like
   the calendar: `Time`, `Title`, `Actor`, `Variant`, `Icon`, `Details`.
@@ -872,21 +902,31 @@ screens.
     by type and actor, search, and virtualization for long logs.
   - Live: new entries appear at the top without the list jumping, and are
     announced politely to screen readers.
-  - `StilTimeline` is the compact form, for an order's history in a side
-    panel.
+- [ ] `StilTimeline` is the compact form, for an order's history in a side
+  panel.
+
+**Done when:** an order's history shows as a timeline, and a live log takes
+new entries without jumping.
+
+### Phase 12.5: Chat and comments
+
 - [ ] `StilChat` and `StilComments`: a conversation or a comment thread on
   top of the activity log's data model, with avatars, own and others'
   messages, day separators, a composer (Enter sends, Shift+Enter breaks the
   line), attachments through `StilFileUpload`, and "is typing". Transport is
   the app's (SignalR or anything else); Stil only renders and raises
   `OnSend`.
+
+**Done when:** two browser windows chat through the demo's own transport.
+
+### Phase 12.6: Check-in demo
+
 - [ ] A demo page that combines them: a check-in desk that scans a badge or
   a QR code, asks for a signature, and writes the visit to the log.
 - [ ] CSS (`stil-scanner`, `stil-signature`, `stil-log`, `stil-timeline`),
-  built-in texts in the five languages, bUnit tests and docs.
+  built-in texts in the five languages, bUnit tests and docs for every part.
 
-**Done when:** the check-in demo works on a phone (camera), on a desktop
-with a USB scanner, and with only a keyboard.
+**Done when:** the phase's own "done when" above.
 
 ## Phase 13: Boards and workspace
 

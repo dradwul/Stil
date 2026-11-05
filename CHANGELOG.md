@@ -35,6 +35,14 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 
 ### Added
 
+- **Stil for Blazor**: `StilQrCode` and `StilBarcode` (Code 128, EAN-13,
+  EAN-8) draw codes as SVG in C#, with no dependency, so they render in
+  static SSR and print sharply. `StilCodes` has the encoders (`QrSvg`,
+  `QrModules`, `BarcodeSvg`, `BarcodeModules`, `EanCheckDigit`) for PDFs and
+  label printers.
+- **Stil CSS**: `stil-qr-code`, `stil-barcode` and `stil-code-invalid`, with
+  the tokens `--stil-barcode-color` and `--stil-barcode-bg`.
+
 - **Stil for Blazor**: `options.Font` in `AddStil()` gives the whole app a web
   font; `<StilHead />` links its stylesheet and sets `--stil-font-family`.
   `StilFonts` has ready-made fonts from cdnfonts.com (Lexend, BR Cobane,
