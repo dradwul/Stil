@@ -3463,6 +3463,71 @@
     margin: 0;
   }
 
+  .stil-signature {
+    gap: var(--stil-space-2);
+    display: grid;
+  }
+
+  .stil-signature-modes {
+    gap: var(--stil-space-1);
+    display: flex;
+  }
+
+  .stil-signature-pad {
+    height: var(--stil-signature-height, 10rem);
+    border: 1px solid var(--stil-color-border-strong);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+    position: relative;
+  }
+
+  .stil-signature-canvas {
+    touch-action: none;
+    cursor: crosshair;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .stil-signature-canvas[data-stil-disabled] {
+    cursor: not-allowed;
+    opacity: .6;
+  }
+
+  .stil-signature-line {
+    inset-inline: var(--stil-space-5);
+    border-bottom: 1px dashed var(--stil-color-border-strong);
+    pointer-events: none;
+    position: absolute;
+    bottom: 28%;
+  }
+
+  .stil-signature-placeholder {
+    inset-inline-start: var(--stil-space-5);
+    bottom: calc(28% + var(--stil-space-1));
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+    pointer-events: none;
+    position: absolute;
+  }
+
+  .stil-signature-typed {
+    min-height: 5rem;
+    padding: var(--stil-space-2);
+    border-bottom: 1px dashed var(--stil-color-border-strong);
+    overflow-wrap: anywhere;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    display: flex;
+  }
+
+  .stil-signature[data-stil-invalid] .stil-signature-pad {
+    --_bg: var(--stil-color-danger);
+    border-color: var(--_ink);
+  }
+
   .stil-code-invalid {
     color: var(--stil-color-text-muted);
     font-size: var(--stil-font-size-sm);

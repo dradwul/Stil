@@ -41,6 +41,8 @@
 //   - startScanner, stopScanner and setTorch read barcodes and QR codes from the camera with the
 //     browser's BarcodeDetector, or with a decoder the page passes to registerScanDecoder;
 //     initScanInput tells a handheld scanner's keystrokes from typing.
+//   - initSignaturePad, drawSignature and signaturePng: a signature drawn with a finger, pen or
+//     mouse on a canvas, and the signature as a PNG.
 // Stil for Blazor loads this module automatically and also uses showDialog/closeDialog.
 
 const initialized = Symbol.for('stil.initialized');
@@ -922,6 +924,114 @@ function beep() {
     } catch {
         // No audio: the scan still counts.
     }
+}
+
+// Signature pads: strokes drawn on a <canvas> with pointer events, as wide as the pen presses
+// (1 to 4 pixels; a mouse presses 0.5). Each finished stroke goes to the .NET method
+// OnStroke(points, width, height), with points as [x, y, pressure, x, y, pressure, …] in CSS
+// pixels of the canvas. drawSignature redraws the strokes, scaled to the canvas's current size.
+const pads = new WeakMap();
+
+export function initSignaturePad(canvas, dotnet) {
+    if (!canvas || pads.has(canvas)) return;
+    const state = { strokes: [], width: 0, height: 0, current: null, last: null };
+    pads.set(canvas, state);
+
+    const point = event => {
+        const box = canvas.getBoundingClientRect();
+        const round = n => Math.round(n * 10) / 10;
+        return [round(event.clientX - box.left), round(event.clientY - box.top), round(event.pressure || 0.5)];
+    };
+
+    canvas.addEventListener('pointerdown', event => {
+        if (canvas.dataset.stilDisabled !== undefined || event.pointerType === 'mouse' && event.button !== 0) return;
+        event.preventDefault();
+        canvas.setPointerCapture(event.pointerId);
+        state.current = point(event);
+        state.last = state.current;
+        strokeSegment(canvas, state.last, state.last);
+    });
+    canvas.addEventListener('pointermove', event => {
+        if (!state.current) return;
+        for (const e of event.getCoalescedEvents?.() ?? [event]) {
+            const next = point(e);
+            strokeSegment(canvas, state.last, next);
+            state.current.push(...next);
+            state.last = next;
+        }
+    });
+    const end = () => {
+        if (!state.current) return;
+        const stroke = state.current;
+        state.current = null;
+        dotnet.invokeMethodAsync('OnStroke', stroke, canvas.clientWidth, canvas.clientHeight);
+    };
+    canvas.addEventListener('pointerup', end);
+    canvas.addEventListener('pointercancel', end);
+
+    // Keep the bitmap as sharp as the screen and redraw when the pad changes size.
+    new ResizeObserver(() => redrawSignature(canvas)).observe(canvas);
+}
+
+export function drawSignature(canvas, strokes, width, height) {
+    const state = canvas && pads.get(canvas);
+    if (!state) return;
+    Object.assign(state, { strokes: strokes ?? [], width, height });
+    redrawSignature(canvas);
+}
+
+function redrawSignature(canvas) {
+    const state = pads.get(canvas);
+    const ratio = devicePixelRatio || 1;
+    canvas.width = Math.round(canvas.clientWidth * ratio);
+    canvas.height = Math.round(canvas.clientHeight * ratio);
+    const scale = state.width ? canvas.clientWidth / state.width : 1;
+    for (const stroke of state.strokes) {
+        for (let i = 0; i < stroke.length; i += 3) {
+            const from = i ? stroke.slice(i - 3, i) : stroke.slice(0, 3);
+            strokeSegment(canvas, from.map((v, j) => j < 2 ? v * scale : v), stroke.slice(i, i + 3).map((v, j) => j < 2 ? v * scale : v));
+        }
+    }
+}
+
+function strokeSegment(canvas, [x1, y1], [x2, y2, pressure], context = canvas.getContext('2d'), ratio = canvas.width / (canvas.clientWidth || 1)) {
+    context.lineCap = 'round';
+    context.lineJoin = 'round';
+    context.strokeStyle = getComputedStyle(canvas).color;
+    context.lineWidth = (1 + 3 * pressure) * ratio;
+    context.beginPath();
+    context.moveTo(x1 * ratio, y1 * ratio);
+    context.lineTo(x2 * ratio, y2 * ratio);
+    context.stroke();
+}
+
+// The signature as a PNG data URL at twice its size: the strokes, or a typed name in the given
+// font, in the given color on a transparent background.
+export function signaturePng(strokes, typedName, width, height, color = '#000', font = 'cursive') {
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(width * 2);
+    canvas.height = Math.round(height * 2);
+    const context = canvas.getContext('2d');
+    if (typedName) {
+        context.fillStyle = color;
+        context.textAlign = 'center';
+        context.font = `${Math.round(height * 0.72)}px ${font}`;
+        context.fillText(typedName, width, height * 1.24, width * 1.9);
+    }
+    context.lineCap = 'round';
+    context.lineJoin = 'round';
+    context.strokeStyle = color;
+    for (const stroke of strokes ?? []) {
+        for (let i = 0; i < stroke.length; i += 3) {
+            const [x1, y1] = i ? stroke.slice(i - 3, i) : stroke;
+            context.lineWidth = (1 + 3 * stroke[i + 2]) * 2;
+            context.beginPath();
+            context.moveTo(x1 * 2, y1 * 2);
+            context.lineTo(stroke[i] * 2, stroke[i + 1] * 2);
+            context.stroke();
+        }
+    }
+    return canvas.toDataURL('image/png');
 }
 
 // Scan inputs: a handheld USB or Bluetooth scanner types the code as fast keystrokes and ends

@@ -372,6 +372,79 @@
     font-size: var(--stil-font-size-sm);
 }
 
+/* Signature: a drawing area with a line to sign on, or a typed name in a handwriting font.
+   <div class="stil-signature">
+     <div class="stil-signature-pad"><canvas class="stil-signature-canvas" role="img" aria-label="Signature area"></canvas>
+       <span class="stil-signature-line"></span><span class="stil-signature-placeholder">Sign here</span></div>
+   </div>
+   stil.js (initSignaturePad) draws on the canvas. The ink is the text color; data-stil-invalid
+   on stil-signature marks it red. */
+
+.stil-signature {
+    display: grid;
+    gap: var(--stil-space-2);
+}
+
+.stil-signature-modes {
+    display: flex;
+    gap: var(--stil-space-1);
+}
+
+.stil-signature-pad {
+    position: relative;
+    height: var(--stil-signature-height, 10rem);
+    border: 1px solid var(--stil-color-border-strong);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+}
+
+.stil-signature-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    cursor: crosshair;
+}
+
+.stil-signature-canvas[data-stil-disabled] {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.stil-signature-line {
+    position: absolute;
+    inset-inline: var(--stil-space-5);
+    bottom: 28%;
+    border-bottom: 1px dashed var(--stil-color-border-strong);
+    pointer-events: none;
+}
+
+.stil-signature-placeholder {
+    position: absolute;
+    inset-inline-start: var(--stil-space-5);
+    bottom: calc(28% + var(--stil-space-1));
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+    pointer-events: none;
+}
+
+.stil-signature-typed {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 5rem;
+    padding: var(--stil-space-2);
+    border-bottom: 1px dashed var(--stil-color-border-strong);
+    font-size: 2rem;
+    overflow-wrap: anywhere;
+}
+
+.stil-signature[data-stil-invalid] .stil-signature-pad {
+    --_bg: var(--stil-color-danger);
+    border-color: var(--_ink);
+}
+
 /* Shown instead of a code whose value does not fit the format. */
 .stil-code-invalid {
     color: var(--stil-color-text-muted);

@@ -141,6 +141,7 @@ classes: `aria-current="page"`, `aria-selected="true"`,
 | Progress | `stil-progress` (`stil-progress-lg`) > `stil-progress-bar` with a width |
 | QR code, barcode | `stil-qr-code` and `stil-barcode` around an `<svg>` of the code (`role="img"` and `aria-label` on the wrapper). Dark on light in both modes: `--stil-barcode-color`, `--stil-barcode-bg`. `stil-code-invalid` for a value that does not fit. |
 | Scanner | `stil-scanner` > `stil-scanner-view` (a `stil-scanner-preview` video and a `stil-scanner-frame` to aim at) and a `stil-scanner-status` line. stil.js's `startScanner` reads the codes. |
+| Signature | `stil-signature` > `stil-signature-pad` (a `stil-signature-canvas`, a `stil-signature-line` and a `stil-signature-placeholder`; `--stil-signature-height`, 10rem), or `stil-signature-typed` for a typed name. `data-stil-invalid` on `stil-signature` marks it red. stil.js's `initSignaturePad` draws. |
 | Spinner | `stil-spinner`, `stil-spinner-sm`. It uses the current text color. |
 | Toast | `stil-toast-container` > `stil-toast` + `stil-toast-{variant}` > `stil-toast-body` (`stil-toast-title`) + `stil-close` |
 | Event | `stil-event` + `stil-event-{variant}`, or `--stil-event-color` for your own color, with `stil-event-title` (`stil-event-time`) and `stil-event-meta`. `stil-event-draft` marks an unsaved event. |
@@ -155,7 +156,7 @@ full page built only with Stil, open
 
 ## Optional JavaScript
 
-Stil works without JavaScript. The optional `dist/stil.js` module, 53 kB (15 kB gzipped) with
+Stil works without JavaScript. The optional `dist/stil.js` module, 58 kB (16 kB gzipped) with
 no dependencies, adds a few behaviours:
 
 ```html
@@ -203,6 +204,8 @@ no dependencies, adds a few behaviours:
   your own passed to `registerScanDecoder` (a function that takes the `<video>`
   and returns `[{ rawValue, format }]`). `initScanInput` tells a handheld
   scanner's fast keystrokes from typing.
+- `initSignaturePad`, `drawSignature` and `signaturePng` draw a signature on a
+  canvas with pointer events (as wide as the pen presses) and save it as a PNG.
 - `data-stil-mask="000 00"` on an input formats it while typing: `0` is a digit,
   `A` a letter, `*` any character, and the rest are literals that are filled in.
 - A splitter's `stil-splitter-handle` (`role="separator"`) resizes the first
