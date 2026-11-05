@@ -72,6 +72,17 @@
     "Manual": "Eller skriv koden",
     "Code": "Kode"
   },
+  "Signature": {
+    "Mode": "Måde at underskrive på",
+    "Draw": "Tegn",
+    "Type": "Skriv",
+    "NamePlaceholder": "Dit fulde navn",
+    "Area": "Underskriftsfelt, tomt. Tegn med finger, pen eller mus, eller vælg Skriv.",
+    "Signed": "Underskriftsfelt, underskrevet",
+    "Placeholder": "Underskriv her",
+    "Undo": "Fortryd",
+    "Clear": "Ryd"
+  },
   "Combobox": {
     "NoResults": "Ingen resultater",
     "Searching": "Søger…",

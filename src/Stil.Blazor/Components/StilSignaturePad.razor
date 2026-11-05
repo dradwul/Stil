@@ -1,0 +1,219 @@
+@inherits StilInputBase<StilSignature?>
+@inject IJSRuntime JS
+
+@* A signature: drawn with a finger, pen or mouse, or typed as a name (the keyboard alternative).
+   The value is null until something is drawn or typed, so [Required] makes it required. It is a
+   picture of a signature, not a qualified electronic signature. Needs an interactive render mode. *@
+<StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
+    <div class="stil-signature" data-stil-invalid="@(Messages.Count > 0 ? "" : null)">
+        <div class="stil-signature-modes" role="group" aria-label="@Localize(null, "Signature.Mode")">
+            <StilButton Size="StilSize.Small" Variant="StilVariant.Secondary" Appearance="@(_typing ? StilButtonAppearance.Ghost : StilButtonAppearance.Outline)"
+                        aria-pressed="@(_typing ? "false" : "true")" Disabled="Disabled" OnClick="() => SetModeAsync(false)">@Localize(null, "Signature.Draw")</StilButton>
+            <StilButton Size="StilSize.Small" Variant="StilVariant.Secondary" Appearance="@(_typing ? StilButtonAppearance.Outline : StilButtonAppearance.Ghost)"
+                        aria-pressed="@(_typing ? "true" : "false")" Disabled="Disabled" OnClick="() => SetModeAsync(true)">@Localize(null, "Signature.Type")</StilButton>
+        </div>
+        @if (_typing)
+        {
+            <input @attributes="NameAttributes" value="@_typedName" @oninput="OnTypedAsync"
+                   placeholder="@Localize(NamePlaceholder, "Signature.NamePlaceholder")" autocomplete="name" />
+            <div class="stil-signature-typed" style="@($"font-family: {StilSignature.TypedFont}")" aria-hidden="true">@_typedName</div>
+        }
+        else
+        {
+            <div class="stil-signature-pad">
+                <canvas @ref="_canvas" id="@InputId" class="stil-signature-canvas" role="img" data-stil-disabled="@(Disabled ? "" : null)"
+                        aria-label="@(Localize(null, _strokes.Count > 0 ? "Signature.Signed" : "Signature.Area"))" aria-describedby="@DescribedBy"></canvas>
+                <span class="stil-signature-line" aria-hidden="true"></span>
+                @if (_strokes.Count == 0)
+                {
+                    <span class="stil-signature-placeholder" aria-hidden="true">@Localize(Placeholder, "Signature.Placeholder")</span>
+                }
+            </div>
+            <div class="stil-cluster">
+                <StilButton Size="StilSize.Small" Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline"
+                            Disabled="@(Disabled || _strokes.Count == 0)" OnClick="UndoAsync">@Localize(null, "Signature.Undo")</StilButton>
+                <StilButton Size="StilSize.Small" Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline"
+                            Disabled="@(Disabled || _strokes.Count == 0)" OnClick="ClearAsync">@Localize(null, "Signature.Clear")</StilButton>
+            </div>
+        }
+    </div>
+</StilField>
+
+@code {
+    private ElementReference _canvas;
+    private IJSObjectReference? _module;
+    private DotNetObjectReference<StilSignaturePad>? _reference;
+    private readonly List<IReadOnlyList<StilSignaturePoint>> _strokes = [];
+    private double _width = 600;
+    private double _height = 150;
+    private bool _typing;
+    private string _typedName = "";
+    private bool _padReady;
+
+    private IReadOnlyDictionary<string, object> NameAttributes => ControlAttributes("stil-input");
+
+    /// <summary>The text in the empty drawing area. The default is the localized "Sign here".</summary>
+    [Parameter]
+    public string? Placeholder { get; set; }
+
+    /// <summary>The placeholder of the name field. The default is localized.</summary>
+    [Parameter]
+    public string? NamePlaceholder { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        // Show a signature bound from the model, unless it is the one this pad produced.
+        if (Value is { } value && !ReferenceEquals(value, _produced))
+        {
+            _strokes.Clear();
+            _strokes.AddRange(value.Strokes);
+            _width = value.Width;
+            _height = value.Height;
+            _typedName = value.TypedName ?? "";
+            _typing = value.Strokes.Count == 0 && !string.IsNullOrWhiteSpace(value.TypedName);
+            _padReady = false;
+        }
+    }
+
+    private StilSignature? _produced;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_typing || _padReady)
+        {
+            return;
+        }
+
+        _module ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Stil/stil.js");
+        _reference ??= DotNetObjectReference.Create(this);
+        await _module.InvokeVoidAsync("initSignaturePad", _canvas, _reference);
+        await RedrawAsync();
+        _padReady = true;
+    }
+
+    /// <summary>Called by stil.js with each finished stroke: x, y and pressure for each point.</summary>
+    [JSInvokable]
+    public async Task OnStroke(double[] points, double width, double height)
+    {
+        if (points.Length < 3 || Disabled)
+        {
+            return;
+        }
+
+        // Strokes drawn at another size are scaled to the current one.
+        if (_strokes.Count > 0 && width > 0 && Math.Abs(width - _width) > 0.5)
+        {
+            var scale = width / _width;
+            for (var i = 0; i < _strokes.Count; i++)
+            {
+                _strokes[i] = [.. _strokes[i].Select(p => p with { X = p.X * scale, Y = p.Y * scale })];
+            }
+        }
+
+        if (width > 0 && height > 0)
+        {
+            _width = width;
+            _height = height;
+        }
+
+        var stroke = new StilSignaturePoint[points.Length / 3];
+        for (var i = 0; i < stroke.Length; i++)
+        {
+            stroke[i] = new StilSignaturePoint(points[3 * i], points[3 * i + 1], points[3 * i + 2]);
+        }
+
+        _strokes.Add(stroke);
+        await PublishAsync();
+
+        // A call from JavaScript is not an event, so nothing re-renders by itself.
+        StateHasChanged();
+    }
+
+    /// <summary>The signature as a PNG data URL, at twice its size, in the given ink color; null when empty.</summary>
+    public async Task<string?> ToPngAsync(string color = "#000")
+    {
+        if (Value is not { HasContent: true } signature)
+        {
+            return null;
+        }
+
+        _module ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Stil/stil.js");
+        return await _module.InvokeAsync<string>("signaturePng", Flatten(signature.Strokes), signature.TypedName, signature.Width, signature.Height, color, StilSignature.TypedFont);
+    }
+
+    private async Task UndoAsync()
+    {
+        if (_strokes.Count > 0)
+        {
+            _strokes.RemoveAt(_strokes.Count - 1);
+            await RedrawAsync();
+            await PublishAsync();
+        }
+    }
+
+    private async Task ClearAsync()
+    {
+        _strokes.Clear();
+        await RedrawAsync();
+        await PublishAsync();
+    }
+
+    private async Task SetModeAsync(bool typing)
+    {
+        if (_typing == typing)
+        {
+            return;
+        }
+
+        _typing = typing;
+        _padReady = false;
+        await PublishAsync();
+    }
+
+    private async Task OnTypedAsync(ChangeEventArgs e)
+    {
+        _typedName = e.Value?.ToString() ?? "";
+        await PublishAsync();
+    }
+
+    private Task PublishAsync()
+    {
+        _produced = _typing
+            ? string.IsNullOrWhiteSpace(_typedName) ? null : StilSignature.Typed(_typedName)
+            : _strokes.Count == 0 ? null : new StilSignature([.. _strokes], null, _width, _height);
+        return SetValueAsync(_produced);
+    }
+
+    private async Task RedrawAsync()
+    {
+        if (_module is not null && !_typing)
+        {
+            await _module.InvokeVoidAsync("drawSignature", _canvas, Flatten(_strokes), _width, _height);
+        }
+    }
+
+    private static double[][] Flatten(IEnumerable<IReadOnlyList<StilSignaturePoint>> strokes) =>
+        [.. strokes.Select(s => s.SelectMany(p => new[] { p.X, p.Y, p.Pressure }).ToArray())];
+
+    protected override void DisposeField()
+    {
+        _reference?.Dispose();
+        if (_module is not null)
+        {
+            _ = DisposeModuleAsync(_module);
+        }
+    }
+
+    private static async Task DisposeModuleAsync(IJSObjectReference module)
+    {
+        try
+        {
+            await module.DisposeAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+    }
+}

@@ -72,6 +72,17 @@
     "Manual": "Tai kirjoita koodi",
     "Code": "Koodi"
   },
+  "Signature": {
+    "Mode": "Allekirjoitustapa",
+    "Draw": "Piirrä",
+    "Type": "Kirjoita",
+    "NamePlaceholder": "Koko nimesi",
+    "Area": "Allekirjoitusalue, tyhjä. Piirrä sormella, kynällä tai hiirellä, tai valitse Kirjoita.",
+    "Signed": "Allekirjoitusalue, allekirjoitettu",
+    "Placeholder": "Allekirjoita tähän",
+    "Undo": "Kumoa",
+    "Clear": "Tyhjennä"
+  },
   "Combobox": {
     "NoResults": "Ei tuloksia",
     "Searching": "Haetaan…",

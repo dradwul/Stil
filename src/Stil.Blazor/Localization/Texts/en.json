@@ -72,6 +72,17 @@
     "Manual": "Or type the code",
     "Code": "Code"
   },
+  "Signature": {
+    "Mode": "Signature method",
+    "Draw": "Draw",
+    "Type": "Type",
+    "NamePlaceholder": "Your full name",
+    "Area": "Signature area, empty. Draw with a finger, pen or mouse, or choose Type.",
+    "Signed": "Signature area, signed",
+    "Placeholder": "Sign here",
+    "Undo": "Undo",
+    "Clear": "Clear"
+  },
   "Combobox": {
     "NoResults": "No results",
     "Searching": "Searching…",

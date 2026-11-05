@@ -72,6 +72,17 @@
     "Manual": "Eller skriv koden",
     "Code": "Kod"
   },
+  "Signature": {
+    "Mode": "Sätt att signera",
+    "Draw": "Rita",
+    "Type": "Skriv",
+    "NamePlaceholder": "Ditt fullständiga namn",
+    "Area": "Signaturyta, tom. Rita med finger, penna eller mus, eller välj Skriv.",
+    "Signed": "Signaturyta, signerad",
+    "Placeholder": "Signera här",
+    "Undo": "Ångra",
+    "Clear": "Rensa"
+  },
   "Combobox": {
     "NoResults": "Inga träffar",
     "Searching": "Söker…",

@@ -516,6 +516,7 @@ Recurring events and time zones are up to the app.
 | `StilBarcode` | `Value`, `Format` (Code128, Ean13, Ean8), `ShowText`, `Width` (default 16rem), `Label`. `StilCodes` has the encoders for PDFs and label printers. |
 | `StilScanner` | `OnScan` (`StilScanResult`: `Value`, `Format`, `Source`), `Formats`, `Sound`, `Cooldown`, `FrontCamera`, `ManualEntry`. Reads codes with the camera through the browser's `BarcodeDetector`, or a decoder the app registers with stil.js's `registerScanDecoder`; switches cameras and has a flashlight button. |
 | `StilScanInput` | A text field for handheld USB and Bluetooth scanners: `OnScan` on Enter, with `Source` Scanner or Keyboard (`MaxKeyInterval`, 50 ms), `ClearOnScan`, `AutoFocus`, and the usual field parameters. Enter never submits the form. |
+| `StilSignaturePad` | `@bind-Value` (`StilSignature`: `Strokes`, `TypedName`, `Width`, `Height`, `ToSvg()`; null when empty, so `[Required]` works), `Placeholder`, `NamePlaceholder`, `ToPngAsync()`. Drawn with pointer events and pressure, with undo and clear; typing a name is the keyboard alternative. Not a qualified electronic signature. |
 | `StilSpinner` | `Size` (Medium, Small), `Variant`, `Label` (for screen readers) |
 
 ### Dialogs

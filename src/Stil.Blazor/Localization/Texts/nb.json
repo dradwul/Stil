@@ -72,6 +72,17 @@
     "Manual": "Eller skriv inn koden",
     "Code": "Kode"
   },
+  "Signature": {
+    "Mode": "Måte å signere på",
+    "Draw": "Tegn",
+    "Type": "Skriv",
+    "NamePlaceholder": "Ditt fulle navn",
+    "Area": "Signaturfelt, tomt. Tegn med finger, penn eller mus, eller velg Skriv.",
+    "Signed": "Signaturfelt, signert",
+    "Placeholder": "Signer her",
+    "Undo": "Angre",
+    "Clear": "Tøm"
+  },
   "Combobox": {
     "NoResults": "Ingen treff",
     "Searching": "Søker…",

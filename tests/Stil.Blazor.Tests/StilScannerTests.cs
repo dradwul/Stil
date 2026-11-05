@@ -12,8 +12,8 @@ public class StilScannerTests
         var module = context.JSInterop.SetupModule(ModulePath);
         module.Setup<string>("startScanner", _ => true).SetResult(status);
         module.Setup<bool>("hasTorch", _ => true).SetResult(torch);
-        module.SetupVoid("initScanInput", _ => true);
-        module.SetupVoid("stopScanner", _ => true);
+        module.SetupVoid("initScanInput", _ => true).SetVoidResult();
+        module.SetupVoid("stopScanner", _ => true).SetVoidResult();
         return module;
     }
 
