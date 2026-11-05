@@ -26,6 +26,8 @@
 //   - In a right-to-left page the arrow keys of the calendar grid follow the reading direction.
 //   - Popovers (.stil-popover with popover) are placed next to their popovertarget toggle, below
 //     it or above it (data-stil-placement="top"), and follow it on scroll and resize.
+//   - Open dropdown menus and combobox lists (.stil-combobox-popup without hidden) move to the top
+//     layer, so a parent with overflow (a scrolling card, a table, a dialog) never cuts them off.
 //   - data-stil-mask="0000 00 00-0000" on an input formats it while typing (0 digit, A letter,
 //     * any character, the rest literals).
 //   - Splitters (.stil-splitter) resize by dragging or with the keyboard and fire stilsplit;
@@ -68,6 +70,9 @@ export function init(root = document) {
     root.addEventListener('input', onMaskInput, true);
     addEventListener('scroll', placeOpenPopovers, { capture: true, passive: true });
     addEventListener('resize', placeOpenPopovers);
+    // Combobox lists open and close through their hidden attribute (set by Blazor or the page).
+    new MutationObserver(onPopupMutations).observe(root, { subtree: true, childList: true, attributes: true, attributeFilter: ['hidden'] });
+    for (const popup of root.querySelectorAll('.stil-combobox-popup:not([hidden])')) liftPanel(popup);
 }
 
 const openDropdowns = () => document.querySelectorAll('details.stil-dropdown[open]');
@@ -374,10 +379,16 @@ function onToggle(event) {
         return;
     }
     const dropdown = event.target;
-    if (!(dropdown instanceof HTMLDetailsElement) || !dropdown.matches('.stil-dropdown') || !dropdown.open) return;
+    if (!(dropdown instanceof HTMLDetailsElement) || !dropdown.matches('.stil-dropdown')) return;
+    const menu = dropdown.querySelector(':scope > .stil-dropdown-menu');
+    if (!dropdown.open) {
+        if (menu) dropPanel(menu);
+        return;
+    }
     for (const other of openDropdowns()) {
         if (other !== dropdown) other.open = false;
     }
+    if (menu) liftPanel(menu);
 }
 
 // Popovers (.stil-popover with the popover attribute) sit in the top layer, so they are placed
@@ -398,30 +409,83 @@ function onPopoverToggle(event) {
 
 function placePopover(popover) {
     const toggle = document.querySelector(`[popovertarget="${CSS.escape(popover.id)}"]`);
-    if (!toggle) return;
-    const gap = 6;
+    if (toggle) placeNextTo(popover, toggle, { gap: 6, top: popover.dataset.stilPlacement === 'top' });
+}
+
+// Places a panel in the top layer under its anchor (or above it with top), flipping when there is
+// no room. It lines up with the anchor's start edge, or its end edge with end, and stays inside
+// the viewport while the anchor is visible; otherwise it scrolls away with it.
+function placeNextTo(panel, anchorElement, { gap = 4, top: wantsTop = false, end = false } = {}) {
     const margin = 8;
-    const anchor = toggle.getBoundingClientRect();
-    const size = popover.getBoundingClientRect();
+    const anchor = anchorElement.getBoundingClientRect();
+    const size = panel.getBoundingClientRect();
     const roomBelow = innerHeight - anchor.bottom - gap - margin;
     const roomAbove = anchor.top - gap - margin;
-    const wantsTop = popover.dataset.stilPlacement === 'top';
     const top = (wantsTop ? roomAbove >= size.height || roomAbove > roomBelow : roomBelow < size.height && roomAbove > roomBelow)
         ? anchor.top - gap - size.height
         : anchor.bottom + gap;
-    const rtl = getComputedStyle(toggle).direction === 'rtl';
-    let left = rtl ? anchor.right - size.width : anchor.left;
+    const rtl = getComputedStyle(anchorElement).direction === 'rtl';
+    let left = rtl !== end ? anchor.right - size.width : anchor.left;
     left = Math.min(Math.max(margin, left), innerWidth - size.width - margin);
-    // Keep it inside the viewport while its toggle is visible; otherwise let it scroll away with it.
     const visible = anchor.bottom > 0 && anchor.top < innerHeight;
-    popover.style.top = `${visible ? Math.max(margin, top) : top}px`;
-    popover.style.left = `${Math.max(margin, left)}px`;
+    panel.style.top = `${visible ? Math.max(margin, top) : top}px`;
+    panel.style.left = `${Math.max(margin, left)}px`;
+}
+
+// Dropdown menus and combobox lists are positioned inside their component by the CSS. When they
+// open, they move to the top layer (popover="manual": Stil closes them, not the browser) and are
+// placed next to the component; the DOM stays the same, so clicks and keys work as before.
+const liftedPanels = new Set();
+
+function liftPanel(panel) {
+    if (!('showPopover' in panel) || !panel.isConnected) return;
+    if (!panel.hasAttribute('popover')) panel.setAttribute('popover', 'manual');
+    if (!panel.matches(':popover-open')) panel.showPopover();
+    liftedPanels.add(panel);
+    placePanel(panel);
+}
+
+function dropPanel(panel) {
+    liftedPanels.delete(panel);
+    if (panel.matches?.(':popover-open')) panel.hidePopover();
+}
+
+function placePanel(panel) {
+    const combobox = panel.closest('.stil-combobox');
+    if (combobox) {
+        // As wide as the field, as it is without the top layer.
+        panel.style.width = `${combobox.getBoundingClientRect().width}px`;
+        placeNextTo(panel, combobox);
+    } else {
+        placeNextTo(panel, panel.parentElement, { end: panel.classList.contains('stil-dropdown-menu-end') });
+    }
+}
+
+function onPopupMutations(mutations) {
+    for (const mutation of mutations) {
+        if (mutation.type === 'attributes') {
+            const popup = mutation.target;
+            if (!popup.matches('.stil-combobox-popup')) continue;
+            if (popup.hidden) dropPanel(popup); else liftPanel(popup);
+        } else {
+            for (const node of mutation.addedNodes) {
+                if (!(node instanceof Element)) continue;
+                for (const popup of [node, ...node.querySelectorAll('.stil-combobox-popup')]) {
+                    if (popup.matches('.stil-combobox-popup:not([hidden])')) liftPanel(popup);
+                }
+            }
+        }
+    }
 }
 
 function placeOpenPopovers() {
     for (const popover of openPopovers) {
         if (popover.matches(':popover-open')) placePopover(popover);
         else openPopovers.delete(popover);
+    }
+    for (const panel of liftedPanels) {
+        if (panel.isConnected && panel.matches(':popover-open')) placePanel(panel);
+        else liftedPanels.delete(panel);
     }
 }
 

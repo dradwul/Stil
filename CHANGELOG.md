@@ -12,6 +12,13 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 
 ### Changed
 
+- **Stil CSS and Stil for Blazor**: open dropdown menus and the lists of
+  `StilAutocomplete`, `StilMultiSelect` and `StilTimePicker` sit in the
+  top layer (stil.js), placed under their toggle or field and following it on
+  scroll. A parent with `overflow`, such as a scrolling card, a table or a
+  dialog, no longer cuts them off. Without stil.js they open in place, as
+  before.
+
 - **Stil CSS**: the default font is BR Shape (`--stil-font-family`), used
   when the page loads it from `https://fonts.cdnfonts.com/css/br-shape`;
   otherwise `sans-serif`. Lexend is still in `StilFonts`.

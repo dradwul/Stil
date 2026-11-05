@@ -153,7 +153,7 @@ full page built only with Stil, open
 
 ## Optional JavaScript
 
-Stil works without JavaScript. The optional `dist/stil.js` module, 34 kB (10 kB gzipped) with
+Stil works without JavaScript. The optional `dist/stil.js` module, 47 kB (13 kB gzipped) with
 no dependencies, adds a few behaviours:
 
 ```html
@@ -192,6 +192,10 @@ no dependencies, adds a few behaviours:
 - Popovers (`.stil-popover` with `popover`) are placed next to their
   `popovertarget` button, below it or above it (`data-stil-placement="top"`),
   and follow it on scroll and resize.
+- Open dropdown menus and combobox lists (a `stil-combobox-popup` without
+  `hidden`) move to the top layer and are placed next to their toggle or field,
+  so a parent with `overflow` (a scrolling card, a table, a dialog) never cuts
+  them off. Without stil.js they open in place, as before.
 - `data-stil-mask="000 00"` on an input formats it while typing: `0` is a digit,
   `A` a letter, `*` any character, and the rest are literals that are filled in.
 - A splitter's `stil-splitter-handle` (`role="separator"`) resizes the first

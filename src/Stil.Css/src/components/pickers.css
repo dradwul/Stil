@@ -34,6 +34,13 @@
 
 .stil-combobox-popup[hidden] { display: none; }
 
+/* stil.js moves an open list to the top layer and places it under the field. */
+.stil-combobox-popup[popover] {
+    position: fixed;
+    inset: auto;
+    margin: 0;
+}
+
 .stil-combobox-list {
     margin: 0;
     padding: 0;

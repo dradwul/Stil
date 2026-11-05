@@ -596,6 +596,23 @@ The stylesheet still never fetches fonts itself. Each font's license is on
 cdnfonts.com; some are free for personal use only, so the docs say to check
 it.
 
+## Detour: Popups in the top layer ✅ Done
+
+A fix outside the phase plan: an open list or menu was cut off by any parent
+with `overflow`, such as a docs example, a scrolling card or a dialog.
+
+- [x] stil.js moves open dropdown menus (`details.stil-dropdown`) and combobox
+  lists (`.stil-combobox-popup` without `hidden`) to the top layer with
+  `popover="manual"`, places them under their toggle or field (above when
+  there is no room), and follows it on scroll and resize. Stil still opens
+  and closes them; the DOM stays the same, so clicks and keys work as before.
+- [x] It covers `StilDropdown`, `StilAutocomplete`, `StilMultiSelect` and
+  `StilTimePicker` without changes to the components. Without stil.js the
+  popups open in place, as before.
+- [x] The docs workaround (examples that let popups overflow) is gone.
+
+The date pickers use the browser's own picker, which is never clipped.
+
 ---
 
 ## Phase 9: Forms 2 ✅ Done

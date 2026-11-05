@@ -1878,6 +1878,12 @@
     inset-inline: auto 0;
   }
 
+  .stil-dropdown > .stil-dropdown-menu[popover] {
+    position: fixed;
+    inset: auto;
+    overflow: visible;
+  }
+
   .stil-dropdown-item {
     align-items: center;
     gap: var(--stil-space-2);
@@ -2506,6 +2512,12 @@
 
   .stil-combobox-popup[hidden] {
     display: none;
+  }
+
+  .stil-combobox-popup[popover] {
+    margin: 0;
+    position: fixed;
+    inset: auto;
   }
 
   .stil-combobox-list {

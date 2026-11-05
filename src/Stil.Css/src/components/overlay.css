@@ -120,6 +120,13 @@
     inset-inline-end: 0;
 }
 
+/* stil.js moves an open menu to the top layer and places it under the toggle. */
+.stil-dropdown > .stil-dropdown-menu[popover] {
+    position: fixed;
+    inset: auto;
+    overflow: visible;
+}
+
 .stil-dropdown-item {
     display: flex;
     align-items: center;

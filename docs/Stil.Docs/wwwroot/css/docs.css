@@ -121,10 +121,6 @@
     overflow-x: auto;
 }
 
-/* overflow-x: auto also clips vertically, so an open list, menu or picker would be cut off at
-   the code below. While one is open, let it reach past the example. */
-.docs-example-preview:has([aria-expanded="true"], .stil-dropdown[open]) { overflow: visible; }
-
 .docs-example-source { border-top: 1px solid var(--stil-color-border); }
 
 .docs-example-source > summary {
