@@ -1,3 +1,5 @@
+| `StilChat<TItem>` | The activity log's selectors (`Title` is the text) plus `Mine`, `Avatar`, `ItemKey`, `OnSend` (`StilChatMessage`: `Text`, `Files`), `Typing`, `OnTyping`, `AllowAttachments`, `SendOnEnter`, `Height` (28rem), `Disabled`. Oldest first with day separators; stays at the newest message. The transport is the app's. |
+| `StilComments<TItem>` | The thread form of `StilChat`: no sides, a taller composer, Ctrl+Enter posts. |
 | `StilActivityLog<TItem>` | `Items` with `Time`, `Title`, `Actor`, `Type`, `Variant`, `Icon`, `Details` / `DetailsTemplate`; `ItemKey`, `Searchable`, `Filterable`, `Height`, `Virtualize` (`ItemSize`), `Now`. Newest first, grouped by day, relative times; new entries are highlighted and announced. |
 | `StilTimeline<TItem>` | The same selectors, compact and oldest first (`NewestFirst`), `Label`. Works in static SSR. |
 # Stil for Blazor

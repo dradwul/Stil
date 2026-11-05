@@ -1,0 +1,240 @@
+@typeparam TItem
+@inherits StilActivityBase<TItem>
+@using Microsoft.AspNetCore.Components.Forms
+
+@* A conversation on top of the activity log's model: Title is the message, Actor who wrote it and
+   Mine marks your own. Oldest first with day separators; the view stays at the newest message.
+   The composer sends on Enter (Shift+Enter breaks the line) and raises OnSend; the transport
+   (SignalR or anything else) is the app's. StilComments is the thread form. Needs an interactive
+   render mode. *@
+<div @attributes="AdditionalAttributes" class="@Classes(Thread ? "stil-chat stil-comments" : "stil-chat")">
+    <div class="stil-chat-scroll" style="@(Height is null ? null : $"height: {Height}")" tabindex="0" role="region"
+         aria-label="@Localize(Label, Thread ? "Chat.Comments" : "Chat.Conversation")">
+        <div class="stil-chat-messages">
+            @if (Ordered.Count == 0)
+            {
+                <p class="stil-log-empty">@Localize(EmptyText, Thread ? "Chat.NoComments" : "Chat.Empty")</p>
+            }
+            @foreach (var day in Ordered.GroupBy(i => TimeOf(i).Date))
+            {
+                <h3 class="stil-chat-day" @key="day.Key"><span>@DayName(day.Key)</span></h3>
+                <ol class="stil-chat-list">
+                    @{ var previous = default(TItem); var first = true; }
+                    @foreach (var item in day)
+                    {
+                        var mine = !Thread && Mine?.Invoke(item) == true;
+                        var continued = !first && Continues(previous!, item);
+                        <li class="@MessageClass(mine, continued)" @key="KeyOf(item)">
+                            @if (!mine)
+                            {
+                                @if (continued)
+                                {
+                                    <span class="stil-chat-avatar-space" aria-hidden="true"></span>
+                                }
+                                else
+                                {
+                                    <StilAvatar Name="@(Actor?.Invoke(item) ?? "")" ImageSrc="@Avatar?.Invoke(item)" Size="StilSize.Small" aria-hidden="true" />
+                                }
+                            }
+                            <div class="stil-chat-bubble">
+                                @if (!continued)
+                                {
+                                    <div class="stil-chat-head">
+                                        @if (!mine && Actor?.Invoke(item) is { Length: > 0 } actor)
+                                        {
+                                            <span class="stil-chat-author">@actor</span>
+                                        }
+                                        <time class="stil-chat-time" datetime="@MachineTime(TimeOf(item))" title="@FullTime(TimeOf(item))">@RelativeTime(TimeOf(item))</time>
+                                    </div>
+                                }
+                                <div class="stil-chat-text">@TitleOf(item)</div>
+                                @if (DetailsTemplate is not null)
+                                {
+                                    <div class="stil-log-details">@DetailsTemplate(item)</div>
+                                }
+                            </div>
+                        </li>
+                        previous = item;
+                        first = false;
+                    }
+                </ol>
+            }
+            @if (TypingText is { } typing)
+            {
+                <p class="stil-chat-typing"><span class="stil-chat-dots" aria-hidden="true"><span></span><span></span><span></span></span> @typing</p>
+            }
+        </div>
+    </div>
+
+    <form class="stil-chat-composer" @onsubmit="SendAsync">
+        <textarea class="stil-input" rows="@(Thread ? 3 : 1)" value="@_text" @oninput="OnInputAsync" disabled="@Disabled"
+                  data-stil-send="@(SendOnEnter ? "enter" : "ctrl-enter")" placeholder="@Localize(Placeholder, Thread ? "Chat.CommentPlaceholder" : "Chat.Placeholder")"
+                  aria-label="@Localize(Placeholder, Thread ? "Chat.CommentPlaceholder" : "Chat.Placeholder")"></textarea>
+        <div class="stil-chat-actions">
+            @if (AllowAttachments)
+            {
+                <InputFile id="@_fileId" class="stil-visually-hidden" multiple OnChange="OnFiles" disabled="@Disabled" />
+                <label for="@_fileId" class="stil-btn stil-btn-ghost stil-btn-secondary stil-btn-sm">
+                    <StilIcon Name="@StilIcons.Upload" /> @Localize(null, "Chat.Attach")
+                </label>
+            }
+            <StilButton Type="submit" Size="StilSize.Small" Disabled="Disabled">@Localize(SendText, Thread ? "Chat.Comment" : "Chat.Send")</StilButton>
+        </div>
+        @if (_files.Count > 0)
+        {
+            <ul class="stil-chat-files">
+                @foreach (var file in _files)
+                {
+                    <li><span class="stil-chip">@file.Name <StilCloseButton Label="@string.Format(TextCulture, Localize(null, "Chat.RemoveFormat"), file.Name)" OnClick="() => _files.Remove(file)" /></span></li>
+                }
+            </ul>
+        }
+    </form>
+    <div class="stil-visually-hidden" role="status">@_announcement</div>
+</div>
+
+@code {
+    private readonly string _fileId = StilIds.Next("chat-files");
+    private readonly HashSet<object> _seen = [];
+    private readonly List<IBrowserFile> _files = [];
+    private bool _started;
+    private string _text = "";
+    private string? _announcement;
+    private DateTime _lastTyping;
+
+    /// <summary>Marks your own messages, shown on the other side in the primary color.</summary>
+    [Parameter]
+    public Func<TItem, bool>? Mine { get; set; }
+
+    /// <summary>The URL of the author's picture; their initials otherwise.</summary>
+    [Parameter]
+    public Func<TItem, string?>? Avatar { get; set; }
+
+    /// <summary>A key that identifies a message, so new ones can be announced. The default is the item itself.</summary>
+    [Parameter]
+    public Func<TItem, object>? ItemKey { get; set; }
+
+    /// <summary>Raised with the text and the attached files when the user sends. Add the message to Items.</summary>
+    [Parameter]
+    public EventCallback<StilChatMessage> OnSend { get; set; }
+
+    /// <summary>Raised when the user types, at most every three seconds, for a "is typing" signal to the others.</summary>
+    [Parameter]
+    public EventCallback OnTyping { get; set; }
+
+    /// <summary>The names of the others who are typing now.</summary>
+    [Parameter]
+    public IReadOnlyList<string>? Typing { get; set; }
+
+    /// <summary>Lets the user attach files to a message.</summary>
+    [Parameter]
+    public bool AllowAttachments { get; set; }
+
+    /// <summary>Enter sends (Shift+Enter breaks the line). Otherwise Ctrl+Enter sends. The default is true for chat, false for comments.</summary>
+    [Parameter]
+    public bool SendOnEnter { get; set; } = true;
+
+    /// <summary>The height of the message area, as a CSS length. The default is 28rem for chat; comments grow with the thread.</summary>
+    [Parameter]
+    public string? Height { get; set; }
+
+    /// <summary>Turns the composer off, for example while offline.</summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>The accessible name of the message area. The default is localized.</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>The composer's placeholder. The default is localized.</summary>
+    [Parameter]
+    public string? Placeholder { get; set; }
+
+    /// <summary>The send button's text. The default is localized.</summary>
+    [Parameter]
+    public string? SendText { get; set; }
+
+    /// <summary>The text shown before the first message. The default is localized.</summary>
+    [Parameter]
+    public string? EmptyText { get; set; }
+
+    /// <summary>A comment thread instead of a conversation: no sides, and Ctrl+Enter sends.</summary>
+    protected virtual bool Thread => false;
+
+    private List<TItem> Ordered { get; set; } = [];
+
+    private string? TypingText => Typing is not { Count: > 0 } names ? null
+        : names.Count == 1 ? string.Format(TextCulture, Localize(null, "Chat.TypingFormat"), names[0])
+        : string.Format(TextCulture, Localize(null, "Chat.TypingManyFormat"), string.Join(", ", names));
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        if (Thread)
+        {
+            SendOnEnter = false;
+        }
+        else
+        {
+            Height = "28rem";
+        }
+
+        await base.SetParametersAsync(parameters);
+    }
+
+    protected override void OnParametersSet()
+    {
+        Ordered = (Items ?? []).OrderBy(TimeOf).ToList();
+        var fresh = Ordered.Where(i => !_seen.Contains(KeyOf(i))).ToList();
+        var fromOthers = fresh.Where(i => Mine?.Invoke(i) != true).ToList();
+        if (_started && fromOthers.Count > 0)
+        {
+            var last = fromOthers[^1];
+            _announcement = string.Format(TextCulture, Localize(null, "Chat.NewFormat"), Actor?.Invoke(last) ?? "", TitleOf(last));
+        }
+
+        foreach (var item in fresh)
+        {
+            _seen.Add(KeyOf(item));
+        }
+
+        _started = true;
+    }
+
+    // A message from the same person within five minutes joins the one before it.
+    private bool Continues(TItem previous, TItem item) =>
+        Actor?.Invoke(previous) == Actor?.Invoke(item)
+        && Mine?.Invoke(previous) == Mine?.Invoke(item)
+        && TimeOf(item) - TimeOf(previous) < TimeSpan.FromMinutes(5);
+
+    private static string MessageClass(bool mine, bool continued) =>
+        "stil-chat-message" + (mine ? " stil-chat-message-mine" : "") + (continued ? " stil-chat-message-continued" : "");
+
+    private object KeyOf(TItem item) => ItemKey?.Invoke(item) ?? item!;
+
+    private async Task OnInputAsync(ChangeEventArgs e)
+    {
+        _text = e.Value?.ToString() ?? "";
+        if (OnTyping.HasDelegate && _text.Length > 0 && DateTime.UtcNow - _lastTyping > TimeSpan.FromSeconds(3))
+        {
+            _lastTyping = DateTime.UtcNow;
+            await OnTyping.InvokeAsync();
+        }
+    }
+
+    private void OnFiles(InputFileChangeEventArgs e) => _files.AddRange(e.GetMultipleFiles(20));
+
+    private async Task SendAsync()
+    {
+        var text = _text.Trim();
+        if (Disabled || text.Length == 0 && _files.Count == 0)
+        {
+            return;
+        }
+
+        var message = new StilChatMessage(text, [.. _files]);
+        _text = "";
+        _files.Clear();
+        _lastTyping = default;
+        await OnSend.InvokeAsync(message);
+    }
+}

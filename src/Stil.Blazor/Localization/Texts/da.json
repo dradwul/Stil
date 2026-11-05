@@ -101,6 +101,21 @@
     "Undo": "Fortryd",
     "Clear": "Ryd"
   },
+  "Chat": {
+    "Conversation": "Samtale",
+    "Comments": "Kommentarer",
+    "Empty": "Ingen beskeder endnu.",
+    "NoComments": "Ingen kommentarer endnu.",
+    "Placeholder": "Skriv en besked",
+    "CommentPlaceholder": "Skriv en kommentar",
+    "Send": "Send",
+    "Comment": "Kommentér",
+    "Attach": "Vedhæft",
+    "RemoveFormat": "Fjern {0}",
+    "TypingFormat": "{0} skriver…",
+    "TypingManyFormat": "{0} skriver…",
+    "NewFormat": "Ny besked fra {0}: {1}"
+  },
   "Combobox": {
     "NoResults": "Ingen resultater",
     "Searching": "Søger…",

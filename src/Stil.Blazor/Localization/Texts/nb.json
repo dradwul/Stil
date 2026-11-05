@@ -101,6 +101,21 @@
     "Undo": "Angre",
     "Clear": "Tøm"
   },
+  "Chat": {
+    "Conversation": "Samtale",
+    "Comments": "Kommentarer",
+    "Empty": "Ingen meldinger ennå.",
+    "NoComments": "Ingen kommentarer ennå.",
+    "Placeholder": "Skriv en melding",
+    "CommentPlaceholder": "Skriv en kommentar",
+    "Send": "Send",
+    "Comment": "Kommenter",
+    "Attach": "Legg ved",
+    "RemoveFormat": "Fjern {0}",
+    "TypingFormat": "{0} skriver…",
+    "TypingManyFormat": "{0} skriver…",
+    "NewFormat": "Ny melding fra {0}: {1}"
+  },
   "Combobox": {
     "NoResults": "Ingen treff",
     "Searching": "Søker…",

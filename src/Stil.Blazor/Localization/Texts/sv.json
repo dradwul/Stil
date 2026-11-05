@@ -101,6 +101,21 @@
     "Undo": "Ångra",
     "Clear": "Rensa"
   },
+  "Chat": {
+    "Conversation": "Konversation",
+    "Comments": "Kommentarer",
+    "Empty": "Inga meddelanden än.",
+    "NoComments": "Inga kommentarer än.",
+    "Placeholder": "Skriv ett meddelande",
+    "CommentPlaceholder": "Skriv en kommentar",
+    "Send": "Skicka",
+    "Comment": "Kommentera",
+    "Attach": "Bifoga",
+    "RemoveFormat": "Ta bort {0}",
+    "TypingFormat": "{0} skriver…",
+    "TypingManyFormat": "{0} skriver…",
+    "NewFormat": "Nytt meddelande från {0}: {1}"
+  },
   "Combobox": {
     "NoResults": "Inga träffar",
     "Searching": "Söker…",

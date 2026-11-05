@@ -101,6 +101,21 @@
     "Undo": "Undo",
     "Clear": "Clear"
   },
+  "Chat": {
+    "Conversation": "Conversation",
+    "Comments": "Comments",
+    "Empty": "No messages yet.",
+    "NoComments": "No comments yet.",
+    "Placeholder": "Write a message",
+    "CommentPlaceholder": "Write a comment",
+    "Send": "Send",
+    "Comment": "Comment",
+    "Attach": "Attach",
+    "RemoveFormat": "Remove {0}",
+    "TypingFormat": "{0} is typing…",
+    "TypingManyFormat": "{0} are typing…",
+    "NewFormat": "New message from {0}: {1}"
+  },
   "Combobox": {
     "NoResults": "No results",
     "Searching": "Searching…",

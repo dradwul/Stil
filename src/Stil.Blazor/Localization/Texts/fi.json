@@ -101,6 +101,21 @@
     "Undo": "Kumoa",
     "Clear": "Tyhjennä"
   },
+  "Chat": {
+    "Conversation": "Keskustelu",
+    "Comments": "Kommentit",
+    "Empty": "Ei vielä viestejä.",
+    "NoComments": "Ei vielä kommentteja.",
+    "Placeholder": "Kirjoita viesti",
+    "CommentPlaceholder": "Kirjoita kommentti",
+    "Send": "Lähetä",
+    "Comment": "Kommentoi",
+    "Attach": "Liitä",
+    "RemoveFormat": "Poista {0}",
+    "TypingFormat": "{0} kirjoittaa…",
+    "TypingManyFormat": "{0} kirjoittavat…",
+    "NewFormat": "Uusi viesti henkilöltä {0}: {1}"
+  },
   "Combobox": {
     "NoResults": "Ei tuloksia",
     "Searching": "Haetaan…",
