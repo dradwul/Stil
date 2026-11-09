@@ -1,0 +1,51 @@
+@page "/tasks"
+
+<PageTitle>Tasks · Stil for Blazor</PageTitle>
+
+<div class="stil-mb-4">
+    <h1 class="stil-mb-1">Tasks</h1>
+    <p class="stil-text-muted stil-mb-0">The office team's board. Drag the cards, or use Tab, Space and the arrow keys.</p>
+</div>
+
+<StilKanban TItem="OfficeTask" Items="_tasks" Columns="_columns" Column="t => t.Status" ItemKey="t => t.Id" Title="t => t.Title" OnCardMove="Move"
+            CollapsedColumns="@(["done"])" Label="Office tasks">
+    <CardTemplate Context="task">
+        <div class="stil-fw-bold">@task.Title</div>
+        <div class="stil-cluster stil-justify-content-between stil-mt-2">
+            <StilBadge Variant="@task.Variant">@task.Kind</StilBadge>
+            <StilAvatar Name="@task.Owner" Size="StilSize.Small" title="@task.Owner" />
+        </div>
+    </CardTemplate>
+</StilKanban>
+
+@code {
+    private sealed record OfficeTask(int Id, string Title, string Owner, string Kind, string Status)
+    {
+        public StilVariant Variant => Kind switch { "Urgent" => StilVariant.Danger, "Visitors" => StilVariant.Info, _ => StilVariant.Secondary };
+    }
+
+    private readonly StilKanbanColumn[] _columns =
+    [
+        new("backlog", "Backlog"),
+        new("todo", "To do", Limit: 4),
+        new("doing", "In progress", Limit: 2),
+        new("review", "Review"),
+        new("done", "Done"),
+    ];
+
+    private readonly List<OfficeTask> _tasks =
+    [
+        new(1, "Plan the spring kick-off", "Karin Dahl", "Event", "backlog"),
+        new(2, "Replace the badge printer ribbon", "Oskar Lund", "Office", "backlog"),
+        new(3, "Order visitor badges", "Maja Lind", "Urgent", "todo"),
+        new(4, "Book room 4 for the board meeting", "Erik Holm", "Visitors", "todo"),
+        new(5, "Update the guest Wi-Fi password", "Oskar Lund", "Office", "todo"),
+        new(6, "Print the new safety signs", "Sara Berg", "Office", "doing"),
+        new(7, "Welcome pack for new starters", "Lina Ström", "Visitors", "doing"),
+        new(8, "Choose a new coffee machine", "Per Ahl", "Office", "review"),
+        new(9, "Clean the reception desk", "Jonas Ek", "Office", "done"),
+        new(10, "Fire alarm test", "Karin Dahl", "Urgent", "done"),
+    ];
+
+    private void Move(StilKanbanMove<OfficeTask> move) => move.ApplyTo(_tasks, (task, column) => task with { Status = column });
+}
