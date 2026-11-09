@@ -40,6 +40,13 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   static SSR and print sharply. `StilCodes` has the encoders (`QrSvg`,
   `QrModules`, `BarcodeSvg`, `BarcodeModules`, `EanCheckDigit`) for PDFs and
   label printers.
+- **Stil for Blazor**: `StilNotificationCenter`, a bell with the unread count
+  and a panel of notifications from the new `IStilNotificationService`.
+  `IStilToastService.Show(…, keep: true)` keeps a toast there after it
+  closes, and `StilOptions.KeepToasts` keeps every toast. A `bell` icon
+  (`StilIcons.Bell`).
+- **Stil CSS**: `stil-notification-*` and the `stil-icon-bell` icon.
+- **Demo**: the navbar has a notification bell, and a check-in is kept there.
 - **Stil for Blazor**: `StilCommandPalette`: Ctrl+K (Cmd+K) opens a search
   over pages and actions (`StilCommand`) in a modal dialog, with groups,
   keywords, shortcuts, the combobox keys and the recent choices first.

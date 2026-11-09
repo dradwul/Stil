@@ -1006,12 +1006,19 @@ there; 5 bUnit tests.)
 **Changes from the plan:** the recent choices are kept in the browser's
 local storage (`RecentKey`), so they survive a reload.
 
-### Phase 13.3: Notification center
+### Phase 13.3: Notification center ✅ Done
 
-- [ ] `StilNotificationCenter`: a bell with a list of unread items, built on
+- [x] `StilNotificationCenter`: a bell with a list of unread items, built on
   `IStilToastService`, so a toast can also be kept for later.
 
-**Done when:** a toast in the demo can be found again in the bell.
+**Done when:** a toast in the demo can be found again in the bell. ✅ (A
+check-in's toast is kept under the bell in the navbar, checked in the
+browser; 5 bUnit tests.)
+
+**Changes from the plan:** the notifications live in a service of their own,
+`IStilNotificationService`, which the toast service feeds (`keep: true` or
+`KeepToasts`) and the app can add to directly. The panel is a native
+popover, so it sits above everything and closes on an outside click.
 
 ### Phase 13.4: Recurring events
 
