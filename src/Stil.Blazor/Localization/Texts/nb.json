@@ -197,6 +197,21 @@
   "LanguageSelector": {
     "Label": "Språk"
   },
+  "Markdown": {
+    "Toolbar": "Formatering",
+    "Bold": "Fet",
+    "Italic": "Kursiv",
+    "Heading": "Overskrift",
+    "Bullets": "Punktliste",
+    "Numbers": "Nummerert liste",
+    "Quote": "Sitat",
+    "Code": "Kode",
+    "Link": "Lenke",
+    "Image": "Sett inn et bilde",
+    "Write": "Skriv",
+    "Preview": "Forhåndsvis",
+    "Empty": "Ingenting å forhåndsvise"
+  },
   "Navbar": {
     "Toggle": "Meny"
   },

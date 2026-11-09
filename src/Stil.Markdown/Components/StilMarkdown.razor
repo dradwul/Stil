@@ -1,0 +1,23 @@
+@namespace Stil.Markdown
+@inherits StilComponentBase
+
+@* Markdown shown safely with Stil's typography (stil-prose). Works in static SSR. *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-prose stil-markdown")">@((MarkupString)_html)</div>
+
+@code {
+    private string _html = "";
+    private string? _rendered;
+
+    /// <summary>The Markdown to show.</summary>
+    [Parameter]
+    public string? Value { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (_rendered != Value || _html.Length == 0 && !string.IsNullOrEmpty(Value))
+        {
+            _html = StilMarkdownRenderer.ToHtml(Value);
+            _rendered = Value;
+        }
+    }
+}

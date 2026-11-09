@@ -197,6 +197,21 @@
   "LanguageSelector": {
     "Label": "Language"
   },
+  "Markdown": {
+    "Toolbar": "Formatting",
+    "Bold": "Bold",
+    "Italic": "Italic",
+    "Heading": "Heading",
+    "Bullets": "Bulleted list",
+    "Numbers": "Numbered list",
+    "Quote": "Quote",
+    "Code": "Code",
+    "Link": "Link",
+    "Image": "Insert an image",
+    "Write": "Write",
+    "Preview": "Preview",
+    "Empty": "Nothing to preview"
+  },
   "Navbar": {
     "Toggle": "Menu"
   },

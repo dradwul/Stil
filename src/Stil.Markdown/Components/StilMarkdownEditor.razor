@@ -1,0 +1,120 @@
+@namespace Stil.Markdown
+@inherits StilInputBase<string?>
+@inject IJSRuntime JS
+
+@* Writes Markdown: a text area with a formatting toolbar and Ctrl+B, Ctrl+I and Ctrl+K (stil.js
+   formats the selection), and a preview in a tab or beside the text. It binds like a text area and
+   works with EditForm validation. With OnImageUpload, the app stores an image and returns its URL,
+   which is inserted as Markdown. Needs an interactive render mode for the preview and images. *@
+<StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
+    <div class="@($"stil-markdown-editor{(Preview == StilMarkdownPreview.Side ? " stil-markdown-editor-side" : "")}")">
+        <div class="stil-markdown-toolbar" role="toolbar" aria-label="@Localize(null, "Markdown.Toolbar")" aria-controls="@InputId">
+            @foreach (var (command, key, glyph, shortcut) in Commands)
+            {
+                <button type="button" class="stil-btn stil-btn-ghost stil-btn-secondary stil-btn-sm stil-markdown-command" data-stil-markdown-command="@command"
+                        aria-label="@Localize(null, key)" title="@(shortcut is null ? Localize(null, key) : $"{Localize(null, key)} ({shortcut})")"
+                        disabled="@(Disabled || _previewing)"><span aria-hidden="true">@glyph</span></button>
+            }
+            @if (OnImageUpload is not null)
+            {
+                <InputFile id="@_fileId" class="stil-visually-hidden" accept="image/*" OnChange="OnImageAsync" disabled="@(Disabled || _previewing)" />
+                <label for="@_fileId" class="stil-btn stil-btn-ghost stil-btn-secondary stil-btn-sm stil-markdown-command" title="@Localize(null, "Markdown.Image")">
+                    <StilIcon Name="@StilIcons.Upload" /><span class="stil-visually-hidden">@Localize(null, "Markdown.Image")</span>
+                </label>
+            }
+            @if (Preview == StilMarkdownPreview.Tab)
+            {
+                <span class="stil-markdown-modes">
+                    <button type="button" class="@ModeClass(!_previewing)" aria-pressed="@(_previewing ? "false" : "true")" @onclick="() => _previewing = false">@Localize(null, "Markdown.Write")</button>
+                    <button type="button" class="@ModeClass(_previewing)" aria-pressed="@(_previewing ? "true" : "false")" @onclick="() => _previewing = true">@Localize(null, "Markdown.Preview")</button>
+                </span>
+            }
+        </div>
+        <div class="stil-markdown-panes">
+            <textarea @ref="_textarea" @attributes="TextAttributes" rows="@Rows" placeholder="@Placeholder" value="@Value"
+                      @oninput="OnInputAsync" data-stil-markdown hidden="@_previewing"></textarea>
+            @if (Preview == StilMarkdownPreview.Side || _previewing)
+            {
+                <div class="stil-markdown-preview" aria-label="@Localize(null, "Markdown.Preview")" role="region">
+                    @if (string.IsNullOrWhiteSpace(Value))
+                    {
+                        <p class="stil-text-muted stil-mb-0">@Localize(null, "Markdown.Empty")</p>
+                    }
+                    else
+                    {
+                        <StilMarkdown Value="@Value" />
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</StilField>
+
+@code {
+    private static readonly (string Command, string Key, string Glyph, string? Shortcut)[] Commands =
+    [
+        ("bold", "Markdown.Bold", "B", "Ctrl+B"),
+        ("italic", "Markdown.Italic", "I", "Ctrl+I"),
+        ("heading", "Markdown.Heading", "H", null),
+        ("bullets", "Markdown.Bullets", "•", null),
+        ("numbers", "Markdown.Numbers", "1.", null),
+        ("quote", "Markdown.Quote", "❝", null),
+        ("code", "Markdown.Code", "</>", null),
+        ("link", "Markdown.Link", "🔗", "Ctrl+K"),
+    ];
+
+    private readonly string _fileId = $"markdown-image-{Guid.NewGuid():N}";
+    private ElementReference _textarea;
+    private bool _previewing;
+
+    /// <summary>Where the preview is: in a Preview tab (the default), beside the text, or nowhere.</summary>
+    [Parameter]
+    public StilMarkdownPreview Preview { get; set; } = StilMarkdownPreview.Tab;
+
+    /// <summary>The number of visible text lines. The default is 8.</summary>
+    [Parameter]
+    public int Rows { get; set; } = 8;
+
+    /// <summary>Text shown while the editor is empty.</summary>
+    [Parameter]
+    public string? Placeholder { get; set; }
+
+    /// <summary>Stores an image the user chose and returns its URL, or null to insert nothing. Without it there is no image button.</summary>
+    [Parameter]
+    public Func<IBrowserFile, Task<string?>>? OnImageUpload { get; set; }
+
+    private IReadOnlyDictionary<string, object> TextAttributes
+    {
+        get
+        {
+            var attributes = new Dictionary<string, object>(ControlAttributes("stil-input stil-markdown-input"));
+            if (Messages.Count > 0)
+            {
+                attributes["aria-invalid"] = "true";
+            }
+
+            return attributes;
+        }
+    }
+
+    private static string ModeClass(bool active) =>
+        active ? "stil-btn stil-btn-sm stil-btn-secondary stil-btn-outline" : "stil-btn stil-btn-sm stil-btn-ghost stil-btn-secondary";
+
+    private Task OnInputAsync(ChangeEventArgs e) => SetValueAsync(e.Value?.ToString());
+
+    private async Task OnImageAsync(InputFileChangeEventArgs e)
+    {
+        if (OnImageUpload is null || e.File is not { } file)
+        {
+            return;
+        }
+
+        if (await OnImageUpload(file) is { Length: > 0 } url)
+        {
+            var name = Path.GetFileNameWithoutExtension(file.Name).Replace("]", "", StringComparison.Ordinal);
+            var module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Stil/stil.js");
+            await module.InvokeVoidAsync("insertMarkdown", _textarea, $"![{name}]({url.Replace(")", "%29", StringComparison.Ordinal)})");
+            await module.DisposeAsync();
+        }
+    }
+}

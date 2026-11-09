@@ -197,6 +197,21 @@
   "LanguageSelector": {
     "Label": "Kieli"
   },
+  "Markdown": {
+    "Toolbar": "Muotoilu",
+    "Bold": "Lihavointi",
+    "Italic": "Kursivointi",
+    "Heading": "Otsikko",
+    "Bullets": "Luettelo",
+    "Numbers": "Numeroitu luettelo",
+    "Quote": "Lainaus",
+    "Code": "Koodi",
+    "Link": "Linkki",
+    "Image": "Lisää kuva",
+    "Write": "Kirjoita",
+    "Preview": "Esikatselu",
+    "Empty": "Ei esikatseltavaa"
+  },
   "Navbar": {
     "Toggle": "Valikko"
   },

@@ -1,0 +1,87 @@
+using Markdig;
+using Markdig.Extensions.Tables;
+using Markdig.Renderers;
+using Markdig.Renderers.Html;
+using Markdig.Syntax;
+using Markdig.Syntax.Inlines;
+
+namespace Stil.Markdown;
+
+/// <summary>
+/// Turns Markdown into safe HTML, as <c>StilMarkdown</c> shows it: CommonMark with tables, task
+/// lists, autolinks and strikethrough. Raw HTML in the Markdown is shown as text, and links and
+/// images only go to http, https, mailto and tel addresses or relative ones. Use it on the server
+/// too, for example for an e-mail.
+/// </summary>
+public static class StilMarkdownRenderer
+{
+    private static readonly MarkdownPipeline Pipeline = new MarkdownPipelineBuilder()
+        .UsePipeTables()
+        .UseTaskLists()
+        .UseAutoLinks()
+        .UseEmphasisExtras(Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Strikethrough)
+        .DisableHtml()
+        .Build();
+
+    private static readonly string[] LinkSchemes = ["http", "https", "mailto", "tel"];
+    private static readonly string[] ImageSchemes = ["http", "https"];
+
+    /// <summary>The Markdown as HTML. Tables get the stil-table class.</summary>
+    public static string ToHtml(string? markdown)
+    {
+        var document = Markdig.Markdown.Parse(markdown ?? "", Pipeline);
+        foreach (var link in document.Descendants<LinkInline>())
+        {
+            if (!IsSafe(link.Url, link.IsImage ? ImageSchemes : LinkSchemes))
+            {
+                link.Url = "#";
+            }
+            else if (IsExternal(link.Url) && !link.IsImage)
+            {
+                link.GetAttributes().AddPropertyIfNotExist("rel", "noopener noreferrer");
+            }
+        }
+
+        foreach (var link in document.Descendants<AutolinkInline>())
+        {
+            if (!IsSafe(link.Url, LinkSchemes))
+            {
+                link.Url = "#";
+            }
+        }
+
+        foreach (var table in document.Descendants<Table>())
+        {
+            table.GetAttributes().AddClass("stil-table");
+        }
+
+        using var writer = new StringWriter();
+        var renderer = new HtmlRenderer(writer);
+        Pipeline.Setup(renderer);
+        renderer.Render(document);
+        return writer.ToString();
+    }
+
+    // A relative address, an anchor, or one of the allowed schemes.
+    internal static bool IsSafe(string? url, string[] schemes)
+    {
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            return true;
+        }
+
+        var trimmed = url.Trim();
+        var colon = trimmed.IndexOf(':');
+        var firstOther = trimmed.IndexOfAny(['/', '?', '#']);
+        if (colon < 0 || firstOther >= 0 && firstOther < colon)
+        {
+            return true;
+        }
+
+        var scheme = trimmed[..colon];
+        return schemes.Any(s => s.Equals(scheme, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static bool IsExternal(string? url) =>
+        url is not null && (url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || url.StartsWith("https://", StringComparison.OrdinalIgnoreCase));
+}

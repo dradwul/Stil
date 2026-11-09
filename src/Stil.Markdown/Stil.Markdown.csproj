@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PackageId>Stil.Markdown</PackageId>
+    <AssemblyName>Stil.Markdown</AssemblyName>
+    <RootNamespace>Stil.Markdown</RootNamespace>
+    <Description>Markdown for Stil for Blazor: StilMarkdown renders Markdown safely with Stil's typography, and StilMarkdownEditor writes it with a toolbar, shortcuts and a preview. Built on Markdig.</Description>
+    <PackageTags>blazor;markdown;editor;markdig;theme;accessibility;stil</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- XML docs for IntelliSense and the API tables on the docs site. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+    <InternalsVisibleTo Include="Stil.Markdown.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.12" />
+    <PackageReference Include="Markdig" Version="1.4.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Stil.Blazor\Stil.Blazor.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
