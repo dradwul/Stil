@@ -192,6 +192,16 @@
   "Navbar": {
     "Toggle": "Menu"
   },
+  "Notifications": {
+    "Title": "Notifikationer",
+    "ButtonFormat": "Notifikationer, {0} ulæste",
+    "MarkAllRead": "Markér alle som læst",
+    "ClearAll": "Ryd alle",
+    "Dismiss": "Fjern",
+    "Empty": "Ingen notifikationer",
+    "Unread": "ulæst",
+    "NewFormat": "Ny notifikation: {0}"
+  },
   "Pagination": {
     "Label": "Sidenummerering",
     "Previous": "Forrige side",

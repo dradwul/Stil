@@ -192,6 +192,16 @@
   "Navbar": {
     "Toggle": "Menu"
   },
+  "Notifications": {
+    "Title": "Notifications",
+    "ButtonFormat": "Notifications, {0} unread",
+    "MarkAllRead": "Mark all as read",
+    "ClearAll": "Clear all",
+    "Dismiss": "Dismiss",
+    "Empty": "No notifications",
+    "Unread": "unread",
+    "NewFormat": "New notification: {0}"
+  },
   "Pagination": {
     "Label": "Pagination",
     "Previous": "Previous page",

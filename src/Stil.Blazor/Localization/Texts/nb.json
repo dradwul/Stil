@@ -192,6 +192,16 @@
   "Navbar": {
     "Toggle": "Meny"
   },
+  "Notifications": {
+    "Title": "Varsler",
+    "ButtonFormat": "Varsler, {0} uleste",
+    "MarkAllRead": "Merk alle som lest",
+    "ClearAll": "Fjern alle",
+    "Dismiss": "Fjern",
+    "Empty": "Ingen varsler",
+    "Unread": "ulest",
+    "NewFormat": "Nytt varsel: {0}"
+  },
   "Pagination": {
     "Label": "Sidenummerering",
     "Previous": "Forrige side",

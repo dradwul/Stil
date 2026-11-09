@@ -1,0 +1,111 @@
+@inherits StilComponentBase
+@implements IDisposable
+@inject IStilNotificationService Notifications
+@inject NavigationManager Navigation
+
+@* A bell with the number of unread notifications. It opens a panel (a popover, so it sits above
+   everything and closes on an outside click or Escape) with the notifications from
+   IStilNotificationService: toasts shown with keep: true, and any the app adds. Choosing one
+   marks it read and opens its page. New ones are announced politely. *@
+<span @attributes="AdditionalAttributes" class="@Classes("stil-popover-anchor stil-notifications")">
+    <button type="button" class="stil-btn stil-btn-ghost stil-btn-secondary stil-btn-icon stil-notification-bell" popovertarget="@_panelId"
+            aria-label="@(Unread > 0 ? string.Format(TextCulture, Localize(null, "Notifications.ButtonFormat"), Unread) : Localize(Label, "Notifications.Title"))">
+        <StilIcon Name="@StilIcons.Bell" />
+        @if (Unread > 0)
+        {
+            <span class="stil-notification-count" aria-hidden="true">@(Unread > 99 ? "99+" : Unread.ToString(TextCulture))</span>
+        }
+    </button>
+    <div id="@_panelId" popover="auto" role="dialog" aria-labelledby="@($"{_panelId}-title")" class="stil-popover stil-notification-panel">
+        <div class="stil-notification-header">
+            <p class="stil-popover-title" id="@($"{_panelId}-title")">@Localize(Label, "Notifications.Title")</p>
+            @if (Unread > 0)
+            {
+                <button type="button" class="stil-btn stil-btn-ghost stil-btn-sm" @onclick="Notifications.MarkAllRead">@Localize(null, "Notifications.MarkAllRead")</button>
+            }
+        </div>
+        @if (Notifications.Notifications.Count == 0)
+        {
+            <p class="stil-notification-empty">@Localize(EmptyText, "Notifications.Empty")</p>
+        }
+        else
+        {
+            <ul class="stil-notification-list">
+                @foreach (var notification in Notifications.Notifications)
+                {
+                    <li class="@(notification.Read ? "stil-notification" : "stil-notification stil-notification-unread")" @key="notification.Id">
+                        <span class="stil-log-marker @StilCssClasses.Variant("stil-log-marker", notification.Variant)" aria-hidden="true"></span>
+                        <button type="button" class="stil-notification-body" @onclick="() => Open(notification)">
+                            @if (!string.IsNullOrWhiteSpace(notification.Title))
+                            {
+                                <span class="stil-notification-title">@notification.Title</span>
+                            }
+                            <span class="stil-notification-message">@notification.Message</span>
+                            <time class="stil-notification-time" datetime="@notification.Time.ToString("s", System.Globalization.CultureInfo.InvariantCulture)">
+                                @StilRelativeTime.Format(notification.Time, Now ?? DateTime.Now, key => Localize(null, key), TextCulture, withDate: true)
+                            </time>
+                            @if (!notification.Read)
+                            {
+                                <span class="stil-visually-hidden">, @Localize(null, "Notifications.Unread")</span>
+                            }
+                        </button>
+                        <StilCloseButton Label="@Localize(null, "Notifications.Dismiss")" OnClick="() => Notifications.Remove(notification)" />
+                    </li>
+                }
+            </ul>
+            <div class="stil-notification-footer">
+                <button type="button" class="stil-btn stil-btn-ghost stil-btn-secondary stil-btn-sm" @onclick="Notifications.Clear">@Localize(null, "Notifications.ClearAll")</button>
+            </div>
+        }
+    </div>
+    <span class="stil-visually-hidden" role="status">@_announcement</span>
+</span>
+
+@code {
+    private readonly string _panelId = StilIds.Next("notifications");
+    private string? _announcement;
+    private string? _newest;
+
+    /// <summary>The heading and the bell's name. The default is the localized "Notifications".</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>The text shown when there are none. The default is localized.</summary>
+    [Parameter]
+    public string? EmptyText { get; set; }
+
+    /// <summary>The current time, for the relative times. The default is the clock.</summary>
+    [Parameter]
+    public DateTime? Now { get; set; }
+
+    private int Unread => Notifications.UnreadCount;
+
+    protected override void OnInitialized()
+    {
+        _newest = Notifications.Notifications.FirstOrDefault()?.Id;
+        Notifications.NotificationsChanged += OnChanged;
+    }
+
+    private void OnChanged()
+    {
+        var newest = Notifications.Notifications.FirstOrDefault();
+        if (newest is not null && newest.Id != _newest && !newest.Read)
+        {
+            _announcement = string.Format(TextCulture, Localize(null, "Notifications.NewFormat"), newest.Title ?? newest.Message);
+        }
+
+        _newest = newest?.Id;
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private void Open(StilNotification notification)
+    {
+        Notifications.MarkRead(notification);
+        if (notification.Href is not null)
+        {
+            Navigation.NavigateTo(notification.Href);
+        }
+    }
+
+    public void Dispose() => Notifications.NotificationsChanged -= OnChanged;
+}

@@ -192,6 +192,16 @@
   "Navbar": {
     "Toggle": "Meny"
   },
+  "Notifications": {
+    "Title": "Notiser",
+    "ButtonFormat": "Notiser, {0} olästa",
+    "MarkAllRead": "Markera alla som lästa",
+    "ClearAll": "Rensa alla",
+    "Dismiss": "Ta bort",
+    "Empty": "Inga notiser",
+    "Unread": "oläst",
+    "NewFormat": "Ny notis: {0}"
+  },
   "Pagination": {
     "Label": "Sidnumrering",
     "Previous": "Föregående sida",

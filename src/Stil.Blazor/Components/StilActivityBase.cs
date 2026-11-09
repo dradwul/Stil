@@ -62,29 +62,7 @@ public abstract class StilActivityBase<TItem> : StilComponentBase
     /// "Just now", "5 minutes ago" or "2 hours ago" within six hours on the same day, otherwise
     /// the time of day.
     /// </summary>
-    protected string RelativeTime(DateTime time)
-    {
-        var now = CurrentTime;
-        var ago = now - time;
-        if (ago < TimeSpan.Zero || ago.TotalMinutes < 1)
-        {
-            return Localize(null, "ActivityLog.JustNow");
-        }
-
-        if (ago.TotalMinutes < 60)
-        {
-            var minutes = (int)ago.TotalMinutes;
-            return minutes == 1 ? Localize(null, "ActivityLog.MinuteAgo") : string.Format(TextCulture, Localize(null, "ActivityLog.MinutesAgoFormat"), minutes);
-        }
-
-        if (ago.TotalHours < 6 && time.Date == now.Date)
-        {
-            var hours = (int)ago.TotalHours;
-            return hours == 1 ? Localize(null, "ActivityLog.HourAgo") : string.Format(TextCulture, Localize(null, "ActivityLog.HoursAgoFormat"), hours);
-        }
-
-        return time.ToString("t", TextCulture);
-    }
+    protected string RelativeTime(DateTime time) => StilRelativeTime.Format(time, CurrentTime, key => Localize(null, key), TextCulture);
 
     /// <summary>"Today", "Yesterday" or the long date.</summary>
     protected string DayName(DateTime day)

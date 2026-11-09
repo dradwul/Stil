@@ -19,6 +19,7 @@ public static class StilServiceCollectionExtensions
 
         services.TryAddSingleton(options);
         services.TryAddScoped<IStilDialogService, StilDialogService>();
+        services.TryAddScoped<IStilNotificationService, StilNotificationService>();
         services.TryAddScoped<IStilToastService, StilToastService>();
         services.TryAddSingleton<IStilLocalizer>(StilLocalizer.Create);
         return services;
