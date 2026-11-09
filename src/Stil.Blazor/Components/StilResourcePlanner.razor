@@ -1,0 +1,243 @@
+@typeparam TItem
+@inherits StilCalendarBase<TItem>
+
+@* One day of bookings with the resources (rooms, people, vehicles) as rows and time across.
+   With Editable, stil.js lets the user drag a booking to another time or row, drag its end to
+   resize it, or drag on an empty row to book; the planner raises OnItemChange and OnSlotSelect
+   and the app saves. Recurring items show every occurrence. *@
+<div @attributes="RootAttributes" class="@Classes("stil-resource")"
+     style="@($"--stil-resource-first-hour: {FirstHour}; --stil-resource-hours: {Math.Max(1, LastHour - FirstHour)}")"
+     data-stil-editable="@(Editable ? "" : null)">
+    <div class="stil-calendar-header">
+        <StilHeading Level="HeadingLevel" class="stil-calendar-title" id="@_titleId">@_date.ToString("D", CurrentCulture)</StilHeading>
+        @if (ShowNavigation)
+        {
+            <div class="stil-cluster stil-gap-1">
+                <button type="button" class="stil-btn stil-btn-ghost stil-btn-sm stil-btn-icon" aria-label="@Localize(PreviousDayText, "WeekPlanner.PreviousDay")"
+                        @onclick="() => ShowDateAsync(_date.AddDays(-1))"><StilIcon Name="@StilIcons.ChevronLeft" /></button>
+                <button type="button" class="stil-btn stil-btn-outline stil-btn-secondary stil-btn-sm" @onclick="() => ShowDateAsync(Today)">@Localize(TodayText, "Calendar.Today")</button>
+                <button type="button" class="stil-btn stil-btn-ghost stil-btn-sm stil-btn-icon" aria-label="@Localize(NextDayText, "WeekPlanner.NextDay")"
+                        @onclick="() => ShowDateAsync(_date.AddDays(1))"><StilIcon Name="@StilIcons.ChevronRight" /></button>
+            </div>
+        }
+    </div>
+    <div class="stil-resource-scroll" role="region" aria-labelledby="@_titleId" tabindex="0">
+        <div class="stil-resource-grid">
+            <div class="stil-resource-corner" aria-hidden="true"></div>
+            <div class="stil-resource-hours" aria-hidden="true">
+                @for (var hour = FirstHour; hour < LastHour; hour++)
+                {
+                    <span class="stil-resource-hour" style="@($"--stil-start: {hour * 60}")">@FormatTime(hour * 60)</span>
+                }
+            </div>
+            @for (var row = 0; row < (Resources?.Count ?? 0); row++)
+            {
+                var resource = Resources![row];
+                var rowIndex = row;
+                var nameId = $"{_titleId}-{row}";
+                <div class="stil-resource-name" id="@nameId">
+                    <span>@resource.Name</span>
+                    @if (resource.Details is { Length: > 0 } details)
+                    {
+                        <small>@details</small>
+                    }
+                </div>
+                <div class="stil-resource-track" role="group" aria-labelledby="@nameId" @key="resource.Key">
+                    @foreach (var placement in Placements(resource.Key))
+                    {
+                        var occurrence = placement.Occurrence;
+                        var item = occurrence.Item;
+                        var key = $"{occurrence.Index}-{rowIndex}";
+                        _placed[key] = placement;
+                        var position = $"--stil-start: {placement.Start}; --stil-length: {placement.End - placement.Start}; --stil-col: {placement.Column}; --stil-cols: {placement.Columns}";
+                        @(new StilCalendarEventView
+                        {
+                            Classes = EventClasses(item),
+                            Style = JoinStyles(ColorStyle(item), position),
+                            Title = TitleOf(item),
+                            Meta = placement.End - placement.Start >= 60 ? FormatRange(occurrence.StartMinute, occurrence.EndMinute) : null,
+                            Label = $"{resource.Name}: {EventLabel(occurrence, withDay: false)}",
+                            ItemKey = Editable ? key : null,
+                            Resizable = Editable,
+                            OnClick = ItemClick(item),
+                        }.Render())
+                    }
+                    @if (_date == Today && NowMinute >= FirstHour * 60 && NowMinute <= LastHour * 60)
+                    {
+                        <div class="stil-resource-now" style="@($"--stil-start: {NowMinute}")" aria-hidden="true"></div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private readonly string _titleId = StilIds.Next("resources");
+    private readonly Dictionary<string, StilCalendarPlacement<TItem>> _placed = [];
+    private DateOnly _date;
+    private DateOnly? _syncedDate;
+    private bool _initialized;
+
+    /// <summary>The rows, top to bottom.</summary>
+    [Parameter, EditorRequired]
+    public IReadOnlyList<StilResource>? Resources { get; set; }
+
+    /// <summary>The key of the resource an item books.</summary>
+    [Parameter, EditorRequired]
+    public Func<TItem, string>? Resource { get; set; }
+
+    /// <summary>The day shown. The default is today.</summary>
+    [Parameter]
+    public DateOnly? Date { get; set; }
+
+    /// <summary>Raised when the user goes to another day.</summary>
+    [Parameter]
+    public EventCallback<DateOnly?> DateChanged { get; set; }
+
+    /// <summary>The first hour shown. The default is 7.</summary>
+    [Parameter]
+    public int FirstHour { get; set; } = 7;
+
+    /// <summary>The hour the schedule ends at. The default is 19.</summary>
+    [Parameter]
+    public int LastHour { get; set; } = 19;
+
+    /// <summary>Lets the user drag bookings to another time or row, resize them and drag new ones.</summary>
+    [Parameter]
+    public bool Editable { get; set; }
+
+    /// <summary>Raised when a booking was moved (with its new Resource) or resized. Update the item.</summary>
+    [Parameter]
+    public EventCallback<StilCalendarItemChange<TItem>> OnItemChange { get; set; }
+
+    /// <summary>Raised when the user dragged on an empty part of a row, to book it.</summary>
+    [Parameter]
+    public EventCallback<StilResourceSlot> OnSlotSelect { get; set; }
+
+    /// <summary>Shows the previous, today and next buttons. The default is true.</summary>
+    [Parameter]
+    public bool ShowNavigation { get; set; } = true;
+
+    /// <summary>The previous day button's name. The default is localized.</summary>
+    [Parameter]
+    public string? PreviousDayText { get; set; }
+
+    /// <summary>The next day button's name. The default is localized.</summary>
+    [Parameter]
+    public string? NextDayText { get; set; }
+
+    private int NowMinute => (int)CurrentNow.TimeOfDay.TotalMinutes;
+
+    // Razor cannot bind @onstilweekedit inside the assembly that declares it.
+    private IReadOnlyDictionary<string, object> RootAttributes
+    {
+        get
+        {
+            var attributes = AdditionalAttributes is null ? new Dictionary<string, object>() : new Dictionary<string, object>(AdditionalAttributes);
+            attributes["onstilweekedit"] = EventCallback.Factory.Create<StilWeekEditEventArgs>(this, OnEditAsync);
+            return attributes;
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (!_initialized || Date != _syncedDate)
+        {
+            _date = Date ?? Today;
+            _syncedDate = Date;
+            _initialized = true;
+        }
+
+        _placed.Clear();
+    }
+
+    private List<StilCalendarPlacement<TItem>> Placements(string resource)
+    {
+        var (gridStart, gridEnd) = (FirstHour * 60, LastHour * 60);
+        var placements = new List<StilCalendarPlacement<TItem>>();
+        foreach (var occurrence in OccurrencesOn(_date).Where(o => Resource?.Invoke(o.Item) == resource))
+        {
+            var start = Math.Clamp(occurrence.StartMinute, gridStart, gridEnd);
+            var end = Math.Clamp(occurrence.EndMinute, gridStart, gridEnd);
+            if (end <= start && (occurrence.StartMinute < gridStart || occurrence.StartMinute >= gridEnd))
+            {
+                continue;
+            }
+
+            if (end - start < SnapMinutes)
+            {
+                start = Math.Min(start, gridEnd - SnapMinutes);
+                end = start + SnapMinutes;
+            }
+
+            placements.Add(new(occurrence, start, end));
+        }
+
+        Layout(placements);
+        return placements;
+    }
+
+    private async Task ShowDateAsync(DateOnly date)
+    {
+        _date = date;
+        _syncedDate = date;
+        await DateChanged.InvokeAsync(date);
+    }
+
+    private static DateTime At(DateOnly date, int minutes) => date.ToDateTime(TimeOnly.MinValue).AddMinutes(minutes);
+
+    // stil.js finished a drag; Day is the index of the row it ended on.
+    private async Task OnEditAsync(StilWeekEditEventArgs e)
+    {
+        if (Resources is null || e.Day < 0 || e.Day >= Resources.Count)
+        {
+            return;
+        }
+
+        var resource = Resources[e.Day].Key;
+        if (e.Action == "create")
+        {
+            if (e.End > e.Start)
+            {
+                await OnSlotSelect.InvokeAsync(new StilResourceSlot(resource, At(_date, e.Start), At(_date, e.End)));
+            }
+
+            return;
+        }
+
+        if (e.Item is null || !_placed.TryGetValue(e.Item, out var placement) || Start is null || End is null)
+        {
+            return;
+        }
+
+        var item = placement.Occurrence.Item;
+        var occurrence = placement.Occurrence.OccurrenceStart;
+        var start = occurrence ?? Start(item);
+        var end = start + (End(item) - Start(item));
+        var original = (start, end);
+        if (e.Action == "move")
+        {
+            var shift = TimeSpan.FromMinutes(e.Start - placement.Start);
+            start += shift;
+            end += shift;
+        }
+        else if (e.Action == "resize")
+        {
+            end += TimeSpan.FromMinutes(e.End - placement.End);
+            if (end <= start)
+            {
+                end = start.AddMinutes(SnapMinutes);
+            }
+        }
+        else
+        {
+            return;
+        }
+
+        if ((start, end) != original || resource != Resource?.Invoke(item))
+        {
+            await OnItemChange.InvokeAsync(new StilCalendarItemChange<TItem>(item, start, end) { Occurrence = occurrence, Resource = resource });
+        }
+    }
+}

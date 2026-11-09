@@ -28,7 +28,19 @@ public sealed record StilCalendarItemChange<TItem>(TItem Item, DateTime Start, D
     /// to the rule's Exceptions and add a one-off item at the new time.
     /// </summary>
     public DateTime? Occurrence { get; init; }
+
+    /// <summary>In StilResourcePlanner, the key of the resource the item was dropped on.</summary>
+    public string? Resource { get; init; }
 }
+
+/// <summary>A row of StilResourcePlanner: a room, a person or anything else that is booked.</summary>
+/// <param name="Key">The value of the planner's Resource selector for the items in this row.</param>
+/// <param name="Name">The row's name.</param>
+/// <param name="Details">A second line, for example the number of seats.</param>
+public sealed record StilResource(string Key, string Name, string? Details = null);
+
+/// <summary>A span of time dragged on a resource's row in StilResourcePlanner.</summary>
+public readonly record struct StilResourceSlot(string Resource, DateTime Start, DateTime End);
 
 /// <summary>
 /// The part of an item that falls on one day. StartMinute and EndMinute are minutes from that
