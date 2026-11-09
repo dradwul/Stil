@@ -18,6 +18,7 @@
             </StilNav>
         </ChildContent>
         <End>
+            <StilCommandPalette Commands="Commands" />
             <StilSelect @bind-Value="_mode" Size="StilSize.Small" aria-label="Color mode" />
             <StilSelect @bind-Value="_palette" Items="Palettes.Keys" Size="StilSize.Small" aria-label="Palette" />
             <StilLanguageSelector Cultures="Cultures" Size="StilSize.Small" AlignEnd />
@@ -43,6 +44,26 @@
 </div>
 
 @code {
+    // Ctrl+K (or the Search button) finds any page or action.
+    private IReadOnlyList<StilCommand> Commands =>
+    [
+        new("Components", "Pages") { Href = "", Icon = StilIcons.Home, Keywords = "gallery" },
+        new("Orders", "Pages") { Href = "orders", Keywords = "crud sales" },
+        new("Budget", "Pages") { Href = "budget", Keywords = "tree grid costs" },
+        new("Check-in", "Pages") { Href = "check-in", Keywords = "reception visitors scan" },
+        new("Tasks", "Pages") { Href = "tasks", Keywords = "kanban board" },
+        new("Add an order", "Actions") { Href = "orders", Icon = StilIcons.Plus, Keywords = "new create" },
+        new("Dark mode", "Actions") { Action = () => SetMode(StilThemeMode.Dark), Icon = StilIcons.Moon },
+        new("Light mode", "Actions") { Action = () => SetMode(StilThemeMode.Light), Icon = StilIcons.Sun },
+    ];
+
+    private Task SetMode(StilThemeMode mode)
+    {
+        _mode = mode;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
     /// <summary>The languages the demo offers; Program.cs supports the same ones.</summary>
     public static readonly string[] Cultures = ["en", "sv", "nb", "da", "fi", "ar"];
 
