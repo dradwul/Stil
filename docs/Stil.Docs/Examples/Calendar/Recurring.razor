@@ -1,0 +1,41 @@
+@* A weekly team meeting and a daily standup. Drag one occurrence: it moves on its own, as an
+   exception to the series and a one-off meeting of its own. *@
+<StilWeekPlanner TItem="Meeting" Items="_meetings" Start="m => m.Start" End="m => m.End" Title="m => m.Title"
+                 Variant="m => m.Variant" Recurrence="m => m.Rule" View="StilWeekView.WorkWeek" Editable OnItemChange="Move" />
+<p class="stil-text-muted stil-fs-sm stil-mt-2 stil-mb-0" aria-live="polite">@_message</p>
+
+@code {
+    private sealed record Meeting(string Title, DateTime Start, DateTime End, StilVariant? Variant, StilRecurrence? Rule = null);
+
+    private static readonly DateOnly Monday = DateOnly.FromDateTime(DateTime.Today)
+        .AddDays(-(((int)DateTime.Today.DayOfWeek + 6) % 7) - 7);
+
+    private static DateTime At(int day, int hour, int minute = 0) => Monday.AddDays(day).ToDateTime(new TimeOnly(hour, minute));
+
+    private readonly List<Meeting> _meetings =
+    [
+        // Every weekday from last Monday, for eight weeks.
+        new("Standup", At(0, 8, 45), At(0, 9), StilVariant.Success,
+            StilRecurrence.Weekly(DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday) with { Count = 40 }),
+        // Every other Wednesday from this week, written as an iCalendar rule.
+        new("Team meeting", At(9, 13), At(9, 14), StilVariant.Primary, StilRecurrence.Parse("FREQ=WEEKLY;INTERVAL=2;BYDAY=WE")),
+    ];
+
+    private string _message = "Drag one occurrence of a recurring meeting to move just that one.";
+
+    private void Move(StilCalendarItemChange<Meeting> change)
+    {
+        if (change.Occurrence is { } occurrence)
+        {
+            // Leave the occurrence out of the series and add a one-off meeting at the new time.
+            var index = _meetings.IndexOf(change.Item);
+            _meetings[index] = change.Item with { Rule = change.Item.Rule!.Except(DateOnly.FromDateTime(occurrence)) };
+            _meetings.Add(change.Item with { Start = change.Start, End = change.End, Rule = null });
+            _message = $"Moved {change.Item.Title} on {occurrence:ddd d MMM} to {change.Start:ddd t}.";
+        }
+        else
+        {
+            _meetings[_meetings.IndexOf(change.Item)] = change.Item with { Start = change.Start, End = change.End };
+        }
+    }
+}

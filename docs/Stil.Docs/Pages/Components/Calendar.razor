@@ -55,6 +55,22 @@
     </p>
 </DocExample>
 
+<h2 id="recurring">Recurring events</h2>
+<DocExample Type="typeof(Recurring)">
+    <p>
+        <code>Recurrence</code> gives an item a <code>StilRecurrence</code>: daily, weekly on given days, monthly or yearly,
+        every <code>Interval</code> periods, until a date (<code>Until</code>) or for a <code>Count</code>. The item's Start
+        and End are the first occurrence, and the month view, the week planner and the agenda show every one.
+        <code>StilRecurrence.Parse</code> reads an iCalendar RRULE (FREQ, INTERVAL, BYDAY, UNTIL, COUNT) and
+        <code>ToString</code> writes one.
+    </p>
+    <p>
+        To cancel one occurrence, add its day to the rule's <code>Exceptions</code> (<code>Except(date)</code>). When one
+        occurrence is dragged in the week planner, <code>OnItemChange</code> gets its original start in
+        <code>Occurrence</code>: leave that day out of the series and add a one-off item at the new time.
+    </p>
+</DocExample>
+
 <h2 id="agenda">Agenda</h2>
 <DocExample Type="typeof(Agenda)">
     <p>
