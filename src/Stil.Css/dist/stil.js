@@ -20,6 +20,10 @@
 //     stilweekedit event fires (detail: action "move", "resize" or "create"; item, the event
 //     element or null; day, the index of the day column; start and end in minutes from
 //     midnight). The page saves the change and redraws: the grid puts the event back first.
+//   - Kanban boards (.stil-kanban): drag a card (.stil-kanban-card[data-stil-item]) to another
+//     place or column ([data-stil-column]); on release a bubbling stilcardmove event fires
+//     (detail: item, column and index among the column's other cards). The arrow keys move focus
+//     between cards; a card with data-stil-grabbed is moved by the page instead.
 //   - A textarea with data-stil-send="enter" submits its form on Enter (Shift+Enter breaks the
 //     line); with data-stil-send="ctrl-enter", on Ctrl+Enter or Cmd+Enter.
 //   - Keys that a widget handles itself (arrows in a tree, tab list or combobox; Enter and Escape
@@ -66,6 +70,11 @@ export function init(root = document) {
     root.addEventListener('pointermove', onSplitterPointerMove);
     root.addEventListener('pointerup', onSplitterPointerUp);
     root.addEventListener('pointercancel', onSplitterPointerUp);
+    root.addEventListener('pointerdown', onCardPointerDown);
+    root.addEventListener('pointermove', onCardPointerMove);
+    root.addEventListener('pointerup', onCardPointerUp);
+    root.addEventListener('pointercancel', onCardPointerUp);
+    root.addEventListener('keydown', cancelCardDrag);
     root.addEventListener('pointerdown', onColumnPointerDown);
     root.addEventListener('pointermove', onColumnPointerMove);
     root.addEventListener('pointerup', onColumnPointerUp);
@@ -150,6 +159,7 @@ function onKeyDown(event) {
         return;
     }
     if (sendFromComposer(event)) return;
+    if (moveInKanban(event)) return;
     if (preventHandledKey(event)) return;
     if (moveInDropdown(event)) return;
     if (moveInCalendar(event)) return;
@@ -173,6 +183,7 @@ const handledKeys = [
     ['[role="treeitem"]', ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Home', 'End', ' ']],
     ['[role="treegrid"] tr[aria-level]', ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Home', 'End']],
     ['[role="tab"]', ['ArrowLeft', 'ArrowRight', 'Home', 'End']],
+    ['.stil-kanban-card', ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', ' ', 'Escape']],
 ];
 
 function preventHandledKey(event) {
@@ -380,6 +391,117 @@ function cancelDrag() {
         if (d.style === null) d.item.removeAttribute('style'); else d.item.setAttribute('style', d.style);
     }
     d.ghost?.remove();
+}
+
+// Kanban: arrow keys move focus between the cards of a board (up and down in a column, left and
+// right to the nearest card of the next column with cards). A grabbed card is left to the page.
+function moveInKanban(event) {
+    const card = event.target instanceof Element ? event.target.closest('.stil-kanban-card') : null;
+    if (!card || event.target !== card || event.altKey || event.ctrlKey || event.metaKey) return false;
+    // Mark a card picked up at once, before the page re-renders it, so a quick arrow key moves the
+    // card and not the focus. The page renders the same state.
+    if (event.key === ' ') card.toggleAttribute('data-stil-grabbed');
+    if (event.key === 'Escape') card.removeAttribute('data-stil-grabbed');
+    if (card.hasAttribute('data-stil-grabbed')) return false;
+    if (!['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(event.key)) return false;
+    event.preventDefault();
+    const columns = [...card.closest('.stil-kanban').querySelectorAll('[data-stil-column]')]
+        .map(column => [...column.querySelectorAll('.stil-kanban-card')])
+        .filter(cards => cards.length > 0);
+    const c = columns.findIndex(cards => cards.includes(card));
+    const i = columns[c].indexOf(card);
+    const step = logicalArrow(event.key, card);
+    let next = null;
+    if (step === 'ArrowDown') next = columns[c][i + 1];
+    else if (step === 'ArrowUp') next = columns[c][i - 1];
+    else {
+        const other = columns[c + (step === 'ArrowRight' ? 1 : -1)];
+        next = other?.[Math.min(i, other.length - 1)];
+    }
+    next?.focus();
+    return true;
+}
+
+// Focuses a card of a board by its data-stil-item, for example after the page moved it.
+export function focusCard(board, item) {
+    board?.querySelector(`.stil-kanban-card[data-stil-item="${CSS.escape(item)}"]`)?.focus();
+}
+
+// Dragging a card: a copy follows the pointer, the card it would land before (or the end of the
+// column) is marked, and Escape cancels. The cards themselves stay where the page put them.
+let cardDrag = null;
+
+function onCardPointerDown(event) {
+    const card = event.target instanceof Element ? event.target.closest('.stil-kanban-card[data-stil-item]') : null;
+    if (!card || event.button !== 0 || event.target.closest('a, button, input, select, textarea, label, [contenteditable]')) return;
+    cardDrag = { card, pointerId: event.pointerId, x: event.clientX, y: event.clientY, ghost: null, target: null };
+}
+
+function onCardPointerMove(event) {
+    const d = cardDrag;
+    if (!d || event.pointerId !== d.pointerId) return;
+    if (!d.ghost) {
+        if (Math.hypot(event.clientX - d.x, event.clientY - d.y) < 6) return;
+        const box = d.card.getBoundingClientRect();
+        d.offset = [d.x - box.left, d.y - box.top];
+        d.ghost = d.card.cloneNode(true);
+        d.ghost.removeAttribute('data-stil-item');
+        d.ghost.classList.add('stil-kanban-ghost');
+        d.ghost.style.width = `${box.width}px`;
+        document.body.append(d.ghost);
+        d.card.classList.add('stil-kanban-dragging');
+        d.card.setPointerCapture?.(event.pointerId);
+    }
+    event.preventDefault();
+    d.ghost.style.left = `${event.clientX - d.offset[0]}px`;
+    d.ghost.style.top = `${event.clientY - d.offset[1]}px`;
+    markCardTarget(d, event.clientX, event.clientY);
+}
+
+function markCardTarget(d, x, y) {
+    clearCardTarget(d);
+    const board = d.card.closest('.stil-kanban');
+    const column = [...board.querySelectorAll('[data-stil-column]')].find(c => {
+        const box = c.getBoundingClientRect();
+        return x >= box.left && x <= box.right;
+    });
+    if (!column || column.hasAttribute('data-stil-collapsed')) { d.target = null; return; }
+    const cards = [...column.querySelectorAll('.stil-kanban-card[data-stil-item]')].filter(c => c !== d.card);
+    const index = cards.findIndex(c => { const box = c.getBoundingClientRect(); return y < box.top + box.height / 2; });
+    d.target = { column, index: index < 0 ? cards.length : index };
+    if (index >= 0) cards[index].setAttribute('data-stil-drop-before', '');
+    else column.setAttribute('data-stil-drop-end', '');
+}
+
+function clearCardTarget(d) {
+    d.card.closest('.stil-kanban')?.querySelectorAll('[data-stil-drop-before], [data-stil-drop-end]')
+        .forEach(e => { e.removeAttribute('data-stil-drop-before'); e.removeAttribute('data-stil-drop-end'); });
+}
+
+function onCardPointerUp(event) {
+    const d = cardDrag;
+    if (!d || event.pointerId !== d.pointerId) return;
+    cardDrag = null;
+    if (!d.ghost) return;
+    finishCardDrag(d);
+    if (event.type === 'pointerup' && d.target) {
+        d.card.dispatchEvent(new CustomEvent('stilcardmove', {
+            bubbles: true,
+            detail: { item: d.card.dataset.stilItem, column: d.target.column.dataset.stilColumn, index: d.target.index },
+        }));
+    }
+}
+
+function finishCardDrag(d) {
+    clearCardTarget(d);
+    d.ghost.remove();
+    d.card.classList.remove('stil-kanban-dragging');
+}
+
+function cancelCardDrag(event) {
+    if (!cardDrag || event.key !== 'Escape') return;
+    if (cardDrag.ghost) finishCardDrag(cardDrag);
+    cardDrag = null;
 }
 
 // Chat and comment composers: Enter (or Ctrl+Enter) sends the form the textarea is in.

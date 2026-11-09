@@ -1,3 +1,4 @@
+| Kanban | `stil-kanban` > `stil-kanban-column` (`[data-stil-column]`; `-over`, `-collapsed`) > `stil-kanban-header` (`stil-kanban-toggle`, `stil-kanban-title`, `stil-kanban-count`) and `stil-kanban-cards` > `stil-kanban-card` (`[data-stil-item]`, `tabindex="0"`). `--stil-kanban-column-width` (18rem), `--stil-kanban-height`. stil.js drags cards (`stilcardmove`) and moves focus with the arrow keys. |
 | Chat | `stil-chat` > `stil-chat-scroll` > `stil-chat-messages` (`stil-chat-day`, `stil-chat-list` > `stil-chat-message`, `-mine`, `-continued`, with a `stil-chat-bubble`: `stil-chat-head`, `stil-chat-author`, `stil-chat-time`, `stil-chat-text`), `stil-chat-typing` with `stil-chat-dots`, and a `stil-chat-composer` form. `stil-comments` on the same root is the thread form. |
 | Activity log | `stil-log` > `stil-log-toolbar` and `stil-log-scroll` > `stil-log-group` (`stil-log-day`, `stil-log-list` > `stil-log-entry`). An entry has a `stil-log-marker` (`stil-log-marker-{variant}`; a small dot when empty) and a `stil-log-body` (`stil-log-head` with `stil-log-title` and `stil-log-time`, `stil-log-meta`, `stil-log-details`). `stil-log-entry-new` highlights a new entry. `stil-timeline` > `stil-timeline-entry` is the compact form. |
 # Stil CSS
@@ -158,7 +159,7 @@ full page built only with Stil, open
 
 ## Optional JavaScript
 
-Stil works without JavaScript. The optional `dist/stil.js` module, 58 kB (16 kB gzipped) with
+Stil works without JavaScript. The optional `dist/stil.js` module, 65 kB (18 kB gzipped) with
 no dependencies, adds a few behaviours:
 
 ```html
@@ -206,6 +207,9 @@ no dependencies, adds a few behaviours:
   your own passed to `registerScanDecoder` (a function that takes the `<video>`
   and returns `[{ rawValue, format }]`). `initScanInput` tells a handheld
   scanner's fast keystrokes from typing.
+- Kanban boards: dragging a `.stil-kanban-card` fires a bubbling `stilcardmove`
+  event (`item`, `column`, `index`); the arrow keys move focus between cards,
+  and `focusCard` focuses one.
 - A `<textarea data-stil-send="enter">` submits its form on Enter (Shift+Enter
   breaks the line); `data-stil-send="ctrl-enter"` on Ctrl+Enter or Cmd+Enter.
 - `initSignaturePad`, `drawSignature` and `signaturePng` draw a signature on a

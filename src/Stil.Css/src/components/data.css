@@ -640,3 +640,155 @@ th[data-stil-drop="after"]:dir(rtl) { box-shadow: inset 3px 0 0 var(--_accent); 
     padding: 0;
     background: none;
 }
+
+/* Kanban: columns of cards side by side, scrolling sideways when they do not fit.
+   <div class="stil-kanban">
+     <section class="stil-kanban-column" data-stil-column="todo">
+       <header class="stil-kanban-header"><button class="stil-kanban-toggle" aria-expanded="true">…</button>
+         <h3 class="stil-kanban-title">To do</h3><span class="stil-kanban-count">3 / 4</span></header>
+       <ol class="stil-kanban-cards"><li class="stil-kanban-card" tabindex="0" data-stil-item="12">…</li></ol>
+     </section>
+   </div>
+   stil-kanban-column-over marks a column over its limit and stil-kanban-column-collapsed a
+   collapsed one. stil.js drags cards and marks where they would land (data-stil-drop-before on a
+   card, data-stil-drop-end on a column); data-stil-grabbed marks a card moved with the keyboard. */
+
+.stil-kanban {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--stil-space-3);
+    overflow-x: auto;
+    padding-block-end: var(--stil-space-2);
+}
+
+.stil-kanban-column {
+    display: flex;
+    flex: 0 0 var(--stil-kanban-column-width, 18rem);
+    flex-direction: column;
+    max-height: var(--stil-kanban-height, none);
+    padding: var(--stil-space-2);
+    border-radius: var(--stil-radius-lg);
+    background-color: var(--stil-color-surface-muted);
+}
+
+.stil-kanban-column-over {
+    --_bg: var(--stil-color-danger);
+    box-shadow: inset 0 3px 0 var(--_ink);
+}
+
+.stil-kanban-header {
+    display: flex;
+    align-items: center;
+    gap: var(--stil-space-2);
+    padding: var(--stil-space-1);
+}
+
+.stil-kanban-toggle {
+    display: inline-grid;
+    place-items: center;
+    padding: 2px;
+    border: 0;
+    border-radius: var(--stil-radius-sm);
+    background: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.stil-kanban-toggle:focus-visible,
+.stil-kanban-card:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+}
+
+.stil-kanban-title {
+    flex: 1;
+    margin: 0;
+    font-size: var(--stil-font-size-md);
+}
+
+.stil-kanban-count {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+    white-space: nowrap;
+}
+
+.stil-kanban-column-over .stil-kanban-count {
+    --_bg: var(--stil-color-danger);
+    color: var(--_ink);
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-kanban-column-collapsed { flex-basis: 3rem; }
+
+.stil-kanban-column-collapsed > .stil-kanban-header { flex-direction: column; }
+
+.stil-kanban-column-collapsed .stil-kanban-title {
+    writing-mode: vertical-rl;
+    white-space: nowrap;
+}
+
+.stil-kanban-cards {
+    display: grid;
+    gap: var(--stil-space-2);
+    min-height: 3rem;
+    margin: 0;
+    padding: var(--stil-space-1);
+    overflow-y: auto;
+    list-style: none;
+}
+
+.stil-kanban-card {
+    position: relative;
+    padding: var(--stil-space-2) var(--stil-space-3);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface);
+    box-shadow: var(--stil-shadow-sm);
+    cursor: grab;
+    touch-action: none;
+}
+
+.stil-kanban-card[data-stil-grabbed] {
+    outline: 2px dashed var(--_accent);
+    outline-offset: 2px;
+    box-shadow: var(--stil-shadow-lg);
+}
+
+.stil-kanban-dragging { opacity: 0.4; }
+
+/* The copy that follows the pointer, appended to the body. */
+.stil-kanban-ghost {
+    position: fixed;
+    z-index: var(--stil-z-popover);
+    margin: 0;
+    box-shadow: var(--stil-shadow-lg);
+    list-style: none;
+    pointer-events: none;
+    rotate: 2deg;
+    cursor: grabbing;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stil-kanban-ghost { rotate: none; }
+}
+
+.stil-kanban-card[data-stil-drop-before]::before,
+.stil-kanban-column[data-stil-drop-end] .stil-kanban-cards::after {
+    content: "";
+    height: 3px;
+    border-radius: 2px;
+    background-color: var(--_accent);
+}
+
+.stil-kanban-card[data-stil-drop-before]::before {
+    position: absolute;
+    inset-inline: 0;
+    top: calc(-1 * var(--stil-space-1) - 2px);
+}
+
+.stil-kanban-empty {
+    padding: var(--stil-space-2);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+    text-align: center;
+}
