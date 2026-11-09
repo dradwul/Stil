@@ -994,12 +994,17 @@ dragging; a copy follows the pointer and a line marks where the card lands,
 so Blazor's rendering stays in step. The app applies the move
 (`StilKanbanMove.ApplyTo`).
 
-### Phase 13.2: Command palette
+### Phase 13.2: Command palette ✅ Done
 
-- [ ] `StilCommandPalette`: Ctrl+K search over pages and actions, with
+- [x] `StilCommandPalette`: Ctrl+K search over pages and actions, with
   groups, keyboard navigation and recent choices.
 
 **Done when:** the demo opens a palette with Ctrl+K that goes to any page.
+✅ (Opened with Ctrl+K in the browser, found Tasks by a keyword and went
+there; 5 bUnit tests.)
+
+**Changes from the plan:** the recent choices are kept in the browser's
+local storage (`RecentKey`), so they survive a reload.
 
 ### Phase 13.3: Notification center
 
