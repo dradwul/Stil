@@ -21,7 +21,7 @@ something usable.
 | 10 | Layout and media: skeleton, splitter, carousel, image cropper, PDF viewer | ✅ Done |
 | 11 | Data grid 2, in five parts: totals and export ✅, column layout ✅, grouping ✅, inline editing ✅, tree grid ✅ | Done |
 | 12 | Capture and records: QR codes, scanner, signature, activity log, chat | Done |
-| 13 | Boards and workspace: kanban, command palette, recurring events, Gantt | Planned |
+| 13 | Boards and workspace: kanban, command palette, notifications, recurring events, resources, Gantt | In progress |
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | Planned |
 | V2 | Version 2, Stil Sites: section blocks, page model, a visual page builder, content | Planned (after 1.0) |
 
@@ -966,26 +966,70 @@ the owner on real devices.
 of the demo, so 12.5's two windows are covered here. The page lists today's
 visitors with their QR codes, to scan from the screen with a phone.
 
-## Phase 13: Boards and workspace
+## Phase 13: Boards and workspace 🚧 In progress
 
 Goal: the building blocks of planning and internal tools beyond forms and
-grids.
+grids. The phase is split into six parts that each end with something usable;
+the resource view and the Gantt view build on the recurring events.
 
-**Plan:**
+**Done when (all parts):** the demo has a task board, a command palette and a
+resource schedule for meeting rooms.
 
-- [ ] `StilKanban`: columns of cards that move by dragging and with the
-  keyboard (stil.js, like the week planner), with WIP limits, collapsible
-  columns and `OnCardMove`.
+### Phase 13.1: Kanban board ✅ Done
+
+- [x] `StilKanban<TItem>`: columns of cards that move by dragging (stil.js,
+  like the week planner) and with the keyboard (Space picks a card up, the
+  arrow keys move it, Space drops it, Escape puts it back), announced to
+  screen readers.
+- [x] WIP limits per column, collapsible columns, and `OnCardMove` with a
+  helper that applies the move to the app's list.
+
+**Done when:** the demo has a task board where cards move by mouse, touch and
+keyboard. ✅ The demo's Tasks page (`/tasks`): dragged with the mouse and
+moved with the keyboard in the browser; 6 bUnit tests. Touch uses the same
+pointer events, but is checked on a real device by the owner.
+
+**Changes from the plan:** the board never changes the cards' DOM while
+dragging; a copy follows the pointer and a line marks where the card lands,
+so Blazor's rendering stays in step. The app applies the move
+(`StilKanbanMove.ApplyTo`).
+
+### Phase 13.2: Command palette
+
 - [ ] `StilCommandPalette`: Ctrl+K search over pages and actions, with
   groups, keyboard navigation and recent choices.
+
+**Done when:** the demo opens a palette with Ctrl+K that goes to any page.
+
+### Phase 13.3: Notification center
+
 - [ ] `StilNotificationCenter`: a bell with a list of unread items, built on
   `IStilToastService`, so a toast can also be kept for later.
-- [ ] The planner, extended: recurring events (RRULE-style rules expanded by
-  Stil), a resource view (rooms or people as rows over time), and a simple
-  Gantt view with dependencies.
 
-**Done when:** the demo has a task board, a command palette and a resource
-schedule for meeting rooms.
+**Done when:** a toast in the demo can be found again in the bell.
+
+### Phase 13.4: Recurring events
+
+- [ ] Recurring events in the calendar, agenda and planner: RRULE-style rules
+  (daily, weekly on given days, monthly, with an end date or a count, and
+  exceptions) expanded by Stil.
+
+**Done when:** a weekly meeting shows in every view, with one occurrence
+moved.
+
+### Phase 13.5: Resource view
+
+- [ ] A resource view of the planner: rooms or people as rows over time, with
+  the same dragging as the week planner.
+
+**Done when:** the demo books meeting rooms in a resource schedule.
+
+### Phase 13.6: Gantt view
+
+- [ ] A simple Gantt view with dependencies between tasks.
+
+**Done when:** a small project plan shows as a Gantt chart with its
+dependencies.
 
 ## Phase 14: Markdown, rich text and charts 2
 

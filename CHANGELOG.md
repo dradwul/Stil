@@ -40,6 +40,14 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   static SSR and print sharply. `StilCodes` has the encoders (`QrSvg`,
   `QrModules`, `BarcodeSvg`, `BarcodeModules`, `EanCheckDigit`) for PDFs and
   label printers.
+- **Stil for Blazor**: `StilKanban<TItem>`, a board of columns whose cards
+  move by dragging (also by touch) and with the keyboard (Space picks a card
+  up, the arrow keys move it, Space drops it, Escape puts it back), announced
+  to screen readers. Columns have WIP limits (`Limit`) and collapse.
+  `OnCardMove` gets a `StilKanbanMove` whose `ApplyTo` updates your list.
+- **Stil CSS**: `stil-kanban`, and in stil.js the `stilcardmove` event,
+  arrow-key focus between cards and `focusCard`.
+- **Demo**: a task board (`/tasks`).
 - **Demo**: a check-in desk (`/check-in`) that scans a visitor's code, takes
   a signature, writes the visit to the log and chats with the host, live
   between two windows.
