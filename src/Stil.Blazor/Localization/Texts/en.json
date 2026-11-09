@@ -186,6 +186,14 @@
     "ExpandFormat": "Expand {0}",
     "Empty": "No cards"
   },
+  "Gantt": {
+    "Label": "Project plan",
+    "Task": "Task",
+    "BarFormat": "{0}: {1} to {2}",
+    "MilestoneFormat": "{0}: milestone on {1}",
+    "ProgressFormat": "{0}% done",
+    "AfterFormat": "after {0}"
+  },
   "LanguageSelector": {
     "Label": "Language"
   },

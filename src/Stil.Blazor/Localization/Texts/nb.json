@@ -186,6 +186,14 @@
     "ExpandFormat": "Vis {0}",
     "Empty": "Ingen kort"
   },
+  "Gantt": {
+    "Label": "Prosjektplan",
+    "Task": "Oppgave",
+    "BarFormat": "{0}: {1} til {2}",
+    "MilestoneFormat": "{0}: milepæl {1}",
+    "ProgressFormat": "{0} % ferdig",
+    "AfterFormat": "etter {0}"
+  },
   "LanguageSelector": {
     "Label": "Språk"
   },

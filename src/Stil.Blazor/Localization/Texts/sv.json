@@ -186,6 +186,14 @@
     "ExpandFormat": "Fäll ut {0}",
     "Empty": "Inga kort"
   },
+  "Gantt": {
+    "Label": "Projektplan",
+    "Task": "Uppgift",
+    "BarFormat": "{0}: {1} till {2}",
+    "MilestoneFormat": "{0}: milstolpe {1}",
+    "ProgressFormat": "{0} % klart",
+    "AfterFormat": "efter {0}"
+  },
   "LanguageSelector": {
     "Label": "Språk"
   },

@@ -1,0 +1,272 @@
+@typeparam TItem
+@inherits StilComponentBase
+@using System.Globalization
+
+@* A simple Gantt chart: one row per task, a bar from its first to its last day, progress inside,
+   milestones as diamonds, and finish-to-start arrows from the tasks it depends on. An arrow into
+   a task that starts before its predecessor ends is marked as a conflict. Days run across, with
+   the months and day numbers above and a line for today. Works in static SSR. *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-gantt")"
+     style="@($"--stil-gantt-days: {_days}; --stil-gantt-rows: {_rows.Count}")">
+    <div class="stil-gantt-scroll" role="region" aria-label="@Localize(Label, "Gantt.Label")" tabindex="0">
+        <div class="stil-gantt-grid">
+            <div class="stil-gantt-corner">@Localize(TaskText, "Gantt.Task")</div>
+            <div class="stil-gantt-head" aria-hidden="true">
+                <div class="stil-gantt-months">
+                    @foreach (var (month, start, length) in Months())
+                    {
+                        <span style="@($"--_start: {start}; --_length: {length}")">@month.ToString("Y", Culture)</span>
+                    }
+                </div>
+                <div class="stil-gantt-dates">
+                    @for (var day = 0; day < _days; day++)
+                    {
+                        var date = _from.AddDays(day);
+                        <span class="@(IsWeekend(date) ? "stil-gantt-date stil-gantt-weekend" : "stil-gantt-date")"
+                              aria-current="@(date == Today ? "date" : null)" style="@($"--_start: {day}")">@date.Day</span>
+                    }
+                </div>
+            </div>
+            <ol class="stil-gantt-names">
+                @foreach (var row in _rows)
+                {
+                    <li class="stil-gantt-name" @key="row.Key" title="@row.Title">@row.Title</li>
+                }
+            </ol>
+            <div class="stil-gantt-body">
+                @for (var day = 0; day < _days; day++)
+                {
+                    if (IsWeekend(_from.AddDays(day)))
+                    {
+                        <span class="stil-gantt-weekend" style="@($"--_start: {day}")" aria-hidden="true"></span>
+                    }
+                }
+                @if (Today >= _from && Today < _from.AddDays(_days))
+                {
+                    <span class="stil-gantt-today" style="@($"--_start: {Today.DayNumber - _from.DayNumber}")" aria-hidden="true"></span>
+                }
+                <svg class="stil-gantt-links" viewBox="@($"0 0 {_days} {Math.Max(1, _rows.Count)}")" preserveAspectRatio="none" aria-hidden="true">
+                    @foreach (var link in _links)
+                    {
+                        <polyline class="@(link.Conflict ? "stil-gantt-link stil-gantt-link-conflict" : "stil-gantt-link")" points="@link.Points" vector-effect="non-scaling-stroke" />
+                    }
+                </svg>
+                @foreach (var link in _links)
+                {
+                    <span class="@(link.Conflict ? "stil-gantt-arrow stil-gantt-link-conflict" : "stil-gantt-arrow")"
+                          style="@Css($"--_start: {link.To}; --_row: {link.Row}")" aria-hidden="true"></span>
+                }
+                @foreach (var row in _rows)
+                {
+                    var item = row.Item;
+                    var style = $"--_start: {row.Start}; --_length: {row.Length}; --_row: {row.Index}; --_progress: {Css(row.Progress)}";
+                    var classes = row.Milestone ? "stil-gantt-bar stil-gantt-milestone" : "stil-gantt-bar";
+                    if (Variant?.Invoke(item) is { } variant)
+                    {
+                        classes += " " + StilCssClasses.Variant("stil-gantt-bar", variant);
+                    }
+
+                    @if (OnItemClick.HasDelegate)
+                    {
+                        <button type="button" class="@classes" style="@style" aria-label="@BarLabel(row)" @onclick="() => OnItemClick.InvokeAsync(item)" @key="row.Key">
+                            <span class="stil-gantt-bar-title">@row.Title</span>
+                        </button>
+                    }
+                    else
+                    {
+                        <div class="@classes" style="@style" role="img" aria-label="@BarLabel(row)" @key="row.Key">
+                            <span class="stil-gantt-bar-title">@row.Title</span>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private sealed record Row(TItem Item, object Key, int Index, string Title, DateOnly First, DateOnly Last, int Start, int Length, double Progress, bool Milestone, List<string> After);
+
+    private sealed record Link(string Points, double To, int Row, bool Conflict);
+
+    private List<Row> _rows = [];
+    private List<Link> _links = [];
+    private DateOnly _from;
+    private int _days;
+
+    /// <summary>The tasks, one row each, in this order.</summary>
+    [Parameter]
+    public IEnumerable<TItem>? Items { get; set; }
+
+    /// <summary>A key that identifies a task; DependsOn refers to it.</summary>
+    [Parameter, EditorRequired]
+    public Func<TItem, object>? ItemKey { get; set; }
+
+    /// <summary>The task's name. Without it, ToString().</summary>
+    [Parameter]
+    public Func<TItem, string>? Title { get; set; }
+
+    /// <summary>The task's first day.</summary>
+    [Parameter, EditorRequired]
+    public Func<TItem, DateOnly>? Start { get; set; }
+
+    /// <summary>The task's last day (included).</summary>
+    [Parameter, EditorRequired]
+    public Func<TItem, DateOnly>? End { get; set; }
+
+    /// <summary>How much of the task is done, from 0 to 1.</summary>
+    [Parameter]
+    public Func<TItem, double?>? Progress { get; set; }
+
+    /// <summary>The keys of the tasks that must finish before this one starts.</summary>
+    [Parameter]
+    public Func<TItem, IEnumerable<object>?>? DependsOn { get; set; }
+
+    /// <summary>Shows the task as a milestone: a diamond on its first day.</summary>
+    [Parameter]
+    public Func<TItem, bool>? Milestone { get; set; }
+
+    /// <summary>The bar's color. Primary when not set.</summary>
+    [Parameter]
+    public Func<TItem, StilVariant?>? Variant { get; set; }
+
+    /// <summary>Raised when a bar is clicked. Without it, bars are not buttons.</summary>
+    [Parameter]
+    public EventCallback<TItem> OnItemClick { get; set; }
+
+    /// <summary>The first day shown. The default is the Monday before the first task.</summary>
+    [Parameter]
+    public DateOnly? From { get; set; }
+
+    /// <summary>The last day shown. The default is the Sunday after the last task.</summary>
+    [Parameter]
+    public DateOnly? To { get; set; }
+
+    /// <summary>Today, for the today line. The default is the clock.</summary>
+    [Parameter]
+    public DateOnly? Now { get; set; }
+
+    /// <summary>The culture of the months and dates. The default is the current culture.</summary>
+    [Parameter]
+    public CultureInfo? Culture { get; set; }
+
+    /// <summary>The accessible name of the chart. The default is the localized "Project plan".</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>The heading of the task column. The default is localized.</summary>
+    [Parameter]
+    public string? TaskText { get; set; }
+
+    private DateOnly Today => Now ?? DateOnly.FromDateTime(DateTime.Now);
+
+    protected override CultureInfo TextCulture => Culture ?? CultureInfo.CurrentUICulture;
+
+    private CultureInfo CurrentCulture => Culture ?? CultureInfo.CurrentCulture;
+
+    private static bool IsWeekend(DateOnly date) => date.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday;
+
+    private static string Css(double value) => value.ToString("0.###", CultureInfo.InvariantCulture);
+
+    private static string Css(FormattableString text) => text.ToString(CultureInfo.InvariantCulture);
+
+    protected override void OnParametersSet()
+    {
+        var items = Items?.ToList() ?? [];
+        if (items.Count == 0 || Start is null || End is null)
+        {
+            _from = From ?? Today;
+            _days = Math.Max(7, (To ?? _from.AddDays(13)).DayNumber - _from.DayNumber + 1);
+            _rows = [];
+            _links = [];
+            return;
+        }
+
+        var first = items.Min(Start);
+        var last = items.Max(i => End(i) < Start(i) ? Start(i) : End(i));
+        _from = From ?? first.AddDays(-(((int)first.DayOfWeek + 6) % 7));
+        var to = To ?? last.AddDays((7 - (int)last.DayOfWeek) % 7);
+        _days = Math.Max(1, to.DayNumber - _from.DayNumber + 1);
+
+        _rows = [.. items.Select((item, index) =>
+        {
+            var start = Start(item);
+            var end = End(item) < start ? start : End(item);
+            var milestone = Milestone?.Invoke(item) == true;
+            return new Row(item, ItemKey?.Invoke(item) ?? item!, index, Title?.Invoke(item) ?? item?.ToString() ?? "", start, end,
+                start.DayNumber - _from.DayNumber, milestone ? 0 : end.DayNumber - start.DayNumber + 1,
+                Math.Clamp(Progress?.Invoke(item) ?? 0, 0, 1), milestone, []);
+        })];
+
+        var byKey = _rows.GroupBy(r => r.Key).ToDictionary(g => g.Key, g => g.First());
+        _links = [];
+        foreach (var row in _rows)
+        {
+            foreach (var key in DependsOn?.Invoke(row.Item) ?? [])
+            {
+                if (byKey.TryGetValue(key, out var before))
+                {
+                    row.After.Add(before.Title);
+                    _links.Add(LinkBetween(before, row));
+                }
+            }
+        }
+    }
+
+    // A finish-to-start arrow: out of the end of the earlier bar, down (or up) to the later row and
+    // into its start. When the later task starts too soon to fit a straight drop, it turns back in
+    // the gap between the rows. Units: days across, rows down.
+    private static Link LinkBetween(Row before, Row after)
+    {
+        const double gap = 0.3;
+        // Out of the end of a bar, or the right tip of a milestone's diamond (half a day wide).
+        var from = before.Milestone ? before.Start + 0.85 : before.Start + before.Length;
+        var to = after.Milestone ? after.Start + 0.15 : after.Start;
+        var (y1, y2) = (before.Index + 0.5, after.Index + 0.5);
+        (double X, double Y)[] points;
+        if (to >= from + 2 * gap)
+        {
+            points = [(from, y1), (from + gap, y1), (from + gap, y2), (to, y2)];
+        }
+        else
+        {
+            // Between the two rows: below the earlier one when the later is lower, else above it.
+            double between = after.Index > before.Index ? before.Index + 1 : before.Index;
+            points = [(from, y1), (from + gap, y1), (from + gap, between), (to - gap, between), (to - gap, y2), (to, y2)];
+        }
+
+        var conflict = after.First <= before.Last;
+        return new Link(string.Join(' ', points.Select(p => $"{Css(p.X)},{Css(p.Y)}")), to, after.Index, conflict);
+    }
+
+    private IEnumerable<(DateOnly Month, int Start, int Length)> Months()
+    {
+        var day = 0;
+        while (day < _days)
+        {
+            var date = _from.AddDays(day);
+            var month = new DateOnly(date.Year, date.Month, 1);
+            var length = Math.Min(_days - day, month.AddMonths(1).DayNumber - date.DayNumber);
+            yield return (month, day, length);
+            day += length;
+        }
+    }
+
+    private string BarLabel(Row row)
+    {
+        var text = row.Milestone
+            ? string.Format(TextCulture, Localize(null, "Gantt.MilestoneFormat"), row.Title, row.First.ToString("D", CurrentCulture))
+            : string.Format(TextCulture, Localize(null, "Gantt.BarFormat"), row.Title, row.First.ToString("D", CurrentCulture), row.Last.ToString("D", CurrentCulture));
+        if (row.Progress > 0)
+        {
+            text += ", " + string.Format(TextCulture, Localize(null, "Gantt.ProgressFormat"), Math.Round(row.Progress * 100));
+        }
+
+        if (row.After.Count > 0)
+        {
+            text += ", " + string.Format(TextCulture, Localize(null, "Gantt.AfterFormat"), string.Join(", ", row.After));
+        }
+
+        return text;
+    }
+}

@@ -186,6 +186,14 @@
     "ExpandFormat": "Laajenna {0}",
     "Empty": "Ei kortteja"
   },
+  "Gantt": {
+    "Label": "Projektisuunnitelma",
+    "Task": "Tehtävä",
+    "BarFormat": "{0}: {1}–{2}",
+    "MilestoneFormat": "{0}: virstanpylväs {1}",
+    "ProgressFormat": "{0} % valmis",
+    "AfterFormat": "jälkeen: {0}"
+  },
   "LanguageSelector": {
     "Label": "Kieli"
   },
