@@ -27,6 +27,10 @@
 //     between cards; a card with data-stil-grabbed is moved by the page instead.
 //   - bindCommandKey calls the .NET method OpenFromKey on Ctrl+K or Cmd+K; readStorage and
 //     writeStorage keep small values (such as recent commands) in local storage.
+//   - Markdown text areas (textarea[data-stil-markdown]) get Ctrl+B, Ctrl+I and Ctrl+K, and buttons
+//     with data-stil-markdown-command (bold, italic, heading, bullets, numbers, quote, code, link)
+//     in a toolbar whose aria-controls names the text area format its selection;
+//     insertMarkdown inserts text at the cursor.
 //   - A textarea with data-stil-send="enter" submits its form on Enter (Shift+Enter breaks the
 //     line); with data-stil-send="ctrl-enter", on Ctrl+Enter or Cmd+Enter.
 //   - Keys that a widget handles itself (arrows in a tree, tab list or combobox; Enter and Escape
@@ -83,6 +87,7 @@ export function init(root = document) {
     root.addEventListener('pointerup', onColumnPointerUp);
     root.addEventListener('pointercancel', onColumnPointerUp);
     root.addEventListener('click', onCarouselClick);
+    root.addEventListener('click', onMarkdownClick);
     // scroll does not bubble, so listen in the capture phase.
     root.addEventListener('scroll', onCarouselScroll, true);
     root.addEventListener('scrollend', onCarouselScroll, true);
@@ -162,6 +167,7 @@ function onKeyDown(event) {
         return;
     }
     if (sendFromComposer(event)) return;
+    if (markdownShortcut(event)) return;
     if (moveInKanban(event)) return;
     if (preventHandledKey(event)) return;
     if (moveInDropdown(event)) return;
@@ -517,6 +523,79 @@ function cancelCardDrag(event) {
     if (!cardDrag || event.key !== 'Escape') return;
     if (cardDrag.ghost) finishCardDrag(cardDrag);
     cardDrag = null;
+}
+
+// Markdown text areas. Each command wraps the selection (bold, italic, code), or adds or removes a
+// prefix on its lines (heading, lists, quote). The change goes through insertText where it
+// exists, so Ctrl+Z undoes it, and fires input, so a framework sees the new value.
+const markdownWraps = { bold: ['**', 'bold text'], italic: ['_', 'italic text'], code: ['`', 'code'] };
+const markdownPrefixes = { heading: '## ', bullets: '- ', numbers: '1. ', quote: '> ' };
+
+function onMarkdownClick(event) {
+    const button = event.target instanceof Element ? event.target.closest('[data-stil-markdown-command]') : null;
+    const id = button?.closest('[aria-controls]')?.getAttribute('aria-controls');
+    const textarea = id && document.getElementById(id);
+    if (!textarea || button.disabled) return;
+    applyMarkdown(textarea, button.dataset.stilMarkdownCommand);
+}
+
+function markdownShortcut(event) {
+    const textarea = event.target;
+    if (!(textarea instanceof HTMLTextAreaElement) || !textarea.hasAttribute('data-stil-markdown')) return false;
+    if (!(event.ctrlKey || event.metaKey) || event.altKey || event.shiftKey) return false;
+    const command = { b: 'bold', i: 'italic', k: 'link' }[event.key.toLowerCase()];
+    if (!command) return false;
+    event.preventDefault();
+    applyMarkdown(textarea, command);
+    return true;
+}
+
+export function insertMarkdown(textarea, text) {
+    if (!textarea) return;
+    replaceSelection(textarea, textarea.selectionStart, textarea.selectionEnd, text);
+}
+
+export function markdownCommand(textarea, command) {
+    if (textarea) applyMarkdown(textarea, command);
+}
+
+function applyMarkdown(textarea, command) {
+    const { selectionStart: start, selectionEnd: end, value } = textarea;
+    const selected = value.slice(start, end);
+    if (command === 'code' && selected.includes('\n')) {
+        replaceSelection(textarea, start, end, `\n\`\`\`\n${selected}\n\`\`\`\n`);
+    } else if (markdownWraps[command]) {
+        const [mark, placeholder] = markdownWraps[command];
+        const inner = selected || placeholder;
+        replaceSelection(textarea, start, end, mark + inner + mark);
+        textarea.setSelectionRange(start + mark.length, start + mark.length + inner.length);
+    } else if (command === 'link') {
+        const text = selected || 'link text';
+        replaceSelection(textarea, start, end, `[${text}](https://)`);
+        const url = start + text.length + 3;
+        textarea.setSelectionRange(url, url + 'https://'.length);
+    } else if (markdownPrefixes[command]) {
+        // The whole lines the selection touches.
+        const lineStart = value.lastIndexOf('\n', start - 1) + 1;
+        const lineEnd = value.indexOf('\n', end) < 0 ? value.length : value.indexOf('\n', end);
+        const lines = value.slice(lineStart, lineEnd).split('\n');
+        // The bullet ("- ") and quote ("> ") prefixes have no characters that are special in a pattern.
+        const pattern = command === 'numbers' ? /^\d+\. / : command === 'heading' ? /^#{1,6} / : new RegExp('^' + markdownPrefixes[command]);
+        const remove = lines.every(line => pattern.test(line));
+        const text = lines.map((line, i) => remove ? line.replace(pattern, '')
+            : (command === 'numbers' ? `${i + 1}. ` : markdownPrefixes[command]) + line).join('\n');
+        replaceSelection(textarea, lineStart, lineEnd, text);
+        textarea.setSelectionRange(lineStart, lineStart + text.length);
+    }
+}
+
+function replaceSelection(textarea, start, end, text) {
+    textarea.focus();
+    textarea.setSelectionRange(start, end);
+    if (!document.execCommand?.('insertText', false, text)) {
+        textarea.setRangeText(text, start, end, 'end');
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    }
 }
 
 // Chat and comment composers: Enter (or Ctrl+Enter) sends the form the textarea is in.

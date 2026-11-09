@@ -1,4 +1,6 @@
 | Gantt chart | `stil-gantt` (`--stil-gantt-days`, `--stil-gantt-rows`, `--stil-gantt-day-width`, `--stil-gantt-row-height`, `--stil-gantt-name-width`) > `stil-gantt-scroll` > `stil-gantt-grid` > `stil-gantt-corner`, `stil-gantt-head` (`stil-gantt-months`, `stil-gantt-dates`), `stil-gantt-names` and `stil-gantt-body` with `stil-gantt-bar`s (`--_start`, `--_length`, `--_row`, `--_progress`; `stil-gantt-bar-{variant}`, `stil-gantt-milestone`), an SVG of `stil-gantt-link` polylines with `stil-gantt-arrow`s (`stil-gantt-link-conflict`), weekends and `stil-gantt-today`. |
+| Prose | `stil-prose` on formatted text from Markdown or a rich text editor: even spacing between paragraphs, headings, lists, tables, code blocks, quotes and images, and task-list checkboxes. Use it with `stil-scope` for the fonts and links. |
+| Markdown editor | `stil-markdown-editor` (`-side` for the preview beside the text) > `stil-markdown-toolbar` (`role="toolbar"`, `aria-controls` naming the text area, with `stil-markdown-command` buttons) and `stil-markdown-panes` (a `stil-markdown-input` text area with `data-stil-markdown`, and a `stil-markdown-preview`). stil.js formats the text. |
 | Notification center | `stil-notifications` (a `stil-popover-anchor`) > `stil-notification-bell` with a `stil-notification-count`, and a `stil-popover stil-notification-panel` > `stil-notification-header`, `stil-notification-list` > `stil-notification` (`-unread`) with a `stil-log-marker`, a `stil-notification-body` (`-title`, `-message`, `-time`) and a close button, `stil-notification-empty`, `stil-notification-footer`. |
 | Command palette | `stil-dialog stil-command-palette` > `stil-command-search` (`stil-command-input`), `stil-command-results` (a `stil-combobox-list` with `stil-command-group` headings and `stil-combobox-option`s with `stil-command-title` and `stil-command-kbd`), `stil-command-empty` and `stil-command-footer`. `stil-command-button` opens it. |
 | Kanban | `stil-kanban` > `stil-kanban-column` (`[data-stil-column]`; `-over`, `-collapsed`) > `stil-kanban-header` (`stil-kanban-toggle`, `stil-kanban-title`, `stil-kanban-count`) and `stil-kanban-cards` > `stil-kanban-card` (`[data-stil-item]`, `tabindex="0"`). `--stil-kanban-column-width` (18rem), `--stil-kanban-height`. stil.js drags cards (`stilcardmove`) and moves focus with the arrow keys. |
@@ -163,7 +165,7 @@ full page built only with Stil, open
 
 ## Optional JavaScript
 
-Stil works without JavaScript. The optional `dist/stil.js` module, 67 kB (19 kB gzipped) with
+Stil works without JavaScript. The optional `dist/stil.js` module, 71 kB (20 kB gzipped) with
 no dependencies, adds a few behaviours:
 
 ```html

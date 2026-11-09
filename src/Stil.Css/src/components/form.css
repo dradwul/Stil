@@ -275,3 +275,77 @@ textarea.stil-input {
 :is(.stil-cluster, .stil-navbar, .stil-navbar-end, .stil-card-header) > :is(.stil-input, .stil-select, .stil-input-group) {
     width: auto;
 }
+
+/* Markdown editor: a toolbar over a text area, with a preview in a tab or beside it.
+   <div class="stil-markdown-editor">
+     <div class="stil-markdown-toolbar" role="toolbar" aria-controls="notes">
+       <button class="stil-btn stil-btn-ghost stil-btn-sm stil-markdown-command" data-stil-markdown-command="bold">B</button>…</div>
+     <div class="stil-markdown-panes"><textarea id="notes" class="stil-input stil-markdown-input" data-stil-markdown></textarea>
+       <div class="stil-markdown-preview">…</div></div>
+   </div>
+   stil.js formats the text. stil-markdown-editor-side puts the preview beside the text. */
+
+.stil-markdown-editor {
+    border: 1px solid var(--stil-color-border-strong);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface);
+}
+
+.stil-markdown-editor:focus-within {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: 0;
+}
+
+.stil-markdown-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px;
+    padding: var(--stil-space-1);
+    border-block-end: 1px solid var(--stil-color-border);
+}
+
+.stil-markdown-command {
+    min-width: 2rem;
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-markdown-modes {
+    display: flex;
+    gap: var(--stil-space-1);
+    margin-inline-start: auto;
+}
+
+.stil-markdown-panes { display: grid; }
+
+.stil-markdown-input.stil-input {
+    min-height: 8rem;
+    border: 0;
+    border-radius: 0 0 var(--stil-radius-md) var(--stil-radius-md);
+    font-family: var(--stil-font-family-mono);
+    font-size: var(--stil-font-size-sm);
+    resize: vertical;
+}
+
+.stil-markdown-input.stil-input:focus-visible { outline: none; }
+
+/* Hidden while the preview tab is shown (stil-input sets display, which would win over hidden). */
+.stil-markdown-input[hidden] { display: none; }
+
+.stil-markdown-preview {
+    min-height: 8rem;
+    padding: var(--stil-space-3);
+}
+
+@container (min-width: 40rem) {
+    .stil-markdown-editor-side .stil-markdown-panes { grid-template-columns: 1fr 1fr; }
+    .stil-markdown-editor-side .stil-markdown-preview { border-inline-start: 1px solid var(--stil-color-border); }
+}
+
+.stil-markdown-editor-side { container-type: inline-size; }
+
+.stil-markdown-editor-side .stil-markdown-preview:not(:first-child) { border-block-start: 1px solid var(--stil-color-border); }
+
+@container (min-width: 40rem) {
+    .stil-markdown-editor-side .stil-markdown-preview:not(:first-child) { border-block-start: 0; }
+}
