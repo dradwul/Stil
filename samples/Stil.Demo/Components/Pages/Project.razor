@@ -1,0 +1,41 @@
+@page "/project"
+
+<PageTitle>Project · Stil for Blazor</PageTitle>
+
+<div class="stil-mb-4">
+    <h1 class="stil-mb-1">Office move</h1>
+    <p class="stil-text-muted stil-mb-0">The plan for moving to the new office, with what each step waits for.</p>
+</div>
+
+<StilGantt TItem="Step" Items="_steps" ItemKey="s => s.Id" Title="s => s.Title" Start="s => s.Start" End="s => s.End"
+           Progress="s => s.Done" DependsOn="s => s.After" Milestone="s => s.IsMilestone" Variant="s => s.Variant"
+           OnItemClick="s => _chosen = s" Label="Office move" />
+
+@if (_chosen is not null)
+{
+    <StilAlert Variant="StilVariant.Info" Appearance="StilAlertAppearance.Subtle" class="stil-mt-3">
+        <strong>@_chosen.Title</strong>: @_chosen.Start.ToString("d") – @_chosen.End.ToString("d"), @Math.Round(_chosen.Done * 100) % done. Owner: @_chosen.Owner.
+    </StilAlert>
+}
+
+@code {
+    private sealed record Step(string Id, string Title, string Owner, DateOnly Start, DateOnly End, double Done = 0,
+        string[]? After = null, bool IsMilestone = false, StilVariant? Variant = null);
+
+    private static readonly DateOnly Monday = DateOnly.FromDateTime(DateTime.Today).AddDays(-(((int)DateTime.Today.DayOfWeek + 6) % 7) - 7);
+
+    private static DateOnly Day(int offset) => Monday.AddDays(offset);
+
+    private Step? _chosen;
+
+    private readonly List<Step> _steps =
+    [
+        new("sign", "Sign the lease", "Karin Dahl", Day(0), Day(0), 1, IsMilestone: true, Variant: StilVariant.Success),
+        new("plan", "Floor plan", "Per Ahl", Day(1), Day(4), 1, ["sign"]),
+        new("network", "Network and Wi-Fi", "Oskar Lund", Day(7), Day(11), 0.6, ["plan"], Variant: StilVariant.Info),
+        new("furniture", "Order furniture", "Sara Berg", Day(7), Day(11), 0.4, ["plan"]),
+        new("pack", "Pack the old office", "Lina Ström", Day(14), Day(17), 0, ["furniture"], Variant: StilVariant.Warning),
+        new("move", "Moving day", "Maja Lind", Day(18), Day(18), 0, ["pack", "network"], IsMilestone: true, Variant: StilVariant.Success),
+        new("unpack", "Unpack and set up", "Erik Holm", Day(21), Day(23), 0, ["move"]),
+    ];
+}
