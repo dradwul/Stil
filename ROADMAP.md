@@ -20,7 +20,7 @@ something usable.
 | 9 | Forms 2: popover, time, slider, wizard, rating, color, masks | ✅ Done |
 | 10 | Layout and media: skeleton, splitter, carousel, image cropper, PDF viewer | ✅ Done |
 | 11 | Data grid 2, in five parts: totals and export ✅, column layout ✅, grouping ✅, inline editing ✅, tree grid ✅ | Done |
-| 12 | Capture and records: QR codes, scanner, signature, activity log, chat | In progress |
+| 12 | Capture and records: QR codes, scanner, signature, activity log, chat | Done |
 | 13 | Boards and workspace: kanban, command palette, recurring events, Gantt | Planned |
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | Planned |
 | V2 | Version 2, Stil Sites: section blocks, page model, a visual page builder, content | Planned (after 1.0) |
@@ -64,7 +64,10 @@ end, so they never keep a phase open.
     masked and PIN inputs, popover, stepper and wizard.
   - Layout and media: skeleton, splitter, carousel, image cropper, camera
     and PDF viewer.
-  - 754 bUnit tests.
+  - Capture and records: QR codes and barcodes, scanning with the camera or
+    a handheld scanner, signature pad, activity log and timeline, chat and
+    comments.
+  - 799 bUnit tests.
 - **Stil.Charts:** SVG line, area, bar, donut and sparkline charts that
   follow the theme, with 68 bUnit tests.
 - **Stil.Templates:** `dotnet new stil-app`.
@@ -839,7 +842,7 @@ their own, so its own values do not count twice. It has no grouping or
 `ItemsProvider`; `LoadChildren` loads from a server instead. Playwright
 checks of the treegrid were left out for now.
 
-## Phase 12: Capture and records 🚧 In progress
+## Phase 12: Capture and records ✅ Done
 
 Goal: components for apps that register things on the spot: check-ins at a
 reception, deliveries in a warehouse, visits, inspections. Few component
@@ -945,14 +948,23 @@ work in the log and the chat. `StilComments` is `StilChat` in thread form,
 where Ctrl+Enter posts. Attachments use Blazor's `InputFile` behind an
 "Attach" button rather than the full `StilFileUpload` drop zone.
 
-### Phase 12.6: Check-in demo
+### Phase 12.6: Check-in demo ✅ Done
 
-- [ ] A demo page that combines them: a check-in desk that scans a badge or
+- [x] A demo page that combines them: a check-in desk that scans a badge or
   a QR code, asks for a signature, and writes the visit to the log.
-- [ ] CSS (`stil-scanner`, `stil-signature`, `stil-log`, `stil-timeline`),
+- [x] CSS (`stil-scanner`, `stil-signature`, `stil-log`, `stil-timeline`),
   built-in texts in the five languages, bUnit tests and docs for every part.
 
-**Done when:** the phase's own "done when" above.
+**Done when:** the phase's own "done when" above. ✅ The demo's Check-in page
+(`/check-in`, and `/check-in?as=host` for a host): with only a keyboard
+(a typed code, a typed signature) in the browser, and in two windows that
+share the log and the chat, with "is typing", through the app's own shared
+service. The camera on a phone and a USB scanner on a desktop are checked by
+the owner on real devices.
+
+**Changes from the plan:** the chat between the reception and a host is part
+of the demo, so 12.5's two windows are covered here. The page lists today's
+visitors with their QR codes, to scan from the screen with a phone.
 
 ## Phase 13: Boards and workspace
 

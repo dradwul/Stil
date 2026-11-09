@@ -40,6 +40,9 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   static SSR and print sharply. `StilCodes` has the encoders (`QrSvg`,
   `QrModules`, `BarcodeSvg`, `BarcodeModules`, `EanCheckDigit`) for PDFs and
   label printers.
+- **Demo**: a check-in desk (`/check-in`) that scans a visitor's code, takes
+  a signature, writes the visit to the log and chats with the host, live
+  between two windows.
 - **Stil for Blazor**: `StilChat<TItem>` and `StilComments<TItem>`, a
   conversation or a comment thread on the activity log's selectors: own
   messages on the other side, runs, day separators, a composer (Enter or
