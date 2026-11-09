@@ -1,0 +1,23 @@
+@* A small project: each step starts after the ones it depends on. "Copy" starts too early. *@
+<StilGantt TItem="Step" Items="_steps" ItemKey="s => s.Id" Title="s => s.Title" Start="s => s.Start" End="s => s.End"
+           Progress="s => s.Done" DependsOn="s => s.After" Milestone="s => s.IsMilestone" Variant="s => s.Variant"
+           Label="Website project" />
+
+@code {
+    private sealed record Step(string Id, string Title, DateOnly Start, DateOnly End, double Done = 0, string[]? After = null,
+        bool IsMilestone = false, StilVariant? Variant = null);
+
+    private static readonly DateOnly Monday = DateOnly.FromDateTime(DateTime.Today).AddDays(-(((int)DateTime.Today.DayOfWeek + 6) % 7) - 7);
+
+    private static DateOnly Day(int offset) => Monday.AddDays(offset);
+
+    private readonly List<Step> _steps =
+    [
+        new("brief", "Brief", Day(0), Day(1), 1),
+        new("design", "Design", Day(2), Day(8), 0.8, ["brief"]),
+        new("copy", "Copy", Day(7), Day(11), 0.3, ["design"], Variant: StilVariant.Info),
+        new("build", "Build", Day(9), Day(18), 0.1, ["design"]),
+        new("test", "Test", Day(21), Day(24), 0, ["build", "copy"], Variant: StilVariant.Warning),
+        new("launch", "Launch", Day(25), Day(25), 0, ["test"], IsMilestone: true, Variant: StilVariant.Success),
+    ];
+}

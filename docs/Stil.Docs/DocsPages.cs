@@ -60,6 +60,7 @@ public static class DocsPages
             new("Kanban board", "components/kanban"),
             new("Command palette", "components/command-palette"),
             new("Notification center", "components/notifications"),
+            new("Gantt chart", "components/gantt"),
         ]),
     ];
 

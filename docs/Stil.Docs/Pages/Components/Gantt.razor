@@ -1,0 +1,26 @@
+@page "/components/gantt"
+@using Stil.Docs.Examples.Gantt
+
+<DocsHeader Title="Gantt chart" Eyebrow="Boards">
+    <Lead>A project plan: tasks over days, with what each one waits for.</Lead>
+</DocsHeader>
+
+<DocExample Type="typeof(ProjectPlan)">
+    <p>
+        <code>StilGantt</code> shows one row per item, a bar from its <code>Start</code> to its <code>End</code> (both days,
+        the end included) and the share done (<code>Progress</code>, 0 to 1) as a line along the bar. <code>DependsOn</code>
+        gives the keys (<code>ItemKey</code>) of the tasks that must finish first; each draws an arrow from the end of that
+        task into the start of this one. An arrow into a task that starts before the other ends is dashed in the danger
+        color. <code>Milestone</code> shows a task as a diamond on its day, and <code>Variant</code> colors a bar.
+    </p>
+    <p>
+        The days run from the Monday before the first task to the Sunday after the last (<code>From</code> and
+        <code>To</code> change that), with the months and dates above, weekends shaded and a line for today. Each bar's
+        accessible name has its dates, progress and what it waits for. With <code>OnItemClick</code> the bars are buttons.
+        It works in static SSR. Set <code>--stil-gantt-day-width</code> (2.25rem), <code>--stil-gantt-row-height</code>
+        (2.5rem) and <code>--stil-gantt-name-width</code> (12rem) to size it.
+    </p>
+</DocExample>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilGantt<>)" />
