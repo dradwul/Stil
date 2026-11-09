@@ -1,0 +1,24 @@
+@page "/components/notifications"
+@using Stil.Docs.Examples.Notifications
+
+<DocsHeader Title="Notification center" Eyebrow="Boards">
+    <Lead>A bell that keeps notifications for later, so a toast that closed is not lost.</Lead>
+</DocsHeader>
+
+<DocExample Type="typeof(Bell)">
+    <p>
+        <code>StilNotificationCenter</code> shows a bell with the number of unread notifications. It opens a panel with
+        them, newest first: choosing one marks it read and opens its page (<code>Href</code>), the cross removes it, and
+        the panel can mark all as read or clear them. New ones are announced to screen readers.
+    </p>
+    <p>
+        The notifications live in <code>IStilNotificationService</code>, one list per user session. A toast shown with
+        <code>keep: true</code> is also kept there (<code>IStilToastService.Show(…, keep: true)</code>), and
+        <code>AddStil(o =&gt; o.KeepToasts = true)</code> keeps every toast. Add your own with
+        <code>Notifications.Add(message, title, variant, href)</code>. The newest 50 are kept
+        (<code>MaxNotifications</code>). Put the bell in the navbar of an interactive layout.
+    </p>
+</DocExample>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilNotificationCenter)" />

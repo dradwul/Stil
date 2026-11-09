@@ -1,0 +1,18 @@
+@inject IStilToastService Toasts
+@inject IStilNotificationService Notifications
+@* A toast shown with keep: true can be found again under the bell after it closes. *@
+<div class="stil-cluster">
+    <StilNotificationCenter />
+    <StilButton Size="StilSize.Small" OnClick="Ship">Ship order #1042</StilButton>
+    <StilButton Size="StilSize.Small" Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline" OnClick="Remind">Add a reminder</StilButton>
+</div>
+
+@code {
+    private int _order = 1042;
+
+    private void Ship() =>
+        Toasts.Show($"Order #{_order++} is on its way.", "Shipped", StilVariant.Success, keep: true);
+
+    private void Remind() =>
+        Notifications.Add("The fire alarm is tested at 10:00 tomorrow.", "Reminder", StilVariant.Warning, href: "components/notifications");
+}
