@@ -1,0 +1,6 @@
+@* The preview beside the text on wide screens. *@
+<StilMarkdownEditor @bind-Value="_text" Label="Release notes" Preview="StilMarkdownPreview.Side" Rows="6" />
+
+@code {
+    private string? _text = "### 0.2.0\n\n- New: **kanban board**\n- Fixed: dates in the agenda\n\n> Thanks to everyone who reported issues!";
+}

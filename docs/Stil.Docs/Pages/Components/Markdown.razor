@@ -1,0 +1,43 @@
+@page "/components/markdown"
+@using Stil.Docs.Examples.Markdown
+
+<DocsHeader Title="Markdown" Eyebrow="Writing">
+    <Lead>Write and show formatted text that is easy to store, compare and search.</Lead>
+</DocsHeader>
+
+<p>
+    <code>Stil.Markdown</code> is a package of its own, built on Markdig, so the core <code>Stil</code> package stays free
+    of dependencies: <code>dotnet add package Stil.Markdown --prerelease</code> and <code>@@using Stil.Markdown</code>.
+    It is safe by default: raw HTML in the Markdown is shown as text, and links and images only go to http, https,
+    mailto and tel addresses or relative ones. It supports CommonMark with tables, task lists, autolinks and
+    strikethrough.
+</p>
+
+<h2 id="notes">Write and show</h2>
+<DocExample Type="typeof(Notes)">
+    <p>
+        <code>StilMarkdownEditor</code> binds like a text area and works with EditForm validation. Its toolbar has bold,
+        italic, heading, lists, quote, code and link, and Ctrl+B, Ctrl+I and Ctrl+K work in the text; Ctrl+Z undoes a
+        change. Write and Preview switch to a preview. With <code>OnImageUpload</code> there is an image button: the app
+        stores the image and returns its URL, which is inserted as Markdown. <code>StilMarkdown</code> shows the text
+        with Stil's typography (<code>stil-prose</code>), also in static SSR.
+    </p>
+</DocExample>
+
+<h2 id="side-by-side">Preview beside the text</h2>
+<DocExample Type="typeof(SideBySide)">
+    <p>
+        <code>Preview="StilMarkdownPreview.Side"</code> shows the preview beside the text when the editor is at least 40rem
+        wide, and under it when it is narrower. <code>None</code> leaves it out.
+    </p>
+</DocExample>
+
+<h2 id="server">On the server</h2>
+<p>
+    <code>StilMarkdownRenderer.ToHtml(markdown)</code> gives the same safe HTML, for example for an e-mail. Tables get
+    the <code>stil-table</code> class.
+</p>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilMarkdownEditor)" />
+<ApiTable Type="typeof(StilMarkdown)" />

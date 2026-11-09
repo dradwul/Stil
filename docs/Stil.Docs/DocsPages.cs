@@ -55,6 +55,10 @@ public static class DocsPages
             new("Activity log and timeline", "components/activity-log"),
             new("Chat and comments", "components/chat"),
         ]),
+        new("Writing", StilIcons.Pencil,
+        [
+            new("Markdown", "components/markdown"),
+        ]),
         new("Boards", StilIcons.Menu,
         [
             new("Kanban board", "components/kanban"),

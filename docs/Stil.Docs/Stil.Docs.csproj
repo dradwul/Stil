@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Stil.Blazor\Stil.Blazor.csproj" />
     <ProjectReference Include="..\..\src\Stil.Charts\Stil.Charts.csproj" />
+    <ProjectReference Include="..\..\src\Stil.Markdown\Stil.Markdown.csproj" />
   </ItemGroup>
 
   <!-- Every example is compiled as a component and also embedded as text, so a page shows the

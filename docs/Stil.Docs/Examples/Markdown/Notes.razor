@@ -1,0 +1,43 @@
+@using System.ComponentModel.DataAnnotations
+@* Order notes written in Markdown, required and at most 2 000 characters, shown when saved. *@
+<EditForm Model="_order" OnValidSubmit="Save" class="stil-form">
+    <DataAnnotationsValidator />
+    <StilMarkdownEditor @bind-Value="_order.Notes" Label="Notes" Hint="Markdown: **bold**, _italic_, lists, links and tables." />
+    <StilButton Type="submit">Save</StilButton>
+</EditForm>
+
+@if (_saved is not null)
+{
+    <div class="stil-card stil-mt-4">
+        <StilMarkdown Value="@_saved" />
+    </div>
+}
+
+@code {
+    private readonly Order _order = new()
+    {
+        Notes = """
+            ## Delivery
+            Leave at the **loading dock**, gate B. Call [Erik](tel:+46701234567) on arrival.
+
+            - [x] Packed
+            - [ ] Shipped
+
+            | Item | Qty |
+            | --- | --- |
+            | Chairs | 12 |
+            | Desks | 4 |
+            """,
+    };
+
+    private string? _saved;
+
+    private void Save() => _saved = _order.Notes;
+
+    private sealed class Order
+    {
+        [Required(ErrorMessage = "Write a note.")]
+        [MaxLength(2000)]
+        public string? Notes { get; set; }
+    }
+}
