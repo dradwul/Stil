@@ -1,0 +1,34 @@
+@* A small board. OnCardMove applies the move to the list, which keeps the cards in board order. *@
+<StilKanban TItem="Job" Items="_tasks" Columns="_columns" Column="t => t.Status" ItemKey="t => t.Id" Title="t => t.Title" OnCardMove="Move">
+    <CardTemplate Context="task">
+        <div class="stil-fw-bold">@task.Title</div>
+        <div class="stil-cluster stil-mt-1">
+            <StilBadge Variant="@(task.Urgent ? StilVariant.Danger : StilVariant.Secondary)">@(task.Urgent ? "Urgent" : "Normal")</StilBadge>
+            <span class="stil-text-muted stil-fs-sm">@task.Owner</span>
+        </div>
+    </CardTemplate>
+</StilKanban>
+
+@code {
+    private sealed record Job(int Id, string Title, string Owner, string Status, bool Urgent = false);
+
+    private readonly StilKanbanColumn[] _columns =
+    [
+        new("todo", "To do"),
+        new("doing", "Doing", Limit: 2),
+        new("review", "Review"),
+        new("done", "Done"),
+    ];
+
+    private readonly List<Job> _tasks =
+    [
+        new(1, "Order visitor badges", "Maja", "todo", Urgent: true),
+        new(2, "Book room 4 for Friday", "Erik", "todo"),
+        new(3, "Print the safety signs", "Sara", "doing"),
+        new(4, "Update the guest Wi-Fi", "Oskar", "doing"),
+        new(5, "New coffee machine", "Lina", "review"),
+        new(6, "Clean the reception desk", "Jonas", "done"),
+    ];
+
+    private void Move(StilKanbanMove<Job> move) => move.ApplyTo(_tasks, (task, column) => task with { Status = column });
+}

@@ -1,0 +1,26 @@
+@page "/components/kanban"
+@using Stil.Docs.Examples.Kanban
+
+<DocsHeader Title="Kanban board" Eyebrow="Boards">
+    <Lead>Columns of cards that move by dragging, by touch and with the keyboard.</Lead>
+</DocsHeader>
+
+<DocExample Type="typeof(TaskBoard)">
+    <p>
+        <code>StilKanban</code> shows <code>Items</code> in <code>Columns</code> by the <code>Column</code> selector, in the
+        order of <code>Items</code>. Drag a card to another place or column; the line shows where it lands, and Escape
+        cancels. With the keyboard, Tab or the arrow keys move between cards, Space picks one up, the arrow keys move it
+        and Space drops it (Escape puts it back), and each step is announced to screen readers.
+    </p>
+    <p>
+        The board does not change your data: <code>OnCardMove</code> gets a <code>StilKanbanMove</code> with the item, the
+        columns, its place, and the cards before and after it. <code>ApplyTo</code> applies it to a list in board order.
+        A column's <code>Limit</code> marks it when it holds more cards (a WIP limit), and the button by its title collapses
+        it (<code>CollapsedColumns</code> sets which start collapsed). <code>CardTemplate</code> sets the content of a card;
+        without it, <code>Title</code> is shown. Needs an interactive render mode; set
+        <code>--stil-kanban-column-width</code> (18rem) and <code>--stil-kanban-height</code> to size it.
+    </p>
+</DocExample>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilKanban<>)" />
