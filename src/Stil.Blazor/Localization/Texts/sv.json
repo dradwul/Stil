@@ -167,6 +167,18 @@
     "SelectedFormat": "{0} fil(er) valda.",
     "List": "Valda filer"
   },
+  "Kanban": {
+    "Board": "Tavla",
+    "Instructions": "Tryck Mellanslag för att lyfta ett kort, piltangenterna för att flytta det, Mellanslag för att släppa det och Escape för att lägga tillbaka det.",
+    "PickedUpFormat": "{0} lyft. Flytta det med piltangenterna, släpp det med Mellanslag.",
+    "MovedFormat": "{0}, plats {1} av {2}.",
+    "DroppedFormat": "{0} släppt i {1}, plats {2} av {3}.",
+    "CancelledFormat": "{0} tillbaka i {1}.",
+    "OverLimit": "över gränsen",
+    "CollapseFormat": "Fäll ihop {0}",
+    "ExpandFormat": "Fäll ut {0}",
+    "Empty": "Inga kort"
+  },
   "LanguageSelector": {
     "Label": "Språk"
   },

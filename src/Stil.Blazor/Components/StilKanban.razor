@@ -1,0 +1,244 @@
+@typeparam TItem
+@inherits StilComponentBase
+@inject IJSRuntime JS
+
+@* A board of columns with cards. Cards move by dragging (stil.js) and with the keyboard: the
+   arrow keys move focus, Space picks a card up, the arrow keys move it, Space drops it and Escape
+   puts it back, all announced. The board raises OnCardMove; the app applies it to its data (see
+   StilKanbanMove.ApplyTo). Columns can have a WIP limit and be collapsed. *@
+<div @ref="_board" @attributes="RootAttributes" class="@Classes("stil-kanban")" role="group" aria-label="@Localize(Label, "Kanban.Board")">
+    <p id="@_instructionsId" class="stil-visually-hidden">@Localize(null, "Kanban.Instructions")</p>
+    @foreach (var column in Columns ?? [])
+    {
+        var cards = CardsIn(column.Key);
+        var collapsed = _collapsed.Contains(column.Key);
+        var over = column.Limit is { } limit && cards.Count > limit;
+        var headingId = $"{_instructionsId}-{column.Key}";
+        <section class="@ColumnClass(collapsed, over)" data-stil-column="@column.Key" data-stil-collapsed="@(collapsed ? "" : null)"
+                 aria-labelledby="@headingId" @key="column.Key">
+            <header class="stil-kanban-header">
+                <button type="button" class="stil-kanban-toggle" aria-expanded="@(collapsed ? "false" : "true")"
+                        aria-label="@string.Format(TextCulture, Localize(null, collapsed ? "Kanban.ExpandFormat" : "Kanban.CollapseFormat"), column.Title)"
+                        @onclick="() => Toggle(column.Key)">
+                    <StilIcon Name="@(collapsed ? StilIcons.ChevronRight : StilIcons.ChevronDown)" />
+                </button>
+                <h3 class="stil-kanban-title" id="@headingId">@column.Title</h3>
+                <span class="stil-kanban-count">
+                    @(column.Limit is { } max ? $"{cards.Count} / {max}" : cards.Count.ToString(TextCulture))
+                    @if (over)
+                    {
+                        <span class="stil-visually-hidden">, @Localize(null, "Kanban.OverLimit")</span>
+                    }
+                </span>
+            </header>
+            @if (!collapsed)
+            {
+                <ol class="stil-kanban-cards" aria-labelledby="@headingId">
+                    @foreach (var item in cards)
+                    {
+                        var key = KeyOf(item);
+                        <li class="stil-kanban-card" tabindex="0" data-stil-item="@key" data-stil-grabbed="@(_grabbed == key ? "" : null)"
+                            aria-describedby="@_instructionsId" @key="key" @onkeydown="e => OnKeyAsync(e, item)">
+                            @if (CardTemplate is not null)
+                            {
+                                @CardTemplate(item)
+                            }
+                            else
+                            {
+                                @TitleOf(item)
+                            }
+                        </li>
+                    }
+                    @if (cards.Count == 0)
+                    {
+                        <li class="stil-kanban-empty">@Localize(EmptyText, "Kanban.Empty")</li>
+                    }
+                </ol>
+            }
+        </section>
+    }
+    <div class="stil-visually-hidden" role="status">@_announcement</div>
+</div>
+
+@code {
+    private readonly string _instructionsId = StilIds.Next("kanban");
+    private readonly HashSet<string> _collapsed = [];
+    private ElementReference _board;
+    private IJSObjectReference? _module;
+    private string? _grabbed;
+    private (string Column, int Index) _origin;
+    private string? _focus;
+    private string? _announcement;
+
+    /// <summary>The cards, in board order: the order within each column is their order here.</summary>
+    [Parameter]
+    public IEnumerable<TItem>? Items { get; set; }
+
+    /// <summary>The columns, left to right.</summary>
+    [Parameter, EditorRequired]
+    public IReadOnlyList<StilKanbanColumn>? Columns { get; set; }
+
+    /// <summary>The key of the column a card is in.</summary>
+    [Parameter, EditorRequired]
+    public Func<TItem, string>? Column { get; set; }
+
+    /// <summary>A key that identifies a card, such as its id.</summary>
+    [Parameter, EditorRequired]
+    public Func<TItem, object>? ItemKey { get; set; }
+
+    /// <summary>The card's text: shown when there is no CardTemplate, and always used in what is announced. The default is ToString().</summary>
+    [Parameter]
+    public Func<TItem, string>? Title { get; set; }
+
+    /// <summary>The content of a card.</summary>
+    [Parameter]
+    public RenderFragment<TItem>? CardTemplate { get; set; }
+
+    /// <summary>Raised when a card is dropped somewhere else, or moved a step with the keyboard.</summary>
+    [Parameter]
+    public EventCallback<StilKanbanMove<TItem>> OnCardMove { get; set; }
+
+    /// <summary>The keys of the columns that start collapsed.</summary>
+    [Parameter]
+    public IEnumerable<string>? CollapsedColumns { get; set; }
+
+    /// <summary>The accessible name of the board. The default is the localized "Board".</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>The text in an empty column. The default is localized.</summary>
+    [Parameter]
+    public string? EmptyText { get; set; }
+
+    private IReadOnlyDictionary<string, object> RootAttributes
+    {
+        get
+        {
+            var attributes = AdditionalAttributes is null ? new Dictionary<string, object>() : new Dictionary<string, object>(AdditionalAttributes);
+            attributes["onstilcardmove"] = EventCallback.Factory.Create<StilCardMoveEventArgs>(this, OnDroppedAsync);
+            return attributes;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        foreach (var key in CollapsedColumns ?? [])
+        {
+            _collapsed.Add(key);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_focus is { } key)
+        {
+            _focus = null;
+            _module ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Stil/stil.js");
+            await _module.InvokeVoidAsync("focusCard", _board, key);
+        }
+    }
+
+    private List<TItem> CardsIn(string column) => (Items ?? []).Where(i => Column?.Invoke(i) == column).ToList();
+
+    private string KeyOf(TItem item) => ItemKey?.Invoke(item)?.ToString() ?? "";
+
+    private string TitleOf(TItem item) => Title?.Invoke(item) ?? item?.ToString() ?? "";
+
+    private string ColumnTitle(string key) => Columns?.FirstOrDefault(c => c.Key == key)?.Title ?? key;
+
+    private static string ColumnClass(bool collapsed, bool over) =>
+        "stil-kanban-column" + (collapsed ? " stil-kanban-column-collapsed" : "") + (over ? " stil-kanban-column-over" : "");
+
+    private void Toggle(string key)
+    {
+        if (!_collapsed.Remove(key))
+        {
+            _collapsed.Add(key);
+        }
+    }
+
+    private async Task OnDroppedAsync(StilCardMoveEventArgs e)
+    {
+        if ((Items ?? []).FirstOrDefault(i => KeyOf(i) == e.Item) is { } item && !_collapsed.Contains(e.Column))
+        {
+            await MoveAsync(item, e.Column, e.Index);
+        }
+    }
+
+    private async Task OnKeyAsync(KeyboardEventArgs e, TItem item)
+    {
+        var key = KeyOf(item);
+        var column = Column?.Invoke(item) ?? "";
+        var cards = CardsIn(column);
+        var index = cards.FindIndex(c => KeyOf(c) == key);
+
+        if (e.Key == " ")
+        {
+            if (_grabbed == key)
+            {
+                _grabbed = null;
+                Announce("Kanban.DroppedFormat", TitleOf(item), ColumnTitle(column), index + 1, cards.Count);
+            }
+            else
+            {
+                _grabbed = key;
+                _origin = (column, index);
+                Announce("Kanban.PickedUpFormat", TitleOf(item));
+            }
+
+            return;
+        }
+
+        if (_grabbed != key)
+        {
+            return;
+        }
+
+        if (e.Key == "Escape")
+        {
+            _grabbed = null;
+            await MoveAsync(item, _origin.Column, _origin.Index);
+            Announce("Kanban.CancelledFormat", TitleOf(item), ColumnTitle(_origin.Column));
+            return;
+        }
+
+        var open = (Columns ?? []).Where(c => !_collapsed.Contains(c.Key)).Select(c => c.Key).ToList();
+        var position = open.IndexOf(column);
+        var (target, targetIndex) = e.Key switch
+        {
+            "ArrowUp" when index > 0 => (column, index - 1),
+            "ArrowDown" when index < cards.Count - 1 => (column, index + 1),
+            "ArrowLeft" when position > 0 => (open[position - 1], Math.Min(index, CardsIn(open[position - 1]).Count)),
+            "ArrowRight" when position >= 0 && position < open.Count - 1 => (open[position + 1], Math.Min(index, CardsIn(open[position + 1]).Count)),
+            _ => (null, 0),
+        };
+
+        if (target is not null)
+        {
+            // Counted before the move: the app may change Items while handling it.
+            var total = CardsIn(target).Count(c => KeyOf(c) != key) + 1;
+            await MoveAsync(item, target, targetIndex);
+            _focus = key;
+            Announce("Kanban.MovedFormat", ColumnTitle(target), targetIndex + 1, total);
+        }
+    }
+
+    private async Task MoveAsync(TItem item, string to, int index)
+    {
+        var from = Column?.Invoke(item) ?? "";
+        var key = KeyOf(item);
+        var others = CardsIn(to).Where(c => KeyOf(c) != key).ToList();
+        index = Math.Clamp(index, 0, others.Count);
+        if (from == to && CardsIn(to).FindIndex(c => KeyOf(c) == key) == index)
+        {
+            return;
+        }
+
+        var before = index < others.Count ? others[index] : default;
+        var after = index > 0 ? others[index - 1] : default;
+        await OnCardMove.InvokeAsync(new StilKanbanMove<TItem>(item, from, to, index, before, after));
+    }
+
+    private void Announce(string key, params object[] values) =>
+        _announcement = string.Format(TextCulture, Localize(null, key), values);
+}

@@ -167,6 +167,18 @@
     "SelectedFormat": "{0} file(s) selected.",
     "List": "Selected files"
   },
+  "Kanban": {
+    "Board": "Board",
+    "Instructions": "Press Space to pick up a card, the arrow keys to move it, Space to drop it and Escape to put it back.",
+    "PickedUpFormat": "{0} picked up. Move it with the arrow keys, drop it with Space.",
+    "MovedFormat": "{0}, position {1} of {2}.",
+    "DroppedFormat": "{0} dropped in {1}, position {2} of {3}.",
+    "CancelledFormat": "{0} put back in {1}.",
+    "OverLimit": "over the limit",
+    "CollapseFormat": "Collapse {0}",
+    "ExpandFormat": "Expand {0}",
+    "Empty": "No cards"
+  },
   "LanguageSelector": {
     "Label": "Language"
   },

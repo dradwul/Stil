@@ -74,6 +74,19 @@ public sealed class StilCropZoomEventArgs : EventArgs
     public double Zoom { get; set; }
 }
 
+/// <summary>Arguments of the <c>@onstilcardmove</c> event: a kanban card dropped by dragging.</summary>
+public sealed class StilCardMoveEventArgs : EventArgs
+{
+    /// <summary>The data-stil-item attribute of the card.</summary>
+    public string Item { get; set; } = "";
+
+    /// <summary>The data-stil-column attribute of the column it was dropped in.</summary>
+    public string Column { get; set; } = "";
+
+    /// <summary>Its place among the column's other cards.</summary>
+    public int Index { get; set; }
+}
+
 /// <summary>
 /// Custom events registered by Stil.lib.module.js. <c>@onstiltoggle</c> fires on a &lt;details&gt;
 /// element's toggle event and reports whether it is now open. <c>@onstilcalendaredge</c> and
@@ -87,6 +100,7 @@ public sealed class StilCropZoomEventArgs : EventArgs
 [EventHandler("onstilcolumnresize", typeof(StilColumnResizeEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
 [EventHandler("onstilcolumnmove", typeof(StilColumnMoveEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
 [EventHandler("onstilcropzoom", typeof(StilCropZoomEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
+[EventHandler("onstilcardmove", typeof(StilCardMoveEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
 public static class StilEventHandlers
 {
 }

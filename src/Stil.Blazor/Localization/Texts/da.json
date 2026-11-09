@@ -167,6 +167,18 @@
     "SelectedFormat": "{0} fil(er) valgt.",
     "List": "Valgte filer"
   },
+  "Kanban": {
+    "Board": "Tavle",
+    "Instructions": "Tryk Mellemrum for at løfte et kort, piletasterne for at flytte det, Mellemrum for at slippe det og Escape for at lægge det tilbage.",
+    "PickedUpFormat": "{0} løftet. Flyt det med piletasterne, slip det med Mellemrum.",
+    "MovedFormat": "{0}, plads {1} af {2}.",
+    "DroppedFormat": "{0} sluppet i {1}, plads {2} af {3}.",
+    "CancelledFormat": "{0} lagt tilbage i {1}.",
+    "OverLimit": "over grænsen",
+    "CollapseFormat": "Fold {0} sammen",
+    "ExpandFormat": "Fold {0} ud",
+    "Empty": "Ingen kort"
+  },
   "LanguageSelector": {
     "Label": "Sprog"
   },

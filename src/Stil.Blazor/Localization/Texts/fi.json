@@ -167,6 +167,18 @@
     "SelectedFormat": "Valittu {0} tiedosto(a).",
     "List": "Valitut tiedostot"
   },
+  "Kanban": {
+    "Board": "Taulu",
+    "Instructions": "Nosta kortti välilyönnillä, siirrä sitä nuolinäppäimillä, pudota välilyönnillä ja palauta Escillä.",
+    "PickedUpFormat": "{0} nostettu. Siirrä nuolinäppäimillä, pudota välilyönnillä.",
+    "MovedFormat": "{0}, sijainti {1}/{2}.",
+    "DroppedFormat": "{0} pudotettu sarakkeeseen {1}, sijainti {2}/{3}.",
+    "CancelledFormat": "{0} palautettu sarakkeeseen {1}.",
+    "OverLimit": "yli rajan",
+    "CollapseFormat": "Pienennä {0}",
+    "ExpandFormat": "Laajenna {0}",
+    "Empty": "Ei kortteja"
+  },
   "LanguageSelector": {
     "Label": "Kieli"
   },
