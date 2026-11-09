@@ -17,6 +17,8 @@ public abstract class StilCalendarBase<TItem> : StilComponentBase
         [DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday];
 
     private Dictionary<DateOnly, List<StilCalendarOccurrence<TItem>>>? _byDay;
+    private readonly List<(TItem Item, int Index, StilRecurrence Rule)> _recurring = [];
+    private readonly Dictionary<DateOnly, IReadOnlyList<StilCalendarOccurrence<TItem>>> _withRecurring = [];
 
     /// <summary>The events. They are read again every time the parameters are set.</summary>
     [Parameter, EditorRequired]
@@ -45,6 +47,14 @@ public abstract class StilCalendarBase<TItem> : StilComponentBase
     /// <summary>Extra text for an item, for example its place or calendar.</summary>
     [Parameter]
     public Func<TItem, string?>? Details { get; set; }
+
+    /// <summary>
+    /// The rule an item repeats by, or null for a one-off item. Its Start and End are the first
+    /// occurrence; every occurrence is shown. To move or cancel one occurrence, add it to the rule's
+    /// Exceptions (and add a one-off item for a moved one).
+    /// </summary>
+    [Parameter]
+    public Func<TItem, StilRecurrence?>? Recurrence { get; set; }
 
     /// <summary>Marks an item as a draft (stil-event-draft): an event that is not saved yet.</summary>
     [Parameter]
@@ -109,6 +119,7 @@ public abstract class StilCalendarBase<TItem> : StilComponentBase
     public override Task SetParametersAsync(ParameterView parameters)
     {
         _byDay = null;
+        _withRecurring.Clear();
         return base.SetParametersAsync(parameters);
     }
 
@@ -137,8 +148,63 @@ public abstract class StilCalendarBase<TItem> : StilComponentBase
         : CurrentCulture.Calendar.GetWeekOfYear(date.ToDateTime(TimeOnly.MinValue), CurrentCulture.DateTimeFormat.CalendarWeekRule, FirstDay);
 
     /// <summary>The items on a day, by start time; longer ones first when they start together.</summary>
-    internal IReadOnlyList<StilCalendarOccurrence<TItem>> OccurrencesOn(DateOnly date) =>
-        (_byDay ??= IndexByDay()).TryGetValue(date, out var occurrences) ? occurrences : [];
+    internal IReadOnlyList<StilCalendarOccurrence<TItem>> OccurrencesOn(DateOnly date)
+    {
+        var single = (_byDay ??= IndexByDay()).TryGetValue(date, out var occurrences) ? occurrences : [];
+        if (_recurring.Count == 0)
+        {
+            return single;
+        }
+
+        if (!_withRecurring.TryGetValue(date, out var all))
+        {
+            var list = new List<StilCalendarOccurrence<TItem>>(single);
+            foreach (var (item, index, rule) in _recurring)
+            {
+                AddRecurring(list, item, index, rule, date);
+            }
+
+            list.Sort(ByStart);
+            _withRecurring[date] = all = list;
+        }
+
+        return all;
+    }
+
+    // The occurrences of a recurring item that fall on a date: one that starts that day, or an
+    // earlier one that runs into it.
+    private void AddRecurring(List<StilCalendarOccurrence<TItem>> list, TItem item, int index, StilRecurrence rule, DateOnly date)
+    {
+        var first = Start!(item);
+        var length = End!(item) - first;
+        if (length < TimeSpan.Zero)
+        {
+            length = TimeSpan.Zero;
+        }
+
+        var midnight = date.ToDateTime(TimeOnly.MinValue);
+        var spanDays = Math.Min(366, (int)Math.Ceiling(length.TotalDays));
+        for (var back = spanDays; back >= 0; back--)
+        {
+            if (rule.OccurrenceOn(first, date.AddDays(-back)) is not { } start)
+            {
+                continue;
+            }
+
+            var end = start + length;
+            if (back > 0 && end <= midnight)
+            {
+                continue;
+            }
+
+            var from = Math.Max(0, (int)(start - midnight).TotalMinutes);
+            var to = Math.Min(MinutesPerDay, (int)Math.Ceiling((end - midnight).TotalMinutes));
+            list.Add(new(item, index, date, from, Math.Max(from, to)) { OccurrenceStart = start });
+        }
+    }
+
+    private static int ByStart(StilCalendarOccurrence<TItem> a, StilCalendarOccurrence<TItem> b) =>
+        a.StartMinute != b.StartMinute ? a.StartMinute.CompareTo(b.StartMinute) : b.EndMinute.CompareTo(a.EndMinute);
 
     private Dictionary<DateOnly, List<StilCalendarOccurrence<TItem>>> IndexByDay()
     {
@@ -148,9 +214,16 @@ public abstract class StilCalendarBase<TItem> : StilComponentBase
             return byDay;
         }
 
+        _recurring.Clear();
         var index = 0;
         foreach (var item in Items)
         {
+            if (Recurrence?.Invoke(item) is { } rule)
+            {
+                _recurring.Add((item, index++, rule));
+                continue;
+            }
+
             var start = Start(item);
             var end = End(item);
             if (end < start)
@@ -179,9 +252,7 @@ public abstract class StilCalendarBase<TItem> : StilComponentBase
 
         foreach (var list in byDay.Values)
         {
-            list.Sort((a, b) => a.StartMinute != b.StartMinute
-                ? a.StartMinute.CompareTo(b.StartMinute)
-                : b.EndMinute.CompareTo(a.EndMinute));
+            list.Sort(ByStart);
         }
 
         return byDay;

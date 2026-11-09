@@ -434,9 +434,9 @@ the first day of the week follow the culture.
 
 | Component | Parameters |
 | --- | --- |
-| Shared | `Items`, `Start`, `End`, `Title`, `Variant`, `Color`, `Details`, `Draft`, `OnItemClick` (events are buttons only when it is set), `Now`, `WorkdayStart`, `WorkdayEnd`, `WorkingDays`, `ShowLoad`, `ShowFreeTime`, `MinFreeMinutes`, `Culture`, `FirstDayOfWeek`, `HeadingLevel`, and the texts |
+| Shared | `Items`, `Start`, `End`, `Title`, `Variant`, `Color`, `Details`, `Draft`, `Recurrence` (a `StilRecurrence`: daily, weekly on days, monthly or yearly, `Interval`, `Until`, `Count`, `Exceptions`; `Parse` and `ToString` for iCalendar RRULEs), `OnItemClick` (events are buttons only when it is set), `Now`, `WorkdayStart`, `WorkdayEnd`, `WorkingDays`, `ShowLoad`, `ShowFreeTime`, `MinFreeMinutes`, `Culture`, `FirstDayOfWeek`, `HeadingLevel`, and the texts |
 | `StilCalendar<TItem>` | `@bind-Month`, `@bind-SelectedDate`, `OnDateOpen` (the selected day clicked again, or "+N more"), `Mini`, `ShowWeekNumbers`, `MaxEventsPerDay`, `RangeStart`/`RangeEnd`, `ShowNavigation`, `HrefTemplate`. A WAI-ARIA grid; stil.js moves between the days and past the edges of the month. |
-| `StilWeekPlanner<TItem>` | `@bind-Date`, `View` (`Week`, `WorkWeek`, `Day`), `FirstHour`/`LastHour`, `Editable`, `OnItemChange` (moved or resized), `OnSlotSelect` (a free block clicked or a range dragged), `NewEventMinutes`, `AgendaWhenNarrow` (an agenda below 36rem, the default), `ShowNavigation`, `HrefTemplate` |
+| `StilWeekPlanner<TItem>` | `@bind-Date`, `View` (`Week`, `WorkWeek`, `Day`), `FirstHour`/`LastHour`, `Editable`, `OnItemChange` (moved or resized; `Occurrence` for one occurrence of a recurring item), `OnSlotSelect` (a free block clicked or a range dragged), `NewEventMinutes`, `AgendaWhenNarrow` (an agenda below 36rem, the default), `ShowNavigation`, `HrefTemplate` |
 | `StilAgenda<TItem>` | `Date` (the first day, today by default), `Days`, `ShowEmptyDays`, `EmptyText` |
 
 Dragging never changes your data by itself: save the new times in

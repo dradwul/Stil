@@ -354,8 +354,11 @@
         }
 
         var item = placed.Placement.Occurrence.Item;
-        var start = Start(item);
-        var end = End(item);
+        // One occurrence of a recurring item moves on its own, from its own times.
+        var occurrence = placed.Placement.Occurrence.OccurrenceStart;
+        var start = occurrence ?? Start(item);
+        var end = start + (End(item) - Start(item));
+        var original = (start, end);
         if (e.Action == "move")
         {
             var shift = TimeSpan.FromDays(e.Day - placed.Day) + TimeSpan.FromMinutes(e.Start - placed.Placement.Start);
@@ -375,9 +378,9 @@
             return;
         }
 
-        if (start != Start(item) || end != End(item))
+        if ((start, end) != original)
         {
-            await OnItemChange.InvokeAsync(new StilCalendarItemChange<TItem>(item, start, end));
+            await OnItemChange.InvokeAsync(new StilCalendarItemChange<TItem>(item, start, end) { Occurrence = occurrence });
         }
     }
 }

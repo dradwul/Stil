@@ -20,13 +20,25 @@ public readonly record struct StilTimeSlot(DateTime Start, DateTime End)
 }
 
 /// <summary>An item that was moved or resized in StilWeekPlanner, with its new start and end.</summary>
-public sealed record StilCalendarItemChange<TItem>(TItem Item, DateTime Start, DateTime End);
+public sealed record StilCalendarItemChange<TItem>(TItem Item, DateTime Start, DateTime End)
+{
+    /// <summary>
+    /// For one occurrence of a recurring item, the start it had before the change; null for a
+    /// one-off item. Start and End are then that occurrence's new times: add the occurrence's day
+    /// to the rule's Exceptions and add a one-off item at the new time.
+    /// </summary>
+    public DateTime? Occurrence { get; init; }
+}
 
 /// <summary>
 /// The part of an item that falls on one day. StartMinute and EndMinute are minutes from that
 /// day's midnight (0–1440); an item over several days has one occurrence per day.
 /// </summary>
-internal sealed record StilCalendarOccurrence<TItem>(TItem Item, int Index, DateOnly Date, int StartMinute, int EndMinute);
+internal sealed record StilCalendarOccurrence<TItem>(TItem Item, int Index, DateOnly Date, int StartMinute, int EndMinute)
+{
+    /// <summary>The start of this occurrence of a recurring item; null for a one-off item.</summary>
+    public DateTime? OccurrenceStart { get; init; }
+}
 
 /// <summary>An occurrence placed in a day column: its shown start and end, and its overlap column.</summary>
 internal sealed class StilCalendarPlacement<TItem>(StilCalendarOccurrence<TItem> occurrence, int start, int end)
