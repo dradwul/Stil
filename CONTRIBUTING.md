@@ -188,6 +188,7 @@ first.
 | NuGet (Blazor + stylesheet) | `Stil` | Published from a version tag (see Releases). |
 | npm (CSS only) | `stil-css` | Free on npm. Prepared in `src/Stil.Css/package.json`. Not published yet. `stil` is taken by another package. |
 | NuGet (charts) | `Stil.Charts` | Packed by `src/Stil.Charts`, published with `Stil`. |
+| NuGet (Markdown) | `Stil.Markdown` | Packed by `src/Stil.Markdown`, published with `Stil`. It depends on Markdig, so the core package does not. |
 | NuGet (`dotnet new` templates) | `Stil.Templates` | Packed by `templates/Stil.Templates`, published with `Stil`. |
 
 All packages share the version in `Directory.Build.props` and are listed in
@@ -204,7 +205,7 @@ All packages share the version in `Directory.Build.props` and are listed in
    markup. Check it in light and dark mode. If a change matters for a typical
    app page, also check `samples/Stil.Html/admin.html`.
 3. Every Blazor component gets bUnit tests in `tests/Stil.Blazor.Tests`
-   (charts: `tests/Stil.Charts.Tests`), an example in `samples/Stil.Demo`
+   (charts: `tests/Stil.Charts.Tests`, Markdown: `tests/Stil.Markdown.Tests`), an example in `samples/Stil.Demo`
    and a section on its page in the docs site. A docs example is a component
    in `docs/Stil.Docs/Examples/{Page}/`, shown with
    `<DocExample Type="typeof(…)">`, so the code on the page is the code that
@@ -237,8 +238,8 @@ All packages share the version in `Directory.Build.props` and are listed in
 
 ## Releases
 
-`.github/workflows/release.yml` publishes `Stil`, `Stil.Charts` and
-`Stil.Templates` to nuget.org when the owner pushes a version tag. Nothing
+`.github/workflows/release.yml` publishes `Stil`, `Stil.Charts`,
+`Stil.Markdown` and `Stil.Templates` to nuget.org when the owner pushes a version tag. Nothing
 else publishes.
 
 1. In `CHANGELOG.md`, move the notes under `[Unreleased]` to a new section

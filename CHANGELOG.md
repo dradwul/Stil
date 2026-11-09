@@ -40,6 +40,16 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   static SSR and print sharply. `StilCodes` has the encoders (`QrSvg`,
   `QrModules`, `BarcodeSvg`, `BarcodeModules`, `EanCheckDigit`) for PDFs and
   label printers.
+- **Stil.Markdown** (new package, on Markdig): `StilMarkdown` shows Markdown
+  safely (raw HTML as text, only safe links and images) with tables, task
+  lists, autolinks and strikethrough, also in static SSR; `StilMarkdownEditor`
+  writes it with a toolbar, Ctrl+B, Ctrl+I and Ctrl+K, a preview in a tab or
+  beside the text, EditForm validation and image uploads.
+  `StilMarkdownRenderer.ToHtml` gives the same HTML on the server.
+- **Stil CSS**: `stil-prose`, the typography and spacing of formatted text,
+  and the Markdown editor (`stil-markdown-editor`). In stil.js,
+  `textarea[data-stil-markdown]` with toolbar commands and shortcuts, and
+  `insertMarkdown`.
 - **Stil for Blazor**: `StilGantt<TItem>`, a Gantt chart: one row per task, a
   bar over its days with its progress, milestones, and finish-to-start arrows
   from `DependsOn` (dashed in the danger color when a task starts too early).

@@ -22,7 +22,7 @@ something usable.
 | 11 | Data grid 2, in five parts: totals and export ✅, column layout ✅, grouping ✅, inline editing ✅, tree grid ✅ | Done |
 | 12 | Capture and records: QR codes, scanner, signature, activity log, chat | Done |
 | 13 | Boards and workspace: kanban, command palette, notifications, recurring events, resources, Gantt | Done |
-| 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | Planned |
+| 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | In progress |
 | V2 | Version 2, Stil Sites: section blocks, page model, a visual page builder, content | Planned (after 1.0) |
 
 A phase is done when every item in it is checked. Items that need the
@@ -1066,26 +1066,45 @@ tests.
 as `DateOnly` (the end included), not a view of the planner. It shows the
 plan and does not edit it; dragging bars is left for later.
 
-## Phase 14: Markdown, rich text and charts 2
+## Phase 14: Markdown, rich text and charts 2 🚧 In progress
 
 Goal: writing formatted text and showing more kinds of data, both in the Stil
 look and without large dependencies. Markdown comes first: it is smaller, it
 is easier to store, compare and search than HTML, and the rich text editor
-reuses its toolbar.
+reuses its toolbar. The phase is split into five parts that each end with
+something usable.
 
-**Plan:**
+**Done when (all parts):** the demo's order page has notes written in
+Markdown, a product description written in the rich text editor, and its
+dashboard shows a gauge, a heat map of orders per hour, and revenue as bars
+with a margin line.
 
-- [ ] `Stil.Markdown`, a package of its own on top of Markdig (BSD licence,
+### Phase 14.1: Markdown ✅ Done
+
+- [x] `Stil.Markdown`, a package of its own on top of Markdig (BSD licence,
   the standard .NET Markdown library), so the core `Stil` package stays
-  free of dependencies, as `Stil.Charts` does:
-  - `StilMarkdown`: renders Markdown safely (raw HTML off, safe links) with
-    Stil's typography: headings, lists, tables, code blocks, quotes, task
-    lists. It works in static SSR.
-  - `StilMarkdownEditor`: a text area with a Stil toolbar (bold, italic,
-    heading, lists, link, code, quote) and keyboard shortcuts, and a preview
-    beside it or in a tab. `@bind-Value`, EditForm validation (required, max
-    length), and images through `StilFileUpload` (the app stores them and
-    returns the URL).
+  free of dependencies, as `Stil.Charts` does.
+- [x] `StilMarkdown`: renders Markdown safely (raw HTML off, safe links) with
+  Stil's typography: headings, lists, tables, code blocks, quotes, task
+  lists. It works in static SSR.
+- [x] `StilMarkdownEditor`: a text area with a Stil toolbar (bold, italic,
+  heading, lists, link, code, quote) and keyboard shortcuts, and a preview
+  beside it or in a tab. `@bind-Value`, EditForm validation (required, max
+  length), and images through `StilFileUpload` (the app stores them and
+  returns the URL).
+
+**Done when:** a form saves notes written in Markdown and shows them safely.
+✅ (The docs: notes written with the toolbar and Ctrl+B, previewed, saved
+and shown; 11 tests, among them HTML, script and javascript: links kept out.)
+
+**Changes from the plan:** the formatting lives in stil.js
+(`textarea[data-stil-markdown]`), so it needs no round trip to the server and
+Ctrl+Z undoes it. The typography is a new Stil CSS class, `stil-prose`, which
+the rich text view will share. Markdig 1.4.2, the newest release that is at
+least two weeks old.
+
+### Phase 14.2: Rich text
+
 - [ ] `StilRichTextEditor`: bold, italic, headings, lists, links, quotes and
   code, with a Stil toolbar and keyboard shortcuts, on top of
   `contenteditable`. The output is sanitized HTML (an allow-list of tags), or
@@ -1093,18 +1112,34 @@ reuses its toolbar.
   cleanly from Word and web pages.
 - [ ] `StilRichTextView`: renders saved HTML or Markdown safely, with Stil's
   typography.
-- [ ] Charts 2 in Stil.Charts, with the same accessibility as today (summary,
-  data table, tooltips):
-  - `StilScatterChart`, also as a bubble chart.
-  - `StilGauge`, for a value against a target, as an arc or a bar.
-  - `StilHeatMap`, for example activity by weekday and hour (it can show the
-    calendar's load).
-  - Combined charts: bars and a line in one chart, with a second value axis.
-- [ ] Docs, demo sections and bUnit tests.
 
-**Done when:** the demo's order page has notes written in Markdown, a
-product description written in the rich text editor, and its dashboard shows a gauge, a heat map of orders per hour, and revenue as bars
+**Done when:** a product description is written, pasted into from a web page,
+saved and shown safely.
+
+### Phase 14.3: Scatter and gauge
+
+- [ ] `StilScatterChart`, also as a bubble chart, in Stil.Charts with the same
+  accessibility as today (summary, data table, tooltips).
+- [ ] `StilGauge`, for a value against a target, as an arc or a bar.
+
+**Done when:** the docs show a scatter, a bubble chart and both gauges.
+
+### Phase 14.4: Heat map and combined charts
+
+- [ ] `StilHeatMap`, for example activity by weekday and hour (it can show the
+  calendar's load).
+- [ ] Combined charts: bars and a line in one chart, with a second value axis.
+
+**Done when:** the docs show orders per hour as a heat map and revenue as bars
 with a margin line.
+
+### Phase 14.5: Demo and docs
+
+- [ ] The order page's Markdown notes and rich text product description, and
+  the dashboard's gauge, heat map and combined chart.
+- [ ] Docs, demo sections and bUnit tests for every part.
+
+**Done when:** the phase's own "done when" above.
 
 ---
 

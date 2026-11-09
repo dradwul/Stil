@@ -12,7 +12,9 @@ Stil is a themeable UI toolkit in two parts:
 | **Stil for Blazor** | A Blazor component library built on Stil CSS: forms with validation, a data grid, pickers, tree view, tabs, dropdowns, dialogs and toasts. Shipped as the `Stil` NuGet package. | [`src/Stil.Blazor`](src/Stil.Blazor/README.md) |
 
 Around them: `Stil.Charts`, themeable SVG charts for Blazor
-([`src/Stil.Charts`](src/Stil.Charts/README.md)); `dotnet new stil-app`, a
+([`src/Stil.Charts`](src/Stil.Charts/README.md)); `Stil.Markdown`, a
+Markdown view and editor ([`src/Stil.Markdown`](src/Stil.Markdown/README.md));
+`dotnet new stil-app`, a
 project template ([`templates/Stil.Templates`](templates/Stil.Templates/README.md));
 and a documentation site with live examples and a theme builder
 ([`docs/Stil.Docs`](docs/Stil.Docs)).
@@ -35,6 +37,7 @@ library.
 | A new Blazor app with Stil set up | `dotnet new install Stil.Templates`, then `dotnet new stil-app -n MyApp` ([templates](templates/Stil.Templates/README.md)) |
 | Stil in an existing Blazor app | `dotnet add package Stil --prerelease`, then follow [Get started](src/Stil.Blazor/README.md#get-started) |
 | Charts | `dotnet add package Stil.Charts --prerelease` ([charts](src/Stil.Charts/README.md)) |
+| Markdown | `dotnet add package Stil.Markdown --prerelease` ([Markdown](src/Stil.Markdown/README.md)) |
 | Only the CSS | Download `stil.min.css` from a [release](https://github.com/dradwul/Stil/releases), or link it from jsDelivr ([Stil CSS](src/Stil.Css/README.md#install)) |
 
 All packages require .NET 10. The latest version is on
@@ -99,11 +102,12 @@ assets/              Logo and other shared brand files
 src/Stil.Css/        Stil CSS: sources (src/), build scripts (build/), output (dist/), npm package
 src/Stil.Blazor/     Stil for Blazor: Razor class library, packed as NuGet "Stil"
 src/Stil.Charts/     SVG charts for Blazor, packed as NuGet "Stil.Charts"
+src/Stil.Markdown/   Markdown view and editor (on Markdig), packed as NuGet "Stil.Markdown"
 templates/           dotnet new stil-app (Stil.Templates) and its test script
 docs/Stil.Docs/      Documentation site (Blazor WebAssembly) with a theme builder
 samples/Stil.Html/   Plain-HTML showcase of every CSS class, plus an admin page built with Stil
 samples/Stil.Demo/   Blazor web app: gallery, orders, budget, check-in, task board, rooms and a project plan
-tests/               bUnit tests (Stil.Blazor.Tests, Stil.Charts.Tests) and Playwright tests (Stil.Visual)
+tests/               bUnit tests (Stil.Blazor.Tests, Stil.Charts.Tests, Stil.Markdown.Tests) and Playwright tests (Stil.Visual)
 tools/               check-contrast.mjs: WCAG contrast check run by CI
 CHANGELOG.md         Changes in every package
 CONTRIBUTING.md      Naming rules, scope model, browser support, workflow
@@ -177,6 +181,7 @@ Build local NuGet packages (releases are published from a tag; see
 ```shell
 dotnet pack src/Stil.Blazor -o artifacts
 dotnet pack src/Stil.Charts -o artifacts
+dotnet pack src/Stil.Markdown -o artifacts
 dotnet pack templates/Stil.Templates -o artifacts
 ```
 
