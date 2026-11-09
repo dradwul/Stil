@@ -1020,14 +1020,22 @@ browser; 5 bUnit tests.)
 `KeepToasts`) and the app can add to directly. The panel is a native
 popover, so it sits above everything and closes on an outside click.
 
-### Phase 13.4: Recurring events
+### Phase 13.4: Recurring events ✅ Done
 
-- [ ] Recurring events in the calendar, agenda and planner: RRULE-style rules
+- [x] Recurring events in the calendar, agenda and planner: RRULE-style rules
   (daily, weekly on given days, monthly, with an end date or a count, and
   exceptions) expanded by Stil.
 
 **Done when:** a weekly meeting shows in every view, with one occurrence
-moved.
+moved. ✅ (bUnit: a weekly series with one occurrence moved, in the agenda and
+the month view, and one dragged in the week planner; 6 tests. The docs show a
+daily standup and a team meeting every other week.)
+
+**Changes from the plan:** a moved occurrence is the app's: `OnItemChange`
+gives its original start (`Occurrence`), and the app adds the day to the
+rule's `Exceptions` and a one-off item at the new time, as iCalendar does with
+EXDATE and an override. Monthly rules repeat on the start's day of the month;
+rules like "the second Tuesday" are left for later.
 
 ### Phase 13.5: Resource view
 

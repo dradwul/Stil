@@ -40,6 +40,12 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   static SSR and print sharply. `StilCodes` has the encoders (`QrSvg`,
   `QrModules`, `BarcodeSvg`, `BarcodeModules`, `EanCheckDigit`) for PDFs and
   label printers.
+- **Stil for Blazor**: recurring events in `StilCalendar`, `StilWeekPlanner`
+  and `StilAgenda`: a `Recurrence` selector gives an item a `StilRecurrence`
+  (daily, weekly on given days, monthly or yearly, with an interval, an end
+  date or a count, and exceptions), read from and written as an iCalendar
+  RRULE. Dragging one occurrence raises `OnItemChange` with its original start
+  in `Occurrence`.
 - **Stil for Blazor**: `StilNotificationCenter`, a bell with the unread count
   and a panel of notifications from the new `IStilNotificationService`.
   `IStilToastService.Show(…, keep: true)` keeps a toast there after it
