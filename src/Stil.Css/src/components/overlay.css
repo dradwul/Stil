@@ -393,3 +393,81 @@
     top: auto;
     bottom: calc(100% + var(--stil-space-1));
 }
+
+/* Command palette: a search over pages and actions in a stil-dialog, near the top of the screen.
+   <dialog class="stil-dialog stil-command-palette">
+     <div class="stil-command-search"><svg …></svg><input class="stil-command-input" role="combobox" …></div>
+     <div class="stil-command-results"><div class="stil-combobox-list" role="listbox">
+       <div role="group"><div class="stil-command-group">Pages</div>
+         <div class="stil-combobox-option" role="option"><span class="stil-command-title">Orders</span></div></div>
+     </div></div>
+     <div class="stil-command-footer">↑↓ to move · Enter to choose · Esc to close</div>
+   </dialog>
+   stil-command-button opens it, with a stil-command-kbd hint. */
+
+.stil-command-palette {
+    width: min(36rem, calc(100vw - 2 * var(--stil-space-4)));
+    margin-block-start: min(12vh, 6rem);
+}
+
+.stil-command-search {
+    display: flex;
+    align-items: center;
+    gap: var(--stil-space-2);
+    padding: var(--stil-space-3) var(--stil-space-4);
+    border-bottom: 1px solid var(--stil-color-border);
+    color: var(--stil-color-text-muted);
+}
+
+.stil-command-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--stil-color-text);
+    font: inherit;
+    font-size: var(--stil-font-size-lg);
+    outline: none;
+}
+
+.stil-command-results {
+    max-height: min(24rem, 60dvh);
+    padding: var(--stil-space-2);
+    overflow-y: auto;
+}
+
+.stil-command-group {
+    padding: var(--stil-space-2) var(--stil-space-3) var(--stil-space-1);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-xs);
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-command-title { flex: 1; }
+
+.stil-command-kbd {
+    padding: 0 var(--stil-space-1);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-sm);
+    color: var(--stil-color-text-muted);
+    font-family: inherit;
+    font-size: var(--stil-font-size-xs);
+    white-space: nowrap;
+}
+
+.stil-command-empty {
+    margin: 0;
+    padding: var(--stil-space-4);
+    color: var(--stil-color-text-muted);
+    text-align: center;
+}
+
+.stil-command-footer {
+    padding: var(--stil-space-2) var(--stil-space-4);
+    border-top: 1px solid var(--stil-color-border);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-xs);
+}
+
+.stil-command-button { gap: var(--stil-space-2); }

@@ -23,6 +23,8 @@
 //     place or column ([data-stil-column]); on release a bubbling stilcardmove event fires
 //     (detail: item, column and index among the column's other cards). The arrow keys move focus
 //     between cards; a card with data-stil-grabbed is moved by the page instead.
+//   - bindCommandKey calls the .NET method OpenFromKey on Ctrl+K or Cmd+K; readStorage and
+//     writeStorage keep small values (such as recent commands) in local storage.
 //   - A textarea with data-stil-send="enter" submits its form on Enter (Shift+Enter breaks the
 //     line); with data-stil-send="ctrl-enter", on Ctrl+Enter or Cmd+Enter.
 //   - Keys that a widget handles itself (arrows in a tree, tab list or combobox; Enter and Escape
@@ -1420,6 +1422,36 @@ export function closeDialog(dialog) {
 }
 
 if (typeof document !== 'undefined') init();
+
+// Command palette: Ctrl+K (Cmd+K on a Mac) opens it from anywhere on the page. Returns an object
+// whose dispose() removes the shortcut.
+export function bindCommandKey(dotnet, key = 'k') {
+    const handler = event => {
+        if ((event.ctrlKey || event.metaKey) && !event.altKey && !event.shiftKey && event.key.toLowerCase() === key) {
+            event.preventDefault();
+            dotnet.invokeMethodAsync('OpenFromKey');
+        }
+    };
+    document.addEventListener('keydown', handler);
+    return { dispose: () => document.removeEventListener('keydown', handler) };
+}
+
+// Small values in local storage. Private windows and blocked storage give null and keep nothing.
+export function readStorage(key) {
+    try {
+        return localStorage.getItem(key);
+    } catch {
+        return null;
+    }
+}
+
+export function writeStorage(key, value) {
+    try {
+        localStorage.setItem(key, value);
+    } catch {
+        // Not kept; the page works without it.
+    }
+}
 
 // Focuses the first field of the row or cell being edited in a data grid (StilDataGrid EditMode).
 export function focusEditor(table) {
