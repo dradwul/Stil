@@ -116,6 +116,13 @@
     "TypingManyFormat": "{0} are typing…",
     "NewFormat": "New message from {0}: {1}"
   },
+  "CommandPalette": {
+    "Label": "Command palette",
+    "Placeholder": "Search pages and actions",
+    "Button": "Search",
+    "Recent": "Recent",
+    "Keys": "↑↓ to move · Enter to choose · Esc to close"
+  },
   "Combobox": {
     "NoResults": "No results",
     "Searching": "Searching…",

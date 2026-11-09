@@ -1,0 +1,285 @@
+@inherits StilComponentBase
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+
+@* A search over pages and actions in a modal dialog, opened with Ctrl+K (Cmd+K) from anywhere on
+   the page or with its button. It follows the WAI-ARIA combobox pattern: focus stays in the
+   search field, the arrow keys move through the results, Enter chooses and Escape closes. With an
+   empty search it lists the recent choices first. Needs an interactive render mode. *@
+@if (ShowButton)
+{
+    <button type="button" @attributes="AdditionalAttributes" class="@Classes("stil-btn stil-btn-outline stil-btn-secondary stil-btn-sm stil-command-button")"
+            aria-keyshortcuts="Control+K" @onclick="OpenAsync">
+        <StilIcon Name="@StilIcons.Search" />
+        <span>@Localize(ButtonText, "CommandPalette.Button")</span>
+        <kbd class="stil-command-kbd" aria-hidden="true">Ctrl K</kbd>
+    </button>
+}
+<dialog @ref="_dialog" class="stil-dialog stil-command-palette" aria-label="@Localize(Label, "CommandPalette.Label")">
+    @if (_open)
+    {
+        <div class="stil-command-search">
+            <StilIcon Name="@StilIcons.Search" />
+            <input type="text" class="stil-command-input" role="combobox" aria-expanded="true" aria-controls="@_listId"
+                   aria-autocomplete="list" aria-activedescendant="@ActiveId" autocomplete="off" spellcheck="false" autofocus
+                   aria-label="@Localize(Placeholder, "CommandPalette.Placeholder")" placeholder="@Localize(Placeholder, "CommandPalette.Placeholder")"
+                   value="@_query" @oninput="OnInput" @onkeydown="OnKeyDownAsync" />
+        </div>
+        <div class="stil-command-results">
+            @if (_results.Count == 0)
+            {
+                <p class="stil-command-empty" role="status">@Localize(NoResultsText, "Combobox.NoResults")</p>
+            }
+            else
+            {
+                <div class="stil-combobox-list" id="@_listId" role="listbox" aria-label="@Localize(Label, "CommandPalette.Label")">
+                    @foreach (var group in _results.GroupBy(r => r.Heading))
+                    {
+                        var headingId = $"{_listId}-{Math.Abs(group.Key.GetHashCode())}";
+                        <div role="group" aria-labelledby="@headingId">
+                            @if (group.Key.Length > 0)
+                            {
+                                <div class="stil-command-group" id="@headingId">@group.Key</div>
+                            }
+                            @foreach (var result in group)
+                            {
+                                var index = _results.IndexOf(result);
+                                <div id="@OptionId(index)" role="option" aria-selected="@(index == _active ? "true" : "false")"
+                                     class="@(index == _active ? "stil-combobox-option stil-combobox-option-active" : "stil-combobox-option")"
+                                     @onmousedown:preventDefault="true" @onclick="() => RunAsync(result.Command)" @onmousemove="() => _active = index">
+                                    @if (result.Command.Icon is { Length: > 0 } icon)
+                                    {
+                                        <StilIcon Name="@icon" />
+                                    }
+                                    <span class="stil-command-title">@result.Command.Title</span>
+                                    @if (result.Command.Shortcut is { Length: > 0 } shortcut)
+                                    {
+                                        <kbd class="stil-command-kbd">@shortcut</kbd>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+        <div class="stil-command-footer" aria-hidden="true">@Localize(null, "CommandPalette.Keys")</div>
+    }
+</dialog>
+
+@code {
+    private readonly string _listId = StilIds.Next("commands");
+    private ElementReference _dialog;
+    private IJSObjectReference? _module;
+    private IJSObjectReference? _hotkey;
+    private DotNetObjectReference<StilCommandPalette>? _reference;
+    private bool _open;
+    private string _query = "";
+    private int _active;
+    private List<(string Heading, StilCommand Command)> _results = [];
+    private List<string> _recent = [];
+
+    /// <summary>The pages and actions to search.</summary>
+    [Parameter, EditorRequired]
+    public IEnumerable<StilCommand>? Commands { get; set; }
+
+    /// <summary>Shows a button that opens the palette, for the navbar. The default is true; Ctrl+K works either way.</summary>
+    [Parameter]
+    public bool ShowButton { get; set; } = true;
+
+    /// <summary>How many recent choices to list with an empty search. The default is 5; 0 turns them off.</summary>
+    [Parameter]
+    public int RecentCount { get; set; } = 5;
+
+    /// <summary>The local storage key the recent choices are kept under, per browser. The default is "stil-recent-commands".</summary>
+    [Parameter]
+    public string RecentKey { get; set; } = "stil-recent-commands";
+
+    /// <summary>The accessible name of the palette. The default is localized.</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>The search field's placeholder. The default is localized.</summary>
+    [Parameter]
+    public string? Placeholder { get; set; }
+
+    /// <summary>The button's text. The default is the localized "Search".</summary>
+    [Parameter]
+    public string? ButtonText { get; set; }
+
+    /// <summary>The text shown when nothing matches. The default is localized.</summary>
+    [Parameter]
+    public string? NoResultsText { get; set; }
+
+    private string? ActiveId => _results.Count == 0 ? null : OptionId(_active);
+
+    private string OptionId(int index) => $"{_listId}-{index}";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Stil/stil.js");
+            _reference = DotNetObjectReference.Create(this);
+            _hotkey = await _module.InvokeAsync<IJSObjectReference>("bindCommandKey", _reference);
+        }
+    }
+
+    /// <summary>Opens the palette with an empty search.</summary>
+    public async Task OpenAsync()
+    {
+        if (_module is null)
+        {
+            return;
+        }
+
+        _query = "";
+        _recent = RecentCount > 0 ? Split(await _module.InvokeAsync<string?>("readStorage", RecentKey)) : [];
+        Search();
+        _open = true;
+        StateHasChanged();
+        await _module.InvokeVoidAsync("showDialog", _dialog, _reference);
+    }
+
+    /// <summary>Called by stil.js on Ctrl+K or Cmd+K.</summary>
+    [JSInvokable]
+    public Task OpenFromKey() => _open ? CloseAsync() : OpenAsync();
+
+    /// <summary>Called by stil.js when the dialog closes, whoever closed it.</summary>
+    [JSInvokable]
+    public void OnDialogClosed()
+    {
+        _open = false;
+        StateHasChanged();
+    }
+
+    private async Task CloseAsync()
+    {
+        _open = false;
+        if (_module is not null)
+        {
+            await _module.InvokeVoidAsync("closeDialog", _dialog);
+        }
+    }
+
+    private void OnInput(ChangeEventArgs e)
+    {
+        _query = e.Value?.ToString() ?? "";
+        Search();
+    }
+
+    private async Task OnKeyDownAsync(KeyboardEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case "ArrowDown" when _results.Count > 0:
+                _active = (_active + 1) % _results.Count;
+                break;
+            case "ArrowUp" when _results.Count > 0:
+                _active = (_active - 1 + _results.Count) % _results.Count;
+                break;
+            case "Home" when _results.Count > 0 && _query.Length == 0:
+                _active = 0;
+                break;
+            case "End" when _results.Count > 0 && _query.Length == 0:
+                _active = _results.Count - 1;
+                break;
+            case "Enter" when _results.Count > 0:
+                await RunAsync(_results[_active].Command);
+                break;
+            case "Escape":
+                await CloseAsync();
+                break;
+        }
+    }
+
+    // Matches in the title rank above matches in the group or keywords; earlier ones above later.
+    private void Search()
+    {
+        var commands = (Commands ?? []).ToList();
+        var query = _query.Trim();
+        _active = 0;
+        if (query.Length == 0)
+        {
+            var recentHeading = Localize(null, "CommandPalette.Recent");
+            var recent = _recent.Select(id => commands.FirstOrDefault(c => c.Id == id)).OfType<StilCommand>().Take(RecentCount);
+            _results = [.. recent.Select(c => (recentHeading, c)), .. commands.Select(c => (c.Group ?? "", c))];
+            return;
+        }
+
+        _results = commands
+            .Select(c => (Command: c, Score: Score(c, query)))
+            .Where(r => r.Score > 0)
+            .OrderByDescending(r => r.Score)
+            .ThenBy(r => commands.IndexOf(r.Command))
+            .GroupBy(r => r.Command.Group ?? "")
+            .SelectMany(g => g.Select(r => (g.Key, r.Command)))
+            .ToList();
+    }
+
+    private static int Score(StilCommand command, string query)
+    {
+        var title = command.Title;
+        if (title.StartsWith(query, StringComparison.CurrentCultureIgnoreCase))
+        {
+            return 4;
+        }
+
+        if (title.Split(' ').Any(word => word.StartsWith(query, StringComparison.CurrentCultureIgnoreCase)))
+        {
+            return 3;
+        }
+
+        if (title.Contains(query, StringComparison.CurrentCultureIgnoreCase))
+        {
+            return 2;
+        }
+
+        return $"{command.Group} {command.Keywords}".Contains(query, StringComparison.CurrentCultureIgnoreCase) ? 1 : 0;
+    }
+
+    private async Task RunAsync(StilCommand command)
+    {
+        await CloseAsync();
+        if (RecentCount > 0 && _module is not null)
+        {
+            _recent = [command.Id, .. _recent.Where(id => id != command.Id).Take(RecentCount - 1)];
+            await _module.InvokeVoidAsync("writeStorage", RecentKey, string.Join('\n', _recent));
+        }
+
+        if (command.Action is not null)
+        {
+            await command.Action();
+        }
+
+        if (command.Href is not null)
+        {
+            Navigation.NavigateTo(command.Href);
+        }
+    }
+
+    private static List<string> Split(string? stored) => stored is null ? [] : [.. stored.Split('\n', StringSplitOptions.RemoveEmptyEntries)];
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (_hotkey is not null)
+            {
+                await _hotkey.InvokeVoidAsync("dispose");
+                await _hotkey.DisposeAsync();
+            }
+
+            if (_module is not null)
+            {
+                await _module.DisposeAsync();
+            }
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+
+        _reference?.Dispose();
+    }
+}

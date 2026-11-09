@@ -116,6 +116,13 @@
     "TypingManyFormat": "{0} kirjoittavat…",
     "NewFormat": "Uusi viesti henkilöltä {0}: {1}"
   },
+  "CommandPalette": {
+    "Label": "Komentopaletti",
+    "Placeholder": "Hae sivuja ja toimintoja",
+    "Button": "Hae",
+    "Recent": "Viimeisimmät",
+    "Keys": "↑↓ siirtää · Enter valitsee · Esc sulkee"
+  },
   "Combobox": {
     "NoResults": "Ei tuloksia",
     "Searching": "Haetaan…",

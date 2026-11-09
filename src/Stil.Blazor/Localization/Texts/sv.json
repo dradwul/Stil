@@ -116,6 +116,13 @@
     "TypingManyFormat": "{0} skriver…",
     "NewFormat": "Nytt meddelande från {0}: {1}"
   },
+  "CommandPalette": {
+    "Label": "Kommandopalett",
+    "Placeholder": "Sök sidor och åtgärder",
+    "Button": "Sök",
+    "Recent": "Senaste",
+    "Keys": "↑↓ för att flytta · Enter för att välja · Esc för att stänga"
+  },
   "Combobox": {
     "NoResults": "Inga träffar",
     "Searching": "Söker…",
