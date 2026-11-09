@@ -102,7 +102,7 @@ src/Stil.Charts/     SVG charts for Blazor, packed as NuGet "Stil.Charts"
 templates/           dotnet new stil-app (Stil.Templates) and its test script
 docs/Stil.Docs/      Documentation site (Blazor WebAssembly) with a theme builder
 samples/Stil.Html/   Plain-HTML showcase of every CSS class, plus an admin page built with Stil
-samples/Stil.Demo/   Blazor web app: component gallery, orders CRUD, budget tree grid and a check-in desk
+samples/Stil.Demo/   Blazor web app: gallery, orders, budget, check-in, task board, rooms and a project plan
 tests/               bUnit tests (Stil.Blazor.Tests, Stil.Charts.Tests) and Playwright tests (Stil.Visual)
 tools/               check-contrast.mjs: WCAG contrast check run by CI
 CHANGELOG.md         Changes in every package

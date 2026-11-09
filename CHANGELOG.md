@@ -40,6 +40,12 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   static SSR and print sharply. `StilCodes` has the encoders (`QrSvg`,
   `QrModules`, `BarcodeSvg`, `BarcodeModules`, `EanCheckDigit`) for PDFs and
   label printers.
+- **Stil for Blazor**: `StilGantt<TItem>`, a Gantt chart: one row per task, a
+  bar over its days with its progress, milestones, and finish-to-start arrows
+  from `DependsOn` (dashed in the danger color when a task starts too early).
+  Months, dates, weekends and today above and behind; it works in static SSR.
+- **Stil CSS**: `stil-gantt` and the bar variants `stil-gantt-bar-{variant}`.
+- **Demo**: an office move plan as a Gantt chart (`/project`).
 - **Stil for Blazor**: `StilResourcePlanner<TItem>`, one day with resources
   (rooms, people, vehicles) as rows and time across, with the calendar's
   selectors and dragging: a booking moves to another time or row, resizes,

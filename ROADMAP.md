@@ -21,7 +21,7 @@ something usable.
 | 10 | Layout and media: skeleton, splitter, carousel, image cropper, PDF viewer | ✅ Done |
 | 11 | Data grid 2, in five parts: totals and export ✅, column layout ✅, grouping ✅, inline editing ✅, tree grid ✅ | Done |
 | 12 | Capture and records: QR codes, scanner, signature, activity log, chat | Done |
-| 13 | Boards and workspace: kanban, command palette, notifications, recurring events, resources, Gantt | In progress |
+| 13 | Boards and workspace: kanban, command palette, notifications, recurring events, resources, Gantt | Done |
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | Planned |
 | V2 | Version 2, Stil Sites: section blocks, page model, a visual page builder, content | Planned (after 1.0) |
 
@@ -67,7 +67,9 @@ end, so they never keep a phase open.
   - Capture and records: QR codes and barcodes, scanning with the camera or
     a handheld scanner, signature pad, activity log and timeline, chat and
     comments.
-  - 799 bUnit tests.
+  - Boards and workspace: kanban board, command palette, notification
+    center, recurring events, resource schedule and Gantt chart.
+  - 830 bUnit tests.
 - **Stil.Charts:** SVG line, area, bar, donut and sparkline charts that
   follow the theme, with 68 bUnit tests.
 - **Stil.Templates:** `dotnet new stil-app`.
@@ -966,7 +968,7 @@ the owner on real devices.
 of the demo, so 12.5's two windows are covered here. The page lists today's
 visitors with their QR codes, to scan from the screen with a phone.
 
-## Phase 13: Boards and workspace 🚧 In progress
+## Phase 13: Boards and workspace ✅ Done
 
 Goal: the building blocks of planning and internal tools beyond forms and
 grids. The phase is split into six parts that each end with something usable;
@@ -1052,12 +1054,17 @@ the calendar's data model, for one day at a time. stil.js's week dragging
 takes a time axis across, so both views share it and its `stilweekedit`
 event (the row's index in `Day`).
 
-### Phase 13.6: Gantt view
+### Phase 13.6: Gantt view ✅ Done
 
-- [ ] A simple Gantt view with dependencies between tasks.
+- [x] A simple Gantt view with dependencies between tasks.
 
 **Done when:** a small project plan shows as a Gantt chart with its
-dependencies.
+dependencies. ✅ The demo's Project page (`/project`) and the docs; 4 bUnit
+tests.
+
+**Changes from the plan:** `StilGantt` is a component of its own with days
+as `DateOnly` (the end included), not a view of the planner. It shows the
+plan and does not edit it; dragging bars is left for later.
 
 ## Phase 14: Markdown, rich text and charts 2
 
