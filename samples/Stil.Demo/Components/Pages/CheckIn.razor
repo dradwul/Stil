@@ -1,6 +1,7 @@
 @page "/check-in"
 @implements IDisposable
 @inject CheckInDesk Desk
+@inject IStilToastService Toasts
 
 <PageTitle>Check-in · Stil for Blazor</PageTitle>
 
@@ -145,6 +146,8 @@
     private Task CheckInAsync()
     {
         Desk.CheckIn(_visitor!, _form.Signature!);
+        // Kept under the bell in the navbar after the toast closes.
+        Toasts.Show($"{_visitor!.Name} is checked in for {_visitor.Host}.", "Checked in", StilVariant.Success, keep: true);
         _form = new();
         return Task.CompletedTask;
     }
