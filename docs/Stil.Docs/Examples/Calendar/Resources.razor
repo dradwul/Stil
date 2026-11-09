@@ -1,0 +1,25 @@
+@* Rooms as rows, the day across. Drag on a row to book, drag a booking to move it. *@
+<StilResourcePlanner TItem="Booking" Items="_bookings" Resources="_rooms" Resource="b => b.Room" Start="b => b.Start" End="b => b.End"
+                     Title="b => b.Title" Variant="b => b.Variant" FirstHour="8" LastHour="18" Editable
+                     OnItemChange="Move" OnSlotSelect="Book" />
+
+@code {
+    private sealed record Booking(string Title, string Room, DateTime Start, DateTime End, StilVariant? Variant = null);
+
+    private readonly StilResource[] _rooms = [new("a", "Room A", "10 seats"), new("b", "Room B", "4 seats"), new("van", "Van", "Delivery")];
+
+    private static DateTime At(double hour) => DateTime.Today.AddHours(hour);
+
+    private readonly List<Booking> _bookings =
+    [
+        new("Sales meeting", "a", At(9), At(10.5), StilVariant.Primary),
+        new("1:1", "b", At(10), At(10.5), StilVariant.Info),
+        new("Deliveries north", "van", At(8), At(12), StilVariant.Warning),
+        new("Training", "a", At(13), At(16), StilVariant.Success),
+    ];
+
+    private void Book(StilResourceSlot slot) => _bookings.Add(new("New booking", slot.Resource, slot.Start, slot.End));
+
+    private void Move(StilCalendarItemChange<Booking> change) =>
+        _bookings[_bookings.IndexOf(change.Item)] = change.Item with { Room = change.Resource ?? change.Item.Room, Start = change.Start, End = change.End };
+}

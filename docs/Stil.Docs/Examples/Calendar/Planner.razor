@@ -37,19 +37,19 @@
     private bool _gridOnPhones;
     private string _message = "Drag an event to move it, drag its bottom edge to resize it, or drag on empty time to create one.";
 
-    private void Show(Booking booking) => _message = $"{booking.Title}, {booking.Start:ddd t}–{booking.End:t}.";
+    private void Show(Booking booking) => _message = $"{booking.Title}, {booking.Start:ddd} {booking.Start:t}–{booking.End:t}.";
 
     // The planner does not change by itself: the app saves the change and the planner redraws.
     private void Move(StilCalendarItemChange<Booking> change)
     {
         _bookings[_bookings.IndexOf(change.Item)] = change.Item with { Start = change.Start, End = change.End };
-        _message = $"Moved {change.Item.Title} to {change.Start:ddd t}–{change.End:t}.";
+        _message = $"Moved {change.Item.Title} to {change.Start:ddd} {change.Start:t}–{change.End:t}.";
     }
 
     // A clicked free block or a range dragged on empty time.
     private void Create(StilTimeSlot slot)
     {
         _bookings.Add(new("New event", slot.Start, slot.End, StilVariant.Primary, IsDraft: true));
-        _message = $"Draft created {slot.Start:ddd t}–{slot.End:t}. In an app, this opens the editor.";
+        _message = $"Draft created {slot.Start:ddd} {slot.Start:t}–{slot.End:t}. In an app, this opens the editor.";
     }
 }

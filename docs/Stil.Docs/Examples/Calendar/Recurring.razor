@@ -31,7 +31,7 @@
             var index = _meetings.IndexOf(change.Item);
             _meetings[index] = change.Item with { Rule = change.Item.Rule!.Except(DateOnly.FromDateTime(occurrence)) };
             _meetings.Add(change.Item with { Start = change.Start, End = change.End, Rule = null });
-            _message = $"Moved {change.Item.Title} on {occurrence:ddd d MMM} to {change.Start:ddd t}.";
+            _message = $"Moved {change.Item.Title} on {occurrence:ddd d MMM} to {change.Start:ddd} {change.Start:t}.";
         }
         else
         {

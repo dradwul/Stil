@@ -71,6 +71,20 @@
     </p>
 </DocExample>
 
+<h2 id="resources">Resource schedule</h2>
+<DocExample Type="typeof(Resources)">
+    <p>
+        <code>StilResourcePlanner</code> shows one day with <code>Resources</code> (rooms, people or vehicles; a
+        <code>StilResource</code> has a <code>Key</code>, a <code>Name</code> and <code>Details</code>) as rows and the hours
+        across, from <code>FirstHour</code> to <code>LastHour</code>. The <code>Resource</code> selector puts each item on
+        its row; overlapping bookings share it. With <code>Editable</code>, dragging a booking raises
+        <code>OnItemChange</code> with its new times and <code>Resource</code>, dragging its end resizes it, and dragging on
+        an empty row raises <code>OnSlotSelect</code> with a <code>StilResourceSlot</code>. It takes the same item
+        selectors as the other views, recurring items included. Set <code>--stil-resource-hour-width</code> (5rem),
+        <code>--stil-resource-row-height</code> (3.5rem) and <code>--stil-resource-name-width</code> (10rem) to size it.
+    </p>
+</DocExample>
+
 <h2 id="agenda">Agenda</h2>
 <DocExample Type="typeof(Agenda)">
     <p>
@@ -96,4 +110,5 @@
 <h2 id="api">API</h2>
 <ApiTable Type="typeof(StilCalendar<>)" />
 <ApiTable Type="typeof(StilWeekPlanner<>)" />
+<ApiTable Type="typeof(StilResourcePlanner<>)" />
 <ApiTable Type="typeof(StilAgenda<>)" />
