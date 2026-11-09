@@ -1037,12 +1037,20 @@ rule's `Exceptions` and a one-off item at the new time, as iCalendar does with
 EXDATE and an override. Monthly rules repeat on the start's day of the month;
 rules like "the second Tuesday" are left for later.
 
-### Phase 13.5: Resource view
+### Phase 13.5: Resource view ✅ Done
 
-- [ ] A resource view of the planner: rooms or people as rows over time, with
+- [x] A resource view of the planner: rooms or people as rows over time, with
   the same dragging as the week planner.
 
-**Done when:** the demo books meeting rooms in a resource schedule.
+**Done when:** the demo books meeting rooms in a resource schedule. ✅ The
+demo's Rooms page (`/rooms`): a booking dragged to another room and time and
+a new one dragged on an empty row, in the browser; the week planner's
+dragging still works; 4 bUnit tests.
+
+**Changes from the plan:** a component of its own, `StilResourcePlanner`, on
+the calendar's data model, for one day at a time. stil.js's week dragging
+takes a time axis across, so both views share it and its `stilweekedit`
+event (the row's index in `Day`).
 
 ### Phase 13.6: Gantt view
 

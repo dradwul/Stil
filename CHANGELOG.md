@@ -40,6 +40,14 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   static SSR and print sharply. `StilCodes` has the encoders (`QrSvg`,
   `QrModules`, `BarcodeSvg`, `BarcodeModules`, `EanCheckDigit`) for PDFs and
   label printers.
+- **Stil for Blazor**: `StilResourcePlanner<TItem>`, one day with resources
+  (rooms, people, vehicles) as rows and time across, with the calendar's
+  selectors and dragging: a booking moves to another time or row, resizes,
+  and a drag on an empty row books it (`OnItemChange` with `Resource`,
+  `OnSlotSelect` with a `StilResourceSlot`).
+- **Stil CSS**: `stil-resource`; stil.js's week dragging also runs across, in
+  a resource schedule.
+- **Demo**: meeting room bookings (`/rooms`).
 - **Stil for Blazor**: recurring events in `StilCalendar`, `StilWeekPlanner`
   and `StilAgenda`: a `Recurrence` selector gives an item a `StilRecurrence`
   (daily, weekly on given days, monthly or yearly, with an interval, an end
