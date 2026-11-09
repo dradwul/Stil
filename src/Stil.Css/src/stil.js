@@ -19,6 +19,8 @@
 //     stilweekedit event fires (detail: action "move", "resize" or "create"; item, the event
 //     element or null; day, the index of the day column; start and end in minutes from
 //     midnight). The page saves the change and redraws: the grid puts the event back first.
+//     A resource schedule (div.stil-resource[data-stil-editable]) works the same with time across:
+//     its rows (.stil-resource-track) take the place of the days, and day is the row's index.
 //   - Kanban boards (.stil-kanban): drag a card (.stil-kanban-card[data-stil-item]) to another
 //     place or column ([data-stil-column]); on release a bubbling stilcardmove event fires
 //     (detail: item, column and index among the column's other cards). The arrow keys move focus
@@ -281,18 +283,20 @@ let drag = null;
 function onPointerDown(event) {
     if (event.button !== 0 || !event.isPrimary) return;
     const target = event.target instanceof Element ? event.target : null;
-    const column = target?.closest('.stil-week[data-stil-editable] .stil-week-col');
+    const column = target?.closest('.stil-week[data-stil-editable] .stil-week-col, .stil-resource[data-stil-editable] .stil-resource-track');
     if (!column) return;
-    const item = target.closest('.stil-week-col > .stil-event');
+    const item = target.closest('.stil-week-col > .stil-event, .stil-resource-track > .stil-event');
     if (!item && target !== column && !target.matches('.stil-week-free')) return;
 
-    const week = column.closest('.stil-week');
+    const week = column.closest('.stil-week, .stil-resource');
     const styles = getComputedStyle(week);
     const first = parseFloat(styles.getPropertyValue('--_from')) * 60;
     const length = item ? parseFloat(item.style.getPropertyValue('--stil-length')) : 0;
     drag = {
         week,
         column,
+        // A resource schedule runs time across and its rows down; a week the other way round.
+        across: week.classList.contains('stil-resource'),
         item,
         action: !item ? 'create' : target.closest('.stil-event-resize') ? 'resize' : 'move',
         first,
@@ -327,34 +331,44 @@ function onPointerMove(event) {
     }
 
     const rect = d.column.getBoundingClientRect();
-    const perMinute = rect.height / (d.last - d.first);
+    // Time runs along one axis and the days (or resources) along the other; across, it runs
+    // from the inline start, so right to left in a right-to-left page.
+    const sign = d.across && getComputedStyle(d.week).direction === 'rtl' ? -1 : 1;
+    const time = e => d.across ? sign * e.clientX : e.clientY;
+    const cross = e => d.across ? e.clientY : e.clientX;
+    const origin = d.across ? sign * d.x : d.y;
+    const perMinute = (d.across ? rect.width : rect.height) / (d.last - d.first);
     const snap = minutes => Math.round(minutes / snapMinutes) * snapMinutes;
     const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-    const columns = [...d.week.querySelectorAll('.stil-week-col')];
+    const columns = [...d.week.querySelectorAll(d.across ? '.stil-resource-track' : '.stil-week-col')];
     let day = columns.indexOf(d.column);
     let start;
     let end;
 
     if (d.action === 'move') {
-        start = clamp(d.start + snap((event.clientY - d.y) / perMinute), d.first, d.last - d.length);
+        start = clamp(d.start + snap((time(event) - origin) / perMinute), d.first, d.last - d.length);
         end = start + d.length;
-        // The day column under the pointer, or the nearest one.
+        // The day column (or resource row) under the pointer, or the nearest one.
         const target = columns.reduce((best, column) => {
             const r = column.getBoundingClientRect();
-            const distance = event.clientX < r.left ? r.left - event.clientX : event.clientX > r.right ? event.clientX - r.right : 0;
+            const [low, high] = d.across ? [r.top, r.bottom] : [r.left, r.right];
+            const at = cross(event);
+            const distance = at < low ? low - at : at > high ? at - high : 0;
             return distance < best.distance ? { column, distance } : best;
         }, { column: d.column, distance: Infinity }).column;
         day = columns.indexOf(target);
         d.item.style.setProperty('--stil-start', start);
-        d.item.style.translate = `${target.getBoundingClientRect().left - rect.left}px 0`;
+        const shift = target.getBoundingClientRect();
+        d.item.style.translate = d.across ? `0 ${shift.top - rect.top}px` : `${shift.left - rect.left}px 0`;
     } else if (d.action === 'resize') {
         start = d.start;
-        end = clamp(d.start + snap(d.length + (event.clientY - d.y) / perMinute), d.start + snapMinutes, d.last);
+        end = clamp(d.start + snap(d.length + (time(event) - origin) / perMinute), d.start + snapMinutes, d.last);
         d.item.style.setProperty('--stil-length', end - start);
     } else {
-        const at = clientY => clamp(snap(d.first + (clientY - rect.top) / perMinute), d.first, d.last);
-        const anchor = at(d.y);
-        const current = at(event.clientY);
+        const edge = d.across ? (sign > 0 ? rect.left : -rect.right) : rect.top;
+        const at = position => clamp(snap(d.first + (position - edge) / perMinute), d.first, d.last);
+        const anchor = at(origin);
+        const current = at(time(event));
         start = Math.min(anchor, current);
         end = Math.max(anchor, current, start + snapMinutes);
         d.ghost.style.setProperty('--stil-start', start);

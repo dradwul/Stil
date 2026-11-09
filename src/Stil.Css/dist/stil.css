@@ -5026,6 +5026,128 @@
     }
   }
 
+  .stil-resource {
+    --_from: var(--stil-resource-first-hour, 7);
+    --_hours: var(--stil-resource-hours, 12);
+    --_hour: var(--stil-resource-hour-width, 5rem);
+    --_row: var(--stil-resource-row-height, 3.5rem);
+  }
+
+  .stil-resource-scroll {
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface);
+    overflow-x: auto;
+  }
+
+  .stil-resource-grid {
+    grid-template-columns: var(--stil-resource-name-width, 10rem) calc(var(--_hours) * var(--_hour));
+    display: grid;
+  }
+
+  .stil-resource-corner, .stil-resource-name {
+    z-index: 25;
+    border-inline-end: 1px solid var(--stil-color-border);
+    background-color: var(--stil-color-surface);
+    position: sticky;
+    inset-inline-start: 0;
+  }
+
+  .stil-resource-corner, .stil-resource-hours {
+    border-block-end: 1px solid var(--stil-color-border);
+  }
+
+  .stil-resource-hours {
+    height: 2rem;
+    position: relative;
+  }
+
+  .stil-resource-hour {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-xs);
+    font-variant-numeric: tabular-nums;
+    padding-inline-start: var(--stil-space-1);
+    position: absolute;
+    inset-block-start: .5rem;
+    inset-inline-start: calc((var(--stil-start, 0) / 60 - var(--_from)) * var(--_hour));
+  }
+
+  .stil-resource-name {
+    min-height: var(--_row);
+    padding: 0 var(--stil-space-3);
+    border-block-end: 1px solid var(--stil-color-border);
+    font-weight: var(--stil-font-weight-bold);
+    flex-direction: column;
+    justify-content: center;
+    display: flex;
+  }
+
+  .stil-resource-name > small {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-xs);
+    font-weight: var(--stil-font-weight-normal);
+  }
+
+  .stil-resource-track {
+    height: var(--_row);
+    border-block-end: 1px solid var(--stil-color-border);
+    background-image: repeating-linear-gradient(to right,
+        transparent 0, transparent calc(var(--_hour) - 1px),
+        color-mix(in srgb, var(--stil-color-border) 70%, transparent) calc(var(--_hour) - 1px),
+        color-mix(in srgb, var(--stil-color-border) 70%, transparent) var(--_hour));
+    position: relative;
+  }
+
+  .stil-resource-track:dir(rtl) {
+    background-image: repeating-linear-gradient(to left,
+        transparent 0, transparent calc(var(--_hour) - 1px),
+        color-mix(in srgb, var(--stil-color-border) 70%, transparent) calc(var(--_hour) - 1px),
+        color-mix(in srgb, var(--stil-color-border) 70%, transparent) var(--_hour));
+  }
+
+  .stil-resource-track > .stil-event {
+    inset-inline-start: calc((var(--stil-start, 0) / 60 - var(--_from)) * var(--_hour) + 1px);
+    top: calc(var(--stil-col, 0) / var(--stil-cols, 1) * (100% - 6px) + 3px);
+    width: calc(var(--stil-length, 60) / 60 * var(--_hour) - 2px);
+    height: calc((100% - 6px) / var(--stil-cols, 1) - 1px);
+    box-shadow: 0 0 0 1px var(--stil-color-surface);
+    padding-block: .15rem;
+    position: absolute;
+    overflow: hidden;
+  }
+
+  .stil-resource-now {
+    z-index: 9;
+    border-inline-start: 2px solid var(--_accent);
+    pointer-events: none;
+    width: 0;
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc((var(--stil-start, 0) / 60 - var(--_from)) * var(--_hour));
+  }
+
+  .stil-resource[data-stil-editable] .stil-resource-track {
+    cursor: copy;
+  }
+
+  .stil-resource[data-stil-editable] .stil-resource-track > .stil-event {
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .stil-resource[data-stil-editable] .stil-resource-track > .stil-event-dragging {
+    cursor: grabbing;
+  }
+
+  .stil-resource[data-stil-editable] .stil-event-resize {
+    cursor: ew-resize;
+    width: .5rem;
+    display: block;
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+  }
+
   .stil-dropzone {
     justify-content: center;
     align-items: center;

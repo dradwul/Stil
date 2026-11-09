@@ -152,6 +152,7 @@ classes: `aria-current="page"`, `aria-selected="true"`,
 | Event | `stil-event` + `stil-event-{variant}`, or `--stil-event-color` for your own color, with `stil-event-title` (`stil-event-time`) and `stil-event-meta`. `stil-event-draft` marks an unsaved event. |
 | Calendar (month) | `stil-calendar` (`stil-calendar-mini` for a small month) > `stil-calendar-header` (`stil-calendar-title`) + `<table class="stil-calendar-grid" role="grid">`. Days are `<td role="gridcell" class="stil-calendar-day">` with `--stil-load` (0–1, tints the day), `aria-current="date"`, `aria-selected`, `stil-calendar-outside` and `stil-calendar-range`. Inside: `stil-calendar-date`, `stil-calendar-events` (event chips), `stil-calendar-more` and `stil-calendar-dots` (`stil-calendar-dot`, shown instead of chips on a narrow calendar). An optional week number column: `stil-calendar-week`. Key: `stil-calendar-legend` with `stil-calendar-legend-scale`. Filters: `stil-calendar-filter` with a variant class. |
 | Week | `stil-week` (`--stil-week-days`, `--stil-week-first-hour`, `--stil-week-hours`) > `stil-week-scroll` > `stil-week-grid` > `stil-week-corner`, `stil-week-day-head` (`stil-week-day-name`, `stil-calendar-date`, `stil-week-load` with `stil-week-load-bar`), `stil-week-times` (`stil-week-time`) and a `stil-week-col` per day (`stil-week-col-muted` for weekends). In a column, `stil-event`, `stil-week-free` and `stil-week-now` are placed by `--stil-start` and `--stil-length` (minutes from midnight); overlapping events get `--stil-col` and `--stil-cols`. With `data-stil-editable`, stil.js lets the user drag events (an optional `stil-event-resize` handle at the bottom of an event resizes it). `stil-week-auto` shows a `stil-agenda` child instead of the grid when the week is narrower than 36rem. |
+| Resource schedule | `stil-resource` (`--stil-resource-first-hour`, `--stil-resource-hours`, `--stil-resource-hour-width`, `--stil-resource-row-height`, `--stil-resource-name-width`) > `stil-resource-scroll` > `stil-resource-grid` > `stil-resource-corner`, `stil-resource-hours` (`stil-resource-hour`), and per row a `stil-resource-name` and a `stil-resource-track` with `stil-event`s placed by `--stil-start` and `--stil-length` and a `stil-resource-now` line. With `data-stil-editable`, stil.js drags events across time and rows. |
 | Agenda | `stil-agenda` > `stil-agenda-day` (`stil-agenda-day-title`) > `stil-agenda-list` > `stil-agenda-item` (`stil-agenda-time` + a `stil-event`). A free gap: `stil-agenda-item stil-agenda-free` with `stil-agenda-free-line`. |
 
 To see every class with its markup, open
@@ -161,7 +162,7 @@ full page built only with Stil, open
 
 ## Optional JavaScript
 
-Stil works without JavaScript. The optional `dist/stil.js` module, 66 kB (18 kB gzipped) with
+Stil works without JavaScript. The optional `dist/stil.js` module, 67 kB (19 kB gzipped) with
 no dependencies, adds a few behaviours:
 
 ```html

@@ -632,3 +632,136 @@
     .stil-week-now,
     .stil-week-now::before { border-color: Highlight; background-color: Highlight; }
 }
+
+/* ---------- Resource schedule: rows of resources, time across (stil-resource) ----------
+   <div class="stil-resource" style="--stil-resource-first-hour: 7; --stil-resource-hours: 12">
+     <div class="stil-resource-scroll"><div class="stil-resource-grid">
+       <div class="stil-resource-corner"></div>
+       <div class="stil-resource-hours"><span class="stil-resource-hour" style="--stil-start: 420">07:00</span>…</div>
+       <div class="stil-resource-name">Room Fjord <small>8 seats</small></div>
+       <div class="stil-resource-track"><div class="stil-event" style="--stil-start: 540; --stil-length: 60">…</div></div>
+     </div></div>
+   </div>
+   Times are minutes from midnight. Overlapping events share the row's height (--stil-col and
+   --stil-cols). With data-stil-editable, stil.js drags events across time and rows. */
+
+.stil-resource {
+    --_from: var(--stil-resource-first-hour, 7);
+    --_hours: var(--stil-resource-hours, 12);
+    --_hour: var(--stil-resource-hour-width, 5rem);
+    --_row: var(--stil-resource-row-height, 3.5rem);
+}
+
+.stil-resource-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface);
+}
+
+.stil-resource-grid {
+    display: grid;
+    grid-template-columns: var(--stil-resource-name-width, 10rem) calc(var(--_hours) * var(--_hour));
+}
+
+/* The names stay in view when the times scroll. */
+.stil-resource-corner,
+.stil-resource-name {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 25;
+    border-inline-end: 1px solid var(--stil-color-border);
+    background-color: var(--stil-color-surface);
+}
+
+.stil-resource-corner,
+.stil-resource-hours { border-block-end: 1px solid var(--stil-color-border); }
+
+.stil-resource-hours {
+    position: relative;
+    height: 2rem;
+}
+
+.stil-resource-hour {
+    position: absolute;
+    inset-block-start: 0.5rem;
+    inset-inline-start: calc((var(--stil-start, 0) / 60 - var(--_from)) * var(--_hour));
+    padding-inline-start: var(--stil-space-1);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-xs);
+    font-variant-numeric: tabular-nums;
+}
+
+.stil-resource-name {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: var(--_row);
+    padding: 0 var(--stil-space-3);
+    border-block-end: 1px solid var(--stil-color-border);
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-resource-name > small {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-xs);
+    font-weight: var(--stil-font-weight-normal);
+}
+
+.stil-resource-track {
+    position: relative;
+    height: var(--_row);
+    border-block-end: 1px solid var(--stil-color-border);
+    background-image: repeating-linear-gradient(to right,
+        transparent 0, transparent calc(var(--_hour) - 1px),
+        color-mix(in srgb, var(--stil-color-border) 70%, transparent) calc(var(--_hour) - 1px),
+        color-mix(in srgb, var(--stil-color-border) 70%, transparent) var(--_hour));
+}
+
+.stil-resource-track:dir(rtl) {
+    background-image: repeating-linear-gradient(to left,
+        transparent 0, transparent calc(var(--_hour) - 1px),
+        color-mix(in srgb, var(--stil-color-border) 70%, transparent) calc(var(--_hour) - 1px),
+        color-mix(in srgb, var(--stil-color-border) 70%, transparent) var(--_hour));
+}
+
+/* Overlapping events split the row's height. */
+.stil-resource-track > .stil-event {
+    position: absolute;
+    inset-inline-start: calc((var(--stil-start, 0) / 60 - var(--_from)) * var(--_hour) + 1px);
+    top: calc(var(--stil-col, 0) / var(--stil-cols, 1) * (100% - 6px) + 3px);
+    width: calc(var(--stil-length, 60) / 60 * var(--_hour) - 2px);
+    height: calc((100% - 6px) / var(--stil-cols, 1) - 1px);
+    padding-block: 0.15rem;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px var(--stil-color-surface);
+}
+
+.stil-resource-now {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc((var(--stil-start, 0) / 60 - var(--_from)) * var(--_hour));
+    z-index: 9;
+    width: 0;
+    border-inline-start: 2px solid var(--_accent);
+    pointer-events: none;
+}
+
+.stil-resource[data-stil-editable] .stil-resource-track { cursor: copy; }
+
+.stil-resource[data-stil-editable] .stil-resource-track > .stil-event {
+    cursor: grab;
+    touch-action: none;
+}
+
+.stil-resource[data-stil-editable] .stil-resource-track > .stil-event-dragging { cursor: grabbing; }
+
+/* The handle at the end of an event. */
+.stil-resource[data-stil-editable] .stil-event-resize {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    display: block;
+    width: 0.5rem;
+    cursor: ew-resize;
+}
