@@ -14,6 +14,8 @@ builder.Services.AddStil();
 // The app's own texts from Locales/*.json, through IStringLocalizer<T>.
 builder.Services.AddStilLocalization();
 builder.Services.AddSingleton<OrderStore>();
+// The check-in desk is shared by every window, so two windows see the same log and chat.
+builder.Services.AddSingleton<CheckInDesk>();
 
 var app = builder.Build();
 

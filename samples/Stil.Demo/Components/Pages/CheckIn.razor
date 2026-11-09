@@ -1,0 +1,176 @@
+@page "/check-in"
+@implements IDisposable
+@inject CheckInDesk Desk
+
+<PageTitle>Check-in · Stil for Blazor</PageTitle>
+
+<div class="stil-mb-4">
+    <h1 class="stil-mb-1">Check-in desk</h1>
+    <p class="stil-text-muted stil-mb-2">
+        Scan a visitor's code with the camera or a USB scanner, or type it. The visitor signs, and the visit goes to the
+        log. Open the page in a second window as the host to see the log and the chat follow.
+    </p>
+    <nav class="stil-cluster" aria-label="Who you are">
+        <span class="stil-text-muted">You are:</span>
+        <a class="@RoleClass(!IsHost)" href="check-in" aria-current="@(IsHost ? null : "page")">Reception</a>
+        <a class="@RoleClass(IsHost)" href="check-in?as=host" aria-current="@(IsHost ? "page" : null)">@HostName (host)</a>
+    </nav>
+</div>
+
+<div class="stil-grid">
+    <div class="stil-col-lg-7 stil-stack">
+        <section class="stil-card">
+            <h2 class="stil-card-title">1. Scan the visitor</h2>
+            @if (_visitor is null)
+            {
+                <StilScanner OnScan="OnScan" Formats="@(["qr_code", "code_128"])" />
+                @if (_unknown is not null)
+                {
+                    <StilAlert Variant="StilVariant.Danger" Appearance="StilAlertAppearance.Subtle" class="stil-mt-3">
+                        No visitor is expected with the code @_unknown.
+                    </StilAlert>
+                }
+            }
+            else
+            {
+                <div class="stil-cluster stil-justify-content-between">
+                    <div>
+                        <p class="stil-fs-lg stil-fw-bold stil-mb-0">@_visitor.Name</p>
+                        <p class="stil-text-muted stil-mb-0">@_visitor.Company · visiting @_visitor.Host · @_visitor.Code</p>
+                    </div>
+                    <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline" Size="StilSize.Small" OnClick="Reset">Scan another</StilButton>
+                </div>
+            }
+        </section>
+
+        @if (_visitor is not null && !Desk.IsCheckedIn(_visitor))
+        {
+            <section class="stil-card">
+                <h2 class="stil-card-title">2. Sign</h2>
+                <EditForm Model="_form" OnValidSubmit="CheckInAsync" class="stil-form">
+                    <DataAnnotationsValidator />
+                    <StilSignaturePad @bind-Value="_form.Signature" Label="@($"{_visitor.Name}'s signature")"
+                                      Hint="I have read the safety rules and will wear my badge visibly." />
+                    <StilButton Type="submit">Check in</StilButton>
+                </EditForm>
+            </section>
+        }
+        else if (_visitor is not null)
+        {
+            <StilAlert Variant="StilVariant.Success" Appearance="StilAlertAppearance.Subtle">
+                @_visitor.Name is checked in.
+                <StilButton Size="StilSize.Small" Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline" class="stil-ms-2" OnClick="CheckOut">Check out</StilButton>
+            </StilAlert>
+        }
+
+        <section class="stil-card">
+            <h2 class="stil-card-title">Expected today</h2>
+            <p class="stil-text-muted stil-fs-sm">Scan these with a phone from the screen, or type a code above.</p>
+            <ul class="stil-list">
+                @foreach (var visitor in Desk.Expected)
+                {
+                    <li class="stil-list-item stil-cluster" @key="visitor.Code">
+                        <StilQrCode Value="@visitor.Code" Size="4.5rem" Label="@($"Badge code {visitor.Code} for {visitor.Name}")" />
+                        <div class="stil-flex-grow-1">
+                            <div class="stil-fw-bold">@visitor.Name</div>
+                            <div class="stil-text-muted stil-fs-sm">@visitor.Company · @visitor.Host · @visitor.Code</div>
+                        </div>
+                        @if (Desk.IsCheckedIn(visitor))
+                        {
+                            <StilBadge Variant="StilVariant.Success">Checked in</StilBadge>
+                        }
+                    </li>
+                }
+            </ul>
+        </section>
+    </div>
+
+    <div class="stil-col-lg-5 stil-stack">
+        <section class="stil-card">
+            <h2 class="stil-card-title">Log</h2>
+            <StilActivityLog Items="Desk.Log" Time="e => e.Time" Title="e => e.Title" Actor="e => e.Actor" Type="e => e.Type"
+                             Variant="e => e.Variant" Icon="e => e.Icon" Details="e => e.Details" ItemKey="e => e.Id"
+                             Filterable Height="22rem" Label="Reception log" />
+        </section>
+        <section class="stil-card">
+            <h2 class="stil-card-title">Chat with the hosts</h2>
+            <StilChat Items="Desk.Messages" Time="m => m.Time" Title="m => m.Text" Actor="m => m.Author" Mine="m => m.Author == Me"
+                      ItemKey="m => m.Id" Typing="Desk.TypingOthers(Me)" OnSend="m => Desk.Send(Me, m.Text)" OnTyping="() => Desk.Typing(Me)"
+                      Height="18rem" />
+        </section>
+    </div>
+</div>
+
+@code {
+    private const string HostName = "Karin Dahl";
+
+    private Visitor? _visitor;
+    private string? _unknown;
+    private SignatureForm _form = new();
+    private Timer? _timer;
+
+    [SupplyParameterFromQuery(Name = "as")]
+    public string? As { get; set; }
+
+    private bool IsHost => As == "host";
+
+    private string Me => IsHost ? HostName : "Reception";
+
+    private static string RoleClass(bool current) =>
+        current ? "stil-btn stil-btn-sm stil-btn-primary" : "stil-btn stil-btn-sm stil-btn-ghost stil-btn-secondary";
+
+    protected override void OnInitialized() => Desk.Changed += OnDeskChanged;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        // Lets "is typing" disappear when the other window stops typing.
+        if (firstRender)
+        {
+            _timer = new Timer(_ => InvokeAsync(StateHasChanged), null, TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2));
+        }
+    }
+
+    private void OnDeskChanged() => _ = InvokeAsync(StateHasChanged);
+
+    private void OnScan(StilScanResult scan)
+    {
+        _visitor = Desk.Find(scan.Value);
+        _unknown = _visitor is null ? scan.Value : null;
+        if (_visitor is null)
+        {
+            Desk.Unknown(scan.Value);
+        }
+    }
+
+    private Task CheckInAsync()
+    {
+        Desk.CheckIn(_visitor!, _form.Signature!);
+        _form = new();
+        return Task.CompletedTask;
+    }
+
+    private void CheckOut()
+    {
+        Desk.CheckOut(_visitor!);
+        Reset();
+    }
+
+    private void Reset()
+    {
+        _visitor = null;
+        _unknown = null;
+        _form = new();
+    }
+
+    public void Dispose()
+    {
+        Desk.Changed -= OnDeskChanged;
+        _timer?.Dispose();
+    }
+
+    private sealed class SignatureForm
+    {
+        [Required(ErrorMessage = "The visitor signs to check in.")]
+        public StilSignature? Signature { get; set; }
+    }
+}
