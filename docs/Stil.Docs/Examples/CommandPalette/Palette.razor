@@ -1,0 +1,23 @@
+@* Press Ctrl+K (Cmd+K) anywhere on this page, or the button. Actions run here; pages navigate. *@
+<StilCommandPalette Commands="_commands" />
+<p class="stil-mt-3 stil-mb-0" role="status">@_last</p>
+
+@code {
+    private string? _last;
+
+    private IReadOnlyList<StilCommand> _commands => [
+        new("Data grid", "Pages") { Href = "components/data-grid", Keywords = "table" },
+        new("Kanban board", "Pages") { Href = "components/kanban", Keywords = "tasks" },
+        new("Theme builder", "Pages") { Href = "theme-builder", Keywords = "colors fonts" },
+        new("New invoice", "Actions") { Action = () => Run("Created an invoice"), Icon = StilIcons.Plus, Shortcut = "Ctrl+I" },
+        new("Export to CSV", "Actions") { Action = () => Run("Exported 42 rows"), Icon = StilIcons.Download },
+        new("Invite a colleague", "Actions") { Action = () => Run("Invitation sent"), Keywords = "team share" },
+    ];
+
+    private Task Run(string message)
+    {
+        _last = message;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+}

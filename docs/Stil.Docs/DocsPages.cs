@@ -58,6 +58,7 @@ public static class DocsPages
         new("Boards", StilIcons.Menu,
         [
             new("Kanban board", "components/kanban"),
+            new("Command palette", "components/command-palette"),
         ]),
     ];
 

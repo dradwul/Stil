@@ -1,0 +1,24 @@
+@page "/components/command-palette"
+@using Stil.Docs.Examples.CommandPalette
+
+<DocsHeader Title="Command palette" Eyebrow="Boards">
+    <Lead>Ctrl+K to search every page and action of an app.</Lead>
+</DocsHeader>
+
+<DocExample Type="typeof(Palette)">
+    <p>
+        <code>StilCommandPalette</code> opens a search in a modal dialog with Ctrl+K (Cmd+K on a Mac) from anywhere on the
+        page, or with its button (<code>ShowButton</code>), which fits in a navbar. Each <code>StilCommand</code> has a
+        <code>Title</code> and a <code>Group</code>, and goes to a page (<code>Href</code>) or runs an
+        <code>Action</code>. <code>Keywords</code> find it by other words, and <code>Icon</code> and <code>Shortcut</code>
+        show next to it.
+    </p>
+    <p>
+        Matches in the title come first. Focus stays in the search field: the arrow keys move through the results, Enter
+        chooses and Escape closes. With an empty search the last choices (<code>RecentCount</code>, 5) come first; they are
+        kept in the browser's local storage. Needs an interactive render mode.
+    </p>
+</DocExample>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilCommandPalette)" />
