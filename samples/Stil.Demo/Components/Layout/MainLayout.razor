@@ -15,6 +15,7 @@
                 <StilNavLink Href="budget">Budget</StilNavLink>
                 <StilNavLink Href="check-in">Check-in</StilNavLink>
                 <StilNavLink Href="tasks">Tasks</StilNavLink>
+                <StilNavLink Href="rooms">Rooms</StilNavLink>
             </StilNav>
         </ChildContent>
         <End>
@@ -53,6 +54,7 @@
         new("Budget", "Pages") { Href = "budget", Keywords = "tree grid costs" },
         new("Check-in", "Pages") { Href = "check-in", Keywords = "reception visitors scan" },
         new("Tasks", "Pages") { Href = "tasks", Keywords = "kanban board" },
+        new("Meeting rooms", "Pages") { Href = "rooms", Keywords = "book booking resources schedule" },
         new("Add an order", "Actions") { Href = "orders", Icon = StilIcons.Plus, Keywords = "new create" },
         new("Dark mode", "Actions") { Action = () => SetMode(StilThemeMode.Dark), Icon = StilIcons.Moon },
         new("Light mode", "Actions") { Action = () => SetMode(StilThemeMode.Light), Icon = StilIcons.Sun },

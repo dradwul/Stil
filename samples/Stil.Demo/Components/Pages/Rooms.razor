@@ -1,0 +1,66 @@
+@page "/rooms"
+
+<PageTitle>Rooms · Stil for Blazor</PageTitle>
+
+<div class="stil-mb-4">
+    <h1 class="stil-mb-1">Meeting rooms</h1>
+    <p class="stil-text-muted stil-mb-0">Drag on a room's row to book it, drag a booking to another time or room, or drag its end to make it longer.</p>
+</div>
+
+<StilResourcePlanner TItem="Booking" Items="_bookings" Resources="_rooms" Resource="b => b.Room" Start="b => b.Start" End="b => b.End"
+                     Title="b => b.Title" Variant="b => b.Variant" Recurrence="b => b.Rule" @bind-Date="_date" Editable
+                     OnItemChange="Move" OnSlotSelect="Book" />
+<p class="stil-text-muted stil-fs-sm stil-mt-2" aria-live="polite">@_message</p>
+
+@code {
+    private sealed record Booking(string Title, string Room, DateTime Start, DateTime End, StilVariant? Variant = null, StilRecurrence? Rule = null);
+
+    private readonly StilResource[] _rooms =
+    [
+        new("fjord", "Room Fjord", "12 seats · screen"),
+        new("glacier", "Room Glacier", "6 seats"),
+        new("harbour", "Room Harbour", "4 seats"),
+        new("studio", "Studio", "Recording"),
+    ];
+
+    private static DateTime At(double hour) => DateTime.Today.AddHours(hour);
+
+    private readonly List<Booking> _bookings =
+    [
+        new("Standup", "glacier", At(8.75), At(9), StilVariant.Success, StilRecurrence.Weekly(DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday)),
+        new("Board meeting", "fjord", At(9), At(11.5), StilVariant.Primary),
+        new("Interview", "harbour", At(10), At(11), StilVariant.Info),
+        new("Lunch & learn", "fjord", At(12), At(13), StilVariant.Warning),
+        new("Podcast", "studio", At(13.5), At(15), StilVariant.Danger),
+        new("Design review", "glacier", At(14), At(15.5), StilVariant.Primary),
+    ];
+
+    private DateOnly? _date;
+    private string _message = "";
+    private int _next = 1;
+
+    private void Book(StilResourceSlot slot)
+    {
+        _bookings.Add(new($"New booking {_next++}", slot.Resource, slot.Start, slot.End, StilVariant.Secondary));
+        _message = $"Booked {Name(slot.Resource)} {slot.Start:t}–{slot.End:t}.";
+    }
+
+    private void Move(StilCalendarItemChange<Booking> change)
+    {
+        var room = change.Resource ?? change.Item.Room;
+        if (change.Occurrence is { } occurrence)
+        {
+            // One occurrence of a recurring booking moves on its own.
+            _bookings[_bookings.IndexOf(change.Item)] = change.Item with { Rule = change.Item.Rule!.Except(DateOnly.FromDateTime(occurrence)) };
+            _bookings.Add(change.Item with { Room = room, Start = change.Start, End = change.End, Rule = null });
+        }
+        else
+        {
+            _bookings[_bookings.IndexOf(change.Item)] = change.Item with { Room = room, Start = change.Start, End = change.End };
+        }
+
+        _message = $"{change.Item.Title}: {Name(room)} {change.Start:t}–{change.End:t}.";
+    }
+
+    private string Name(string key) => _rooms.First(r => r.Key == key).Name;
+}
