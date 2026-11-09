@@ -765,3 +765,251 @@
     width: 0.5rem;
     cursor: ew-resize;
 }
+
+/* ---------- Gantt chart: tasks as rows, days across (stil-gantt) ----------
+   <div class="stil-gantt" style="--stil-gantt-days: 28; --stil-gantt-rows: 5">
+     <div class="stil-gantt-scroll"><div class="stil-gantt-grid">
+       <div class="stil-gantt-corner">Task</div>
+       <div class="stil-gantt-head"><div class="stil-gantt-months"><span style="--_start: 0; --_length: 28">November 2026</span></div>
+         <div class="stil-gantt-dates"><span class="stil-gantt-date" style="--_start: 0">2</span>…</div></div>
+       <ol class="stil-gantt-names"><li class="stil-gantt-name">Design</li>…</ol>
+       <div class="stil-gantt-body">
+         <svg class="stil-gantt-links" viewBox="0 0 28 5" preserveAspectRatio="none"><polyline class="stil-gantt-link" points="…"/></svg>
+         <span class="stil-gantt-arrow" style="--_start: 5; --_row: 1"></span>
+         <div class="stil-gantt-bar" style="--_start: 0; --_length: 5; --_row: 0; --_progress: 0.6">…</div>
+       </div>
+     </div></div>
+   </div>
+   Days and rows are counted from 0. stil-gantt-bar-{variant} colors a bar, stil-gantt-milestone
+   makes it a diamond, and stil-gantt-link-conflict marks a dependency that is not met. */
+
+.stil-gantt {
+    --_day: var(--stil-gantt-day-width, 2.25rem);
+    --_line: var(--stil-gantt-row-height, 2.5rem);
+    --_days: var(--stil-gantt-days, 14);
+    --_rows: var(--stil-gantt-rows, 0);
+}
+
+.stil-gantt-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-md);
+    background-color: var(--stil-color-surface);
+}
+
+.stil-gantt-grid {
+    display: grid;
+    grid-template-columns: var(--stil-gantt-name-width, 12rem) calc(var(--_days) * var(--_day));
+}
+
+/* The task names stay in view when the days scroll. */
+.stil-gantt-corner,
+.stil-gantt-names {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 25;
+    border-inline-end: 1px solid var(--stil-color-border);
+    background-color: var(--stil-color-surface);
+}
+
+.stil-gantt-corner {
+    display: flex;
+    align-items: flex-end;
+    padding: var(--stil-space-1) var(--stil-space-3);
+    border-block-end: 1px solid var(--stil-color-border);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-gantt-head { border-block-end: 1px solid var(--stil-color-border); }
+
+.stil-gantt-months,
+.stil-gantt-dates {
+    position: relative;
+    height: 1.5rem;
+}
+
+.stil-gantt-months > span {
+    position: absolute;
+    inset-inline-start: calc(var(--_start) * var(--_day));
+    width: calc(var(--_length) * var(--_day));
+    padding-inline-start: var(--stil-space-2);
+    overflow: hidden;
+    border-inline-start: 1px solid var(--stil-color-border);
+    font-size: var(--stil-font-size-xs);
+    font-weight: var(--stil-font-weight-bold);
+    line-height: 1.5rem;
+    white-space: nowrap;
+}
+
+.stil-gantt-date {
+    position: absolute;
+    inset-inline-start: calc(var(--_start) * var(--_day));
+    width: var(--_day);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-xs);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.5rem;
+    text-align: center;
+}
+
+.stil-gantt-date[aria-current] {
+    color: var(--_accent);
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-gantt-names {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stil-gantt-name {
+    height: var(--_line);
+    padding: 0 var(--stil-space-3);
+    overflow: hidden;
+    border-block-end: 1px solid var(--stil-color-border);
+    font-size: var(--stil-font-size-sm);
+    line-height: var(--_line);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Row lines and day lines. */
+.stil-gantt-body {
+    position: relative;
+    height: calc(var(--_rows) * var(--_line));
+    background-image:
+        repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--_line) - 1px),
+            var(--stil-color-border) calc(var(--_line) - 1px), var(--stil-color-border) var(--_line)),
+        repeating-linear-gradient(to right, transparent 0, transparent calc(var(--_day) - 1px),
+            color-mix(in srgb, var(--stil-color-border) 50%, transparent) calc(var(--_day) - 1px),
+            color-mix(in srgb, var(--stil-color-border) 50%, transparent) var(--_day));
+}
+
+.stil-gantt-body > .stil-gantt-weekend {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc(var(--_start) * var(--_day));
+    width: var(--_day);
+    background-color: color-mix(in srgb, var(--stil-color-surface-muted) 70%, transparent);
+}
+
+.stil-gantt-today {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc((var(--_start) + 0.5) * var(--_day));
+    z-index: 3;
+    border-inline-start: 2px solid var(--_accent);
+    pointer-events: none;
+}
+
+.stil-gantt-links {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+}
+
+.stil-gantt-links:dir(rtl) { scale: -1 1; }
+
+.stil-gantt-link {
+    fill: none;
+    stroke: var(--stil-color-text-muted);
+    stroke-width: 1.5;
+}
+
+.stil-gantt-link-conflict { --_bg: var(--stil-color-danger); }
+polyline.stil-gantt-link-conflict { stroke: var(--_ink); stroke-dasharray: 4 3; }
+
+.stil-gantt-arrow {
+    position: absolute;
+    inset-inline-start: calc(var(--_start) * var(--_day));
+    top: calc((var(--_row) + 0.5) * var(--_line));
+    z-index: 4;
+    width: 0;
+    height: 0;
+    border-block: 4px solid transparent;
+    border-inline-start: 6px solid var(--stil-color-text-muted);
+    translate: -100% -50%;
+    pointer-events: none;
+}
+
+.stil-gantt-arrow:dir(rtl) { translate: 100% -50%; }
+.stil-gantt-arrow.stil-gantt-link-conflict { border-inline-start-color: var(--_ink); }
+
+.stil-gantt-bar {
+    --_bg: var(--stil-color-primary);
+    position: absolute;
+    inset-inline-start: calc(var(--_start) * var(--_day) + 2px);
+    top: calc(var(--_row) * var(--_line) + 0.45rem);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    width: calc(var(--_length) * var(--_day) - 4px);
+    height: calc(var(--_line) - 0.9rem);
+    padding: 0 var(--stil-space-2);
+    overflow: hidden;
+    border: 0;
+    border-inline-start: 3px solid var(--_ink);
+    border-radius: var(--stil-radius-sm);
+    background-color: color-mix(in srgb, var(--_bg) 30%, var(--stil-color-surface));
+    color: var(--stil-color-text);
+    font: inherit;
+    font-size: var(--stil-font-size-xs);
+    text-align: start;
+}
+
+/* How much is done: a line along the bottom of the bar. */
+.stil-gantt-bar::after {
+    content: "";
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-start: 0;
+    width: calc(var(--_progress, 0) * 100%);
+    height: 3px;
+    background-color: var(--_ink);
+}
+
+.stil-gantt-bar-title {
+    position: relative;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+button.stil-gantt-bar { cursor: pointer; }
+
+button.stil-gantt-bar:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+}
+
+/* A milestone: a diamond on its day, with its name beside it. */
+.stil-gantt-milestone {
+    inset-inline-start: calc((var(--_start) + 0.15) * var(--_day));
+    width: auto;
+    max-width: none;
+    padding-inline-start: calc(0.7 * var(--_day) + 0.3rem);
+    overflow: visible;
+    border: 0;
+    background: none;
+}
+
+.stil-gantt-milestone::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0;
+    top: 50%;
+    width: calc(0.7 * var(--_day));
+    aspect-ratio: 1;
+    background-color: var(--_ink);
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+    translate: 0 -50%;
+}
+
+.stil-gantt-milestone::after { display: none; }
