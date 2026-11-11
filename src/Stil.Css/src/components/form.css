@@ -349,3 +349,36 @@ textarea.stil-input {
 @container (min-width: 40rem) {
     .stil-markdown-editor-side .stil-markdown-preview:not(:first-child) { border-block-start: 0; }
 }
+
+/* Rich text editor: the Markdown editor's frame and toolbar around a contenteditable area.
+   <div class="stil-markdown-editor stil-richtext-editor">
+     <div class="stil-markdown-toolbar" role="toolbar" aria-controls="text">
+       <button class="stil-btn stil-btn-ghost stil-btn-sm stil-markdown-command" data-stil-richtext-command="bold">B</button>…</div>
+     <div id="text" class="stil-input stil-prose stil-richtext" contenteditable="true" role="textbox" data-stil-richtext></div>
+   </div> */
+
+.stil-richtext.stil-input {
+    display: block;
+    min-height: 8rem;
+    max-height: var(--stil-richtext-height, 30rem);
+    padding: var(--stil-space-3);
+    position: relative;
+    overflow-y: auto;
+    border: 0;
+    border-radius: 0 0 var(--stil-radius-md) var(--stil-radius-md);
+    white-space: normal;
+}
+
+.stil-richtext.stil-input:focus-visible { outline: none; }
+
+.stil-richtext:empty::before,
+.stil-richtext[data-stil-empty]::before {
+    content: attr(data-placeholder);
+    position: absolute;
+    inset-block-start: var(--stil-space-3);
+    inset-inline-start: var(--stil-space-3);
+    color: var(--stil-color-text-muted);
+    pointer-events: none;
+}
+
+.stil-richtext[contenteditable="false"] { opacity: 0.6; }

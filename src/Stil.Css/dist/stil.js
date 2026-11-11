@@ -32,6 +32,9 @@
 //     with data-stil-markdown-command (bold, italic, heading, bullets, numbers, quote, code, link)
 //     in a toolbar whose aria-controls names the text area format its selection;
 //     insertMarkdown inserts text at the cursor.
+//   - Rich text (a contenteditable element with data-stil-richtext): toolbar buttons with
+//     data-stil-richtext-command, Ctrl+K for a link, and pastes cleaned to the allowed tags;
+//     initRichText sends the content to .NET, and cleanRichText cleans HTML the same way.
 //   - A textarea with data-stil-send="enter" submits its form on Enter (Shift+Enter breaks the
 //     line); with data-stil-send="ctrl-enter", on Ctrl+Enter or Cmd+Enter.
 //   - Keys that a widget handles itself (arrows in a tree, tab list or combobox; Enter and Escape
@@ -89,6 +92,9 @@ export function init(root = document) {
     root.addEventListener('pointercancel', onColumnPointerUp);
     root.addEventListener('click', onCarouselClick);
     root.addEventListener('click', onMarkdownClick);
+    root.addEventListener('click', onRichTextClick);
+    // A toolbar button must not take focus, or the editor would lose its selection.
+    root.addEventListener('mousedown', event => { if (richTextFor(event.target)) event.preventDefault(); });
     // scroll does not bubble, so listen in the capture phase.
     root.addEventListener('scroll', onCarouselScroll, true);
     root.addEventListener('scrollend', onCarouselScroll, true);
@@ -169,6 +175,7 @@ function onKeyDown(event) {
     }
     if (sendFromComposer(event)) return;
     if (markdownShortcut(event)) return;
+    if (richTextShortcut(event)) return;
     if (moveInKanban(event)) return;
     if (preventHandledKey(event)) return;
     if (moveInDropdown(event)) return;
@@ -597,6 +604,155 @@ function replaceSelection(textarea, start, end, text) {
         textarea.setRangeText(text, start, end, 'end');
         textarea.dispatchEvent(new Event('input', { bubbles: true }));
     }
+}
+
+// Rich text: a contenteditable element with data-stil-richtext. Toolbar buttons with
+// data-stil-richtext-command (in a toolbar whose aria-controls names the element) format the
+// selection, Ctrl+K adds a link, and a paste is cleaned to the same tags the server keeps before it
+// is inserted. initRichText sends the content to the .NET method OnHtml(html) shortly after each
+// change, and when the element loses focus. The server sanitizes it again: this is for a clean edit.
+const richTextAllowed = {
+    P: 'p', DIV: 'p', BR: 'br', STRONG: 'strong', B: 'strong', EM: 'em', I: 'em', U: 'u',
+    S: 'del', STRIKE: 'del', DEL: 'del', H1: 'h2', H2: 'h2', H3: 'h3', H4: 'h4', H5: 'h4', H6: 'h4',
+    UL: 'ul', OL: 'ol', LI: 'li', A: 'a', BLOCKQUOTE: 'blockquote', CODE: 'code', PRE: 'pre',
+};
+const richTextDropped = new Set(['SCRIPT', 'STYLE', 'TEMPLATE', 'IFRAME', 'OBJECT', 'EMBED', 'NOSCRIPT', 'HEAD', 'TITLE',
+    'META', 'LINK', 'SVG', 'MATH', 'CANVAS', 'AUDIO', 'VIDEO', 'IMG', 'PICTURE', 'FORM', 'INPUT', 'BUTTON', 'SELECT', 'TEXTAREA']);
+
+export function initRichText(element, dotnet) {
+    if (!element || element.stilRichText) return;
+    let timer = 0;
+    const send = () => {
+        clearTimeout(timer);
+        dotnet.invokeMethodAsync('OnHtml', element.innerHTML).catch(() => { });
+    };
+    // The browser leaves <p><br></p> when everything is deleted, so :empty no longer shows the placeholder.
+    const markEmpty = () => element.toggleAttribute('data-stil-empty', !element.textContent.trim() && !element.querySelector('li'));
+    element.stilRichText = { send };
+    markEmpty();
+    element.addEventListener('input', () => {
+        markEmpty();
+        clearTimeout(timer);
+        timer = setTimeout(send, 250);
+    });
+    element.addEventListener('blur', send);
+    element.addEventListener('paste', onRichTextPaste);
+    try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch { /* older browsers */ }
+}
+
+function richTextFor(target) {
+    const button = target instanceof Element ? target.closest('[data-stil-richtext-command]') : null;
+    const id = button?.closest('[aria-controls]')?.getAttribute('aria-controls');
+    const element = id && document.getElementById(id);
+    return element?.hasAttribute('data-stil-richtext') && !button.disabled ? [button, element] : null;
+}
+
+function onRichTextClick(event) {
+    const found = richTextFor(event.target);
+    if (!found) return;
+    const [button, element] = found;
+    event.preventDefault();
+    applyRichText(element, button.dataset.stilRichtextCommand);
+}
+
+function richTextShortcut(event) {
+    const element = event.target instanceof Element ? event.target.closest('[data-stil-richtext]') : null;
+    if (!element || !(event.ctrlKey || event.metaKey) || event.altKey || event.key.toLowerCase() !== 'k') return false;
+    event.preventDefault();
+    applyRichText(element, 'link');
+    return true;
+}
+
+// The block the selection is in, inside the element.
+function richTextBlock(element) {
+    let node = getSelection()?.anchorNode;
+    while (node && node !== element) {
+        if (node.nodeType === 1 && /^(P|H[1-6]|BLOCKQUOTE|PRE|LI)$/.test(node.nodeName)) return node.nodeName;
+        node = node.parentNode;
+    }
+    return 'P';
+}
+
+function applyRichText(element, command) {
+    element.focus();
+    const block = richTextBlock(element);
+    switch (command) {
+        case 'bold': document.execCommand('bold'); break;
+        case 'italic': document.execCommand('italic'); break;
+        case 'bullets': document.execCommand('insertUnorderedList'); break;
+        case 'numbers': document.execCommand('insertOrderedList'); break;
+        case 'heading': document.execCommand('formatBlock', false, block === 'H2' ? 'p' : 'h2'); break;
+        case 'quote': document.execCommand('formatBlock', false, block === 'BLOCKQUOTE' ? 'p' : 'blockquote'); break;
+        case 'code': {
+            const text = getSelection()?.toString() || 'code';
+            const code = document.createElement('code');
+            code.textContent = text;
+            document.execCommand('insertHTML', false, code.outerHTML);
+            break;
+        }
+        case 'link': {
+            const url = prompt(element.dataset.stilLinkPrompt || 'Link address', 'https://');
+            if (url && /^(https?:|mailto:|tel:|\/|#)/i.test(url.trim())) {
+                if (getSelection()?.isCollapsed) {
+                    const link = document.createElement('a');
+                    link.href = url.trim();
+                    link.textContent = url.trim();
+                    document.execCommand('insertHTML', false, link.outerHTML);
+                } else {
+                    document.execCommand('createLink', false, url.trim());
+                }
+            }
+            break;
+        }
+        case 'clear':
+            document.execCommand('removeFormat');
+            // A list item stays in its list; headings, quotes and code blocks become paragraphs.
+            if (richTextBlock(element) !== 'LI') document.execCommand('formatBlock', false, 'p');
+            break;
+    }
+    element.stilRichText?.send();
+}
+
+// Pasted Word and web markup is cut down to the allowed tags; plain text becomes paragraphs.
+function onRichTextPaste(event) {
+    const data = event.clipboardData;
+    if (!data) return;
+    event.preventDefault();
+    const html = data.getData('text/html');
+    const clean = html ? cleanRichText(html) : plainTextHtml(data.getData('text/plain'));
+    document.execCommand('insertHTML', false, clean);
+}
+
+function plainTextHtml(text) {
+    const escape = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return text.split(/\r?\n\r?\n/).map(p => `<p>${escape(p).replace(/\r?\n/g, '<br>')}</p>`).join('');
+}
+
+export function cleanRichText(html) {
+    const source = new DOMParser().parseFromString(html, 'text/html').body;
+    const output = document.createElement('div');
+    const copy = (from, to) => {
+        for (const node of from.childNodes) {
+            if (node.nodeType === 3) {
+                to.append(node.data);
+            } else if (node.nodeType === 1) {
+                if (richTextDropped.has(node.nodeName)) continue;
+                const plainBold = node.nodeName === 'B' && /font-weight:\s*normal/i.test(node.getAttribute('style') || '');
+                const tag = plainBold ? null : richTextAllowed[node.nodeName];
+                if (!tag) {
+                    copy(node, to);
+                    continue;
+                }
+                const element = document.createElement(tag);
+                const href = node.getAttribute('href');
+                if (tag === 'a' && href && /^(https?:|mailto:|tel:|\/|#)/i.test(href.trim())) element.setAttribute('href', href.trim());
+                if (tag !== 'br') copy(node, element);
+                to.append(element);
+            }
+        }
+    };
+    copy(source, output);
+    return output.innerHTML;
 }
 
 // Chat and comment composers: Enter (or Ctrl+Enter) sends the form the textarea is in.

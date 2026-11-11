@@ -1070,6 +1070,35 @@
     }
   }
 
+  .stil-richtext.stil-input {
+    min-height: 8rem;
+    max-height: var(--stil-richtext-height, 30rem);
+    padding: var(--stil-space-3);
+    border-radius: 0 0 var(--stil-radius-md) var(--stil-radius-md);
+    white-space: normal;
+    border: 0;
+    display: block;
+    position: relative;
+    overflow-y: auto;
+  }
+
+  .stil-richtext.stil-input:focus-visible {
+    outline: none;
+  }
+
+  .stil-richtext:empty:before, .stil-richtext[data-stil-empty]:before {
+    content: attr(data-placeholder);
+    color: var(--stil-color-text-muted);
+    pointer-events: none;
+    position: absolute;
+    inset-block-start: var(--stil-space-3);
+    inset-inline-start: var(--stil-space-3);
+  }
+
+  .stil-richtext[contenteditable="false"] {
+    opacity: .6;
+  }
+
   .stil-card {
     --_pad: var(--stil-space-4);
     min-width: 0;
