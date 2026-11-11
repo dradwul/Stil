@@ -23,17 +23,18 @@ something usable.
 | 12 | Capture and records: QR codes, scanner, signature, activity log, chat | Done |
 | 13 | Boards and workspace: kanban, command palette, notifications, recurring events, resources, Gantt | Done |
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | ✅ Done |
+| 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | Planned |
 | V2 | Version 2, Stil Sites: section blocks, page model, a visual page builder, content | Planned (after 1.0) |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
 end, so they never keep a phase open.
 
-## Where we are (0.1.0-preview.2, Phases 0–10 done)
+## Where we are (0.1.0-preview.4, Phases 0–14 done)
 
 - **Stil CSS:** an npm package (`stil-css`, not yet published). It is built
   with Lightning CSS from partials into `dist/stil.css` and `stil.min.css`
-  (about 19 kB gzipped), plus the optional `stil.js` (10 kB gzipped). It has:
+  (about 23 kB gzipped), plus the optional `stil.js` (22 kB gzipped). It has:
   - cascade layers;
   - a full `--stil-*` token set;
   - light and dark mode;
@@ -44,7 +45,7 @@ end, so they never keep a phase open.
   - about 900 utility classes;
   - a [Bootstrap migration guide](src/Stil.Css/MIGRATING-FROM-BOOTSTRAP.md).
 - **Stil for Blazor:**
-  - About 60 components, with a Blazor counterpart for every Stil CSS
+  - About 90 components, with a Blazor counterpart for every Stil CSS
     component:
     - Buttons, icons and badges.
     - Lists, tables, cards, alerts and accordions.
@@ -70,8 +71,13 @@ end, so they never keep a phase open.
   - Boards and workspace: kanban board, command palette, notification
     center, recurring events, resource schedule and Gantt chart.
   - 830 bUnit tests.
-- **Stil.Charts:** SVG line, area, bar, donut and sparkline charts that
-  follow the theme, with 68 bUnit tests.
+- **Stil.Charts:** SVG line, area, bar (also with a line and a second value
+  axis), donut, scatter, bubble and sparkline charts, heat maps and gauges
+  that follow the theme, with 84 bUnit tests.
+- **Stil.Markdown:** a Markdown view and editor on Markdig, with 11 bUnit
+  tests.
+- **Stil.RichText:** a rich text editor and view that store sanitized HTML or
+  Markdown, on AngleSharp, with 22 bUnit tests.
 - **Stil.Templates:** `dotnet new stil-app`.
 - **Docs:** `docs/Stil.Docs`, a documentation site with live examples, API
   tables and a theme builder.
@@ -1185,6 +1191,80 @@ map rather than single hours, since 64 orders would leave most hourly cells
 empty. An order's new time, cost and texts come from a second seeded
 generator, so the existing demo orders are unchanged.
 
+## Phase 15: Project wizard
+
+Goal: starting a Stil app is choosing what it needs, not reading through
+ninety components. Stil now has a project template, three extra packages
+(`Stil.Charts`, `Stil.Markdown`, `Stil.RichText`), a theme builder and many
+larger components (Gantt, kanban, calendar, chat, signature). A wizard puts
+them together: pick a starter such as "finance" or "monitoring", tick the
+features you want, set the theme, and get an app that already has them set up
+with an example page each.
+
+The wizard only fills in options of `dotnet new stil-app`, so the command line
+and the wizard give exactly the same app, and the template stays the one place
+that knows how a Stil app is set up. Whole websites built from blocks, in the
+way of a site builder, are Version 2 below; the wizard is where they will
+start too (V2.1).
+
+**Done when (all parts):** an app made from the wizard's monitoring starter
+with the Gantt chart and the Markdown editor added builds without warnings,
+runs, and shows every chosen feature on a page of its own.
+
+### Phase 15.1: Features in the template
+
+- [ ] `dotnet new stil-app --Features charts markdown richtext gantt kanban
+  calendar …` (a multi-choice option). Each feature adds what it needs and no
+  more: the package reference, the stylesheet link, the `@using`, a menu item
+  and one example page that shows it with sample data.
+- [ ] The feature list covers the extra packages and the larger components:
+  charts, Markdown, rich text, data grid, calendar and planner, kanban, Gantt,
+  resource schedule, chat and comments, activity log, scanner and signature,
+  command palette and notifications.
+- [ ] `templates/test-templates.mjs` builds every feature on its own and all
+  of them together with `-warnaserror`.
+
+**Done when:** every feature can be added on its own, and an app with all of
+them builds and runs.
+
+### Phase 15.2: Starters
+
+- [ ] `--Starter` with a few complete apps, each a set of features plus a
+  layout, a menu and pages with realistic sample data:
+  - `blank` (the default): today's app.
+  - `admin`: lists and forms on the data grid, with export and an activity log.
+  - `dashboard`: KPI cards, line and bar charts, a donut and sparklines.
+  - `monitoring`: gauges, a heat map, sparklines, notifications and the
+    activity log, refreshed on a timer.
+  - `finance`: a budget, transactions in a grid with totals and export, bars
+    with a margin line, and Markdown notes.
+  - `planner`: calendar, kanban, Gantt and the resource schedule.
+- [ ] The sample data sits behind small interfaces (`IOrderService` and the
+  like), so an app swaps in real data without touching the pages.
+- [ ] Each starter is checked with axe in light and dark mode.
+
+**Done when:** each starter builds, runs and passes axe, and its pages work on
+a phone.
+
+### Phase 15.3: The wizard
+
+- [ ] A wizard on the docs site, built with `StilWizard`, in four steps: a
+  starter (cards with a picture of each), features (grouped, each with a line
+  on what it adds and which package it brings), the theme (the theme builder's
+  color, font, radius and color mode, with a live preview), and the project
+  (name, interactivity and language).
+- [ ] The last step shows the `dotnet new install` and `dotnet new stil-app`
+  commands with every choice, ready to copy. Theme settings the template does
+  not take yet (radius, density) become template options, so the command
+  carries the whole theme.
+- [ ] A link to the wizard with the choices in its address, so a setup can be
+  shared and opened again.
+
+**Done when:** the phase's own "done when" above.
+
+**Later, not in this phase:** downloading the app as a zip from the wizard. It
+needs the template run outside the browser, so it waits for a server.
+
 ---
 
 ## Version 2: Stil Sites (after 1.0)
@@ -1193,7 +1273,7 @@ Goal: Stil builds whole websites, not only apps and dashboards: marketing
 pages, product sites and content pages, made from Stil blocks and edited
 visually. Few Blazor libraries offer this. It is a product rather than a
 component, so it comes in four steps that are each useful on their own, and it
-starts once phases 11–14 are done and `1.0` has a stable API.
+starts once Phase 15 is done and `1.0` has a stable API.
 
 Blocks and the page model (V2.1, V2.2) belong in `Stil`. The builder and the
 content tools (V2.3, V2.4) are a package of their own (`Stil.Builder`), so the
@@ -1207,7 +1287,8 @@ core stays a component library.
   and an article layout.
 - [ ] Each block follows the theme and dark mode, works in static SSR, loads
   fast (no JavaScript where none is needed), and meets WCAG AA.
-- [ ] A starter template (`dotnet new stil-site`) for a product site.
+- [ ] A starter template (`dotnet new stil-site`) for a product site, also
+  offered as a "website" starter in the project wizard (Phase 15).
 
 **Done when:** a product site with a home, pricing, blog and contact page can
 be built from the blocks without custom CSS.
