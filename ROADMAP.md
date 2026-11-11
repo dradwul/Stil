@@ -23,7 +23,7 @@ something usable.
 | 12 | Capture and records: QR codes, scanner, signature, activity log, chat | Done |
 | 13 | Boards and workspace: kanban, command palette, notifications, recurring events, resources, Gantt | Done |
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | ✅ Done |
-| 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | Planned |
+| 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | In progress (15.1 done) |
 | 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | Planned |
 | V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | Planned (after 1.0) |
 
@@ -1228,18 +1228,24 @@ start too (V2.1).
 with the Gantt chart and the Markdown editor added builds without warnings,
 runs, and shows every chosen feature on a page of its own.
 
-### Phase 15.1: Features in the template
+### Phase 15.1: Features in the template ✅ Done
 
-- [ ] `dotnet new stil-app --Features charts markdown richtext gantt kanban
-  calendar …` (a multi-choice option). Each feature adds what it needs and no
-  more: the package reference, the stylesheet link, the `@using`, a menu item
-  and one example page that shows it with sample data.
-- [ ] The feature list covers the extra packages and the larger components:
-  charts, Markdown, rich text, data grid, calendar and planner, kanban, Gantt,
-  resource schedule, chat and comments, activity log, scanner and signature,
-  command palette and notifications.
-- [ ] `templates/test-templates.mjs` builds every feature on its own and all
-  of them together with `-warnaserror`.
+- [x] `dotnet new stil-app --Features charts markdown richtext gantt kanban
+  calendar …` (a multi-choice option; the option can also be repeated). Each
+  feature adds what it needs and no more: the package reference, the
+  stylesheet link, the `@using`, an item in the navbar's Features menu and one
+  example page in `Components/Pages/Features/` that shows it with sample data.
+- [x] The feature list covers the extra packages and the larger components:
+  `charts`, `markdown`, `richtext`, `datagrid`, `calendar` (the week
+  planner), `schedule` (the resource planner), `kanban`, `gantt`, `chat`
+  (chat and comments), `activity`, `scanner`, `signature`, `commands` (a
+  command palette in the navbar that finds every page) and `notifications` (a
+  bell in the navbar), and `all`.
+- [x] With `--Interactivity None`, the feature pages and the bell and palette
+  get `@rendermode InteractiveServer` of their own, so every combination works.
+- [x] `templates/test-templates.mjs` builds every feature on its own (and
+  checks that nothing of the others is there) and all of them together, with
+  and without interactivity, with `-warnaserror`; `--only` runs some cases.
 
 **Done when:** every feature can be added on its own, and an app with all of
 them builds and runs.
