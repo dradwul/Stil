@@ -450,6 +450,8 @@
     padding: 0 var(--stil-space-1);
     border: 1px solid var(--stil-color-border);
     border-radius: var(--stil-radius-sm);
+    /* An outlined key: without this it keeps the base kbd's dark fill under the muted text. */
+    background-color: transparent;
     color: var(--stil-color-text-muted);
     font-family: inherit;
     font-size: var(--stil-font-size-xs);
