@@ -50,6 +50,7 @@ jobs:
           dotnet pack src/Stil.Blazor --configuration Release --no-build --output artifacts
           dotnet pack src/Stil.Charts --configuration Release --no-build --output artifacts
           dotnet pack src/Stil.Markdown --configuration Release --no-build --output artifacts
+          dotnet pack src/Stil.RichText --configuration Release --no-build --output artifacts
           dotnet pack templates/Stil.Templates --configuration Release --no-build --output artifacts
 
       - name: Verify the package contents
@@ -64,6 +65,9 @@ jobs:
           unzip -l "$(ls artifacts/Stil.Markdown.0*.nupkg)" | tee markdown.txt
           grep -q 'Stil.Markdown.xml' markdown.txt
           grep -q 'README.md' markdown.txt
+          unzip -l "$(ls artifacts/Stil.RichText.0*.nupkg)" | tee richtext.txt
+          grep -q 'Stil.RichText.xml' richtext.txt
+          grep -q 'README.md' richtext.txt
           unzip -l "$(ls artifacts/Stil.Templates.0*.nupkg)" | tee templates.txt
           grep -q 'content/StilApp/.template.config/template.json' templates.txt
           grep -q 'content/StilApp/.gitignore' templates.txt

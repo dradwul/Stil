@@ -1,6 +1,6 @@
 name: Release
 
-# Publishes Stil, Stil.Charts, Stil.Markdown and Stil.Templates to nuget.org when a version tag is pushed:
+# Publishes Stil, Stil.Charts, Stil.Markdown, Stil.RichText and Stil.Templates to nuget.org when a version tag is pushed:
 #   git tag v0.1.0 && git push origin v0.1.0
 # The version comes from the tag (v1.2.3 or v1.2.3-preview.1). Nothing else publishes: pushes to
 # main and pull requests only build and test (ci.yml).
@@ -100,7 +100,7 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          for project in src/Stil.Blazor src/Stil.Charts src/Stil.Markdown templates/Stil.Templates; do
+          for project in src/Stil.Blazor src/Stil.Charts src/Stil.Markdown src/Stil.RichText templates/Stil.Templates; do
             dotnet pack "$project" --configuration Release --no-build --output artifacts -p:Version="$VERSION"
           done
 
@@ -116,6 +116,8 @@ jobs:
           grep -q 'staticwebassets/stil-charts.css' charts.txt
           unzip -l "artifacts/Stil.Markdown.$VERSION.nupkg" | tee markdown.txt
           grep -q 'Stil.Markdown.xml' markdown.txt
+          unzip -l "artifacts/Stil.RichText.$VERSION.nupkg" | tee richtext.txt
+          grep -q 'Stil.RichText.xml' richtext.txt
           unzip -l "artifacts/Stil.Templates.$VERSION.nupkg" | tee templates.txt
           grep -q 'content/StilApp/.template.config/template.json' templates.txt
           template=$(unzip -Z1 "artifacts/Stil.Templates.$VERSION.nupkg" | grep 'StilApp/.template.config/template.json$')
