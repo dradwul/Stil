@@ -97,7 +97,7 @@ public class StilMarkdownTests
 
         var cut = context.Render<EditForm>(parameters => parameters
             .Add(form => form.Model, model)
-            .Add<RenderFragment<EditContext>>(form => form.ChildContent, _ => builder =>
+            .Add<RenderFragment<EditContext>?>(form => form.ChildContent, _ => builder =>
             {
                 builder.OpenComponent<DataAnnotationsValidator>(0);
                 builder.CloseComponent();
