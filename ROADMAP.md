@@ -23,7 +23,7 @@ something usable.
 | 12 | Capture and records: QR codes, scanner, signature, activity log, chat | Done |
 | 13 | Boards and workspace: kanban, command palette, notifications, recurring events, resources, Gantt | Done |
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | ✅ Done |
-| 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | In progress (15.1 and 15.2 done) |
+| 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | Done |
 | 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | Planned |
 | V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | Planned (after 1.0) |
 
@@ -31,7 +31,7 @@ A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
 end, so they never keep a phase open.
 
-## Where we are (0.1.0-preview.4, Phases 0–14 done)
+## Where we are (0.1.0-preview.4, Phases 0–15 done)
 
 - **Stil CSS:** an npm package (`stil-css`, not yet published). It is built
   with Lightning CSS from partials into `dist/stil.css` and `stil.min.css`
@@ -1208,7 +1208,7 @@ map rather than single hours, since 64 orders would leave most hourly cells
 empty. An order's new time, cost and texts come from a second seeded
 generator, so the existing demo orders are unchanged.
 
-## Phase 15: Project wizard
+## Phase 15: Project wizard ✅ Done
 
 Goal: starting a Stil app is choosing what it needs, not reading through
 ninety components. Stil now has a project template, three extra packages
@@ -1276,19 +1276,24 @@ them builds and runs.
 **Done when:** each starter builds, runs and passes axe, and its pages work on
 a phone.
 
-### Phase 15.3: The wizard
+### Phase 15.3: The wizard ✅ Done
 
-- [ ] A wizard on the docs site, built with `StilWizard`, in four steps: a
-  starter (cards with a picture of each), features (grouped, each with a line
-  on what it adds and which package it brings), the theme (the theme builder's
-  color, font, radius and color mode, with a live preview), and the project
-  (name, interactivity and language).
-- [ ] The last step shows the `dotnet new install` and `dotnet new stil-app`
-  commands with every choice, ready to copy. Theme settings the template does
-  not take yet (radius, density) become template options, so the command
-  carries the whole theme.
-- [ ] A link to the wizard with the choices in its address, so a setup can be
-  shared and opened again.
+- [x] A wizard on the docs site (New app, `/new-app`), built with `StilWizard`,
+  in four steps: a starter (cards with a drawing of each), features (grouped,
+  each with a line on what it adds and which package it brings; what the
+  starter already has is ticked and locked), the theme (brand color, font,
+  corners and color mode, with a live preview), and the project (name,
+  interactivity and language, and a summary of the pages and packages).
+- [x] The last step shows the `dotnet new install` and `dotnet new stil-app`
+  commands with every choice that is not the default, ready to copy. The
+  corner radius became a template option (`--Radius`), so the command carries
+  the whole theme. Stil has no density setting, so there is nothing to carry.
+- [x] A link to the wizard with the choices in its address, so a setup can be
+  shared and opened again; it opens on the last step.
+- [x] The wizard's example (the monitoring starter with the Gantt chart and the
+  Markdown editor, and a theme) is a case in `templates/test-templates.mjs`;
+  it builds without warnings, and it was run with every chosen feature on a
+  page of its own. Every step passes axe in light and dark mode.
 
 **Done when:** the phase's own "done when" above.
 
