@@ -24,7 +24,7 @@ something usable.
 | 13 | Boards and workspace: kanban, command palette, notifications, recurring events, resources, Gantt | Done |
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | ✅ Done |
 | 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | Done |
-| 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | Planned |
+| 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | In progress (16.1 done) |
 | V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | Planned (after 1.0) |
 
 A phase is done when every item in it is checked. Items that need the
@@ -1311,16 +1311,28 @@ a minor version may break things. After `1.0`, breaking changes wait for
 public API baseline is checked in CI, and the migration notes cover every
 breaking change since `0.1.0`.
 
-### Phase 16.1: API review
+### Phase 16.1: API review ✅ Done
 
-- [ ] Every public component, parameter, service and type, in all packages:
-  consistent names (`Value`/`ValueChanged`, `Disabled`, `Size`, `Variant`,
-  `…Text` for texts), consistent defaults, and nothing public that should be
-  internal. The changes land together, as one list of breaking changes.
-- [ ] The same review for Stil CSS: class names, token names and the
-  `stil.js` exports.
-- [ ] Remove what is obsolete, and mark experimental what may still change
-  after `1.0` (`[Experimental]`, and "experimental" in the docs).
+- [x] Every public component, parameter, service and type, in all packages
+  (211 types, read from the assemblies): the names follow a few rules, now
+  written in the Stil for Blazor README, and the ones that broke them are
+  changed together, as one list in the changelog (eight renames in .NET).
+  Members that are public only for stil.js are hidden from IntelliSense; a
+  Razor component cannot be internal, so `StilConfirmDialogContent` is hidden
+  the same way.
+- [x] The same review for Stil CSS: the class names follow
+  `stil-{component}-{part}`, and the tokens `--stil-{group}-{name}`; the
+  backdrop color and the variables that place events got such names. The
+  stil.js exports that are public API are listed in the Stil CSS README; the
+  others are Stil for Blazor's and may change.
+- [x] Nothing was obsolete. `[Experimental]` makes every use a compiler error
+  until it is suppressed, which is too much for a component; the device
+  components (camera, scanner, signature), which are not yet checked on real
+  devices, are marked experimental in the docs instead.
+- [x] Kept as they are, on purpose: `Size` is a length on pictures and charts
+  (`StilIcon`, `StilQrCode`, `StilGauge`), and `Min`/`Max` follow the input
+  (a string on `StilDatePicker` and `StilNumeric`, which accept month, week and
+  any number type; `DateOnly` and `TimeOnly` on the pickers built on them).
 
 **Done when:** the list of breaking changes is in the changelog and every
 package builds and passes its tests with them.
