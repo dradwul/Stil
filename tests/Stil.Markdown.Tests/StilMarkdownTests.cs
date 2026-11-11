@@ -32,6 +32,18 @@ public class StilMarkdownTests
         Assert.Contains("<table class=\"stil-table\">", html);
     }
 
+    [Fact]
+    public void TaskCheckboxesAreNamedByTheirText()
+    {
+        var html = StilMarkdownRenderer.ToHtml("""
+            - [x] Invoices **sent** for `#1042`
+            - [ ] Call "Kallio" & Co
+            """);
+
+        Assert.Contains("aria-label=\"Invoices sent for #1042\"", html);
+        Assert.Contains("aria-label=\"Call &quot;Kallio&quot; &amp; Co\"", html);
+    }
+
     [Theory]
     [InlineData("<script>alert(1)</script>", "&lt;script&gt;")]
     [InlineData("<img src=x onerror=alert(1)>", "&lt;img")]

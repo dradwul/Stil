@@ -1,5 +1,6 @@
 using Markdig;
 using Markdig.Extensions.Tables;
+using Markdig.Extensions.TaskLists;
 using Markdig.Renderers;
 using Markdig.Renderers.Html;
 using Markdig.Syntax;
@@ -55,6 +56,15 @@ public static class StilMarkdownRenderer
             table.GetAttributes().AddClass("stil-table");
         }
 
+        // A task's checkbox gets the task's text as its name, so a screen reader says what is done.
+        foreach (var task in document.Descendants<TaskList>())
+        {
+            if (task.Parent is { } item && TextOf(item) is { Length: > 0 } text)
+            {
+                task.GetAttributes().AddPropertyIfNotExist("aria-label", text);
+            }
+        }
+
         using var writer = new StringWriter();
         var renderer = new HtmlRenderer(writer);
         Pipeline.Setup(renderer);
@@ -87,6 +97,16 @@ public static class StilMarkdownRenderer
         var scheme = trimmed[..colon];
         return schemes.Any(s => s.Equals(scheme, StringComparison.OrdinalIgnoreCase));
     }
+
+    // The plain text of a line of inlines: its words and code, without the markup.
+    private static string TextOf(ContainerInline inlines) =>
+        string.Join(" ", string.Concat(inlines.Descendants().Select(inline => inline switch
+        {
+            LiteralInline literal => literal.Content.ToString(),
+            CodeInline code => code.Content,
+            LineBreakInline => " ",
+            _ => "",
+        })).Split(' ', StringSplitOptions.RemoveEmptyEntries));
 
     private static bool IsExternal(string? url) =>
         url is not null && (url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || url.StartsWith("https://", StringComparison.OrdinalIgnoreCase));
