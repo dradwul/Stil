@@ -88,7 +88,7 @@ public abstract partial class StilChartBase<TItem> : StilComponentBase
 
     internal IReadOnlyList<StilChartSeriesBase<TItem>> RegisteredSeries => _series;
 
-    internal ChartData Data { get; private set; } = ChartData.Empty;
+    internal ChartData Data { get; private protected set; } = ChartData.Empty;
 
     /// <summary>A class for the chart type, for example stil-chart-line.</summary>
     private protected abstract string KindClass { get; }

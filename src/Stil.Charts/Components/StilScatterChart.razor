@@ -1,0 +1,379 @@
+@namespace Stil.Charts
+@typeparam TItem
+@attribute [CascadingTypeParameter(nameof(TItem))]
+@inherits StilChartBase<TItem>
+
+@* A scatter chart: one point per item, placed by two values. With Size it is a bubble chart, the
+   area of each bubble following a third value. Group colors the points and names them in the
+   legend. Horizontal positions are percentages and vertical ones pixels, as in the other charts. *@
+@RenderChart
+
+@code {
+    private const double PointRadius = 5;
+    private const double MinBubble = 3;
+    private List<Point> _points = [];
+    private ChartScale _x = ChartScale.Create(0, 1);
+    private ChartScale _y = ChartScale.Create(0, 1);
+    private ChartLayout _layout = new();
+    private double _sizeMax;
+
+    /// <summary>The value along the bottom, for example <c>s =&gt; s.Visitors</c>. Any number type; null leaves the item out.</summary>
+    [Parameter, EditorRequired]
+    public Func<TItem, object?> X { get; set; } = default!;
+
+    /// <summary>The value up the side, for example <c>s =&gt; s.Revenue</c>. Any number type; null leaves the item out.</summary>
+    [Parameter, EditorRequired]
+    public Func<TItem, object?> Y { get; set; } = default!;
+
+    /// <summary>
+    /// Makes it a bubble chart: the area of each bubble follows this value, for example
+    /// <c>s =&gt; s.Staff</c>. Zero, negative and missing sizes draw the smallest bubble.
+    /// </summary>
+    [Parameter]
+    public Func<TItem, object?>? Size { get; set; }
+
+    /// <summary>
+    /// The group of an item, for example <c>s =&gt; s.Region</c>. Each group gets a color and a
+    /// legend entry, in the order the groups first appear.
+    /// </summary>
+    [Parameter]
+    public Func<TItem, object?>? Group { get; set; }
+
+    /// <summary>CSS colors for the groups, in order. Groups without one use the chart tokens.</summary>
+    [Parameter]
+    public IReadOnlyList<string>? Colors { get; set; }
+
+    /// <summary>A title for the horizontal axis, for example "Visitors". Also names X in tooltips, the summary and the data table.</summary>
+    [Parameter]
+    public string? XAxisTitle { get; set; }
+
+    /// <summary>A title for the vertical axis, for example "Revenue (kr)". Also names Y in tooltips, the summary and the data table.</summary>
+    [Parameter]
+    public string? YAxisTitle { get; set; }
+
+    /// <summary>What the bubble size shows, for example "Staff", in tooltips, the summary and the data table.</summary>
+    [Parameter]
+    public string? SizeTitle { get; set; }
+
+    /// <summary>A format string for X values. The default shows thousands separators and up to two decimals.</summary>
+    [Parameter]
+    public string? XFormat { get; set; }
+
+    /// <summary>A format string for sizes. The default is Format.</summary>
+    [Parameter]
+    public string? SizeFormat { get; set; }
+
+    /// <summary>The lower end of the horizontal axis. The default is a round number below the data.</summary>
+    [Parameter]
+    public double? XMin { get; set; }
+
+    /// <summary>The upper end of the horizontal axis. The default is a round number above the data.</summary>
+    [Parameter]
+    public double? XMax { get; set; }
+
+    /// <summary>The lower end of the vertical axis. The default is a round number below the data.</summary>
+    [Parameter]
+    public double? YMin { get; set; }
+
+    /// <summary>The upper end of the vertical axis. The default is a round number above the data.</summary>
+    [Parameter]
+    public double? YMax { get; set; }
+
+    /// <summary>Starts both axes at zero. The default is false, so the points fill the plot.</summary>
+    [Parameter]
+    public bool BeginAtZero { get; set; }
+
+    /// <summary>Draws gridlines at the ticks of both axes. The default is true.</summary>
+    [Parameter]
+    public bool Gridlines { get; set; } = true;
+
+    /// <summary>The radius of the largest bubble in pixels. The default is 24.</summary>
+    [Parameter]
+    public double MaxBubbleRadius { get; set; } = 24;
+
+    /// <summary>The header of the group column in the data table.</summary>
+    [Parameter]
+    public string? GroupText { get; set; }
+
+    private sealed record Point(int Index, string Name, int Group, double X, double Y, double? Size);
+
+    private bool Bubbles => Size is not null;
+
+    private protected override string KindClass => Bubbles ? "stil-chart-scatter stil-chart-bubble" : "stil-chart-scatter";
+
+    private protected override string KindName => Localize(null, Bubbles ? "Chart.BubbleChart" : "Chart.ScatterChart");
+
+    private string XName => string.IsNullOrWhiteSpace(XAxisTitle) ? "X" : XAxisTitle;
+
+    private string YName => string.IsNullOrWhiteSpace(YAxisTitle) ? "Y" : YAxisTitle;
+
+    private string SizeName => string.IsNullOrWhiteSpace(SizeTitle) ? Localize(null, "Chart.Size") : SizeTitle;
+
+    private string FormatX(double value) => ChartText.Value(value, XFormat);
+
+    private string FormatY(double value) => ChartText.Value(value, Format);
+
+    private string FormatSize(double? value) => ChartText.Value(value, SizeFormat ?? Format, MissingText);
+
+    private protected override void Prepare()
+    {
+        base.Prepare();
+        var items = Items?.ToList() ?? [];
+        var groups = new List<string>();
+        _points = [];
+        for (var i = 0; i < items.Count; i++)
+        {
+            var item = items[i];
+            if (X is null || Y is null || ChartText.ToDouble(X(item)) is not { } x || ChartText.ToDouble(Y(item)) is not { } y)
+            {
+                continue;
+            }
+
+            var group = Group is null ? "" : ChartText.Category(Group(item), null);
+            var groupIndex = groups.IndexOf(group);
+            if (groupIndex < 0)
+            {
+                groups.Add(group);
+                groupIndex = groups.Count - 1;
+            }
+
+            _points.Add(new Point(i, Data.Categories[i], groupIndex, x, y, Size is null ? null : ChartText.ToDouble(Size(item))));
+        }
+
+        // One series per group, so the legend, the colors and the empty state work as in the other charts.
+        var series = groups
+            .Select((name, g) => new ChartSeriesData(
+                g,
+                Group is null ? (HasTitle ? Title! : KindName) : name,
+                Colors is { } colors && g < colors.Count && !string.IsNullOrWhiteSpace(colors[g]) ? colors[g] : SeriesColor(g, null),
+                Format,
+                Enumerable.Range(0, items.Count).Select(i => (double?)null).ToList()))
+            .ToList();
+        foreach (var point in _points)
+        {
+            ((List<double?>)series[point.Group].Values)[point.Index] = point.Y;
+        }
+
+        Data = new ChartData(Data.Categories, series);
+        _sizeMax = _points.Select(p => p.Size ?? 0).DefaultIfEmpty(0).Max();
+        PrepareLayout();
+    }
+
+    private void PrepareLayout()
+    {
+        var xTitle = string.IsNullOrWhiteSpace(XAxisTitle) ? 0 : ChartLayout.AxisTitleBand;
+        var yTitle = string.IsNullOrWhiteSpace(YAxisTitle) ? 0 : ChartLayout.AxisTitleBand;
+        double height = EffectiveHeight;
+        var plotBottom = height - ChartLayout.AxisBand - xTitle;
+        var maxTicks = Math.Clamp((int)((plotBottom - ChartLayout.TopPad) / 48), 2, 8);
+        var (xLow, xHigh) = Extent(_points.Select(p => p.X));
+        var (yLow, yHigh) = Extent(_points.Select(p => p.Y));
+        _x = ChartScale.Create(xLow, xHigh, 6, BeginAtZero, XMin, XMax);
+        _y = ChartScale.Create(yLow, yHigh, maxTicks, BeginAtZero, YMin, YMax);
+        var tickWidth = _y.Ticks.Select(t => ChartText.Width(YTick(t))).DefaultIfEmpty(0).Max();
+        var lastTick = _x.Ticks.Count == 0 ? 0 : ChartText.Width(XTick(_x.Ticks[^1])) / 2;
+        _layout = new ChartLayout
+        {
+            Height = height,
+            PlotTop = ChartLayout.TopPad,
+            PlotBottom = plotBottom,
+            Start = Math.Ceiling(Math.Max(16, tickWidth + ChartLayout.LabelGap + yTitle)),
+            End = Math.Ceiling(Math.Max(ChartLayout.EndPad, lastTick + 4)),
+        };
+    }
+
+    /// <summary>The range to show. Bubbles get some room at the ends, so the largest are not cut in half.</summary>
+    private (double Low, double High) Extent(IEnumerable<double> values)
+    {
+        var list = values.ToList();
+        if (list.Count == 0)
+        {
+            return (0, 0);
+        }
+
+        var (low, high) = (list.Min(), list.Max());
+        if (Bubbles && high > low)
+        {
+            // Never past zero: prices and counts should not get a negative axis.
+            var pad = (high - low) * 0.08;
+            (low, high) = (low >= 0 ? Math.Max(0, low - pad) : low - pad, high <= 0 ? Math.Min(0, high + pad) : high + pad);
+        }
+
+        return (low, high);
+    }
+
+    private string XTick(double value) => ChartText.Value(value, XFormat ?? ChartText.TickFormat(_x.Decimals));
+
+    private string YTick(double value) => ChartText.Value(value, Format ?? ChartText.TickFormat(_y.Decimals));
+
+    /// <summary>The radius of a point: fixed, or by the square root of its size so the area follows the value.</summary>
+    private double Radius(Point point) =>
+        !Bubbles ? PointRadius
+        : point.Size is > 0 && _sizeMax > 0 ? Math.Max(MinBubble, Math.Sqrt(point.Size.Value / _sizeMax) * MaxBubbleRadius)
+        : MinBubble;
+
+    private string Tooltip(Point point)
+    {
+        var lines = new List<string>();
+        if (Category is not null)
+        {
+            lines.Add(point.Name);
+        }
+
+        if (Group is not null)
+        {
+            lines.Add(Data.Series[point.Group].Name);
+        }
+
+        lines.Add($"{XName}: {FormatX(point.X)}");
+        lines.Add($"{YName}: {FormatY(point.Y)}");
+        if (Bubbles)
+        {
+            lines.Add($"{SizeName}: {FormatSize(point.Size)}");
+        }
+
+        return string.Join("\n", lines);
+    }
+
+    private protected override string BuildSummary()
+    {
+        var parts = new List<string> { Phrase("ScatterSummaryFormat", KindName, _points.Count) };
+        if (Group is not null)
+        {
+            parts.Add(Phrase("GroupsFormat", ChartText.List(Data.Series.Select(s => s.Name).ToList(), Phrase("And"))));
+        }
+
+        if (_points.Count > 0)
+        {
+            parts.Add(Phrase("AxisRangeFormat", XName, FormatX(_points.Min(p => p.X)), FormatX(_points.Max(p => p.X))));
+            parts.Add(Phrase("AxisRangeFormat", YName, FormatY(_points.Min(p => p.Y)), FormatY(_points.Max(p => p.Y))));
+            var sizes = _points.Where(p => p.Size.HasValue).Select(p => p.Size!.Value).ToList();
+            if (Bubbles && sizes.Count > 0)
+            {
+                parts.Add(Phrase("AxisRangeFormat", SizeName, FormatSize(sizes.Min()), FormatSize(sizes.Max())));
+            }
+        }
+
+        if (Correlation() is { } r)
+        {
+            parts.Add(Phrase(r >= 0.5 ? "TrendUp" : r <= -0.5 ? "TrendDown" : "TrendNone", XName, YName));
+        }
+
+        return string.Join(" ", parts);
+    }
+
+    /// <summary>The Pearson correlation of X and Y, or null for fewer than three points or no spread.</summary>
+    internal double? Correlation()
+    {
+        if (_points.Count < 3)
+        {
+            return null;
+        }
+
+        var mx = _points.Average(p => p.X);
+        var my = _points.Average(p => p.Y);
+        var sxy = _points.Sum(p => (p.X - mx) * (p.Y - my));
+        var sxx = _points.Sum(p => (p.X - mx) * (p.X - mx));
+        var syy = _points.Sum(p => (p.Y - my) * (p.Y - my));
+        return sxx > 0 && syy > 0 ? sxy / Math.Sqrt(sxx * syy) : null;
+    }
+
+    private protected override (IReadOnlyList<string> Headers, IReadOnlyList<IReadOnlyList<string>> Rows) TableData()
+    {
+        var headers = new List<string> { Localize(CategoryText, "Chart.Category") };
+        if (Group is not null)
+        {
+            headers.Add(Localize(GroupText, "Chart.Group"));
+        }
+
+        headers.Add(XName);
+        headers.Add(YName);
+        if (Bubbles)
+        {
+            headers.Add(SizeName);
+        }
+
+        var rows = new List<IReadOnlyList<string>>();
+        foreach (var point in _points)
+        {
+            var row = new List<string> { point.Name };
+            if (Group is not null)
+            {
+                row.Add(Data.Series[point.Group].Name);
+            }
+
+            row.Add(FormatX(point.X));
+            row.Add(FormatY(point.Y));
+            if (Bubbles)
+            {
+                row.Add(FormatSize(point.Size));
+            }
+
+            rows.Add(row);
+        }
+
+        return (headers, rows);
+    }
+
+    private protected override RenderFragment RenderPlot => __builder =>
+    {
+        var layout = _layout;
+        var tickWidth = _x.Ticks.Select(t => ChartText.Width(XTick(t))).DefaultIfEmpty(0).Max() + 12;
+        var plotStyle = $"--_start: {ChartText.N(layout.Start)}px; --_end: {ChartText.N(layout.End)}px";
+        // Large bubbles first, so the small ones stay on top and can be hovered.
+        var ordered = Bubbles ? _points.OrderByDescending(p => p.Size ?? 0).ToList() : _points;
+        <div class="stil-chart-plot" style="@plotStyle">
+            <svg class="stil-chart-svg" width="100%" height="@ChartText.N(layout.Height)" role="img"
+                 aria-labelledby="@SvgLabelledBy" aria-label="@SvgLabel" aria-describedby="@DescriptionId">
+                <desc id="@DescriptionId">@SummaryText</desc>
+                <g class="stil-chart-axes">
+                    @foreach (var tick in _y.Ticks)
+                    {
+                        if (Gridlines && tick != _y.Baseline)
+                        {
+                            <line class="stil-chart-gridline" x1="0" x2="100%" y1="@Crisp(layout.Y(_y, tick))" y2="@Crisp(layout.Y(_y, tick))" />
+                        }
+                        @SvgText(YTick(tick), ChartText.N(-ChartLayout.LabelGap), ChartText.N(layout.Y(_y, tick)), "stil-chart-tick stil-chart-value-tick", "end", "0.32em")
+                    }
+                    @for (var t = 0; t < _x.Ticks.Count; t++)
+                    {
+                        var tick = _x.Ticks[t];
+                        var x = ChartText.Pct(_x.Fraction(tick));
+                        if (Gridlines && tick != _x.Baseline)
+                        {
+                            <line class="stil-chart-gridline" x1="@x" x2="@x" y1="@ChartText.N(layout.PlotTop)" y2="@ChartText.N(layout.PlotBottom)" />
+                        }
+                        @SvgText(XTick(tick), x, ChartText.N(layout.PlotBottom + 18),
+                            CssClass("stil-chart-tick stil-chart-value-tick", layout.ThinningClass(t, _x.Ticks.Count, tickWidth, includesEndLabels: false)), "middle")
+                    }
+                    <line class="stil-chart-baseline" x1="0" x2="100%" y1="@Crisp(layout.Y(_y, _y.Baseline))" y2="@Crisp(layout.Y(_y, _y.Baseline))" />
+                    <line class="stil-chart-baseline" x1="@ChartText.Pct(_x.Fraction(_x.Baseline))" x2="@ChartText.Pct(_x.Fraction(_x.Baseline))"
+                          y1="@ChartText.N(layout.PlotTop)" y2="@ChartText.N(layout.PlotBottom)" />
+                    @if (!string.IsNullOrWhiteSpace(XAxisTitle))
+                    {
+                        @SvgText(XAxisTitle, "50%", ChartText.N(layout.Height - 6), "stil-chart-axis-title", "middle")
+                    }
+                    @if (!string.IsNullOrWhiteSpace(YAxisTitle))
+                    {
+                        @SvgText(YAxisTitle, ChartText.N(-(layout.PlotTop + layout.PlotBottom) / 2), ChartText.N(-layout.Start + 12),
+                            "stil-chart-axis-title", "middle", transform: "rotate(-90)")
+                    }
+                </g>
+                <g class="stil-chart-points">
+                    @foreach (var point in ordered)
+                    {
+                        <g class="stil-chart-point" style="--_color: @Data.Series[point.Group].Color">
+                            <title>@Tooltip(point)</title>
+                            <circle class="@(Bubbles ? "stil-chart-bubble-mark" : "stil-chart-marker")" cx="@ChartText.Pct(_x.Fraction(point.X))"
+                                    cy="@ChartText.N(layout.Y(_y, point.Y))" r="@ChartText.N(Radius(point))" />
+                        </g>
+                    }
+                </g>
+            </svg>
+        </div>
+    };
+
+    private static string Crisp(double y) => ChartText.N(Math.Round(y) + 0.5);
+
+    private static string CssClass(string classes, string? extra) => string.IsNullOrEmpty(extra) ? classes : $"{classes} {extra}";
+}

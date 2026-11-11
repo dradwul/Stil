@@ -74,7 +74,21 @@
     "TotalsRangeFormat": "Summat vaihtelevat välillä {0} ({1}) – {2} ({3}).",
     "DonutSummaryFormat": "{0}: {1}, {2} osaa, yhteensä {3}.",
     "LargestFormat": "Suurin: {0}, {1}.",
-    "SparklineFormat": "{0}: {1} arvoa, {2}–{3}, pienin {4}, suurin {5}."
+    "SparklineFormat": "{0}: {1} arvoa, {2}–{3}, pienin {4}, suurin {5}.",
+    "ScatterChart": "Hajontakaavio",
+    "BubbleChart": "Kuplakaavio",
+    "Group": "Ryhmä",
+    "Size": "Koko",
+    "ScatterSummaryFormat": "{0}, {1} pistettä.",
+    "GroupsFormat": "Ryhmät: {0}.",
+    "AxisRangeFormat": "{0}: {1}–{2}.",
+    "TrendUp": "{1} kasvaa yleensä, kun {0} kasvaa.",
+    "TrendDown": "{1} pienenee yleensä, kun {0} kasvaa.",
+    "TrendNone": "Ei selvää yhteyttä: {0} ja {1}.",
+    "Gauge": "Mittari",
+    "GaugeTextFormat": "{0}, asteikolla {1}–{2}",
+    "TargetFormat": "tavoite {0}",
+    "Target": "Tavoite"
   },
   "Code": {
     "Invalid": "Koodia ei voi näyttää."

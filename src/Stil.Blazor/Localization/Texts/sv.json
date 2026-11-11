@@ -74,7 +74,21 @@
     "TotalsRangeFormat": "Summorna går från {0} ({1}) till {2} ({3}).",
     "DonutSummaryFormat": "{0} över {1}: {2} delar, totalt {3}.",
     "LargestFormat": "Störst: {0}, {1}.",
-    "SparklineFormat": "{0}: {1} värden från {2} till {3}, lägst {4}, högst {5}."
+    "SparklineFormat": "{0}: {1} värden från {2} till {3}, lägst {4}, högst {5}.",
+    "ScatterChart": "Punktdiagram",
+    "BubbleChart": "Bubbeldiagram",
+    "Group": "Grupp",
+    "Size": "Storlek",
+    "ScatterSummaryFormat": "{0} med {1} punkter.",
+    "GroupsFormat": "Grupper: {0}.",
+    "AxisRangeFormat": "{0} från {1} till {2}.",
+    "TrendUp": "{1} ökar ofta med {0}.",
+    "TrendDown": "{1} minskar ofta när {0} ökar.",
+    "TrendNone": "Inget tydligt samband mellan {0} och {1}.",
+    "Gauge": "Mätare",
+    "GaugeTextFormat": "{0}, på en skala från {1} till {2}",
+    "TargetFormat": "mål {0}",
+    "Target": "Mål"
   },
   "Code": {
     "Invalid": "Koden kan inte visas."

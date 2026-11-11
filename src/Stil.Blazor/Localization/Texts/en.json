@@ -74,7 +74,21 @@
     "TotalsRangeFormat": "Totals range from {0} ({1}) to {2} ({3}).",
     "DonutSummaryFormat": "{0} of {1}: {2} parts totalling {3}.",
     "LargestFormat": "Largest: {0}, {1}.",
-    "SparklineFormat": "{0}: {1} values from {2} to {3}, lowest {4}, highest {5}."
+    "SparklineFormat": "{0}: {1} values from {2} to {3}, lowest {4}, highest {5}.",
+    "ScatterChart": "Scatter chart",
+    "BubbleChart": "Bubble chart",
+    "Group": "Group",
+    "Size": "Size",
+    "ScatterSummaryFormat": "{0} with {1} points.",
+    "GroupsFormat": "Groups: {0}.",
+    "AxisRangeFormat": "{0} from {1} to {2}.",
+    "TrendUp": "{1} tends to rise with {0}.",
+    "TrendDown": "{1} tends to fall as {0} rises.",
+    "TrendNone": "No clear relation between {0} and {1}.",
+    "Gauge": "Gauge",
+    "GaugeTextFormat": "{0}, on a scale from {1} to {2}",
+    "TargetFormat": "target {0}",
+    "Target": "Target"
   },
   "Code": {
     "Invalid": "This code cannot be shown."

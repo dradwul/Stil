@@ -1,0 +1,193 @@
+@namespace Stil.Charts
+@inherits StilComponentBase
+
+@* A gauge: one value on a scale, with an optional target and tinted ranges, as a half circle or a
+   bar. The value is a role="meter" with the value, the scale, the range name and the target in
+   aria-valuetext; the drawing is hidden from screen readers. *@
+<figure @attributes="AdditionalAttributes" class="@Classes("stil-chart", "stil-gauge", Shape == StilGaugeShape.Bar ? "stil-gauge-bar" : "stil-gauge-arc")"
+        style="--_value-color: @ValueColor">
+    @if (HasTitle || !string.IsNullOrWhiteSpace(Description))
+    {
+        <figcaption class="stil-chart-header">
+            @if (HasTitle)
+            {
+                <span id="@TitleId" class="stil-chart-title">@Title</span>
+            }
+            @if (!string.IsNullOrWhiteSpace(Description))
+            {
+                <span class="stil-chart-description">@Description</span>
+            }
+        </figcaption>
+    }
+    <div class="stil-gauge-body" role="meter" aria-valuenow="@ChartText.N(Value)" aria-valuemin="@ChartText.N(Low)" aria-valuemax="@ChartText.N(High)"
+         aria-valuetext="@ValueTextForReaders" aria-labelledby="@(HasTitle ? TitleId : null)" aria-label="@(HasTitle ? null : Localize(null, "Chart.Gauge"))"
+         style="@(Shape == StilGaugeShape.Arc ? $"--_size: {Size}px" : null)">
+        @if (Shape == StilGaugeShape.Arc)
+        {
+            <div class="stil-gauge-dial">
+                <svg class="stil-gauge-svg" viewBox="-106 -106 212 110" aria-hidden="true" focusable="false">
+                    <path class="stil-gauge-track" d="@Arc(0, 1)" />
+                    @foreach (var range in VisibleRanges)
+                    {
+                        <path class="stil-gauge-range" style="--_color: @range.Color" d="@Arc(Fraction(range.From), Fraction(range.To))" />
+                    }
+                    @if (Fraction(Value) > 0)
+                    {
+                        <path class="stil-gauge-value-mark" d="@Arc(0, Fraction(Value))" />
+                    }
+                    @if (Target is { } target)
+                    {
+                        var (x1, y1) = PointAt(Fraction(target), Radius - Thickness / 2 - 5);
+                        var (x2, y2) = PointAt(Fraction(target), Radius + Thickness / 2 + 5);
+                        <line class="stil-gauge-target" x1="@ChartText.N(x1)" y1="@ChartText.N(y1)" x2="@ChartText.N(x2)" y2="@ChartText.N(y2)" />
+                    }
+                </svg>
+                <span class="stil-gauge-value">@DisplayValue</span>
+            </div>
+        }
+        else
+        {
+            <span class="stil-gauge-value">@DisplayValue</span>
+            <span class="stil-gauge-meter">
+                <span class="stil-gauge-track">
+                    @foreach (var range in VisibleRanges)
+                    {
+                        var from = Fraction(range.From);
+                        <span class="stil-gauge-range" style="--_color: @range.Color; inset-inline-start: @ChartText.Pct(from); inline-size: @ChartText.Pct(Fraction(range.To) - from)"></span>
+                    }
+                    <span class="stil-gauge-value-mark" style="inline-size: @ChartText.Pct(Fraction(Value))"></span>
+                </span>
+                @if (Target is { } target)
+                {
+                    <span class="stil-gauge-target" style="inset-inline-start: @ChartText.Pct(Fraction(target))"></span>
+                }
+            </span>
+        }
+        @if (ShowScale)
+        {
+            <span class="stil-gauge-scale" aria-hidden="true">
+                <span>@FormatValue(Low)</span>
+                <span>@FormatValue(High)</span>
+            </span>
+        }
+        @if (Target is { } shownTarget)
+        {
+            <span class="stil-gauge-target-text" aria-hidden="true">@Localize(TargetText, "Chart.Target") @FormatValue(shownTarget)</span>
+        }
+    </div>
+</figure>
+
+@code {
+    private const double Radius = 88;
+    private const double Thickness = 20;
+    private readonly string _id = ChartIds.Next();
+
+    /// <summary>The value to show.</summary>
+    [Parameter]
+    public double Value { get; set; }
+
+    /// <summary>The start of the scale. The default is 0.</summary>
+    [Parameter]
+    public double Min { get; set; }
+
+    /// <summary>The end of the scale. The default is 100.</summary>
+    [Parameter]
+    public double Max { get; set; } = 100;
+
+    /// <summary>A target, drawn as a mark across the scale and written under it.</summary>
+    [Parameter]
+    public double? Target { get; set; }
+
+    /// <summary>A half circle (the default) or a bar.</summary>
+    [Parameter]
+    public StilGaugeShape Shape { get; set; }
+
+    /// <summary>
+    /// Stretches of the scale, for example poor, fair and good, drawn as tints behind the value.
+    /// Without a Color, the value takes the color of the range it is in.
+    /// </summary>
+    [Parameter]
+    public IReadOnlyList<StilGaugeRange>? Ranges { get; set; }
+
+    /// <summary>A CSS color for the value. The default is the color of the value's range, or --stil-chart-1.</summary>
+    [Parameter]
+    public string? Color { get; set; }
+
+    /// <summary>The title. It is also the gauge's accessible name, so set it.</summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>A short line under the title, for example the period or the unit.</summary>
+    [Parameter]
+    public string? Description { get; set; }
+
+    /// <summary>A format string for the value, the scale and the target, for example "P0" or "0 'ms'".</summary>
+    [Parameter]
+    public string? Format { get; set; }
+
+    /// <summary>The text in the middle instead of the formatted value, for example "64 of 100".</summary>
+    [Parameter]
+    public string? ValueText { get; set; }
+
+    /// <summary>Writes the start and end of the scale under it. The default is true.</summary>
+    [Parameter]
+    public bool ShowScale { get; set; } = true;
+
+    /// <summary>The widest a half-circle gauge grows, in pixels. The default is 240.</summary>
+    [Parameter]
+    public int Size { get; set; } = 240;
+
+    /// <summary>The word before the target.</summary>
+    [Parameter]
+    public string? TargetText { get; set; }
+
+    private bool HasTitle => !string.IsNullOrWhiteSpace(Title);
+
+    private string TitleId => $"{_id}-title";
+
+    private double Low => Math.Min(Min, Max);
+
+    private double High => Math.Max(Min, Max);
+
+    private IEnumerable<StilGaugeRange> VisibleRanges => (Ranges ?? []).Where(r => Fraction(Math.Max(r.From, r.To)) > Fraction(Math.Min(r.From, r.To)))
+        .Select(r => r.From <= r.To ? r : r with { From = r.To, To = r.From });
+
+    /// <summary>The range the value is in; the last one wins where ranges meet.</summary>
+    private StilGaugeRange? CurrentRange => VisibleRanges.LastOrDefault(r => Value >= r.From && Value <= r.To);
+
+    private string ValueColor => !string.IsNullOrWhiteSpace(Color) ? Color : CurrentRange?.Color ?? "var(--stil-chart-1)";
+
+    private string DisplayValue => string.IsNullOrWhiteSpace(ValueText) ? FormatValue(Value) : ValueText;
+
+    private string ValueTextForReaders
+    {
+        get
+        {
+            var value = CurrentRange?.Name is { Length: > 0 } name ? $"{DisplayValue} ({name})" : DisplayValue;
+            var text = Phrase("GaugeTextFormat", value, FormatValue(Low), FormatValue(High));
+            return Target is { } target ? $"{text}, {Phrase("TargetFormat", FormatValue(target))}" : text;
+        }
+    }
+
+    private string FormatValue(double value) => ChartText.Value(value, Format);
+
+    private string Phrase(string key, params object[] arguments) =>
+        string.Format(System.Globalization.CultureInfo.CurrentCulture, Localize(null, "Chart." + key), arguments);
+
+    /// <summary>Where a value sits on the scale, from 0 to 1.</summary>
+    private double Fraction(double value) => High == Low ? 0 : Math.Clamp((value - Low) / (High - Low), 0, 1);
+
+    /// <summary>A point on the half circle at a fraction of the scale, from the left end over the top to the right.</summary>
+    private static (double X, double Y) PointAt(double fraction, double radius)
+    {
+        var angle = Math.PI * (1 - fraction);
+        return (radius * Math.Cos(angle), -radius * Math.Sin(angle));
+    }
+
+    private static string Arc(double from, double to)
+    {
+        var (x1, y1) = PointAt(from, Radius);
+        var (x2, y2) = PointAt(to, Radius);
+        return $"M{ChartText.N(x1)} {ChartText.N(y1)}A{ChartText.N(Radius)} {ChartText.N(Radius)} 0 0 1 {ChartText.N(x2)} {ChartText.N(y2)}";
+    }
+}

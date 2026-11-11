@@ -15,3 +15,5 @@ public static class TestData
         new("May", 3000m, 4300m)
     ];
 }
+
+public sealed record Store(string Name, string Region, int Visitors, decimal? Revenue, int? Staff);

@@ -361,11 +361,156 @@
         stroke-width: 1.5;
     }
 
+    /* Scatter and bubbles. Bubbles are see-through, so overlapping ones stay visible. */
+    .stil-chart-scatter .stil-chart-key {
+        border-radius: 50%;
+    }
+
+    .stil-chart-bubble-mark {
+        fill: color-mix(in srgb, var(--_color) 55%, transparent);
+        stroke: var(--_color);
+        stroke-width: 1.5;
+    }
+
+    .stil-chart-point:hover :is(.stil-chart-marker, .stil-chart-bubble-mark) {
+        stroke: var(--stil-color-text);
+        stroke-width: 2;
+    }
+
+    /* Gauge: a half circle (stil-gauge-arc) or a bar (stil-gauge-bar). Ranges tint the track;
+       the value is drawn over them in --_value-color, and the target is a line across. */
+    .stil-gauge-body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--stil-space-1);
+    }
+
+    .stil-gauge-arc .stil-gauge-body {
+        align-items: center;
+    }
+
+    .stil-gauge-dial {
+        container-type: inline-size;
+        position: relative;
+        inline-size: min(100%, var(--_size, 240px));
+        direction: ltr;
+    }
+
+    .stil-gauge-svg {
+        display: block;
+        inline-size: 100%;
+        block-size: auto;
+        overflow: visible;
+    }
+
+    .stil-gauge-svg :is(.stil-gauge-track, .stil-gauge-range, .stil-gauge-value-mark) {
+        fill: none;
+        stroke-width: 20;
+    }
+
+    .stil-gauge-svg .stil-gauge-track {
+        stroke: var(--stil-color-surface-muted);
+    }
+
+    .stil-gauge-svg .stil-gauge-range {
+        stroke: color-mix(in srgb, var(--_color) 30%, var(--stil-color-surface));
+    }
+
+    .stil-gauge-svg .stil-gauge-value-mark {
+        stroke: var(--_value-color);
+    }
+
+    .stil-gauge-svg .stil-gauge-target {
+        stroke: var(--stil-color-text);
+        stroke-width: 3;
+        stroke-linecap: round;
+    }
+
+    .stil-gauge-value {
+        font-size: var(--stil-font-size-xl);
+        font-weight: var(--stil-font-weight-bold);
+        font-variant-numeric: tabular-nums;
+        line-height: 1.1;
+    }
+
+    .stil-gauge-dial .stil-gauge-value {
+        position: absolute;
+        inset-inline: 0;
+        inset-block-end: 4%;
+        font-size: clamp(var(--stil-font-size-md), 12cqi, 2.25rem);
+        text-align: center;
+    }
+
+    .stil-gauge-scale {
+        display: flex;
+        justify-content: space-between;
+        color: var(--stil-color-text-muted);
+        font-size: var(--stil-font-size-xs);
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* Under a half circle, each end's number is centered under the end of the arc. */
+    .stil-gauge-arc .stil-gauge-scale {
+        inline-size: min(100%, var(--_size, 240px));
+        direction: ltr;
+    }
+
+    .stil-gauge-arc .stil-gauge-scale > span {
+        inline-size: 17%;
+        text-align: center;
+    }
+
+    .stil-gauge-target-text {
+        color: var(--stil-color-text-muted);
+        font-size: var(--stil-font-size-sm);
+    }
+
+    .stil-gauge-meter {
+        position: relative;
+        display: block;
+        margin-block: var(--stil-space-1);
+    }
+
+    .stil-gauge-bar .stil-gauge-track {
+        position: relative;
+        display: block;
+        block-size: 0.75rem;
+        overflow: hidden;
+        border-radius: var(--stil-radius-pill);
+        background-color: var(--stil-color-surface-muted);
+    }
+
+    .stil-gauge-bar :is(.stil-gauge-range, .stil-gauge-value-mark) {
+        position: absolute;
+        inset-block: 0;
+        inset-inline-start: 0;
+    }
+
+    .stil-gauge-bar .stil-gauge-range {
+        background-color: color-mix(in srgb, var(--_color) 30%, var(--stil-color-surface));
+    }
+
+    .stil-gauge-bar .stil-gauge-value-mark {
+        border-radius: inherit;
+        background-color: var(--_value-color);
+    }
+
+    .stil-gauge-bar .stil-gauge-target {
+        position: absolute;
+        inset-block: -0.25rem;
+        inline-size: 3px;
+        margin-inline-start: -1.5px;
+        border-radius: 2px;
+        background-color: var(--stil-color-text);
+    }
+
     /* Windows high contrast: keep the series colors (the legend and the table carry the names)
        and draw text and chrome in system colors. */
     @media (forced-colors: active) {
         .stil-chart-svg,
         .stil-chart-donut-svg,
+        .stil-gauge-svg,
+        .stil-gauge-track,
         .stil-chart-key,
         .stil-chart-sparkline-svg {
             forced-color-adjust: none;
@@ -383,6 +528,7 @@
         }
 
         .stil-chart-marker,
+        .stil-chart-bubble-mark,
         .stil-chart-slice-mark,
         .stil-chart-gap {
             stroke: Canvas;

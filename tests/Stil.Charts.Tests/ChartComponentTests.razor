@@ -530,4 +530,156 @@
         Assert.Empty(cut.FindAll("path"));
         Assert.Single(cut.FindAll("circle.stil-chart-sparkline-dot"));
     }
+
+    // Scatter and bubble chart
+
+    private readonly List<Store> _stores =
+    [
+        new("A", "North", 100, 1000m, 4),
+        new("B", "North", 200, 2100m, 8),
+        new("C", "South", 300, 2900m, 2),
+        new("D", "South", 400, 4200m, null),
+        new("E", "North", 500, null, 6)
+    ];
+
+    [Fact]
+    public void ScatterDrawsAPointPerItemColoredByGroup()
+    {
+        var cut = Render(@<StilScatterChart Items="_stores" Category="s => s.Name" X="s => s.Visitors" Y="s => s.Revenue" Group="s => s.Region"
+                                           XAxisTitle="Visitors" YAxisTitle="Revenue" Title="Stores" />);
+
+        Assert.Equal(["stil-chart", "stil-chart-scatter"], cut.Find("figure").ClassList);
+        // E has no revenue, so it is left out.
+        var points = cut.FindAll("g.stil-chart-point");
+        Assert.Equal(4, points.Count);
+        Assert.All(points, p => Assert.Single(p.QuerySelectorAll("circle.stil-chart-marker")));
+        Assert.Equal("A\nNorth\nVisitors: 100\nRevenue: 1,000", points[0].QuerySelector("title")!.TextContent);
+        Assert.Equal("--_color: var(--stil-chart-2)", points[2].GetAttribute("style"));
+        Assert.Equal(["North", "South"], cut.FindAll(".stil-chart-legend-item").Select(i => i.TextContent.Trim()));
+        Assert.Equal("Scatter chart with 4 points. Groups: North and South. Visitors from 100 to 400. Revenue from 1,000 to 4,200. Revenue tends to rise with Visitors.",
+            cut.Find("desc").TextContent);
+        Assert.Equal(["Category", "Group", "Visitors", "Revenue"], cut.FindAll(".stil-chart-data thead th").Select(th => th.TextContent));
+        Assert.Equal(["A", "North", "100", "1,000"], cut.FindAll(".stil-chart-data tbody tr")[0].Children.Select(c => c.TextContent));
+    }
+
+    [Fact]
+    public void ScatterPlacesPointsOnBothScales()
+    {
+        var cut = Render(@<StilScatterChart Items="_stores" X="s => s.Visitors" Y="s => s.Revenue" XMin="0" XMax="500" YMin="0" YMax="5000" Height="300" />);
+
+        // The plot runs from 10 to 274 px; 1,000 of 5,000 is a fifth of the way up.
+        var first = cut.Find("circle.stil-chart-marker");
+        Assert.Equal("20%", first.GetAttribute("cx"));
+        Assert.Equal("221.2", first.GetAttribute("cy"));
+        Assert.Equal("5", first.GetAttribute("r"));
+        Assert.Contains("0", cut.FindAll("text.stil-chart-value-tick").Select(t => t.TextContent));
+        Assert.Contains("500", cut.FindAll("text.stil-chart-value-tick").Select(t => t.TextContent));
+        Assert.Empty(cut.FindAll(".stil-chart-legend"));
+        Assert.Equal("Scatter chart", cut.Find("svg.stil-chart-svg").GetAttribute("aria-label"));
+    }
+
+    [Fact]
+    public void BubbleAreaFollowsTheSize()
+    {
+        var cut = Render(@<StilScatterChart Items="_stores" Category="s => s.Name" X="s => s.Visitors" Y="s => s.Revenue" Size="s => s.Staff" SizeTitle="Staff" />);
+
+        Assert.Equal(["stil-chart", "stil-chart-scatter", "stil-chart-bubble"], cut.Find("figure").ClassList);
+        // Largest first, so small bubbles are drawn on top. B (8 staff) is the largest at 24 px;
+        // A (4) has half the area; D has no size and gets the smallest bubble.
+        var bubbles = cut.FindAll("circle.stil-chart-bubble-mark");
+        Assert.Equal(["24", "16.971", "12", "3"], bubbles.Select(b => b.GetAttribute("r")));
+        Assert.Equal(["Category", "X", "Y", "Staff"], cut.FindAll(".stil-chart-data thead th").Select(th => th.TextContent));
+        Assert.Equal("–", cut.FindAll(".stil-chart-data tbody tr")[3].Children[3].TextContent);
+        Assert.StartsWith("Bubble chart with 4 points. X from 100 to 400. Y from 1,000 to 4,200. Staff from 2 to 8.", cut.Find("desc").TextContent);
+
+        // The axes get room for the bubbles, but never below zero for positive values.
+        List<(int Price, int Margin, int Sold)> nearZero = [(5, 10, 1), (500, 50, 2)];
+        var padded = Render(@<StilScatterChart Items="nearZero" X="p => p.Price" Y="p => p.Margin" Size="p => p.Sold" />);
+        var ticks = padded.FindAll("text.stil-chart-value-tick").Select(t => t.TextContent).ToList();
+        Assert.Contains("0", ticks);
+        Assert.DoesNotContain(ticks, t => t.StartsWith('-'));
+    }
+
+    [Fact]
+    public void ScatterSummaryTellsWhetherTheValuesMoveTogether()
+    {
+        List<(int X, int Y)> falling = [(1, 9), (2, 7), (3, 4), (4, 1)];
+        List<(int X, int Y)> scattered = [(1, 5), (2, 9), (3, 1), (4, 6)];
+
+        var down = Render(@<StilScatterChart Items="falling" X="p => p.X" Y="p => p.Y" />);
+        var none = Render(@<StilScatterChart Items="scattered" X="p => p.X" Y="p => p.Y" />);
+
+        Assert.EndsWith("Y tends to fall as X rises.", down.Find("desc").TextContent);
+        Assert.EndsWith("No clear relation between X and Y.", none.Find("desc").TextContent);
+    }
+
+    [Fact]
+    public void ScatterWithoutPointsShowsTheEmptyText()
+    {
+        var cut = Render(@<StilScatterChart Items="new List<Store>()" X="s => s.Visitors" Y="s => s.Revenue" />);
+
+        Assert.Equal("No data to show.", cut.Find(".stil-chart-empty").TextContent);
+    }
+
+    // Gauge
+
+    [Fact]
+    public void GaugeIsAMeterWithTheValueAndTarget()
+    {
+        var cut = Render(@<StilGauge Value="64" Target="80" Title="Uptime" Description="This month" />);
+
+        Assert.Equal(["stil-chart", "stil-gauge", "stil-gauge-arc"], cut.Find("figure").ClassList);
+        var meter = cut.Find("[role=meter]");
+        Assert.Equal("64", meter.GetAttribute("aria-valuenow"));
+        Assert.Equal("0", meter.GetAttribute("aria-valuemin"));
+        Assert.Equal("100", meter.GetAttribute("aria-valuemax"));
+        Assert.Equal("64, on a scale from 0 to 100, target 80", meter.GetAttribute("aria-valuetext"));
+        Assert.Equal(cut.Find(".stil-chart-title").Id, meter.GetAttribute("aria-labelledby"));
+        Assert.Equal("true", cut.Find("svg").GetAttribute("aria-hidden"));
+        Assert.Equal("64", cut.Find(".stil-gauge-value").TextContent);
+        Assert.Equal(["0", "100"], cut.FindAll(".stil-gauge-scale > span").Select(s => s.TextContent));
+        Assert.Equal("Target 80", cut.Find(".stil-gauge-target-text").TextContent);
+        // The value arc runs from the left end of the half circle.
+        Assert.StartsWith("M-88 0A88 88 0 0 1 ", cut.Find("path.stil-gauge-value-mark").GetAttribute("d"));
+        Assert.Single(cut.FindAll("line.stil-gauge-target"));
+        Assert.Contains("--_value-color: var(--stil-chart-1)", cut.Find("figure").GetAttribute("style"));
+    }
+
+    [Fact]
+    public void GaugeBarTakesTheColorOfItsRange()
+    {
+        IReadOnlyList<StilGaugeRange> ranges =
+        [
+            new(0, 50, "var(--stil-color-danger)", "Poor"),
+            new(50, 80, "var(--stil-color-warning)", "Fair"),
+            new(80, 100, "var(--stil-color-success)", "Good")
+        ];
+
+        var cut = Render(@<StilGauge Value="85" Ranges="ranges" Shape="StilGaugeShape.Bar" Format="@PercentFormat" />);
+
+        Assert.Equal(["stil-chart", "stil-gauge", "stil-gauge-bar"], cut.Find("figure").ClassList);
+        Assert.Contains("--_value-color: var(--stil-color-success)", cut.Find("figure").GetAttribute("style"));
+        var meter = cut.Find("[role=meter]");
+        Assert.Equal("85 % (Good), on a scale from 0 % to 100 %", meter.GetAttribute("aria-valuetext"));
+        Assert.Equal("Gauge", meter.GetAttribute("aria-label"));
+        var tints = cut.FindAll(".stil-gauge-range");
+        Assert.Equal(3, tints.Count);
+        Assert.Equal("--_color: var(--stil-color-warning); inset-inline-start: 50%; inline-size: 30%", tints[1].GetAttribute("style"));
+        Assert.Equal("inline-size: 85%", cut.Find(".stil-gauge-value-mark").GetAttribute("style"));
+        Assert.Empty(cut.FindAll(".stil-gauge-target"));
+    }
+
+    private const string PercentFormat = "0' %'";
+
+    [Fact]
+    public void GaugeDrawsValuesOutsideTheScaleAtItsEnds()
+    {
+        var cut = Render(@<StilGauge Value="150" Shape="StilGaugeShape.Bar" ValueText="150 of 100" Color="red" ShowScale="false" />);
+
+        Assert.Equal("inline-size: 100%", cut.Find(".stil-gauge-value-mark").GetAttribute("style"));
+        Assert.Equal("150", cut.Find("[role=meter]").GetAttribute("aria-valuenow"));
+        Assert.Equal("150 of 100", cut.Find(".stil-gauge-value").TextContent);
+        Assert.Contains("--_value-color: red", cut.Find("figure").GetAttribute("style"));
+        Assert.Empty(cut.FindAll(".stil-gauge-scale"));
+    }
 }

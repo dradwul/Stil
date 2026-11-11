@@ -1,8 +1,8 @@
 # Stil.Charts
 
 Themeable SVG charts for [Stil for Blazor](https://github.com/dradwul/Stil/tree/main/src/Stil.Blazor):
-line, area, bar (grouped, stacked, vertical or horizontal), donut and
-sparkline charts.
+line, area, bar (grouped, stacked, vertical or horizontal), donut, scatter,
+bubble and sparkline charts, and gauges.
 
 - The charts render plain SVG on the server, so they also work in static
   server rendering. There is no JavaScript and no canvas.
@@ -54,6 +54,8 @@ sparkline charts.
 | `StilLineChart` | Changes over time. `Area` fills under the lines; `ShowMarkers` marks every point; `BeginAtZero="false"` zooms in on small changes. |
 | `StilBarChart` | Comparing categories. `Orientation="Horizontal"` suits long names; `Stacked` adds the series up; `ShowValues` writes the values at the bar ends. |
 | `StilDonutChart` | The parts of a whole (the first series). The total is in the middle; the legend lists each part's value and share. Parts beyond `MaxSlices` are combined into "Other". |
+| `StilScatterChart` | Whether two values go together: one point per item by `X` and `Y`. `Group` colors the points; `Size` makes it a bubble chart, the area following a third value. |
+| `StilGauge` | One value against a scale and a target, as a half circle or a bar (`Shape`). `Ranges` tint stretches of the scale, and the value takes the color of its range. |
 | `StilSparkline` | A small line without axes, for example in a `StilStatCard`. |
 
 Shared parameters: `Title` (also the accessible name), `Description`,
@@ -62,7 +64,8 @@ in the current culture), `CategoryFormat`, `ShowLegend`, `DataTable`,
 `Summary` and the texts (`ShowDataText`, `EmptyText`, `CategoryText`,
 `MissingText`) for other languages. Line and bar charts also have
 `CategoryAxisTitle`, `ValueAxisTitle`, `Min`, `Max`, `TickFormat` and
-`Gridlines`.
+`Gridlines`. The scatter chart has its own axis parameters (`XAxisTitle`,
+`YAxisTitle`, `XMin`, `XMax`, `YMin`, `YMax`, `XFormat`).
 
 ## Accessibility
 
@@ -77,6 +80,8 @@ in the current culture), `CategoryFormat`, `ShowLegend`, `DataTable`,
   table, not by color alone. Each mark has a native tooltip with its values.
 - In Windows high-contrast mode the series keep their colors and the text and
   axes use system colors.
+- A `StilGauge` is a `role="meter"`: screen readers hear the value, the name
+  of its range, the scale and the target.
 - A `StilSparkline` without a `Label` is decorative and hidden from screen
   readers. With a `Label`, it reads the first, last, lowest and highest value.
 
