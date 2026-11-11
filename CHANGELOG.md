@@ -204,6 +204,13 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   `OrderStore` is now `IOrderService` with `InMemoryOrderService`; apps made
   from the template earlier are not affected.
 
+- **Stil.Templates**: `--Radius` (`sharp`, `small`, `default`, `large`,
+  `round`) sets how round the corners are, in `AddStil()`.
+- **Docs**: a New app page, a wizard in four steps (starter, features, theme,
+  project) that shows the `dotnet new install` and `dotnet new stil-app`
+  commands for the choices, with a live preview of the theme and a link that
+  opens the wizard with the same choices.
+
 ### Fixed
 
 - **Stil.Markdown**: the checkboxes of a task list (`- [x] Done`) had no

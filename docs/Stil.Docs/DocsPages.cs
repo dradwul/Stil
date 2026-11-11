@@ -17,6 +17,7 @@ public static class DocsPages
         [
             new("Introduction", ""),
             new("Installation", "get-started"),
+            new("New app", "new-app"),
             new("Theming", "theming"),
             new("Localization", "localization"),
             new("Theme builder", "theme-builder"),

@@ -247,3 +247,80 @@
     border: 1px solid var(--stil-color-border);
     border-radius: var(--stil-radius-lg);
 }
+
+/* The project wizard (new-app): starter cards, feature groups and the starter sketches. */
+.docs-choices {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: var(--stil-space-3);
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.docs-choice {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stil-space-1);
+    padding: var(--stil-space-3);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-lg);
+    background: var(--stil-color-surface);
+    cursor: pointer;
+}
+
+.docs-choice:hover { border-color: var(--stil-color-border-strong); }
+
+.docs-choice[data-selected] {
+    border-color: var(--stil-color-primary);
+    box-shadow: 0 0 0 1px var(--stil-color-primary);
+}
+
+.docs-choice:has(:focus-visible) {
+    outline: var(--stil-focus-ring-width) solid var(--stil-color-primary);
+    outline-offset: var(--stil-focus-ring-offset);
+}
+
+.docs-choice-title { font-weight: 600; }
+
+.docs-choice-text,
+.docs-choice-meta {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+}
+
+.docs-sketch {
+    width: 100%;
+    height: auto;
+    margin-bottom: var(--stil-space-2);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-md);
+    background: var(--stil-color-body-bg);
+}
+
+.docs-sketch-bar { fill: var(--stil-color-surface-muted); }
+.docs-sketch-card { fill: var(--stil-color-surface); stroke: var(--stil-color-border); stroke-width: 0.6; }
+.docs-sketch-line { fill: var(--stil-color-border); }
+.docs-sketch-ink { fill: var(--stil-color-text-muted); }
+.docs-sketch-accent { fill: var(--stil-color-primary); }
+.docs-sketch-stroke { fill: none; stroke: var(--stil-color-primary); stroke-width: 1.6; stroke-linejoin: round; }
+.docs-sketch-ring { fill: none; stroke: var(--stil-color-border); stroke-width: 5; }
+.docs-sketch-ring-accent { fill: none; stroke: var(--stil-color-primary); stroke-width: 5; }
+
+.docs-feature-groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: var(--stil-space-4);
+}
+
+.docs-feature-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stil-space-2);
+    margin: 0;
+    padding: var(--stil-space-3);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-lg);
+}
+
+.docs-summary { padding-inline-start: var(--stil-space-4); }

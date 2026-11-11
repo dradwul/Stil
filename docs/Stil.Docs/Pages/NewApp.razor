@@ -1,0 +1,252 @@
+@page "/new-app"
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+@inject IStilToastService Toasts
+
+<DocsHeader Title="New app" Eyebrow="Get started">
+    <Lead>
+        Choose a starter, the features you need and a theme, and get the <code>dotnet new</code> command that makes the app.
+        The command line gives the same app; this page only fills in the options.
+    </Lead>
+</DocsHeader>
+
+@if (_setup.WebFont?.StylesheetUrl is { } fontUrl)
+{
+    <HeadContent><link rel="stylesheet" href="@fontUrl" /></HeadContent>
+}
+
+<StilWizard @bind-Step="_step" OnFinish="CopyCommandsAsync" FinishText="Copy the commands">
+    <StilWizardStep Title="Starter" Description="What the app starts as">
+        <fieldset class="docs-choices">
+            <legend class="stil-visually-hidden">Starter</legend>
+            @foreach (var starter in ProjectSetup.Starters)
+            {
+                <label class="docs-choice" data-selected="@(_setup.Starter == starter.Id ? "true" : null)">
+                    @* The radio is named by the title and described by the rest, so a screen reader says it short. *@
+                    <input type="radio" name="starter" value="@starter.Id" class="stil-visually-hidden"
+                           aria-labelledby="@($"starter-{starter.Id}")" aria-describedby="@($"starter-{starter.Id}-text starter-{starter.Id}-pages")"
+                           checked="@(_setup.Starter == starter.Id)" @onchange="() => _setup.Starter = starter.Id" />
+                    <StarterSketch Starter="@starter.Id" />
+                    <span class="docs-choice-title" id="@($"starter-{starter.Id}")">@starter.Title</span>
+                    <span class="docs-choice-text" id="@($"starter-{starter.Id}-text")">@starter.Text</span>
+                    <span class="docs-choice-meta" id="@($"starter-{starter.Id}-pages")">Pages: @starter.Pages</span>
+                </label>
+            }
+        </fieldset>
+        @if (_setup.Starter == "blank")
+        {
+            <StilSwitch @bind-Value="_setup.SampleContent" Label="Sample pages" Hint="A dashboard and an order form. Without them, the app has one empty page." class="stil-mt-4" />
+        }
+    </StilWizardStep>
+
+    <StilWizardStep Title="Features" Description="What to add">
+        <p class="stil-text-muted">
+            Each feature adds a page with sample data, in the app's Features menu, and the package it needs.
+        </p>
+        <div class="docs-feature-groups">
+            @foreach (var group in ProjectSetup.FeatureGroups)
+            {
+                <fieldset class="docs-feature-group">
+                    <legend class="stil-fw-bold">@group.Title</legend>
+                    @foreach (var feature in group.Features)
+                    {
+                        var included = _setup.Includes(feature.Id);
+                        <StilCheckbox TValue="bool" Value="@(included || _setup.Features.Contains(feature.Id))"
+                                      ValueChanged="on => SetFeature(feature.Id, on)" Disabled="included"
+                                      Label="@feature.Title" Hint="@HintOf(feature, included)" />
+                    }
+                </fieldset>
+            }
+        </div>
+        <StilCluster class="stil-mt-3">
+            <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Outline" OnClick="SelectAll">Select all</StilButton>
+            <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Ghost" Variant="StilVariant.Secondary" OnClick="() => _setup.Features.Clear()">Clear</StilButton>
+        </StilCluster>
+    </StilWizardStep>
+
+    <StilWizardStep Title="Theme" Description="Color, font and corners">
+        <div class="docs-theme-builder">
+            <div class="stil-stack">
+                <div class="docs-color-input">
+                    <input type="color" value="@(_setup.IsValidPrimary ? _setup.Primary : ProjectSetup.DefaultPrimary)" aria-label="Brand color picker"
+                           @oninput="e => SetPrimary(e.Value?.ToString())" />
+                    <StilTextBox Value="@_setup.Primary" ValueChanged="SetPrimary" Label="Brand color" Size="StilSize.Small"
+                                 spellcheck="false" autocomplete="off" />
+                </div>
+                @if (!_setup.IsValidPrimary)
+                {
+                    <p class="stil-text-danger stil-fs-sm stil-mb-0" role="alert">Use a color like #7048e8.</p>
+                }
+                <StilSelect TValue="string" @bind-Value="_setup.Font" Items="ProjectSetup.Fonts.Select(f => f.Id)"
+                            ItemText="id => FontName(id)" Label="Font" />
+                <StilRadioGroup TValue="string" @bind-Value="_setup.Radius" Items="ProjectSetup.Radii.Select(r => r.Id)"
+                                ItemText="id => ProjectSetup.Radii.First(r => r.Id == id).Name" Label="Corners" />
+                <StilRadioGroup TValue="StilThemeMode" @bind-Value="_setup.ColorMode" Items="Modes" ItemText="ModeName"
+                                Label="Color mode the app starts in" />
+                @if (_setup.ColorMode == StilThemeMode.Auto)
+                {
+                    <StilRadioGroup TValue="StilThemeMode" @bind-Value="_previewMode" Items="PreviewModes" Label="Preview" Inline />
+                }
+            </div>
+            <StilThemeProvider Theme="_setup.Theme" Mode="PreviewMode" class="docs-preview-frame stil-scope" aria-label="Preview">
+                <ThemePreview />
+            </StilThemeProvider>
+        </div>
+    </StilWizardStep>
+
+    <StilWizardStep Title="Project" Description="Name and the commands">
+        <div class="stil-grid">
+            <div class="stil-col-md-6 stil-stack">
+                <StilTextBox @bind-Value="_setup.Name" Label="Project name" Hint="Also the app's namespace and its title in the navbar."
+                             spellcheck="false" autocomplete="off" />
+                @if (!_setup.IsValidName)
+                {
+                    <p class="stil-text-danger stil-fs-sm stil-mb-0" role="alert">
+                        Start with a letter, and use letters, digits, dots, hyphens and underscores.
+                    </p>
+                }
+                <StilRadioGroup TValue="bool" @bind-Value="_setup.Interactive" Items="[true, false]"
+                                ItemText="on => on ? InteractiveText : StaticText" Label="Rendering" />
+                <StilSelect TValue="string" @bind-Value="_setup.Culture" Items="ProjectSetup.Cultures.Select(c => c.Id)"
+                            ItemText="id => ProjectSetup.Cultures.First(c => c.Id == id).Name" Label="Default language"
+                            Hint="Users can change it in the navbar. The components have texts in all five." />
+            </div>
+            <div class="stil-col-md-6">
+                <h3 class="stil-fs-md">The app</h3>
+                <ul class="docs-summary">
+                    <li><strong>Pages:</strong> @Pages</li>
+                    <li><strong>Packages:</strong> @string.Join(", ", ["Stil", .. _setup.Packages])</li>
+                    <li><strong>Theme:</strong> @ThemeText</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 class="stil-fs-md stil-mt-4">The commands</h3>
+        <p>Install the templates once, then make the app and run it:</p>
+        <CodeBlock Language="shell" Code="@Commands" />
+        <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Outline" OnClick="CopyLinkAsync">Copy a link to these choices</StilButton>
+    </StilWizardStep>
+</StilWizard>
+
+@code {
+    private const string InteractiveText = "Interactive (Interactive Server for the whole app)";
+    private const string StaticText = "Static (server rendering; only the pages that need it are interactive)";
+
+    private static readonly StilThemeMode[] Modes = [StilThemeMode.Auto, StilThemeMode.Light, StilThemeMode.Dark];
+    private static readonly StilThemeMode[] PreviewModes = [StilThemeMode.Light, StilThemeMode.Dark];
+
+    private readonly ProjectSetup _setup = new();
+    private int _step;
+    private StilThemeMode _previewMode = StilThemeMode.Light;
+
+    [SupplyParameterFromQuery(Name = "starter")] private string? StarterQuery { get; set; }
+    [SupplyParameterFromQuery(Name = "sample")] private string? SampleQuery { get; set; }
+    [SupplyParameterFromQuery(Name = "features")] private string? FeaturesQuery { get; set; }
+    [SupplyParameterFromQuery(Name = "primary")] private string? PrimaryQuery { get; set; }
+    [SupplyParameterFromQuery(Name = "font")] private string? FontQuery { get; set; }
+    [SupplyParameterFromQuery(Name = "radius")] private string? RadiusQuery { get; set; }
+    [SupplyParameterFromQuery(Name = "mode")] private string? ModeQuery { get; set; }
+    [SupplyParameterFromQuery(Name = "name")] private string? NameQuery { get; set; }
+    [SupplyParameterFromQuery(Name = "interactivity")] private string? InteractivityQuery { get; set; }
+    [SupplyParameterFromQuery(Name = "culture")] private string? CultureQuery { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // A shared link, for example /new-app?starter=monitoring&features=gantt,markdown&radius=large,
+        // opens on the last step with the commands.
+        var query = new Dictionary<string, string?>
+        {
+            ["starter"] = StarterQuery, ["sample"] = SampleQuery, ["features"] = FeaturesQuery, ["primary"] = PrimaryQuery,
+            ["font"] = FontQuery, ["radius"] = RadiusQuery, ["mode"] = ModeQuery, ["name"] = NameQuery,
+            ["interactivity"] = InteractivityQuery, ["culture"] = CultureQuery,
+        };
+        _setup.ReadQuery(name => query[name]);
+        if (query.Values.Any(v => v is not null))
+        {
+            _step = 3;
+        }
+    }
+
+    private StilThemeMode PreviewMode => _setup.ColorMode == StilThemeMode.Auto ? _previewMode : _setup.ColorMode;
+
+    private string Commands => $"""
+        dotnet new install Stil.Templates
+        {_setup.Command}
+        cd {(_setup.IsValidName ? _setup.Name : ProjectSetup.DefaultName)}
+        dotnet run
+        """;
+
+    private string Pages
+    {
+        get
+        {
+            var pages = _setup.Starter == "blank" && !_setup.SampleContent ? "Home" : _setup.StarterChoice.Pages;
+            var features = ProjectSetup.AllFeatures.Where(f => _setup.Features.Contains(f.Id) && !_setup.Includes(f.Id) && f.Id != "commands")
+                .Select(f => f.Title).ToList();
+            return features.Count == 0 ? pages : $"{pages}, and under Features: {string.Join(", ", features)}";
+        }
+    }
+
+    private string ThemeText =>
+        $"{(_setup.IsValidPrimary ? _setup.Primary : ProjectSetup.DefaultPrimary)}, {FontName(_setup.Font)}, " +
+        $"{ProjectSetup.Radii.First(r => r.Id == _setup.Radius).Name.ToLowerInvariant()} corners, starts in {ModeName(_setup.ColorMode).ToLowerInvariant()}";
+
+    private static string FontName(string id)
+    {
+        var name = ProjectSetup.Fonts.First(f => f.Id == id).Name;
+        return id == "lexend" ? $"{name} (default, free)" : name;
+    }
+
+    private static string ModeName(StilThemeMode mode) => mode switch
+    {
+        StilThemeMode.Auto => "Auto, as the device",
+        StilThemeMode.Dark => "Dark mode",
+        _ => "Light mode",
+    };
+
+    private static string HintOf(FeatureChoice feature, bool included) =>
+        included ? $"{feature.Text} The starter has it." : feature.Package is null ? feature.Text : $"{feature.Text} Adds {feature.Package}.";
+
+    private void SetFeature(string id, bool on)
+    {
+        if (on)
+        {
+            _setup.Features.Add(id);
+        }
+        else
+        {
+            _setup.Features.Remove(id);
+        }
+    }
+
+    private void SelectAll()
+    {
+        foreach (var feature in ProjectSetup.AllFeatures)
+        {
+            _setup.Features.Add(feature.Id);
+        }
+    }
+
+    private void SetPrimary(string? value)
+    {
+        value = value?.Trim() ?? "";
+        _setup.Primary = value.Length == 6 && !value.StartsWith('#') ? "#" + value : value;
+    }
+
+    private Task CopyCommandsAsync() => CopyAsync(Commands, "The commands are copied.");
+
+    private Task CopyLinkAsync() => CopyAsync(Navigation.GetUriWithQueryParameters(_setup.ToQuery()), "A link to these choices is copied.");
+
+    private async Task CopyAsync(string text, string message)
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", text);
+            Toasts.Success(message);
+        }
+        catch (JSException)
+        {
+            Toasts.Error("Could not copy. Select the text and copy it instead.");
+        }
+    }
+}

@@ -1,0 +1,94 @@
+@* A small drawing of a starter's first page, for the project wizard. It is decorative: the card
+   next to it says the same in words. *@
+<svg class="docs-sketch" viewBox="0 0 160 100" aria-hidden="true" focusable="false">
+    <rect x="0" y="0" width="160" height="12" class="docs-sketch-bar" />
+    <rect x="6" y="4" width="22" height="4" rx="2" class="docs-sketch-accent" />
+    @switch (Starter)
+    {
+        case "admin":
+            <rect x="8" y="18" width="40" height="5" rx="1" class="docs-sketch-ink" />
+            @for (var i = 0; i < 6; i++)
+            {
+                <rect x="8" y="@(28 + i * 11)" width="144" height="8" rx="1" class="docs-sketch-line" />
+                <rect x="124" y="@(30 + i * 11)" width="12" height="4" rx="1" class="docs-sketch-accent" />
+            }
+            <rect x="52" y="34" width="70" height="44" rx="3" class="docs-sketch-card" />
+            <rect x="58" y="40" width="30" height="4" rx="1" class="docs-sketch-ink" />
+            <rect x="58" y="49" width="58" height="6" rx="1" class="docs-sketch-line" />
+            <rect x="58" y="58" width="58" height="6" rx="1" class="docs-sketch-line" />
+            <rect x="98" y="68" width="18" height="6" rx="1" class="docs-sketch-accent" />
+            break;
+
+        case "dashboard":
+            @for (var i = 0; i < 4; i++)
+            {
+                <rect x="@(8 + i * 37)" y="18" width="33" height="20" rx="2" class="docs-sketch-card" />
+                <polyline points="@($"{12 + i * 37},34 {19 + i * 37},30 {26 + i * 37},32 {33 + i * 37},26 {37 + i * 37},27")" class="docs-sketch-stroke" />
+            }
+            <rect x="8" y="44" width="90" height="48" rx="2" class="docs-sketch-card" />
+            <polyline points="14,84 30,74 46,78 62,64 78,66 92,52" class="docs-sketch-stroke" />
+            <rect x="104" y="44" width="48" height="48" rx="2" class="docs-sketch-card" />
+            <circle cx="128" cy="68" r="14" class="docs-sketch-ring" />
+            <path d="M128 54 A14 14 0 0 1 141 73" class="docs-sketch-ring-accent" />
+            break;
+
+        case "monitoring":
+            @for (var i = 0; i < 3; i++)
+            {
+                <path d="@($"M{18 + i * 50} 40 A14 14 0 0 1 {46 + i * 50} 40")" class="docs-sketch-ring" />
+                <path d="@($"M{18 + i * 50} 40 A14 14 0 0 1 {36 + i * 50 + i * 4} 27")" class="docs-sketch-ring-accent" />
+            }
+            @for (var row = 0; row < 4; row++)
+            {
+                @for (var column = 0; column < 12; column++)
+                {
+                    <rect x="@(8 + column * 12)" y="@(52 + row * 10)" width="10" height="8" rx="1"
+                          class="@((row * 5 + column * 3) % 7 < 2 ? "docs-sketch-accent" : "docs-sketch-line")" />
+                }
+            }
+            break;
+
+        case "finance":
+            @for (var i = 0; i < 8; i++)
+            {
+                <rect x="@(12 + i * 11)" y="@(40 - i % 3 * 4)" width="4" height="@(50 - (40 - i % 3 * 4) + 40)" class="docs-sketch-line" />
+                <rect x="@(17 + i * 11)" y="@(36 - i % 4 * 3)" width="4" height="@(90 - (36 - i % 4 * 3))" class="docs-sketch-accent" />
+            }
+            <polyline points="14,30 36,26 58,28 80,20 98,22" class="docs-sketch-stroke" />
+            @for (var i = 0; i < 4; i++)
+            {
+                <rect x="110" y="@(20 + i * 18)" width="42" height="4" rx="1" class="docs-sketch-ink" />
+                <rect x="110" y="@(27 + i * 18)" width="42" height="5" rx="2" class="docs-sketch-line" />
+                <rect x="110" y="@(27 + i * 18)" width="@(18 + i * 7)" height="5" rx="2" class="docs-sketch-accent" />
+            }
+            break;
+
+        case "planner":
+            @for (var day = 0; day < 5; day++)
+            {
+                <rect x="@(8 + day * 29)" y="18" width="27" height="74" rx="1" class="docs-sketch-line" />
+                <rect x="@(10 + day * 29)" y="@(24 + day * 9 % 30)" width="23" height="@(10 + day % 3 * 6)" rx="2" class="docs-sketch-accent" />
+                <rect x="@(10 + day * 29)" y="@(64 - day % 2 * 8)" width="23" height="12" rx="2" class="docs-sketch-card" />
+            }
+            break;
+
+        default:
+            @for (var i = 0; i < 4; i++)
+            {
+                <rect x="@(8 + i * 37)" y="18" width="33" height="18" rx="2" class="docs-sketch-card" />
+                <rect x="@(12 + i * 37)" y="27" width="16" height="5" rx="1" class="docs-sketch-ink" />
+            }
+            @for (var i = 0; i < 5; i++)
+            {
+                <rect x="8" y="@(44 + i * 10)" width="144" height="7" rx="1" class="docs-sketch-line" />
+                <rect x="120" y="@(46 + i * 10)" width="14" height="3" rx="1" class="docs-sketch-accent" />
+            }
+            break;
+    }
+</svg>
+
+@code {
+    /// <summary>The starter's id, for example <c>monitoring</c>.</summary>
+    [Parameter, EditorRequired]
+    public string Starter { get; set; } = "blank";
+}
