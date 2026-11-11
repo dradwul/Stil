@@ -1,8 +1,8 @@
 # Stil.Charts
 
 Themeable SVG charts for [Stil for Blazor](https://github.com/dradwul/Stil/tree/main/src/Stil.Blazor):
-line, area, bar (grouped, stacked, vertical or horizontal), donut, scatter,
-bubble and sparkline charts, and gauges.
+line, area, bar (grouped, stacked, vertical or horizontal, with a line over
+the bars), donut, scatter, bubble and sparkline charts, heat maps and gauges.
 
 - The charts render plain SVG on the server, so they also work in static
   server rendering. There is no JavaScript and no canvas.
@@ -52,9 +52,10 @@ bubble and sparkline charts, and gauges.
 | Component | Use it for |
 | --- | --- |
 | `StilLineChart` | Changes over time. `Area` fills under the lines; `ShowMarkers` marks every point; `BeginAtZero="false"` zooms in on small changes. |
-| `StilBarChart` | Comparing categories. `Orientation="Horizontal"` suits long names; `Stacked` adds the series up; `ShowValues` writes the values at the bar ends. |
+| `StilBarChart` | Comparing categories. `Orientation="Horizontal"` suits long names; `Stacked` adds the series up; `ShowValues` writes the values at the bar ends. A series with `Line="true"` is drawn as a line over the bars. |
 | `StilDonutChart` | The parts of a whole (the first series). The total is in the middle; the legend lists each part's value and share. Parts beyond `MaxSlices` are combined into "Other". |
 | `StilScatterChart` | Whether two values go together: one point per item by `X` and `Y`. `Group` colors the points; `Size` makes it a bubble chart, the area following a third value. |
+| `StilHeatMap` | A value across two categories, such as orders by weekday and hour. `Row` and `Column` place each item; a cell sums its `Value`s, or counts the items. `Rows` and `Columns` set the order. |
 | `StilGauge` | One value against a scale and a target, as a half circle or a bar (`Shape`). `Ranges` tint stretches of the scale, and the value takes the color of its range. |
 | `StilSparkline` | A small line without axes, for example in a `StilStatCard`. |
 
@@ -64,7 +65,9 @@ in the current culture), `CategoryFormat`, `ShowLegend`, `DataTable`,
 `Summary` and the texts (`ShowDataText`, `EmptyText`, `CategoryText`,
 `MissingText`) for other languages. Line and bar charts also have
 `CategoryAxisTitle`, `ValueAxisTitle`, `Min`, `Max`, `TickFormat` and
-`Gridlines`. The scatter chart has its own axis parameters (`XAxisTitle`,
+`Gridlines`, and a second value axis at the right for series with
+`SecondaryAxis="true"` (`SecondaryAxisTitle`, `SecondaryMin`, `SecondaryMax`,
+`SecondaryTickFormat`). The scatter chart has its own axis parameters (`XAxisTitle`,
 `YAxisTitle`, `XMin`, `XMax`, `YMin`, `YMax`, `XFormat`).
 
 ## Accessibility

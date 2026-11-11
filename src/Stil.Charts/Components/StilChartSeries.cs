@@ -25,6 +25,20 @@ public abstract class StilChartSeriesBase<TItem> : ComponentBase, IDisposable
     [Parameter]
     public string? Format { get; set; }
 
+    /// <summary>
+    /// Draws the series as a line over the bars of a vertical bar chart, for example a margin over
+    /// revenue. Other charts ignore it.
+    /// </summary>
+    [Parameter]
+    public bool Line { get; set; }
+
+    /// <summary>
+    /// Measures the series on a second value axis at the right of a vertical line or bar chart, for
+    /// values of another unit or size. In a stacked bar chart only line series can use it.
+    /// </summary>
+    [Parameter]
+    public bool SecondaryAxis { get; set; }
+
     internal abstract double? GetValue(TItem item);
 
     protected override void OnInitialized()

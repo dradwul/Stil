@@ -24,8 +24,12 @@ internal sealed class ChartDefer : ComponentBase
     protected override void BuildRenderTree(RenderTreeBuilder builder) => builder.AddContent(0, ChildContent);
 }
 
-/// <summary>One series, read from the items: its name, color and a value per category.</summary>
-internal sealed record ChartSeriesData(int Index, string Name, string Color, string? Format, IReadOnlyList<double?> Values)
+/// <summary>
+/// One series, read from the items: its name, color and a value per category. <paramref name="Line"/>
+/// draws it as a line in a bar chart; <paramref name="Secondary"/> measures it on the right value axis.
+/// </summary>
+internal sealed record ChartSeriesData(int Index, string Name, string Color, string? Format, IReadOnlyList<double?> Values,
+    bool Line = false, bool Secondary = false)
 {
     /// <summary>The values that are present.</summary>
     public IEnumerable<double> Present => Values.Where(v => v.HasValue).Select(v => v!.Value);

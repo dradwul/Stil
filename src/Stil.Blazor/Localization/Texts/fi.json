@@ -88,7 +88,13 @@
     "Gauge": "Mittari",
     "GaugeTextFormat": "{0}, asteikolla {1}–{2}",
     "TargetFormat": "tavoite {0}",
-    "Target": "Tavoite"
+    "Target": "Tavoite",
+    "BarLineChart": "Pylväs- ja viivakaavio",
+    "SecondaryAxisFormat": "Oikea akseli: {0}.",
+    "HeatMap": "Lämpökartta",
+    "HeatMapSummaryFormat": "{0}, {1} riviä ja {2} saraketta.",
+    "HeatMapAxesFormat": "Rivit: {0}. Sarakkeet: {1}.",
+    "HeatMapRangeFormat": "Suurin {0} ({1}, {2}), pienin {3} ({4}, {5})."
   },
   "Code": {
     "Invalid": "Koodia ei voi näyttää."

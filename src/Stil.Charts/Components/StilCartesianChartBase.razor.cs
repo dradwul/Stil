@@ -30,7 +30,26 @@ public abstract partial class StilCartesianChartBase<TItem> : StilChartBase<TIte
     [Parameter]
     public string? TickFormat { get; set; }
 
+    /// <summary>A title for the second value axis at the right, for example "Margin (%)".</summary>
+    [Parameter]
+    public string? SecondaryAxisTitle { get; set; }
+
+    /// <summary>The lower end of the second value axis. The default is a round number below its series.</summary>
+    [Parameter]
+    public double? SecondaryMin { get; set; }
+
+    /// <summary>The upper end of the second value axis. The default is a round number above its series.</summary>
+    [Parameter]
+    public double? SecondaryMax { get; set; }
+
+    /// <summary>A format string for the second axis' ticks. The default is its first series' Format, or a plain number.</summary>
+    [Parameter]
+    public string? SecondaryTickFormat { get; set; }
+
     internal ChartScale Scale { get; private set; } = ChartScale.Create(0, 1);
+
+    /// <summary>The second value axis, when a series asks for it (vertical charts only).</summary>
+    internal ChartScale? Scale2 { get; private set; }
 
     internal ChartLayout Layout { get; private set; } = new();
 
@@ -40,12 +59,24 @@ public abstract partial class StilCartesianChartBase<TItem> : StilChartBase<TIte
     /// <summary>The value axis starts at zero.</summary>
     private protected virtual bool IncludeZero => true;
 
-    /// <summary>The smallest and largest value the axis must show.</summary>
-    private protected virtual (double Min, double Max) ValueExtent()
+    /// <summary>The smallest and largest value the main axis must show.</summary>
+    private protected virtual (double Min, double Max) ValueExtent() => Extent(Data.Series.Where(s => !IsSecondary(s)));
+
+    /// <summary>The smallest and largest value of some series.</summary>
+    private protected static (double Min, double Max) Extent(IEnumerable<ChartSeriesData> series)
     {
-        var values = Data.Series.SelectMany(s => s.Present).ToList();
+        var values = series.SelectMany(s => s.Present).ToList();
         return values.Count == 0 ? (0, 0) : (values.Min(), values.Max());
     }
+
+    /// <summary>Whether a series is measured on the second value axis.</summary>
+    private protected virtual bool IsSecondary(ChartSeriesData series) => !Horizontal && series.Secondary;
+
+    /// <summary>The axis a series is measured on.</summary>
+    private protected ChartScale ScaleFor(ChartSeriesData series) => Scale2 is not null && IsSecondary(series) ? Scale2 : Scale;
+
+    private protected string SecondaryTickText(double value) =>
+        ChartText.Value(value, SecondaryTickFormat ?? Data.Series.FirstOrDefault(IsSecondary)?.Format ?? ChartText.TickFormat(Scale2?.Decimals ?? 0));
 
     /// <summary>Extra room after the plot for direct labels, in pixels.</summary>
     private protected virtual double EndLabelWidth => 0;
@@ -89,18 +120,30 @@ public abstract partial class StilCartesianChartBase<TItem> : StilChartBase<TIte
             var maxTicks = Math.Clamp((int)((plotBottom - ChartLayout.TopPad - ExtraTop) / 48), 2, 8);
             Scale = ChartScale.Create(low, high, maxTicks, IncludeZero, Min, Max);
             var tickWidth = Scale.Ticks.Select(t => ChartText.Width(TickText(t))).DefaultIfEmpty(0).Max();
+            var end = (double)ChartLayout.EndPad;
+            Scale2 = null;
+            if (Data.Series.Any(IsSecondary))
+            {
+                var (low2, high2) = Extent(Data.Series.Where(IsSecondary));
+                Scale2 = ChartScale.Create(low2, high2, maxTicks, IncludeZero, SecondaryMin, SecondaryMax);
+                var tickWidth2 = Scale2.Ticks.Select(t => ChartText.Width(SecondaryTickText(t))).DefaultIfEmpty(0).Max();
+                var title2 = string.IsNullOrWhiteSpace(SecondaryAxisTitle) ? 0 : ChartLayout.AxisTitleBand;
+                end = Math.Max(end, tickWidth2 + ChartLayout.LabelGap + title2);
+            }
+
             Layout = new ChartLayout
             {
                 Height = height,
                 PlotTop = ChartLayout.TopPad + ExtraTop,
                 PlotBottom = plotBottom,
                 Start = Math.Ceiling(Math.Max(16, tickWidth + ChartLayout.LabelGap + valueTitle)),
-                End = ChartLayout.EndPad,
+                End = Math.Ceiling(end),
                 EndLabels = Math.Ceiling(EndLabelWidth)
             };
         }
         else
         {
+            Scale2 = null;
             var count = Math.Max(1, Data.Categories.Count);
             var band = Height is { } fixedHeight
                 ? Math.Max(8, (fixedHeight - ChartLayout.TopPad - ChartLayout.AxisBand - valueTitle) / count)
@@ -159,6 +202,11 @@ public abstract partial class StilCartesianChartBase<TItem> : StilChartBase<TIte
             }
         }
 
+        if (Scale2 is not null)
+        {
+            parts.Add(Phrase("SecondaryAxisFormat", ChartText.List(series.Where(IsSecondary).Select(s => s.Name).ToList(), Phrase("And"))));
+        }
+
         parts.AddRange(ExtraSummary());
         return string.Join(" ", parts);
     }
@@ -190,8 +238,11 @@ public abstract partial class StilCartesianChartBase<TItem> : StilChartBase<TIte
         return (headers, rows);
     }
 
+    /// <summary>The series a category total adds up: all of them, or a bar chart's bars.</summary>
+    private protected virtual IEnumerable<ChartSeriesData> TotalSeries => Data.Series;
+
     /// <summary>The sum of the values in a category.</summary>
-    private protected double CategoryTotal(int index) => Data.Series.Sum(s => s.Values[index] ?? 0);
+    private protected double CategoryTotal(int index) => TotalSeries.Sum(s => s.Values[index] ?? 0);
 
     /// <summary>A tooltip listing every series' value in a category.</summary>
     private protected string CategoryTooltip(int index, bool withTotal = false)

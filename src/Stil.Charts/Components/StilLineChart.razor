@@ -36,6 +36,8 @@
 
     private protected override bool LegendUsesLines => !Area;
 
+    private protected override bool LegendKeyIsLine(ChartSeriesData series) => LegendUsesLines;
+
     private protected override bool IncludeZero => BeginAtZero || Area;
 
     private protected override RenderFragment RenderPlot => VerticalFrame(Marks);
@@ -60,7 +62,7 @@
 
         var labels = Data.Series
             .Where(s => s.Values[^1].HasValue)
-            .Select(s => (Series: s, X: ChartLayout.BandCenter(count - 1, count), Y: Layout.Y(Scale, s.Values[^1]!.Value)))
+            .Select(s => (Series: s, X: ChartLayout.BandCenter(count - 1, count), Y: Layout.Y(ScaleFor(s), s.Values[^1]!.Value)))
             .OrderBy(l => l.Y)
             .ToList();
         for (var i = 1; i < labels.Count; i++)
@@ -78,7 +80,7 @@
     {
         var layout = Layout;
         var count = Data.Categories.Count;
-        var baseline = layout.Y(Scale, Scale.Baseline);
+        @* Each series is measured on its own axis: the main one, or the second one at the right. *@
         <svg class="stil-chart-stretch" width="100%" height="@ChartText.N(layout.Height)" viewBox="0 0 100 @ChartText.N(layout.Height)"
              preserveAspectRatio="none" overflow="visible">
             @foreach (var series in Data.Series)
@@ -86,10 +88,10 @@
                 <g class="stil-chart-series" style="--_color: @series.Color">
                     @foreach (var run in ChartPaths.Runs(series.Values))
                     {
-                        var points = run.Select(p => (ChartLayout.BandCenter(p.Index, count) * 100, layout.Y(Scale, p.Value))).ToList();
+                        var points = run.Select(p => (ChartLayout.BandCenter(p.Index, count) * 100, layout.Y(ScaleFor(series), p.Value))).ToList();
                         if (Area)
                         {
-                            <path class="stil-chart-area" d="@ChartPaths.Area(points, baseline)" />
+                            <path class="stil-chart-area" d="@ChartPaths.Area(points, layout.Y(ScaleFor(series), ScaleFor(series).Baseline))" />
                         }
                         if (points.Count > 1)
                         {
@@ -111,7 +113,7 @@
                         {
                             if (ShowMarkers || run.Count == 1 || index == last)
                             {
-                                <circle class="stil-chart-marker" cx="@ChartText.Pct(ChartLayout.BandCenter(index, count))" cy="@ChartText.N(layout.Y(Scale, value))" r="5" />
+                                <circle class="stil-chart-marker" cx="@ChartText.Pct(ChartLayout.BandCenter(index, count))" cy="@ChartText.N(layout.Y(ScaleFor(series), value))" r="5" />
                             }
                         }
                     }
@@ -141,7 +143,7 @@
                     if (series.Values[i] is { } value)
                     {
                         <circle class="stil-chart-marker stil-chart-hover-marker" style="--_color: @series.Color"
-                                cx="@center" cy="@ChartText.N(layout.Y(Scale, value))" r="5" />
+                                cx="@center" cy="@ChartText.N(layout.Y(ScaleFor(series), value))" r="5" />
                     }
                 }
             </g>

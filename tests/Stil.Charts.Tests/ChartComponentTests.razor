@@ -682,4 +682,155 @@
         Assert.Contains("--_value-color: red", cut.Find("figure").GetAttribute("style"));
         Assert.Empty(cut.FindAll(".stil-gauge-scale"));
     }
+
+    // Bars and a line, and the second value axis
+
+    [Fact]
+    public void LineSeriesInABarChartIsDrawnOverTheBars()
+    {
+        var cut = Render(@<StilBarChart Items="_sales" Category="s => s.Month" SecondaryAxisTitle="This year (kr)">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+            <StilChartSeries Name="This year" Value="s => s.ThisYear" Line="true" SecondaryAxis="true" />
+        </StilBarChart>);
+
+        // One bar per month, a full band each (the line takes no slot).
+        var bars = cut.FindAll("g.stil-chart-bar-item");
+        Assert.Equal(5, bars.Count);
+        Assert.Contains("--_m: 1", bars[0].GetAttribute("style"));
+        // Jan–Mar is one line; Apr is missing, so May is a point alone.
+        Assert.Single(cut.FindAll("path.stil-chart-line-path"));
+        var points = cut.FindAll(".stil-chart-line-points .stil-chart-point");
+        Assert.Equal(4, points.Count);
+        Assert.Equal("Feb\nThis year: 1,700", points[1].QuerySelector("title")!.TextContent);
+        Assert.Equal("Bar and line chart", cut.Find("svg.stil-chart-svg").GetAttribute("aria-label"));
+        Assert.Equal(["stil-chart-key"], cut.FindAll(".stil-chart-legend-item .stil-chart-key")[0].ClassList);
+        Assert.Equal(["stil-chart-key", "stil-chart-key-line"], cut.FindAll(".stil-chart-legend-item .stil-chart-key")[1].ClassList);
+        Assert.NotEmpty(cut.FindAll("svg.stil-chart-secondary-axis text.stil-chart-value-tick"));
+        Assert.Equal("This year (kr)", cut.Find("svg.stil-chart-secondary-axis text.stil-chart-axis-title").TextContent);
+        Assert.EndsWith("Right axis: This year.", cut.Find("desc").TextContent);
+    }
+
+    [Fact]
+    public void SecondaryAxisMeasuresItsSeriesOnItsOwnScale()
+    {
+        List<(string Month, int Sales, int Share)> months = [("Jan", 1000, 25), ("Feb", 2000, 75)];
+
+        var cut = Render(@<StilLineChart Items="months" Category="m => m.Month" Min="0" Max="4000" SecondaryMin="0" SecondaryMax="100" Height="300" DirectLabels="false">
+            <StilChartSeries Name="Sales" Value="m => m.Sales" />
+            <StilChartSeries Name="Share" Value="m => m.Share" SecondaryAxis="true" Format="0'%'" />
+        </StilLineChart>);
+
+        // The plot runs from 10 to 274 px: 2,000 of 4,000 is halfway up, 75 of 100 three quarters.
+        var lastMarkers = cut.FindAll(".stil-chart-markers circle.stil-chart-marker");
+        Assert.Equal(["142", "76"], lastMarkers.Select(m => m.GetAttribute("cy")));
+        var secondaryTicks = cut.FindAll("svg.stil-chart-secondary-axis text").Select(t => t.TextContent).ToList();
+        Assert.Equal("0%", secondaryTicks[0]);
+        Assert.Equal("100%", secondaryTicks[^1]);
+        Assert.DoesNotContain("100%", cut.FindAll("g.stil-chart-axes > text").Select(t => t.TextContent));
+    }
+
+    [Fact]
+    public void StackedBarTotalsLeaveTheLineOut()
+    {
+        var cut = Render(@<StilBarChart Items="_sales" Category="s => s.Month" Stacked="true">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+            <StilChartSeries Name="This year" Value="s => s.ThisYear" />
+            <StilChartSeries Name="Goal" Value="s => 9000" Line="true" />
+        </StilBarChart>);
+
+        var headers = cut.FindAll(".stil-chart-data thead th").Select(th => th.TextContent).ToList();
+        Assert.Equal(["Category", "Last year", "This year", "Goal", "Total"], headers);
+        Assert.Equal("2,700", cut.FindAll(".stil-chart-data tbody tr")[0].Children[4].TextContent);
+        // The line on the main axis fits: the bars reach 7,300, the axis goes past the goal.
+        Assert.Contains("10,000", cut.FindAll("text.stil-chart-value-tick").Select(t => t.TextContent));
+        Assert.Empty(cut.FindAll("svg.stil-chart-secondary-axis"));
+    }
+
+    [Fact]
+    public void HorizontalBarsDrawLineSeriesAsBars()
+    {
+        var cut = Render(@<StilBarChart Items="_sales" Category="s => s.Month" Orientation="StilChartOrientation.Horizontal">
+            <StilChartSeries Name="Last year" Value="s => s.LastYear" />
+            <StilChartSeries Name="This year" Value="s => s.ThisYear" Line="true" SecondaryAxis="true" />
+        </StilBarChart>);
+
+        Assert.Equal(9, cut.FindAll("g.stil-chart-bar-item").Count);
+        Assert.Empty(cut.FindAll("path.stil-chart-line-path"));
+        Assert.Empty(cut.FindAll("svg.stil-chart-secondary-axis"));
+        Assert.Equal("Bar chart", cut.Find("svg.stil-chart-svg").GetAttribute("aria-label"));
+    }
+
+    // Heat map
+
+    private sealed record Visit(string Day, int Hour, decimal Total);
+
+    private readonly List<Visit> _visits =
+    [
+        new("Tue", 11, 300m), new("Mon", 10, 100m), new("Mon", 10, 50m), new("Tue", 9, 20m), new("Mon", 11, 80m)
+    ];
+
+    [Fact]
+    public void HeatMapCountsTheItemsInEachCell()
+    {
+        var cut = Render(@<StilHeatMap Items="_visits" Row="v => v.Day" Column="v => v.Hour" Rows="@(["Mon", "Tue", "Wed"])"
+                                      RowTitle="Day" ColumnTitle="Hour" Title="Visits" />);
+
+        Assert.Equal(["stil-chart", "stil-chart-heatmap"], cut.Find("figure").ClassList);
+        var grid = cut.Find(".stil-heatmap");
+        Assert.Equal("img", grid.GetAttribute("role"));
+        Assert.Equal(cut.Find(".stil-chart-title").Id, grid.GetAttribute("aria-labelledby"));
+        // Hours are numbers, so they are sorted; the days come from Rows, with Wed empty.
+        Assert.Equal(["9", "10", "11"], cut.FindAll(".stil-heatmap-column").Select(c => c.TextContent));
+        Assert.Equal(["Mon", "Tue", "Wed"], cut.FindAll(".stil-heatmap-row").Select(c => c.TextContent));
+        var cells = cut.FindAll(".stil-heatmap-cell");
+        Assert.Equal(9, cells.Count);
+        Assert.Equal("Mon, 10: 2", cells[1].GetAttribute("title"));
+        Assert.Equal("--_tint: 75%", cells[1].GetAttribute("style"));
+        Assert.Equal("--_tint: 8%", cells[0].GetAttribute("style"));
+        Assert.Equal("--_tint: 41.5%", cells[2].GetAttribute("style"));
+        Assert.Equal(["0", "2"], cut.FindAll(".stil-heatmap-legend > span:not(.stil-heatmap-ramp)").Select(s => s.TextContent));
+        Assert.Equal("Heat map with 3 rows and 3 columns. Rows: Day. Columns: Hour. Highest 2 (Mon, 10), lowest 0 (Mon, 9).",
+            cut.Find(".stil-heatmap > .stil-visually-hidden").TextContent);
+        Assert.Equal(grid.GetAttribute("aria-describedby"), cut.Find(".stil-heatmap > .stil-visually-hidden").Id);
+        Assert.Equal(["Day", "9", "10", "11"], cut.FindAll(".stil-chart-data thead th").Select(th => th.TextContent));
+        Assert.Equal(["Tue", "1", "0", "1"], cut.FindAll(".stil-chart-data tbody tr")[1].Children.Select(c => c.TextContent));
+    }
+
+    [Fact]
+    public void HeatMapAddsUpValuesAndMutesEmptyCells()
+    {
+        var cut = Render(@<StilHeatMap Items="_visits" Row="v => v.Day" Column="v => v.Hour" Value="v => v.Total" ShowValues="true" Format="N0" />);
+
+        // Days are text, so they keep the order they first appear in.
+        Assert.Equal(["Tue", "Mon"], cut.FindAll(".stil-heatmap-row").Select(c => c.TextContent));
+        var cells = cut.FindAll(".stil-heatmap-cell");
+        Assert.Equal(["20", "", "300", "", "150", "80"], cells.Select(c => c.TextContent));
+        Assert.Equal(["stil-heatmap-cell", "stil-heatmap-cell-empty"], cells[1].ClassList);
+        Assert.Equal("Tue, 10: –", cells[1].GetAttribute("title"));
+        Assert.Equal("–", cut.FindAll(".stil-chart-data tbody tr")[0].Children[2].TextContent);
+    }
+
+    [Fact]
+    public void HeatMapThinsCrowdedColumnLabelsOnNarrowCharts()
+    {
+        var hours = Enumerable.Range(0, 24).Select(h => new Visit("Mon", h, 1)).ToList();
+
+        var cut = Render(@<StilHeatMap Items="hours" Row="v => v.Day" Column="v => v.Hour" ColumnFormat="00" />);
+
+        var labels = cut.FindAll(".stil-heatmap-column");
+        Assert.Equal(24, labels.Count);
+        Assert.Equal("00", labels[0].TextContent);
+        Assert.DoesNotContain("stil-chart-hide-s", labels[0].ClassList);
+        Assert.Contains("stil-chart-hide-s", labels[1].ClassList);
+        // One value everywhere: every cell gets the strongest tint.
+        Assert.All(cut.FindAll(".stil-heatmap-cell"), c => Assert.Equal("--_tint: 75%", c.GetAttribute("style")));
+    }
+
+    [Fact]
+    public void HeatMapWithoutItemsShowsTheEmptyText()
+    {
+        var cut = Render(@<StilHeatMap Items="new List<Visit>()" Row="v => v.Day" Column="v => v.Hour" Value="v => v.Total" />);
+
+        Assert.Equal("No data to show.", cut.Find(".stil-chart-empty").TextContent);
+    }
 }

@@ -43,6 +43,21 @@
                         @SvgText(ValueAxisTitle, ChartText.N(-(layout.PlotTop + layout.PlotBottom) / 2), ChartText.N(-layout.Start + 12),
                             "stil-chart-axis-title", "middle", transform: "rotate(-90)")
                     }
+                    @if (Scale2 is { } scale2)
+                    {
+                        @* The second axis: ticks and title right of the plot, in a nested SVG whose origin is the plot's right edge. *@
+                        <svg class="stil-chart-secondary-axis" x="100%" overflow="visible">
+                            @foreach (var tick in scale2.Ticks)
+                            {
+                                @SvgText(SecondaryTickText(tick), ChartText.N(ChartLayout.LabelGap), ChartText.N(layout.Y(scale2, tick)), "stil-chart-tick stil-chart-value-tick", "start", "0.32em")
+                            }
+                            @if (!string.IsNullOrWhiteSpace(SecondaryAxisTitle))
+                            {
+                                @SvgText(SecondaryAxisTitle, ChartText.N((layout.PlotTop + layout.PlotBottom) / 2), ChartText.N(-layout.End + 12),
+                                    "stil-chart-axis-title", "middle", transform: "rotate(90)")
+                            }
+                        </svg>
+                    }
                 </g>
                 @marks
             </svg>

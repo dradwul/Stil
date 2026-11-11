@@ -88,7 +88,13 @@
     "Gauge": "Måler",
     "GaugeTextFormat": "{0}, på en skala fra {1} til {2}",
     "TargetFormat": "mål {0}",
-    "Target": "Mål"
+    "Target": "Mål",
+    "BarLineChart": "Stolpe- og linjediagram",
+    "SecondaryAxisFormat": "Høyre akse: {0}.",
+    "HeatMap": "Varmekart",
+    "HeatMapSummaryFormat": "{0} med {1} rader og {2} kolonner.",
+    "HeatMapAxesFormat": "Rader: {0}. Kolonner: {1}.",
+    "HeatMapRangeFormat": "Høyest {0} ({1}, {2}), lavest {3} ({4}, {5})."
   },
   "Code": {
     "Invalid": "Koden kan ikke vises."

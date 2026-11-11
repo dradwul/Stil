@@ -43,7 +43,7 @@
         @foreach (var series in Data.Series)
         {
             <li class="stil-chart-legend-item" style="--_color: @series.Color">
-                <span class="@(LegendUsesLines ? "stil-chart-key stil-chart-key-line" : "stil-chart-key")" aria-hidden="true"></span>
+                <span class="@(LegendKeyIsLine(series) ?"stil-chart-key stil-chart-key-line" : "stil-chart-key")" aria-hidden="true"></span>
                 @series.Name
             </li>
         }

@@ -88,7 +88,13 @@
     "Gauge": "Gauge",
     "GaugeTextFormat": "{0}, on a scale from {1} to {2}",
     "TargetFormat": "target {0}",
-    "Target": "Target"
+    "Target": "Target",
+    "BarLineChart": "Bar and line chart",
+    "SecondaryAxisFormat": "Right axis: {0}.",
+    "HeatMap": "Heat map",
+    "HeatMapSummaryFormat": "{0} with {1} rows and {2} columns.",
+    "HeatMapAxesFormat": "Rows: {0}. Columns: {1}.",
+    "HeatMapRangeFormat": "Highest {0} ({1}, {2}), lowest {3} ({4}, {5})."
   },
   "Code": {
     "Invalid": "This code cannot be shown."

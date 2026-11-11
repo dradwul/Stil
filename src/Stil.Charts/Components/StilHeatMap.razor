@@ -1,0 +1,221 @@
+@namespace Stil.Charts
+@typeparam TItem
+@attribute [CascadingTypeParameter(nameof(TItem))]
+@inherits StilChartBase<TItem>
+
+@* A heat map: a grid of rows by columns, each cell tinted by its value, for example orders by
+   weekday and hour. Items fall into cells by Row and Column; their values add up, and without a
+   Value the items are counted. The grid is HTML (a CSS grid), so it fills any width. *@
+@RenderChart
+
+@code {
+    private const double LowestTint = 8;
+    private const double HighestTint = 75;
+    private double?[,] _cells = new double?[0, 0];
+    private double _min;
+    private double _max;
+
+    /// <summary>The row of an item, for example <c>o =&gt; o.Weekday</c>.</summary>
+    [Parameter, EditorRequired]
+    public Func<TItem, object?> Row { get; set; } = default!;
+
+    /// <summary>The column of an item, for example <c>o =&gt; o.Hour</c>.</summary>
+    [Parameter, EditorRequired]
+    public Func<TItem, object?> Column { get; set; } = default!;
+
+    /// <summary>
+    /// The value of an item, added up per cell, for example <c>o =&gt; o.Total</c>. The default
+    /// counts the items, so a cell shows how many fell into it.
+    /// </summary>
+    [Parameter]
+    public Func<TItem, object?>? Value { get; set; }
+
+    /// <summary>
+    /// The rows, in order, for example the days of the week. Rows without items are shown, and items
+    /// in other rows are left out. The default is every row in the items: numbers and dates sorted,
+    /// text in the order it first appears.
+    /// </summary>
+    [Parameter]
+    public IEnumerable<object>? Rows { get; set; }
+
+    /// <summary>The columns, in order, for example the hours 0 to 23. The default works as for Rows.</summary>
+    [Parameter]
+    public IEnumerable<object>? Columns { get; set; }
+
+    /// <summary>A format string for rows that are dates or numbers.</summary>
+    [Parameter]
+    public string? RowFormat { get; set; }
+
+    /// <summary>A format string for columns that are dates or numbers, for example "00" for hours.</summary>
+    [Parameter]
+    public string? ColumnFormat { get; set; }
+
+    /// <summary>What the rows are, for example "Day", in the summary and the data table.</summary>
+    [Parameter]
+    public string? RowTitle { get; set; }
+
+    /// <summary>What the columns are, for example "Hour", in the summary.</summary>
+    [Parameter]
+    public string? ColumnTitle { get; set; }
+
+    /// <summary>A CSS color for the cells, mixed lighter for low values. The default is --stil-chart-1.</summary>
+    [Parameter]
+    public string? Color { get; set; }
+
+    /// <summary>Writes each cell's value in it. Suits few columns; the tooltips and the data table always have the values.</summary>
+    [Parameter]
+    public bool ShowValues { get; set; }
+
+    private protected override string KindClass => "stil-chart-heatmap";
+
+    private protected override string KindName => Localize(null, "Chart.HeatMap");
+
+    private protected override RenderFragment RenderLegend => __builder =>
+    {
+        <div class="stil-heatmap-legend" aria-hidden="true">
+            <span>@ChartText.Value(_min, Format)</span>
+            <span class="stil-heatmap-ramp"></span>
+            <span>@ChartText.Value(_max, Format)</span>
+        </div>
+    };
+
+    private protected override void Prepare()
+    {
+        base.Prepare();
+        var items = Items?.ToList() ?? [];
+        var rows = Keys(Rows, items, Row);
+        var columns = Keys(Columns, items, Column);
+        _cells = new double?[rows.Count, columns.Count];
+        if (Value is null)
+        {
+            // Counting: an empty cell is a count of zero.
+            for (var r = 0; r < rows.Count; r++)
+            {
+                for (var c = 0; c < columns.Count; c++)
+                {
+                    _cells[r, c] = 0;
+                }
+            }
+        }
+
+        foreach (var item in items)
+        {
+            var r = rows.IndexOf(Row?.Invoke(item));
+            var c = columns.IndexOf(Column?.Invoke(item));
+            var value = Value is null ? 1 : ChartText.ToDouble(Value(item));
+            if (r >= 0 && c >= 0 && value is { } v)
+            {
+                _cells[r, c] = (_cells[r, c] ?? 0) + v;
+            }
+        }
+
+        var rowLabels = rows.Select(k => ChartText.Category(k, RowFormat)).ToList();
+        var series = columns
+            .Select((key, c) => new ChartSeriesData(c, ChartText.Category(key, ColumnFormat), CellColor, Format,
+                Enumerable.Range(0, rows.Count).Select(r => _cells[r, c]).ToList()))
+            .ToList();
+        Data = new ChartData(rowLabels, series);
+        var present = series.SelectMany(s => s.Present).ToList();
+        _min = present.DefaultIfEmpty(0).Min();
+        _max = present.DefaultIfEmpty(0).Max();
+    }
+
+    /// <summary>The given keys, or those in the items: sorted when they are numbers or dates, in order of appearance when text.</summary>
+    private static List<object?> Keys(IEnumerable<object>? given, List<TItem> items, Func<TItem, object?>? key)
+    {
+        if (given is not null)
+        {
+            return given.Cast<object?>().ToList();
+        }
+
+        var keys = key is null ? [] : items.Select(key).Where(k => k is not null).Distinct().ToList();
+        return keys.All(k => k is IComparable and not string) && keys.Select(k => k!.GetType()).Distinct().Count() <= 1
+            ? keys.OrderBy(k => k).ToList()
+            : keys;
+    }
+
+    private string CellColor => string.IsNullOrWhiteSpace(Color) ? "var(--stil-chart-1)" : Color;
+
+    /// <summary>How much of the color a value gets, in percent: a light tint for the lowest, the strongest for the highest.</summary>
+    private double Tint(double value) =>
+        _max == _min ? HighestTint : LowestTint + (value - _min) / (_max - _min) * (HighestTint - LowestTint);
+
+    private protected override string BuildSummary()
+    {
+        var parts = new List<string> { Phrase("HeatMapSummaryFormat", KindName, Data.Categories.Count, Data.Series.Count) };
+        if (!string.IsNullOrWhiteSpace(RowTitle) && !string.IsNullOrWhiteSpace(ColumnTitle))
+        {
+            parts.Add(Phrase("HeatMapAxesFormat", RowTitle, ColumnTitle));
+        }
+
+        var cells = new List<(double Value, int Row, int Column)>();
+        for (var r = 0; r < Data.Categories.Count; r++)
+        {
+            for (var c = 0; c < Data.Series.Count; c++)
+            {
+                if (_cells[r, c] is { } v)
+                {
+                    cells.Add((v, r, c));
+                }
+            }
+        }
+
+        if (cells.Count > 0)
+        {
+            var high = cells.MaxBy(x => x.Value);
+            var low = cells.MinBy(x => x.Value);
+            parts.Add(Phrase("HeatMapRangeFormat",
+                ChartText.Value(high.Value, Format), Data.Categories[high.Row], Data.Series[high.Column].Name,
+                ChartText.Value(low.Value, Format), Data.Categories[low.Row], Data.Series[low.Column].Name));
+        }
+
+        return string.Join(" ", parts);
+    }
+
+    private protected override (IReadOnlyList<string> Headers, IReadOnlyList<IReadOnlyList<string>> Rows) TableData()
+    {
+        var headers = new List<string> { string.IsNullOrWhiteSpace(RowTitle) ? Localize(CategoryText, "Chart.Category") : RowTitle };
+        headers.AddRange(Data.Series.Select(s => s.Name));
+        var rows = Data.Categories
+            .Select((label, r) => (IReadOnlyList<string>)[label, .. Data.Series.Select(s => FormatValue(s.Values[r], s, MissingText))])
+            .ToList();
+        return (headers, rows);
+    }
+
+    private protected override RenderFragment RenderPlot => __builder =>
+    {
+        var columns = Data.Series;
+        var rowLabelWidth = Data.Categories.Select(c => ChartText.Width(c)).DefaultIfEmpty(0).Max() + 12;
+        var columnLabelWidth = columns.Select(s => ChartText.Width(s.Name)).DefaultIfEmpty(0).Max() + 6;
+        var thinning = new ChartLayout { Start = rowLabelWidth, End = 0 };
+        <div class="stil-heatmap" style="--_columns: @columns.Count; --_color: @CellColor" role="img"
+             aria-labelledby="@SvgLabelledBy" aria-label="@SvgLabel" aria-describedby="@DescriptionId">
+            <span id="@DescriptionId" class="stil-visually-hidden">@SummaryText</span>
+            <span class="stil-heatmap-corner"></span>
+            @for (var c = 0; c < columns.Count; c++)
+            {
+                <span class="@CssClass("stil-heatmap-column", thinning.ThinningClass(c, columns.Count, columnLabelWidth, includesEndLabels: false))">@columns[c].Name</span>
+            }
+            @for (var r = 0; r < Data.Categories.Count; r++)
+            {
+                var row = Data.Categories[r];
+                <span class="stil-heatmap-row">@row</span>
+                @for (var c = 0; c < columns.Count; c++)
+                {
+                    var value = _cells[r, c];
+                    var tooltip = $"{row}, {columns[c].Name}: {FormatValue(value, columns[c], MissingText)}";
+                    if (value is { } v)
+                    {
+                        <span class="stil-heatmap-cell" style="--_tint: @(ChartText.N(Tint(v)))%" title="@tooltip">@(ShowValues ? ChartText.Value(v, Format) : null)</span>
+                    }
+                    else
+                    {
+                        <span class="stil-heatmap-cell stil-heatmap-cell-empty" title="@tooltip"></span>
+                    }
+                }
+            }
+        </div>
+    };
+
+    private static string CssClass(string classes, string? extra) => string.IsNullOrEmpty(extra) ? classes : $"{classes} {extra}";
+}

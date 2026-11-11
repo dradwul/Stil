@@ -102,6 +102,9 @@ public abstract partial class StilChartBase<TItem> : StilComponentBase
     /// <summary>Legend keys are short lines (line charts) instead of squares.</summary>
     private protected virtual bool LegendUsesLines => false;
 
+    /// <summary>Whether a series' legend key is a short line: every series of a line chart, and line series in a bar chart.</summary>
+    private protected virtual bool LegendKeyIsLine(ChartSeriesData series) => LegendUsesLines || series.Line;
+
     private protected virtual int DefaultHeight => 300;
 
     private protected int EffectiveHeight => Math.Max(80, Height ?? DefaultHeight);
@@ -191,7 +194,9 @@ public abstract partial class StilChartBase<TItem> : StilComponentBase
                 string.IsNullOrWhiteSpace(s.Name) ? $"Series {index + 1}" : s.Name,
                 SeriesColor(index, s.Color),
                 s.Format ?? Format,
-                items.Select(s.GetValue).ToList()))
+                items.Select(s.GetValue).ToList(),
+                s.Line,
+                s.SecondaryAxis))
             .ToList();
         Data = new ChartData(categories, series);
     }

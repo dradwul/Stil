@@ -313,17 +313,33 @@
         .stil-chart-hide-s {
             display: none;
         }
+
+        /* A heat map's column labels keep their grid cell, or the cells after them would move. */
+        .stil-heatmap-column.stil-chart-hide-s {
+            display: block;
+            visibility: hidden;
+        }
     }
 
     @container stil-chart (30rem <= width < 50rem) {
         .stil-chart-hide-m {
             display: none;
         }
+
+        .stil-heatmap-column.stil-chart-hide-m {
+            display: block;
+            visibility: hidden;
+        }
     }
 
     @container stil-chart (width >= 50rem) {
         .stil-chart-hide-l {
             display: none;
+        }
+
+        .stil-heatmap-column.stil-chart-hide-l {
+            display: block;
+            visibility: hidden;
         }
     }
 
@@ -504,6 +520,80 @@
         background-color: var(--stil-color-text);
     }
 
+    /* Heat map: a grid of cells tinted with --_color by --_tint (8% for the lowest value, 75% for
+       the highest), so text in the cells keeps its contrast. Empty cells are muted. */
+    .stil-heatmap {
+        display: grid;
+        grid-template-columns: max-content repeat(var(--_columns), minmax(0, 1fr));
+        grid-auto-rows: var(--stil-heatmap-cell-height, 1.75rem);
+        gap: 2px;
+        align-items: stretch;
+        font-size: var(--stil-font-size-xs);
+    }
+
+    .stil-heatmap-column,
+    .stil-heatmap-row {
+        color: var(--stil-color-text-muted);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+    .stil-heatmap-column {
+        align-self: end;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    .stil-heatmap-row {
+        display: flex;
+        align-items: center;
+        padding-inline-end: var(--stil-space-2);
+    }
+
+    .stil-heatmap-cell {
+        display: grid;
+        place-items: center;
+        min-width: 0;
+        overflow: hidden;
+        border-radius: 3px;
+        background-color: color-mix(in srgb, var(--_color) var(--_tint, 8%), var(--_surface));
+        color: var(--stil-color-text);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .stil-heatmap-cell-empty {
+        background-color: var(--stil-color-surface-muted);
+    }
+
+    .stil-heatmap-cell:hover {
+        outline: 2px solid var(--stil-color-text);
+        outline-offset: -1px;
+    }
+
+    .stil-heatmap-legend {
+        display: flex;
+        align-items: center;
+        gap: var(--stil-space-2);
+        color: var(--stil-color-text-muted);
+        font-size: var(--stil-font-size-xs);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .stil-heatmap-ramp {
+        inline-size: 8rem;
+        block-size: 0.625rem;
+        border-radius: var(--stil-radius-sm);
+        background-image: linear-gradient(to right,
+            color-mix(in srgb, var(--_color) 8%, var(--_surface)),
+            color-mix(in srgb, var(--_color) 75%, var(--_surface)));
+    }
+
+    .stil-heatmap-ramp:dir(rtl) {
+        background-image: linear-gradient(to left,
+            color-mix(in srgb, var(--_color) 8%, var(--_surface)),
+            color-mix(in srgb, var(--_color) 75%, var(--_surface)));
+    }
+
     /* Windows high contrast: keep the series colors (the legend and the table carry the names)
        and draw text and chrome in system colors. */
     @media (forced-colors: active) {
@@ -511,6 +601,8 @@
         .stil-chart-donut-svg,
         .stil-gauge-svg,
         .stil-gauge-track,
+        .stil-heatmap,
+        .stil-heatmap-legend,
         .stil-chart-key,
         .stil-chart-sparkline-svg {
             forced-color-adjust: none;

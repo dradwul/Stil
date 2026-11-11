@@ -88,7 +88,13 @@
     "Gauge": "Mätare",
     "GaugeTextFormat": "{0}, på en skala från {1} till {2}",
     "TargetFormat": "mål {0}",
-    "Target": "Mål"
+    "Target": "Mål",
+    "BarLineChart": "Stapel- och linjediagram",
+    "SecondaryAxisFormat": "Höger axel: {0}.",
+    "HeatMap": "Värmekarta",
+    "HeatMapSummaryFormat": "{0} med {1} rader och {2} kolumner.",
+    "HeatMapAxesFormat": "Rader: {0}. Kolumner: {1}.",
+    "HeatMapRangeFormat": "Högst {0} ({1}, {2}), lägst {3} ({4}, {5})."
   },
   "Code": {
     "Invalid": "Koden kan inte visas."

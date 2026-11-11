@@ -30,16 +30,31 @@
     [Parameter]
     public string? TotalText { get; set; }
 
-    private bool IsStacked => Stacked && Data.Series.Count > 1;
+    /// <summary>A series drawn as a line over the bars (vertical charts only).</summary>
+    private bool IsLine(ChartSeriesData series) => series.Line && !Horizontal;
 
-    private int SlotsPerBand => IsStacked ? 1 : Math.Max(1, Data.Series.Count);
+    private List<ChartSeriesData> BarSeries => Data.Series.Where(s => !IsLine(s)).ToList();
 
-    private bool ShowColumnValues => ShowValues && Orientation == StilChartOrientation.Vertical && SlotsPerBand == 1;
+    private List<ChartSeriesData> LineSeries => Data.Series.Where(IsLine).ToList();
+
+    private bool IsStacked => Stacked && BarSeries.Count > 1;
+
+    private int SlotsPerBand => IsStacked ? 1 : Math.Max(1, BarSeries.Count);
+
+    private bool ShowColumnValues => ShowValues && Orientation == StilChartOrientation.Vertical && SlotsPerBand == 1 && BarSeries.Count > 0;
 
     private protected override string KindClass =>
         Orientation == StilChartOrientation.Horizontal ? "stil-chart-bar stil-chart-bar-horizontal" : "stil-chart-bar";
 
-    private protected override string KindName => Localize(null, IsStacked ? "Chart.StackedBarChart" : "Chart.BarChart");
+    private protected override string KindName => Localize(null,
+        LineSeries.Count > 0 ? "Chart.BarLineChart" : IsStacked ? "Chart.StackedBarChart" : "Chart.BarChart");
+
+    private protected override bool LegendKeyIsLine(ChartSeriesData series) => IsLine(series);
+
+    // Stacked bars share the main axis; only lines can move to the second one.
+    private protected override bool IsSecondary(ChartSeriesData series) => base.IsSecondary(series) && !(IsStacked && !IsLine(series));
+
+    private protected override IEnumerable<ChartSeriesData> TotalSeries => BarSeries;
 
     private protected override bool Horizontal => Orientation == StilChartOrientation.Horizontal;
 
@@ -66,9 +81,12 @@
         }
 
         var count = Data.Categories.Count;
-        var positive = Enumerable.Range(0, count).Select(i => Data.Series.Sum(s => Math.Max(0, s.Values[i] ?? 0))).DefaultIfEmpty(0);
-        var negative = Enumerable.Range(0, count).Select(i => Data.Series.Sum(s => Math.Min(0, s.Values[i] ?? 0))).DefaultIfEmpty(0);
-        return (negative.Min(), positive.Max());
+        var bars = BarSeries;
+        var positive = Enumerable.Range(0, count).Select(i => bars.Sum(s => Math.Max(0, s.Values[i] ?? 0))).DefaultIfEmpty(0).Max();
+        var negative = Enumerable.Range(0, count).Select(i => bars.Sum(s => Math.Min(0, s.Values[i] ?? 0))).DefaultIfEmpty(0).Min();
+        // Lines on the main axis must fit too.
+        var (lineLow, lineHigh) = Extent(LineSeries.Where(s => !IsSecondary(s)));
+        return (Math.Min(negative, lineLow), Math.Max(positive, lineHigh));
     }
 
     private protected override IEnumerable<string> ExtraSummary()
@@ -88,24 +106,27 @@
     /// <summary>The value labels at the bar ends: every value, or each stack's total.</summary>
     private IEnumerable<string> EndLabels() => IsStacked
         ? Enumerable.Range(0, Data.Categories.Count).Select(i => ChartText.Value(CategoryTotal(i), Format))
-        : Data.Series.SelectMany(s => s.Present.Select(v => ChartText.Value(v, s.Format)));
+        : BarSeries.SelectMany(s => s.Present.Select(v => ChartText.Value(v, s.Format)));
 
-    /// <summary>One drawn bar or stack segment.</summary>
-    private sealed record Segment(ChartSeriesData Series, int Slot, double From, double To, bool Rounded, bool GapAtEnd, string Tooltip);
+    /// <summary>One drawn bar or stack segment, measured on <paramref name="Scale"/>.</summary>
+    private sealed record Segment(ChartSeriesData Series, int Slot, double From, double To, bool Rounded, bool GapAtEnd, string Tooltip, ChartScale Scale);
 
     /// <summary>The bars of one category, from the baseline outwards.</summary>
     private List<Segment> Segments(int index)
     {
         var category = Data.Categories[index];
         var segments = new List<Segment>();
+        var bars = BarSeries;
         if (!IsStacked)
         {
-            foreach (var series in Data.Series)
+            for (var slot = 0; slot < bars.Count; slot++)
             {
+                var series = bars[slot];
                 if (series.Values[index] is { } value)
                 {
-                    segments.Add(new Segment(series, series.Index, Scale.Baseline, value, value != 0, false,
-                        $"{category}\n{series.Name}: {FormatValue(value, series, MissingText)}"));
+                    var scale = ScaleFor(series);
+                    segments.Add(new Segment(series, slot, scale.Baseline, value, value != 0, false,
+                        $"{category}\n{series.Name}: {FormatValue(value, series, MissingText)}", scale));
                 }
             }
 
@@ -113,10 +134,10 @@
         }
 
         var total = $"\n{Localize(TotalText, "Chart.Total")}: {ChartText.Value(CategoryTotal(index), Format)}";
-        var lastPositive = Data.Series.LastOrDefault(s => s.Values[index] > 0);
-        var lastNegative = Data.Series.LastOrDefault(s => s.Values[index] < 0);
+        var lastPositive = bars.LastOrDefault(s => s.Values[index] > 0);
+        var lastNegative = bars.LastOrDefault(s => s.Values[index] < 0);
         double up = 0, down = 0;
-        foreach (var series in Data.Series)
+        foreach (var series in bars)
         {
             if (series.Values[index] is not { } value || value == 0)
             {
@@ -127,13 +148,13 @@
             if (value > 0)
             {
                 var outer = ReferenceEquals(series, lastPositive);
-                segments.Add(new Segment(series, 0, up, up + value, outer, !outer, tooltip));
+                segments.Add(new Segment(series, 0, up, up + value, outer, !outer, tooltip, Scale));
                 up += value;
             }
             else
             {
                 var outer = ReferenceEquals(series, lastNegative);
-                segments.Add(new Segment(series, 0, down, down + value, outer, !outer, tooltip));
+                segments.Add(new Segment(series, 0, down, down + value, outer, !outer, tooltip, Scale));
                 down += value;
             }
         }
@@ -155,8 +176,8 @@
             var fallbackWidth = band * 0.6 / slots;
             foreach (var segment in Segments(i))
             {
-                var y0 = layout.Y(Scale, segment.From);
-                var y1 = layout.Y(Scale, segment.To);
+                var y0 = layout.Y(segment.Scale, segment.From);
+                var y1 = layout.Y(segment.Scale, segment.To);
                 var top = Math.Min(y0, y1);
                 var height = Math.Abs(y1 - y0);
                 var up = segment.To >= segment.From;
@@ -189,18 +210,69 @@
 
             if (ShowColumnValues)
             {
-                var value = IsStacked ? CategoryTotal(i) : Data.Series[0].Values[i];
+                var bars = BarSeries;
+                var value = IsStacked ? CategoryTotal(i) : bars[0].Values[i];
                 if (value is { } v)
                 {
-                    var up = IsStacked ? Data.Series.Sum(s => Math.Max(0, s.Values[i] ?? 0)) : Math.Max(0, v);
-                    var down = IsStacked ? Data.Series.Sum(s => Math.Min(0, s.Values[i] ?? 0)) : Math.Min(0, v);
+                    var up = IsStacked ? bars.Sum(s => Math.Max(0, s.Values[i] ?? 0)) : Math.Max(0, v);
+                    var down = IsStacked ? bars.Sum(s => Math.Min(0, s.Values[i] ?? 0)) : Math.Min(0, v);
                     var above = up > 0 || down == 0;
-                    var y = above ? layout.Y(Scale, up) - 6 : layout.Y(Scale, down) + 14;
-                    var text = IsStacked ? ChartText.Value(v, Format) : FormatValue(v, Data.Series[0], MissingText);
+                    var scale = IsStacked ? Scale : ScaleFor(bars[0]);
+                    var y = above ? layout.Y(scale, up) - 6 : layout.Y(scale, down) + 14;
+                    var text = IsStacked ? ChartText.Value(v, Format) : FormatValue(v, bars[0], MissingText);
                     @SvgText(text, ChartText.Pct(center), ChartText.N(y),
                         CssClass("stil-chart-label stil-chart-value", layout.ThinningClass(i, count, labelWidth)), "middle")
                 }
             }
+        }
+
+        @LineMarks
+    };
+
+    /// <summary>
+    /// Line series over the bars: a line through the category centers, drawn in a horizontally
+    /// stretched SVG as in the line chart, and a marker with a tooltip at every point.
+    /// </summary>
+    private RenderFragment LineMarks => __builder =>
+    {
+        var lines = LineSeries;
+        if (lines.Count == 0)
+        {
+            return;
+        }
+
+        var layout = Layout;
+        var count = Data.Categories.Count;
+        <svg class="stil-chart-stretch" width="100%" height="@ChartText.N(layout.Height)" viewBox="0 0 100 @ChartText.N(layout.Height)"
+             preserveAspectRatio="none" overflow="visible">
+            @foreach (var series in lines)
+            {
+                <g class="stil-chart-series" style="--_color: @series.Color">
+                    @foreach (var run in ChartPaths.Runs(series.Values))
+                    {
+                        if (run.Count > 1)
+                        {
+                            var points = run.Select(p => (ChartLayout.BandCenter(p.Index, count) * 100, layout.Y(ScaleFor(series), p.Value))).ToList();
+                            <path class="stil-chart-line-path" d="@ChartPaths.Line(points)" vector-effect="non-scaling-stroke" />
+                        }
+                    }
+                </g>
+            }
+        </svg>
+        @foreach (var series in lines)
+        {
+            <g class="stil-chart-line-points" style="--_color: @series.Color">
+                @for (var i = 0; i < count; i++)
+                {
+                    if (series.Values[i] is { } value)
+                    {
+                        <g class="stil-chart-point">
+                            <title>@($"{Data.Categories[i]}\n{series.Name}: {FormatValue(value, series, MissingText)}")</title>
+                            <circle class="stil-chart-marker" cx="@ChartText.Pct(ChartLayout.BandCenter(i, count))" cy="@ChartText.N(layout.Y(ScaleFor(series), value))" r="4" />
+                        </g>
+                    }
+                }
+            </g>
         }
     };
 
@@ -259,8 +331,8 @@
             {
                 if (IsStacked)
                 {
-                    var up = Data.Series.Sum(s => Math.Max(0, s.Values[i] ?? 0));
-                    var down = Data.Series.Sum(s => Math.Min(0, s.Values[i] ?? 0));
+                    var up = BarSeries.Sum(s => Math.Max(0, s.Values[i] ?? 0));
+                    var down = BarSeries.Sum(s => Math.Min(0, s.Values[i] ?? 0));
                     var positive = up > 0 || down == 0;
                     @SvgText(ChartText.Value(CategoryTotal(i), Format), ChartText.Pct(Scale.Fraction(positive ? up : down)), ChartText.N(groupTop + thickness / 2),
                         "stil-chart-label stil-chart-value", positive ? "start" : "end", "0.32em", dx: positive ? "6" : "-6")
