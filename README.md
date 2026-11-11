@@ -110,7 +110,7 @@ src/Stil.RichText/   Rich text editor and view (on AngleSharp), packed as NuGet 
 templates/           dotnet new stil-app (Stil.Templates) and its test script
 docs/Stil.Docs/      Documentation site (Blazor WebAssembly) with a theme builder
 samples/Stil.Html/   Plain-HTML showcase of every CSS class, plus an admin page built with Stil
-samples/Stil.Demo/   Blazor web app: gallery, orders, budget, check-in, task board, rooms and a project plan
+samples/Stil.Demo/   Blazor web app: gallery, orders with a dashboard, budget, check-in, task board, rooms and a project plan
 tests/               bUnit tests (Stil.Blazor.Tests, Stil.Charts.Tests, Stil.Markdown.Tests, Stil.RichText.Tests) and Playwright tests (Stil.Visual)
 tools/               check-contrast.mjs: WCAG contrast check run by CI
 CHANGELOG.md         Changes in every package

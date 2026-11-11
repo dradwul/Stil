@@ -40,6 +40,10 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   static SSR and print sharply. `StilCodes` has the encoders (`QrSvg`,
   `QrModules`, `BarcodeSvg`, `BarcodeModules`, `EanCheckDigit`) for PDFs and
   label printers.
+- **Demo**: the orders page has notes in Markdown and a product description in
+  rich text (in the edit dialog, and shown in a new Details dialog), and above
+  the grid revenue per week with a margin line, a gauge of the share delivered
+  and a heat map of orders by weekday and time. The gallery has a bubble chart.
 - **Stil.Charts**: `StilHeatMap` shows a value across two categories, such as
   orders by weekday and hour: items fall into cells by `Row` and `Column`,
   and a cell sums their `Value` or counts them. `Rows` and `Columns` set the
@@ -170,6 +174,12 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 - **Stil CSS**: `samples/Stil.Html/fonts.html` compares the fonts.
 - **Docs**: the theme builder previews the cdnfonts.com fonts and writes
   `options.Font` in its C#.
+
+### Fixed
+
+- **Stil CSS**: the keyboard shortcut in the command palette's button and list
+  (`stil-command-kbd`) kept the dark fill of a plain `<kbd>` under its muted
+  text, which failed the contrast check. It is now an outlined key.
 
 ## [0.1.0-preview.4] - 2026-11-03
 

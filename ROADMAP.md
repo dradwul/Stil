@@ -22,7 +22,7 @@ something usable.
 | 11 | Data grid 2, in five parts: totals and export ✅, column layout ✅, grouping ✅, inline editing ✅, tree grid ✅ | Done |
 | 12 | Capture and records: QR codes, scanner, signature, activity log, chat | Done |
 | 13 | Boards and workspace: kanban, command palette, notifications, recurring events, resources, Gantt | Done |
-| 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | In progress |
+| 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | ✅ Done |
 | V2 | Version 2, Stil Sites: section blocks, page model, a visual page builder, content | Planned (after 1.0) |
 
 A phase is done when every item in it is checked. Items that need the
@@ -1066,7 +1066,7 @@ tests.
 as `DateOnly` (the end included), not a view of the planner. It shows the
 plan and does not edit it; dragging bars is left for later.
 
-## Phase 14: Markdown, rich text and charts 2 🚧 In progress
+## Phase 14: Markdown, rich text and charts 2 ✅ Done
 
 Goal: writing formatted text and showing more kinds of data, both in the Stil
 look and without large dependencies. Markdown comes first: it is smaller, it
@@ -1166,13 +1166,24 @@ axis. The heat map is an HTML grid rather than SVG, so it fills any width; its
 cells are tinted from 8% to 75% of the color, which keeps text in them
 readable in light and dark mode. Without a `Value` it counts the items.
 
-### Phase 14.5: Demo and docs
+### Phase 14.5: Demo and docs ✅ Done
 
-- [ ] The order page's Markdown notes and rich text product description, and
+- [x] The order page's Markdown notes and rich text product description, and
   the dashboard's gauge, heat map and combined chart.
-- [ ] Docs, demo sections and bUnit tests for every part.
+- [x] Docs, demo sections and bUnit tests for every part.
 
-**Done when:** the phase's own "done when" above.
+**Done when:** the phase's own "done when" above. ✅ (The demo's orders page:
+the edit dialog has notes in a Markdown editor and a product description in
+the rich text editor, a new Details dialog shows both, and above the grid
+revenue per week has a margin line on a second axis, a gauge shows the share
+delivered against a 60% target, and a heat map shows orders by weekday and
+time of day. The gallery's charts section has a bubble chart. Docs and bUnit
+tests came with each part.)
+
+**Changes from the plan:** the orders have three-hour time slots in the heat
+map rather than single hours, since 64 orders would leave most hourly cells
+empty. An order's new time, cost and texts come from a second seeded
+generator, so the existing demo orders are unchanged.
 
 ---
 
