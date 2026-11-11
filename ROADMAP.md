@@ -23,7 +23,7 @@ something usable.
 | 12 | Capture and records: QR codes, scanner, signature, activity log, chat | Done |
 | 13 | Boards and workspace: kanban, command palette, notifications, recurring events, resources, Gantt | Done |
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | ✅ Done |
-| 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | In progress (15.1 done) |
+| 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | In progress (15.1 and 15.2 done) |
 | 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | Planned |
 | V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | Planned (after 1.0) |
 
@@ -1250,9 +1250,9 @@ runs, and shows every chosen feature on a page of its own.
 **Done when:** every feature can be added on its own, and an app with all of
 them builds and runs.
 
-### Phase 15.2: Starters
+### Phase 15.2: Starters ✅ Done
 
-- [ ] `--Starter` with a few complete apps, each a set of features plus a
+- [x] `--Starter` with a few complete apps, each a set of features plus a
   layout, a menu and pages with realistic sample data:
   - `blank` (the default): today's app.
   - `admin`: lists and forms on the data grid, with export and an activity log.
@@ -1262,9 +1262,16 @@ them builds and runs.
   - `finance`: a budget, transactions in a grid with totals and export, bars
     with a margin line, and Markdown notes.
   - `planner`: calendar, kanban, Gantt and the resource schedule.
-- [ ] The sample data sits behind small interfaces (`IOrderService` and the
-  like), so an app swaps in real data without touching the pages.
-- [ ] Each starter is checked with axe in light and dark mode.
+- [x] The sample data sits behind small interfaces (`IOrderService`,
+  `ISalesService`, `IMonitoringService`, `IFinanceService`), registered in
+  `Program.cs`, so an app swaps in real data without touching the pages. The
+  planner's four pages keep their sample data in a list on the page, like the
+  feature pages.
+- [x] Each starter is checked with axe in light and dark mode, on every page
+  and in the admin's edit dialog. It found one bug in a package: the task
+  list checkboxes in `StilMarkdown` had no name (fixed).
+- [x] `templates/test-templates.mjs` builds every starter with and without
+  interactivity, and a starter with extra features.
 
 **Done when:** each starter builds, runs and passes axe, and its pages work on
 a phone.
