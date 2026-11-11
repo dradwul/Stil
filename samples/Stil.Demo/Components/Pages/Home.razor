@@ -476,6 +476,11 @@
             </StilBarChart>
             <StilSparkline Values="_weekly" Label="Orders per week, last 10 weeks" Area class="stil-mt-4" />
         </div>
+        <div class="stil-col-12">
+            <StilScatterChart Items="_stores" Category="s => s.Name" X="s => s.Visitors" Y="s => s.Revenue" Size="s => s.Staff" Group="s => s.Kind"
+                              Title="Stores" Description="Visitors, revenue (k€) and staff per store" XAxisTitle="Visitors" YAxisTitle="Revenue (k€)"
+                              SizeTitle="Staff" Format="N0" XFormat="N0" Height="260" />
+        </div>
     </div>
 </section>
 
@@ -577,6 +582,15 @@
     private static readonly Channel[] _channels = [new("Web shop", 642), new("Stores", 418), new("Wholesale", 196), new("Phone", 57)];
 
     private static readonly double[] _weekly = [92, 104, 99, 118, 121, 109, 130, 127, 141, 152];
+
+    private sealed record Store(string Name, string Kind, int Visitors, int Revenue, int Staff);
+
+    private static readonly Store[] _stores =
+    [
+        new("Kungsgatan", "City", 4_200, 61, 6), new("Hamngatan", "City", 3_600, 50, 5), new("Stortorget", "City", 2_900, 47, 4),
+        new("Mall North", "Mall", 6_800, 81, 9), new("Mall South", "Mall", 7_400, 80, 10), new("Mall West", "Mall", 5_900, 68, 8),
+        new("Airport", "Travel", 2_100, 39, 3), new("Central Station", "Travel", 3_300, 41, 4), new("Harbour", "Travel", 1_400, 23, 2),
+    ];
 
     private sealed record DemoRow(int Id, string Name, string Region, double Score);
 

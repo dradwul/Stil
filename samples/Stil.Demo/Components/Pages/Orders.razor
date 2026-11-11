@@ -24,6 +24,27 @@
                   TrendVariant="StilVariant.Success" Description="vs last month" class="stil-col-sm-6 stil-col-lg-3" />
 </div>
 
+@* The dashboard: revenue and margin per week, the share delivered, and when orders come in. *@
+<div class="stil-grid stil-mb-4">
+    <div class="stil-card stil-card-body stil-col-lg-7 stil-align-self-start">
+        <StilBarChart Items="Weeks" Category="w => w.Week" Title="Revenue and margin" Description="Per week, cancelled orders left out"
+                      Format="N0" ValueAxisTitle="Revenue (€)" SecondaryAxisTitle="Margin (%)" SecondaryMin="0" Height="280">
+            <StilChartSeries Name="Revenue" Value="w => w.Revenue" />
+            <StilChartSeries Name="Margin" Value="w => w.Margin" Line="true" SecondaryAxis="true" Format="0.0'%'" />
+        </StilBarChart>
+    </div>
+    <div class="stil-col-lg-5 stil-stack">
+        <div class="stil-card stil-card-body">
+            <StilGauge Value="DeliveredShare" Max="1" Target="0.6" Format="P0" Ranges="_deliveredRanges" Size="220"
+                       Title="Delivered" Description="Share of the orders that are not cancelled" />
+        </div>
+        <div class="stil-card stil-card-body">
+            <StilHeatMap Items="_orders" Row="o => DayName(o.OrderDate)" Column="o => TimeSlot(o.OrderTime)" Rows="DayNames" Columns="_timeSlots"
+                         Title="Orders by day and time" RowTitle="Day" ColumnTitle="Time" />
+        </div>
+    </div>
+</div>
+
 <StilDataGrid @ref="_grid" TItem="Order" Items="_orders" EditMode="StilDataGridEditMode.Row" OnRowSave="SaveRowAsync" Filterable PageSize="10" PageSizeOptions="[10, 25, 50]"
               SelectionMode="StilSelectionMode.Multiple" @bind-SelectedItems="_selected" ItemKey="o => o.Id"
               RowClass="@(o => o.Status == OrderStatus.Cancelled ? "stil-text-muted" : null)" Caption="Orders, newest first"
@@ -57,6 +78,7 @@
         <StilDataGridTemplateColumn Title="Actions" Align="StilTextAlign.End" Frozen="StilFrozen.End" Hideable="false" Reorderable="false" Resizable="false">
             <StilDropdown Text="⋯" AriaLabel="@($"Actions for order {context.Id}")" Appearance="StilButtonAppearance.Ghost"
                           Variant="StilVariant.Secondary" Size="StilSize.Small" AlignEnd IconOnly>
+                <StilDropdownItem OnClick="() => _viewing = context">Details…</StilDropdownItem>
                 <StilDropdownItem OnClick="() => Edit(context)">Edit all fields…</StilDropdownItem>
                 <StilDropdownDivider />
                 <StilDropdownItem class="stil-text-danger" OnClick="() => DeleteAsync(context)">Delete…</StilDropdownItem>
@@ -65,7 +87,40 @@
     </Columns>
 </StilDataGrid>
 
-<StilDialog @bind-Open="_editing" Title="@(_draft.Id == 0 ? "New order" : $"Edit order #{_draft.Id}")">
+@* Details: the notes as Markdown and the product description as sanitized rich text. *@
+<StilDialog Open="_viewing is not null" OpenChanged="open => { if (!open) _viewing = null; }" Size="StilSize.Large"
+            Title="@($"Order #{_viewing?.Id}")">
+    <ChildContent>
+        @if (_viewing is { } order)
+        {
+            <p class="stil-text-muted">@order.Customer · @order.OrderDate.ToString("d MMM yyyy") @order.OrderTime.ToString("HH:mm") · @order.Amount.ToString("N2") €</p>
+            <h3 class="stil-fs-md">Notes</h3>
+            @if (string.IsNullOrWhiteSpace(order.Notes))
+            {
+                <p class="stil-text-muted">No notes.</p>
+            }
+            else
+            {
+                <StilMarkdown Value="@order.Notes" />
+            }
+            <h3 class="stil-fs-md stil-mt-4">Product description</h3>
+            @if (StilRichText.HasText(order.Description))
+            {
+                <StilRichTextView Value="@order.Description" />
+            }
+            else
+            {
+                <p class="stil-text-muted">No description.</p>
+            }
+        }
+    </ChildContent>
+    <Footer>
+        <StilButton Appearance="StilButtonAppearance.Ghost" Variant="StilVariant.Secondary" OnClick="() => _viewing = null">Close</StilButton>
+        <StilButton OnClick="EditViewed">Edit</StilButton>
+    </Footer>
+</StilDialog>
+
+<StilDialog @bind-Open="_editing" Size="StilSize.Large" Title="@(_draft.Id == 0 ? "New order" : $"Edit order #{_draft.Id}")">
     <ChildContent>
         <EditForm Model="_draft" OnValidSubmit="Save" class="stil-form" id="order-form" novalidate>
             <DataAnnotationsValidator />
@@ -83,6 +138,8 @@
             </div>
             <StilSelect @bind-Value="_draft.Status" Label="Status" />
             <StilSwitch @bind-Value="_draft.Express" Label="Express delivery" Hint="Ships within 24 hours." />
+            <StilMarkdownEditor @bind-Value="_draft.Notes" Label="Notes" Hint="Markdown: **bold**, lists and links. Only staff see the notes." Rows="4" />
+            <StilRichTextEditor @bind-Value="_draft.Description" Label="Product description" Placeholder="Describe the product, or paste from a web page…" />
         </EditForm>
     </ChildContent>
     <Footer>
@@ -96,6 +153,58 @@
     private IReadOnlyCollection<Order> _selected = [];
     private bool _editing;
     private Order _draft = new();
+    private Order? _viewing;
+
+    private void EditViewed()
+    {
+        if (_viewing is { } order)
+        {
+            _viewing = null;
+            Edit(order);
+        }
+    }
+
+    // The dashboard, worked out from the orders on every render, so it follows edits.
+
+    private sealed record WeekResult(string Week, decimal Revenue, double Margin);
+
+    private IEnumerable<WeekResult> Weeks => _orders
+        .Where(o => o.Status != OrderStatus.Cancelled)
+        .GroupBy(o => System.Globalization.ISOWeek.GetWeekOfYear(o.OrderDate.ToDateTime(TimeOnly.MinValue)))
+        .OrderBy(g => g.Key)
+        .Select(g =>
+        {
+            var revenue = g.Sum(o => o.Amount);
+            var margin = revenue == 0 ? 0 : (double)((revenue - g.Sum(o => o.Cost)) / revenue) * 100;
+            return new WeekResult($"W{g.Key}", revenue, Math.Round(margin, 1));
+        });
+
+    private double DeliveredShare
+    {
+        get
+        {
+            var active = _orders.Count(o => o.Status != OrderStatus.Cancelled);
+            return active == 0 ? 0 : (double)Count(OrderStatus.Delivered) / active;
+        }
+    }
+
+    private static readonly StilGaugeRange[] _deliveredRanges =
+    [
+        new(0, 0.4, "var(--stil-color-danger)", "Low"),
+        new(0.4, 0.6, "var(--stil-color-warning)", "Fair"),
+        new(0.6, 1, "var(--stil-color-success)", "Good"),
+    ];
+
+    // Monday first, in the current culture's short day names.
+    private static IEnumerable<object> DayNames =>
+        Enumerable.Range(1, 7).Select(d => (object)CultureInfo.CurrentCulture.DateTimeFormat.AbbreviatedDayNames[d % 7]);
+
+    private static string DayName(DateOnly date) => CultureInfo.CurrentCulture.DateTimeFormat.AbbreviatedDayNames[(int)date.DayOfWeek];
+
+    // Three-hour slots from 08 to 23.
+    private static readonly object[] _timeSlots = [.. Enumerable.Range(0, 5).Select(i => (object)$"{8 + i * 3:00}–{11 + i * 3:00}")];
+
+    private static string TimeSlot(TimeOnly time) => (string)_timeSlots[Math.Clamp((time.Hour - 8) / 3, 0, 4)];
 
     protected override void OnInitialized() => _orders = Store.All();
 

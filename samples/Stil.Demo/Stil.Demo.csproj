@@ -12,6 +12,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Stil.Blazor\Stil.Blazor.csproj" />
     <ProjectReference Include="..\..\src\Stil.Charts\Stil.Charts.csproj" />
+    <ProjectReference Include="..\..\src\Stil.Markdown\Stil.Markdown.csproj" />
+    <ProjectReference Include="..\..\src\Stil.RichText\Stil.RichText.csproj" />
   </ItemGroup>
 
   <!-- A project reference does not import the package's build targets (they embed Locales/*.json). -->

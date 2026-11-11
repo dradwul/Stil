@@ -31,6 +31,23 @@ public sealed class Order
 
     public bool Express { get; set; }
 
+    /// <summary>When the order came in, for the orders-per-hour heat map.</summary>
+    public TimeOnly OrderTime { get; set; } = new(12, 0);
+
+    /// <summary>What the order cost us, for the margin. Not edited in the demo.</summary>
+    public decimal Cost { get; set; }
+
+    /// <summary>Internal notes, written in Markdown.</summary>
+    [MaxLength(2000, ErrorMessage = "Keep the notes under 2,000 characters.")]
+    public string? Notes { get; set; }
+
+    /// <summary>The product description, written in the rich text editor and stored as sanitized HTML.</summary>
+    [MaxLength(4000, ErrorMessage = "Keep the description under 4,000 characters.")]
+    public string? Description { get; set; }
+
+    /// <summary>The margin in percent of the amount.</summary>
+    public double Margin => Amount <= 0 ? 0 : (double)((Amount - Cost) / Amount) * 100;
+
     public Order Clone() => (Order)MemberwiseClone();
 }
 
@@ -50,8 +67,10 @@ public sealed class OrderStore
     private static List<Order> Seed()
     {
         var random = new Random(1042);
+        // Times, costs and texts come from a second generator, so the orders above stay the same.
+        var extra = new Random(2026);
         var statuses = Enum.GetValues<OrderStatus>();
-        return Enumerable.Range(0, 64).Select(i =>
+        var orders = Enumerable.Range(0, 64).Select(i =>
         {
             var customer = Customers[random.Next(Customers.Length)];
             return new Order
@@ -65,6 +84,25 @@ public sealed class OrderStore
                 Express = random.Next(4) == 0,
             };
         }).ToList();
+
+        foreach (var order in orders)
+        {
+            // Most orders come in around lunch and in the evening.
+            var hour = extra.Next(3) switch { 0 => 11 + extra.Next(3), 1 => 18 + extra.Next(4), _ => 8 + extra.Next(14) };
+            order.OrderTime = new TimeOnly(hour, extra.Next(60));
+            order.Cost = Math.Round(order.Amount * (decimal)(0.58 + extra.NextDouble() * 0.2), 2);
+        }
+
+        var newest = orders[^1];
+        newest.Notes = """
+            Customer asked for delivery **before Friday**.
+
+            - Call before delivery: 070-123 45 67
+            - Use the back entrance
+            """;
+        newest.Description = "<h2>Oak desk</h2><p>A <strong>solid oak</strong> desk with a <em>cable tray</em>.</p><ul><li>160 × 80 cm</li><li>Oiled finish</li></ul>";
+        orders[^2].Notes = "Invoice to the *head office*, not the store.";
+        return orders;
     }
 
     public IReadOnlyList<Order> All()
@@ -87,6 +125,11 @@ public sealed class OrderStore
             else
             {
                 order.Id = _orders.Count == 0 ? 1001 : _orders.Max(o => o.Id) + 1;
+                if (order.Cost == 0)
+                {
+                    order.Cost = Math.Round(order.Amount * 0.7m, 2);
+                }
+
                 _orders.Add(order.Clone());
             }
         }
