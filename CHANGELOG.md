@@ -40,6 +40,14 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   static SSR and print sharply. `StilCodes` has the encoders (`QrSvg`,
   `QrModules`, `BarcodeSvg`, `BarcodeModules`, `EanCheckDigit`) for PDFs and
   label printers.
+- **Stil.Charts**: `StilScatterChart` places one point per item by `X` and
+  `Y`, colored by `Group`, with its own axis titles, limits and formats; with
+  `Size` it is a bubble chart. Its summary tells screen readers the ranges and
+  whether the values rise or fall together, and the data table lists every
+  point.
+- **Stil.Charts**: `StilGauge` shows a value on a scale as a half circle or a
+  bar (`Shape`), with a `Target` and tinted `Ranges` (`StilGaugeRange`). It is
+  a `role="meter"` with the value, range, scale and target in its text.
 - **Stil.RichText** (new package, on AngleSharp and Stil.Markdown):
   `StilRichTextEditor` writes formatted text with a toolbar (bold, italic,
   heading, lists, quote, code, link, clear formatting), Ctrl+B, Ctrl+I and

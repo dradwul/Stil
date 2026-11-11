@@ -1128,13 +1128,24 @@ editor sends and the view shows; stil.js also cleans pastes in the browser
 `StilMarkdownRenderer.IsSafeUrl` is now public, so both packages share one
 link check.
 
-### Phase 14.3: Scatter and gauge
+### Phase 14.3: Scatter and gauge ✅ Done
 
-- [ ] `StilScatterChart`, also as a bubble chart, in Stil.Charts with the same
+- [x] `StilScatterChart`, also as a bubble chart, in Stil.Charts with the same
   accessibility as today (summary, data table, tooltips).
-- [ ] `StilGauge`, for a value against a target, as an arc or a bar.
+- [x] `StilGauge`, for a value against a target, as an arc or a bar.
 
-**Done when:** the docs show a scatter, a bubble chart and both gauges.
+**Done when:** the docs show a scatter, a bubble chart and both gauges. ✅
+(The charts page: stores by visitors and revenue in three groups, products
+by price, margin and units sold, and gauges as half circles and bars with
+targets and ranges; 8 new tests, 76 in Stil.Charts.)
+
+**Changes from the plan:** the scatter chart takes `X`, `Y`, `Size` and
+`Group` on the chart instead of series, since each item is one point; its
+groups become series, so the legend, colors and empty state are shared with
+the other charts. Its summary also tells whether Y tends to rise or fall with
+X. The gauge is a `role="meter"` rather than an image, and `Ranges` (for
+example poor, fair, good) color the value. Bubbles get room at the ends of
+the axes, but never past zero.
 
 ### Phase 14.4: Heat map and combined charts
 
