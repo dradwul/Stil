@@ -248,6 +248,10 @@
     "Start": "Minimum",
     "End": "Maximum"
   },
+  "RichText": {
+    "Clear": "Clear formatting",
+    "LinkPrompt": "Link address"
+  },
   "Rating": {
     "OptionFormat": "{0} of {1}"
   },

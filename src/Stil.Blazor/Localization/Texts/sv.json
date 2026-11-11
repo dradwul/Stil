@@ -248,6 +248,10 @@
     "Start": "Minimum",
     "End": "Maximum"
   },
+  "RichText": {
+    "Clear": "Ta bort formatering",
+    "LinkPrompt": "Länkadress"
+  },
   "Rating": {
     "OptionFormat": "{0} av {1}"
   },

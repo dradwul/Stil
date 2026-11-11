@@ -62,6 +62,12 @@ public static class StilMarkdownRenderer
         return writer.ToString();
     }
 
+    /// <summary>
+    /// True for a relative address, an anchor, or an http, https, mailto or tel address (for an
+    /// image, only http and https): the addresses the rendered links and images may use.
+    /// </summary>
+    public static bool IsSafeUrl(string? url, bool image = false) => IsSafe(url, image ? ImageSchemes : LinkSchemes);
+
     // A relative address, an anchor, or one of the allowed schemes.
     internal static bool IsSafe(string? url, string[] schemes)
     {

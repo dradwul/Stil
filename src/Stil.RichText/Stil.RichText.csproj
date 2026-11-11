@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PackageId>Stil.RichText</PackageId>
+    <AssemblyName>Stil.RichText</AssemblyName>
+    <RootNamespace>Stil.RichText</RootNamespace>
+    <Description>Rich text for Stil for Blazor: StilRichTextEditor writes formatted text with a toolbar and shortcuts and pastes cleanly from Word and web pages, and StilRichTextView shows it. The output is sanitized HTML or Markdown.</Description>
+    <PackageTags>blazor;rich-text;editor;wysiwyg;sanitizer;markdown;accessibility;stil</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- XML docs for IntelliSense and the API tables on the docs site. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+    <InternalsVisibleTo Include="Stil.RichText.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.12" />
+    <PackageReference Include="AngleSharp" Version="1.8.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Stil.Markdown\Stil.Markdown.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

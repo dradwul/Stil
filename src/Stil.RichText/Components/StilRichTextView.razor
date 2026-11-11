@@ -1,0 +1,28 @@
+@namespace Stil.RichText
+@inherits StilComponentBase
+
+@* Saved rich text, HTML or Markdown, sanitized and shown with Stil's typography (stil-prose). Works
+   in static SSR. *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-prose stil-richtext-view")">@((MarkupString)_html)</div>
+
+@code {
+    private string _html = "";
+    private (string? Value, StilRichTextFormat Format)? _rendered;
+
+    /// <summary>The text to show.</summary>
+    [Parameter]
+    public string? Value { get; set; }
+
+    /// <summary>What the value holds: HTML (the default) or Markdown.</summary>
+    [Parameter]
+    public StilRichTextFormat Format { get; set; } = StilRichTextFormat.Html;
+
+    protected override void OnParametersSet()
+    {
+        if (_rendered != (Value, Format))
+        {
+            _html = Format == StilRichTextFormat.Markdown ? StilRichText.FromMarkdown(Value) : StilRichText.Sanitize(Value);
+            _rendered = (Value, Format);
+        }
+    }
+}

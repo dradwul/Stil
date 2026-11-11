@@ -248,6 +248,10 @@
     "Start": "Vähimmäisarvo",
     "End": "Enimmäisarvo"
   },
+  "RichText": {
+    "Clear": "Poista muotoilu",
+    "LinkPrompt": "Linkin osoite"
+  },
   "Rating": {
     "OptionFormat": "{0}/{1}"
   },

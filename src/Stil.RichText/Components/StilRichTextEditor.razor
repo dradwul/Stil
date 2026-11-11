@@ -1,0 +1,127 @@
+@namespace Stil.RichText
+@inherits StilInputBase<string?>
+@inject IJSRuntime JS
+
+@* Formatted text without Markdown: a contenteditable area with a toolbar (bold, italic, heading,
+   lists, quote, code, link, clear) and the usual shortcuts. stil.js formats and pastes (Word and
+   web markup is cleaned on the way in); the server sanitizes everything it gets with
+   StilRichText.Sanitize, so the bound value is only allowed tags, or Markdown with Format. It binds
+   like a field and works with EditForm validation; empty text is null. Needs an interactive render
+   mode. *@
+<StilField Label="@Label" Hint="@Hint" InputId="@InputId" Messages="@Messages" Class="@FieldClass" Style="@FieldStyle">
+    <div class="stil-markdown-editor stil-richtext-editor">
+        <div class="stil-markdown-toolbar" role="toolbar" aria-label="@Localize(null, "Markdown.Toolbar")" aria-controls="@InputId">
+            @foreach (var (command, key, glyph, shortcut) in Commands)
+            {
+                <button type="button" class="stil-btn stil-btn-ghost stil-btn-secondary stil-btn-sm stil-markdown-command" data-stil-richtext-command="@command"
+                        aria-label="@Localize(null, key)" title="@(shortcut is null ? Localize(null, key) : $"{Localize(null, key)} ({shortcut})")"
+                        disabled="@Disabled"><span aria-hidden="true">@glyph</span></button>
+            }
+        </div>
+        <div @ref="_editor" @attributes="EditorAttributes" contenteditable="@(Disabled ? "false" : "true")" role="textbox" aria-multiline="true"
+             aria-label="@Label" data-placeholder="@Placeholder" data-stil-richtext
+             data-stil-link-prompt="@Localize(null, "RichText.LinkPrompt")">@((MarkupString)_shown)</div>
+    </div>
+</StilField>
+
+@code {
+    private static readonly (string Command, string Key, string Glyph, string? Shortcut)[] Commands =
+    [
+        ("bold", "Markdown.Bold", "B", "Ctrl+B"),
+        ("italic", "Markdown.Italic", "I", "Ctrl+I"),
+        ("heading", "Markdown.Heading", "H", null),
+        ("bullets", "Markdown.Bullets", "•", null),
+        ("numbers", "Markdown.Numbers", "1.", null),
+        ("quote", "Markdown.Quote", "❝", null),
+        ("code", "Markdown.Code", "</>", null),
+        ("link", "Markdown.Link", "🔗", "Ctrl+K"),
+        ("clear", "RichText.Clear", "⌫", null),
+    ];
+
+    private ElementReference _editor;
+    private IJSObjectReference? _module;
+    private DotNetObjectReference<StilRichTextEditor>? _reference;
+    private string _shown = "";
+    private string? _known;
+    private bool _started;
+
+    /// <summary>What the value holds: sanitized HTML (the default) or Markdown.</summary>
+    [Parameter]
+    public StilRichTextFormat Format { get; set; } = StilRichTextFormat.Html;
+
+    /// <summary>Text shown while the editor is empty.</summary>
+    [Parameter]
+    public string? Placeholder { get; set; }
+
+    private IReadOnlyDictionary<string, object> EditorAttributes
+    {
+        get
+        {
+            var attributes = new Dictionary<string, object>(ControlAttributes("stil-input stil-prose stil-richtext"));
+            attributes.Remove("disabled");
+            if (Messages.Count > 0)
+            {
+                attributes["aria-invalid"] = "true";
+            }
+
+            return attributes;
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        // A value set from outside replaces the content; the editor's own changes do not, so the
+        // cursor stays where it is.
+        if (!_started || Value != _known)
+        {
+            _shown = Format == StilRichTextFormat.Markdown ? StilRichText.FromMarkdown(Value) : StilRichText.Sanitize(Value);
+            _known = Value;
+            _started = true;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Stil/stil.js");
+            _reference = DotNetObjectReference.Create(this);
+            await _module.InvokeVoidAsync("initRichText", _editor, _reference);
+        }
+    }
+
+    /// <summary>Called by stil.js shortly after the content changes.</summary>
+    [JSInvokable]
+    public async Task OnHtml(string html)
+    {
+        var clean = StilRichText.Sanitize(html);
+        var value = clean.Length == 0 ? null : Format == StilRichTextFormat.Markdown ? StilRichText.ToMarkdown(clean) : clean;
+        if (value != Value)
+        {
+            _known = value;
+            await SetValueAsync(value);
+        }
+    }
+
+    protected override void DisposeField()
+    {
+        _reference?.Dispose();
+        if (_module is not null)
+        {
+            _ = DisposeModuleAsync(_module);
+        }
+    }
+
+    private static async Task DisposeModuleAsync(IJSObjectReference module)
+    {
+        try
+        {
+            await module.DisposeAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+    }
+}
