@@ -641,17 +641,18 @@ inside the provider so dialogs and toasts follow its theme.
 stylesheet and sets `--stil-font-family` (`using Stil.Blazor;`):
 
 ```csharp
-builder.Services.AddStil(options => options.Font = StilFonts.BrCobane);
+builder.Services.AddStil(options => options.Font = StilFonts.Geologica);
 // Any font from cdnfonts.com by its name, or any Google font:
 // options.Font = StilFont.CdnFonts("Gilroy");
 // options.Font = StilFont.Google("Open Sans");
 ```
 
-`StilFonts` has BR Shape (the default), Lexend, BR Cobane, BR Segma, BR Sonoma, Averral,
-Sukplena, TASA Explorer, Halcom, Utara and Geologica, and the display fonts
-BLOWREPH, Taster and WARM STORIES, all from
-cdnfonts.com. Check a font's license there before you use it in a product;
-some are free for personal use only. For a font you host yourself, use
+`StilFonts` has Lexend (the default, from Google Fonts and free for any use
+under the SIL Open Font License), and from cdnfonts.com BR Shape, BR Cobane,
+BR Segma, BR Sonoma, Averral, Sukplena, TASA Explorer, Halcom, Utara and
+Geologica, and the display fonts BLOWREPH, Taster and WARM STORIES. Check a
+cdnfonts.com font's license there before you use it in a product: some are free
+for personal use only, and the BR fonts are commercial. For a font you host yourself, use
 `new StilFont("My Font", "fonts/my-font.css")`.
 
 You can also override tokens in CSS. Stil's rules are in cascade layers, so

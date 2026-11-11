@@ -598,7 +598,7 @@ Fonts.
   theme builder lists it by itself.
 - [x] `options.Font`: `<StilHead />` links the stylesheet and sets
   `--stil-font-family`. A theme's `FontFamily` still wins.
-- [x] `dotnet new stil-app --Font …` (BR Shape by default, `system` for none)
+- [x] `dotnet new stil-app --Font …` (Lexend by default, `system` for none)
   and `--GoogleFont "…"`.
 - [x] The theme builder previews the fonts; `samples/Stil.Html/fonts.html`
   shows them side by side.
@@ -607,6 +607,22 @@ Fonts.
 The stylesheet still never fetches fonts itself. Each font's license is on
 cdnfonts.com; some are free for personal use only, so the docs say to check
 it.
+
+## Detour: A free default font ✅ Done
+
+A small change outside the phase plan. For a while the default was BR Shape,
+but the BR fonts are commercial, and the copies on cdnfonts.com are not
+clearly licensed for use in a product. A default that every app gets must be
+free for any use, so the default is Lexend again (SIL Open Font License).
+
+- [x] `StilFonts.Lexend` and the font link in the HTML samples, the demo and
+  the docs site load Lexend from Google Fonts in weights 400 and 600.
+  cdnfonts.com serves Lexend only in weight 400, so semibold was synthesized.
+- [x] `--stil-font-family`, `dotnet new stil-app --Font`, the theme builder
+  and `fonts.html` default to Lexend. BR Shape stays in `StilFonts`.
+- [x] The docs and READMEs say the BR fonts are commercial.
+
+The Playwright baselines are unchanged, because the tests block external fonts.
 
 ## Detour: Popups in the top layer ✅ Done
 

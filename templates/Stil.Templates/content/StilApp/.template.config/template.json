@@ -59,14 +59,14 @@
     },
     "Font": {
       "type": "parameter",
-      "description": "The app's font, from cdnfonts.com (check its license there). It is set with AddStil() in Program.cs. --GoogleFont takes any Google font instead.",
+      "description": "The app's font. Lexend, the default, is free (SIL Open Font License) and comes from Google Fonts; the others come from cdnfonts.com (check their license there; the BR fonts are commercial). It is set with AddStil() in Program.cs. --GoogleFont takes any Google font instead.",
       "datatype": "choice",
       "choices": [
-        { "choice": "br-shape", "description": "BR Shape, Stil's default" },
-        { "choice": "lexend", "description": "Lexend" },
-        { "choice": "br-cobane", "description": "BR Cobane" },
-        { "choice": "br-segma", "description": "BR Segma" },
-        { "choice": "br-sonoma", "description": "BR Sonoma" },
+        { "choice": "lexend", "description": "Lexend, Stil's default (free, from Google Fonts)" },
+        { "choice": "br-shape", "description": "BR Shape (commercial)" },
+        { "choice": "br-cobane", "description": "BR Cobane (commercial)" },
+        { "choice": "br-segma", "description": "BR Segma (commercial)" },
+        { "choice": "br-sonoma", "description": "BR Sonoma (commercial)" },
         { "choice": "averral", "description": "Averral" },
         { "choice": "sukplena", "description": "Sukplena" },
         { "choice": "tasa-explorer", "description": "TASA Explorer" },
@@ -78,17 +78,17 @@
         { "choice": "warm-stories", "description": "WARM STORIES (display font)" },
         { "choice": "system", "description": "The operating system's font; nothing is downloaded" }
       ],
-      "defaultValue": "br-shape"
+      "defaultValue": "lexend"
     },
     "FontValue": {
       "type": "generated",
       "generator": "switch",
-      "replaces": "StilFonts.BrShape",
+      "replaces": "StilFonts.Lexend",
       "parameters": {
         "evaluator": "C++",
         "datatype": "string",
         "cases": [
-          { "condition": "(Font == \"lexend\")", "value": "StilFonts.Lexend" },
+          { "condition": "(Font == \"br-shape\")", "value": "StilFonts.BrShape" },
           { "condition": "(Font == \"br-cobane\")", "value": "StilFonts.BrCobane" },
           { "condition": "(Font == \"br-segma\")", "value": "StilFonts.BrSegma" },
           { "condition": "(Font == \"br-sonoma\")", "value": "StilFonts.BrSonoma" },
@@ -101,7 +101,7 @@
           { "condition": "(Font == \"blowreph\")", "value": "StilFonts.Blowreph" },
           { "condition": "(Font == \"taster\")", "value": "StilFonts.Taster" },
           { "condition": "(Font == \"warm-stories\")", "value": "StilFonts.WarmStories" },
-          { "condition": "", "value": "StilFonts.BrShape" }
+          { "condition": "", "value": "StilFonts.Lexend" }
         ]
       }
     },
@@ -116,7 +116,7 @@
       "type": "computed",
       "value": "(GoogleFont != \"\")"
     },
-    "HasCdnFont": {
+    "HasWebFont": {
       "type": "computed",
       "value": "(GoogleFont == \"\" && Font != \"system\")"
     },

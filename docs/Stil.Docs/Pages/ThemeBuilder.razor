@@ -97,7 +97,7 @@
 
     private static readonly Dictionary<string, string?> Fonts = new()
     {
-        ["BR Shape (default)"] = null,
+        ["Lexend (default)"] = null,
         ["System UI"] = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
         ["Serif"] = "Georgia, 'Times New Roman', serif",
         ["Monospace"] = "ui-monospace, 'Cascadia Code', Consolas, monospace",
@@ -106,7 +106,7 @@
     // Every font in StilFonts except the default; the preview loads the one you pick, like <StilHead /> does.
     private static readonly Dictionary<string, (StilFont Font, string Code)> WebFonts = typeof(StilFonts)
         .GetProperties()
-        .Where(p => p.PropertyType == typeof(StilFont) && p.Name != nameof(StilFonts.BrShape))
+        .Where(p => p.PropertyType == typeof(StilFont) && p.Name != nameof(StilFonts.Lexend))
         .ToDictionary(p => ((StilFont)p.GetValue(null)!).Family, p => ((StilFont)p.GetValue(null)!, $"StilFonts.{p.Name}"));
 
     private static readonly List<string> FontNames = [.. Fonts.Keys, .. WebFonts.Keys];

@@ -370,9 +370,10 @@ same form when you override them, or the override applies to both modes:
 
 The defaults are in [`src/tokens.css`](src/tokens.css).
 
-Stil uses **BR Shape** if your page loads it, for example with
-`<link href="https://fonts.cdnfonts.com/css/br-shape" rel="stylesheet">`.
-Otherwise it falls back to `sans-serif`. The stylesheet never
+Stil uses **Lexend** if your page loads it, for example with
+`<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&display=swap" rel="stylesheet">`.
+Otherwise it falls back to `sans-serif`. Lexend is free for any use (SIL Open
+Font License). The stylesheet never
 fetches fonts on its own. For another font, load it and set the token:
 
 ```html
@@ -381,7 +382,9 @@ fetches fonts on its own. For another font, load it and set the token:
 ```
 
 [`samples/Stil.Html/fonts.html`](../../samples/Stil.Html/fonts.html) shows the
-same card in BR Shape and the other fonts in `StilFonts`, all from cdnfonts.com.
+same card in Lexend and the other fonts in `StilFonts`, which come from
+cdnfonts.com. Check their license there before you use one in a product: some
+are free for personal use only, and the BR fonts are commercial.
 
 ### Accessibility check
 

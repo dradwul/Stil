@@ -53,18 +53,26 @@ public sealed partial record StilFont(string Family, string? StylesheetUrl, stri
 }
 
 /// <summary>
-/// Ready-made fonts from cdnfonts.com. Check each font's license on cdnfonts.com before you use it in a
-/// product; some are free for personal use only. Add another with <see cref="StilFont.CdnFonts"/>.
+/// Ready-made fonts. <see cref="Lexend"/>, the default, comes from Google Fonts and is free under the
+/// SIL Open Font License; the others come from cdnfonts.com. Check each of those fonts' license before
+/// you use it in a product: some are free for personal use only, and the BR fonts are commercial.
+/// Add another with <see cref="StilFont.CdnFonts"/> or <see cref="StilFont.Google"/>.
 /// </summary>
 public static class StilFonts
 {
-    /// <summary>BR Shape, Stil's default font.</summary>
+    /// <summary>Lexend, Stil's default font, from Google Fonts. It is free for any use (SIL Open Font License).</summary>
+    public static StilFont Lexend { get; } = StilFont.Google("Lexend");
+
+    /// <summary>BR Shape, a commercial font. Check its license before you use it in a product.</summary>
     public static StilFont BrShape { get; } = StilFont.CdnFonts("BR Shape");
 
-    /// <summary>Lexend, Stil's earlier default font.</summary>
-    public static StilFont Lexend { get; } = StilFont.CdnFonts("Lexend");
+    /// <summary>BR Cobane, a commercial font. Check its license before you use it in a product.</summary>
     public static StilFont BrCobane { get; } = StilFont.CdnFonts("BR Cobane");
+
+    /// <summary>BR Segma, a commercial font. Check its license before you use it in a product.</summary>
     public static StilFont BrSegma { get; } = StilFont.CdnFonts("BR Segma");
+
+    /// <summary>BR Sonoma, a commercial font. Check its license before you use it in a product.</summary>
     public static StilFont BrSonoma { get; } = StilFont.CdnFonts("BR Sonoma");
 
     /// <summary>Averral. It has no € sign; the fallback font draws it.</summary>
@@ -87,7 +95,7 @@ public static class StilFonts
     /// <summary>A display font, for headings and short texts more than for body text. It has no € sign.</summary>
     public static StilFont WarmStories { get; } = StilFont.CdnFonts("WARM STORIES");
 
-    /// <summary>Every font above, BR Shape first.</summary>
+    /// <summary>Every font above, Lexend first.</summary>
     public static IReadOnlyList<StilFont> All { get; } =
-        [BrShape, Lexend, BrCobane, BrSegma, BrSonoma, Averral, Sukplena, TasaExplorer, Halcom, Utara, Geologica, Blowreph, Taster, WarmStories];
+        [Lexend, BrShape, BrCobane, BrSegma, BrSonoma, Averral, Sukplena, TasaExplorer, Halcom, Utara, Geologica, Blowreph, Taster, WarmStories];
 }

@@ -37,7 +37,7 @@ const cases = [
         name: 'Contoso.Default',
         options: [],
         expect: {
-            'Program.cs': ['options.Font = StilFonts.BrShape;', 'AddInteractiveServerComponents', 'AddSingleton<OrderStore>'],
+            'Program.cs': ['options.Font = StilFonts.Lexend;', 'AddInteractiveServerComponents', 'AddSingleton<OrderStore>'],
             'Components/App.razor': ['<StilHead />', '<Routes @rendermode="InteractiveServer" />'],
             'Components/Layout/MainLayout.razor': ['StilThemeMode.Auto', '<StilDialogHost />', '<StilToastHost />', 'CollapseBelow'],
             'Components/Pages/Home.razor': ['<StilDataGrid', '<StilStatCard', 'Filterable'],
@@ -69,7 +69,7 @@ const cases = [
             'Components/Pages/NewOrder.razor': ['[SupplyParameterFromForm]', 'FormName="new-order"'],
         },
         forbidden: {
-            'Program.cs': ['Interactive', 'StilFonts.BrShape'],
+            'Program.cs': ['Interactive', '= StilFonts.Lexend'],
             'Components/App.razor': ['InteractiveServer'],
             'Components/Layout/MainLayout.razor': ['StilDialogHost', 'blazor-error-ui'],
             'wwwroot/app.css': ['blazor-error-ui'],

@@ -6,8 +6,9 @@
     <title>Fonts · Stil CSS</title>
     <link rel="stylesheet" href="../../src/Stil.Css/dist/stil.css">
 
-    <!-- The fonts compared below, from cdnfonts.com. Check each font's license before you use it. -->
-    <link href="https://fonts.cdnfonts.com/css/lexend" rel="stylesheet">
+    <!-- The fonts compared below. Lexend, the default, is free (SIL Open Font License) and comes from Google Fonts.
+         The others come from cdnfonts.com: check each font's license before you use it; the BR fonts are commercial. -->
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&amp;display=swap" rel="stylesheet">
     <link href="https://fonts.cdnfonts.com/css/br-cobane" rel="stylesheet">
     <link href="https://fonts.cdnfonts.com/css/br-segma" rel="stylesheet">
     <link href="https://fonts.cdnfonts.com/css/br-sonoma" rel="stylesheet">
@@ -69,12 +70,12 @@
     </template>
 
     <script>
-        const fonts = ['BR Shape', 'Lexend', 'BR Cobane', 'BR Segma', 'BR Sonoma', 'BLOWREPH', 'Averral', 'Taster', 'Sukplena', 'TASA Explorer', 'Halcom', 'Utara', 'Geologica', 'WARM STORIES'];
+        const fonts = ['Lexend', 'BR Shape', 'BR Cobane', 'BR Segma', 'BR Sonoma', 'BLOWREPH', 'Averral', 'Taster', 'Sukplena', 'TASA Explorer', 'Halcom', 'Utara', 'Geologica', 'WARM STORIES'];
         const template = document.getElementById('specimen');
         for (const font of fonts) {
             const card = template.content.firstElementChild.cloneNode(true);
             card.style.setProperty('--stil-font-family', `'${font}', sans-serif`);
-            card.querySelector('[data-name]').textContent = font + (font === 'BR Shape' ? ' (default)' : '');
+            card.querySelector('[data-name]').textContent = font + (font === 'Lexend' ? ' (default)' : '');
             document.getElementById('specimens').append(card);
         }
         document.getElementById('mode').addEventListener('change', e => document.documentElement.dataset.stilTheme = e.target.value);

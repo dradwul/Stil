@@ -24,14 +24,15 @@ builder.Services.AddStil(options =>
     // options.Theme = new() { Primary = "#7048e8" };
 #endif
 #if (HasGoogleFont)
-    // Any Google font: StilFont.Google("…"). Or one from cdnfonts.com: StilFonts.BrCobane, StilFont.CdnFonts("…").
+    // Any Google font: StilFont.Google("…"). Or one from cdnfonts.com: StilFonts.Geologica, StilFont.CdnFonts("…").
     options.Font = StilFont.Google("STIL_GOOGLE_FONT");
-#elif (HasCdnFont)
-    // Another font: StilFonts.BrCobane, StilFont.CdnFonts("…") from cdnfonts.com, or StilFont.Google("…").
-    options.Font = StilFonts.BrShape;
+#elif (HasWebFont)
+    // Another font: StilFonts.Lexend (the default, free under the SIL Open Font License), StilFont.Google("…"),
+    // or StilFont.CdnFonts("…") from cdnfonts.com (check the license there).
+    options.Font = StilFonts.Lexend;
 #else
-    // A web font, for example StilFonts.BrCobane, StilFont.CdnFonts("…") or StilFont.Google("…"):
-    // options.Font = StilFonts.BrCobane;
+    // A web font, for example StilFonts.Lexend (free), StilFont.Google("…") or StilFont.CdnFonts("…"):
+    // options.Font = StilFonts.Geologica;
 #endif
 });
 // The app's own texts from Locales/*.json, through IStringLocalizer<T>.

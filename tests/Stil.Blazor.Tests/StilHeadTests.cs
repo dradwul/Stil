@@ -124,4 +124,12 @@ public class StilHeadTests
         Assert.Equal("https://fonts.cdnfonts.com/css/br-sonoma", StilFont.CdnFonts("BR Sonoma").StylesheetUrl);
         Assert.Equal("https://fonts.cdnfonts.com/css/custom", StilFont.CdnFonts("Some Font", "custom").StylesheetUrl);
     }
+
+    [Fact]
+    public void TheDefaultFontIsLexendFromGoogleFontsInBothWeights()
+    {
+        Assert.Same(StilFonts.Lexend, StilFonts.All[0]);
+        Assert.Equal("'Lexend', sans-serif", StilFonts.Lexend.FontFamily);
+        Assert.Equal("https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&display=swap", StilFonts.Lexend.StylesheetUrl);
+    }
 }

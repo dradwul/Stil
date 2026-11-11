@@ -19,9 +19,10 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   dialog, no longer cuts them off. Without stil.js they open in place, as
   before.
 
-- **Stil CSS**: the default font is BR Shape (`--stil-font-family`), used
-  when the page loads it from `https://fonts.cdnfonts.com/css/br-shape`;
-  otherwise `sans-serif`. Lexend is still in `StilFonts`.
+- **Stil CSS**: the samples, the demo and the docs site load the default font,
+  Lexend, from Google Fonts in weights 400 and 600, instead of from
+  cdnfonts.com, which serves only weight 400 (so semibold text was
+  synthesized).
 - **Stil CSS**: dark text on colored backgrounds (buttons, badges, alerts and
   other variants) is a soft gray, `#3d3d3d`, instead of black. On colors
   where that gray would fall below 4.5:1 it darkens just enough, so the text
@@ -164,13 +165,16 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 
 - **Stil for Blazor**: `options.Font` in `AddStil()` gives the whole app a web
   font; `<StilHead />` links its stylesheet and sets `--stil-font-family`.
-  `StilFonts` has ready-made fonts from cdnfonts.com (Lexend, BR Cobane,
-  BR Segma, BR Sonoma, BR Shape, Averral, Sukplena, TASA Explorer, Halcom,
-  Utara, Geologica, BLOWREPH, Taster and WARM STORIES); `StilFont.CdnFonts("…")` takes any other font there and
+  `StilFonts` has ready-made fonts: Lexend, the default, from Google Fonts in
+  both weights Stil uses (400 and 600) and free for any use under the SIL Open
+  Font License, and from cdnfonts.com BR Shape, BR Cobane, BR Segma,
+  BR Sonoma, Averral, Sukplena, TASA Explorer, Halcom, Utara, Geologica,
+  BLOWREPH, Taster and WARM STORIES. The docs say to check a cdnfonts.com
+  font's license before using it in a product; the BR fonts are commercial.
+  `StilFont.CdnFonts("…")` takes any other font there and
   `StilFont.Google("…")` any Google font.
-- **Stil.Templates**: `--Font` picks one of those fonts (`br-shape` by default,
-  or `system` for none) and `--GoogleFont` any Google font. New apps now load
-  BR Shape.
+- **Stil.Templates**: `--Font` picks one of those fonts (`lexend` by default,
+  or `system` for none) and `--GoogleFont` any Google font.
 - **Stil CSS**: `samples/Stil.Html/fonts.html` compares the fonts.
 - **Docs**: the theme builder previews the cdnfonts.com fonts and writes
   `options.Font` in its C#.
