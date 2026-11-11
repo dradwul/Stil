@@ -1147,14 +1147,24 @@ X. The gauge is a `role="meter"` rather than an image, and `Ranges` (for
 example poor, fair, good) color the value. Bubbles get room at the ends of
 the axes, but never past zero.
 
-### Phase 14.4: Heat map and combined charts
+### Phase 14.4: Heat map and combined charts ✅ Done
 
-- [ ] `StilHeatMap`, for example activity by weekday and hour (it can show the
+- [x] `StilHeatMap`, for example activity by weekday and hour (it can show the
   calendar's load).
-- [ ] Combined charts: bars and a line in one chart, with a second value axis.
+- [x] Combined charts: bars and a line in one chart, with a second value axis.
 
 **Done when:** the docs show orders per hour as a heat map and revenue as bars
-with a margin line.
+with a margin line. ✅ (The charts page: four weeks of web shop orders by
+weekday and hour, and revenue per month as bars with the margin as a line on
+a percent axis; 8 new tests, 84 in Stil.Charts.)
+
+**Changes from the plan:** no new chart type for the combination: a series in
+`StilBarChart` takes `Line="true"`, and any series in a vertical line or bar
+chart can take `SecondaryAxis="true"`, so line charts get the second axis
+too. Stacked totals count the bars only, and stacked bars stay on the main
+axis. The heat map is an HTML grid rather than SVG, so it fills any width; its
+cells are tinted from 8% to 75% of the color, which keeps text in them
+readable in light and dark mode. Without a `Value` it counts the items.
 
 ### Phase 14.5: Demo and docs
 

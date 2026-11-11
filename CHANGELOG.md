@@ -40,6 +40,15 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   static SSR and print sharply. `StilCodes` has the encoders (`QrSvg`,
   `QrModules`, `BarcodeSvg`, `BarcodeModules`, `EanCheckDigit`) for PDFs and
   label printers.
+- **Stil.Charts**: `StilHeatMap` shows a value across two categories, such as
+  orders by weekday and hour: items fall into cells by `Row` and `Column`,
+  and a cell sums their `Value` or counts them. `Rows` and `Columns` set the
+  order, a legend shows the range, and the data table lists every cell.
+- **Stil.Charts**: bars and a line in one chart: a `StilChartSeries` with
+  `Line="true"` is drawn as a line over the bars of a `StilBarChart`, and
+  `SecondaryAxis="true"` measures a series on a second value axis at the right
+  of a vertical line or bar chart (`SecondaryAxisTitle`, `SecondaryMin`,
+  `SecondaryMax`, `SecondaryTickFormat`).
 - **Stil.Charts**: `StilScatterChart` places one point per item by `X` and
   `Y`, colored by `Group`, with its own axis titles, limits and formats; with
   `Size` it is a bubble chart. Its summary tells screen readers the ranges and
