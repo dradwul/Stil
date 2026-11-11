@@ -27,7 +27,7 @@
             <div class="stil-resource-hours" aria-hidden="true">
                 @for (var hour = FirstHour; hour < LastHour; hour++)
                 {
-                    <span class="stil-resource-hour" style="@($"--stil-start: {hour * 60}")">@FormatTime(hour * 60)</span>
+                    <span class="stil-resource-hour" style="@($"--stil-event-start: {hour * 60}")">@FormatTime(hour * 60)</span>
                 }
             </div>
             @for (var row = 0; row < (Resources?.Count ?? 0); row++)
@@ -49,7 +49,7 @@
                         var item = occurrence.Item;
                         var key = $"{occurrence.Index}-{rowIndex}";
                         _placed[key] = placement;
-                        var position = $"--stil-start: {placement.Start}; --stil-length: {placement.End - placement.Start}; --stil-col: {placement.Column}; --stil-cols: {placement.Columns}";
+                        var position = $"--stil-event-start: {placement.Start}; --stil-event-length: {placement.End - placement.Start}; --stil-event-col: {placement.Column}; --stil-event-cols: {placement.Columns}";
                         @(new StilCalendarEventView
                         {
                             Classes = EventClasses(item),
@@ -64,7 +64,7 @@
                     }
                     @if (_date == Today && NowMinute >= FirstHour * 60 && NowMinute <= LastHour * 60)
                     {
-                        <div class="stil-resource-now" style="@($"--stil-start: {NowMinute}")" aria-hidden="true"></div>
+                        <div class="stil-resource-now" style="@($"--stil-event-start: {NowMinute}")" aria-hidden="true"></div>
                     }
                 </div>
             }

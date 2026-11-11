@@ -57,8 +57,8 @@ public class StilResourcePlannerTests
         Assert.Equal(["Budget", "Interview"], tracks[0].QuerySelectorAll(".stil-event-title").Select(t => t.TextContent));
         Assert.Equal(["Standup", "Workshop"], tracks[1].QuerySelectorAll(".stil-event-title").Select(t => t.TextContent));
         // Budget and Interview overlap and share the row.
-        Assert.Contains("--stil-start: 540; --stil-length: 90; --stil-col: 0; --stil-cols: 2", tracks[0].QuerySelector(".stil-event")!.GetAttribute("style"));
-        Assert.Equal("--stil-start: 620", cut.Find(".stil-resource-now").GetAttribute("style"));
+        Assert.Contains("--stil-event-start: 540; --stil-event-length: 90; --stil-event-col: 0; --stil-event-cols: 2", tracks[0].QuerySelector(".stil-event")!.GetAttribute("style"));
+        Assert.Equal("--stil-event-start: 620", cut.Find(".stil-resource-now").GetAttribute("style"));
         Assert.Equal("--stil-resource-first-hour: 7; --stil-resource-hours: 12", cut.Find(".stil-resource").GetAttribute("style"));
     }
 

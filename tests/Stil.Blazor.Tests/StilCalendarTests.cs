@@ -53,7 +53,7 @@ public class StilCalendarTests
         Assert.Equal("date", today.GetAttribute("aria-current"));
         Assert.Equal("0", today.GetAttribute("tabindex"));
         Assert.Single(cut.FindAll("td[role=gridcell][tabindex='0']"));
-        Assert.Equal("--stil-load: 0.39", today.GetAttribute("style"));
+        Assert.Equal("--stil-day-load: 0.39", today.GetAttribute("style"));
         Assert.Contains("14 October 2026, 4 events, 39% booked", today.GetAttribute("aria-label"));
 
         var free = Cell(cut, "2026-10-15");

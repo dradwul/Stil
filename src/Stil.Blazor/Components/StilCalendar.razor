@@ -233,7 +233,7 @@
         var shown = occurrences.Count > MaxEventsPerDay ? Math.Max(0, MaxEventsPerDay - 1) : occurrences.Count;
 
         // Keyed by date: a new month gets new cells, so @ref captures them and focus can move there.
-        return @<td @key="date" role="gridcell" class="@classes" style="@(load > 0 ? $"--stil-load: {Css(load)}" : null)"
+        return @<td @key="date" role="gridcell" class="@classes" style="@(load > 0 ? $"--stil-day-load: {Css(load)}" : null)"
                     data-date="@date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)" tabindex="@(tabStop ? 0 : -1)"
                     aria-selected="@(_selected == date ? "true" : "false")" aria-current="@(date == Today ? "date" : null)"
                     aria-label="@DayLabel(date, occurrences.Count)" @ref="_cells[date]" @onclick="() => OnDayClickAsync(date)">

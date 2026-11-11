@@ -281,7 +281,7 @@
                     : '';
                 const dots = events.slice(0, 5).map(e => { const c = colorOf(calendarById[e.calendar]); return `<span class="stil-calendar-dot${c.cls}"${styleAttr(c.style)}></span>`; }).join('');
                 cells += html`<td role="gridcell" class="stil-calendar-day${outside ? ' stil-calendar-outside' : ''}${inWeek ? ' stil-calendar-range' : ''}"
-                    style="--stil-load: ${l.toFixed(2)}" data-date="${key(date)}" tabindex="${selected ? 0 : -1}"
+                    style="--stil-day-load: ${l.toFixed(2)}" data-date="${key(date)}" tabindex="${selected ? 0 : -1}"
                     aria-selected="${selected}" aria-label="${label}"${isToday ? ' aria-current="date"' : ''}>
                     <span class="stil-calendar-date" aria-hidden="true">${date.getDate()}</span>
                     ${mini ? '' : `<ul class="stil-calendar-events">${chips}</ul>${more}<div class="stil-calendar-dots" aria-hidden="true">${dots}</div>`}
@@ -318,14 +318,14 @@
                 <span class="stil-week-day-name">${weekdayShort.format(date)}</span>
                 <span class="stil-calendar-date">${date.getDate()}</span>
                 <span class="stil-week-load" title="${hours(b)} booked of ${hours(workEnd - workStart)}">
-                    <span class="stil-week-load-bar" style="--stil-load: ${load(date).toFixed(2)}" aria-hidden="true"></span>
+                    <span class="stil-week-load-bar" style="--stil-day-load: ${load(date).toFixed(2)}" aria-hidden="true"></span>
                     <span>${b ? hours(b) : 'Free'}</span>
                 </span>
             </div>`;
         }).join('');
 
         const times = Array.from({ length: gridHours }, (_, h) =>
-            `<span class="stil-week-time" style="--stil-start: ${(gridFrom + h) * 60}">${time((gridFrom + h) * 60)}</span>`).join('');
+            `<span class="stil-week-time" style="--stil-event-start: ${(gridFrom + h) * 60}">${time((gridFrom + h) * 60)}</span>`).join('');
 
         const columns = days.map(date => {
             const gridStart = gridFrom * 60;
@@ -337,13 +337,13 @@
                 return eventButton(p.e, {
                     meta: end - start >= 45,
                     resizable: true,
-                    style: `--stil-start: ${start}; --stil-length: ${end - start}; --stil-col: ${p.col}; --stil-cols: ${p.cols}`,
+                    style: `--stil-event-start: ${start}; --stil-event-length: ${end - start}; --stil-event-col: ${p.col}; --stil-event-cols: ${p.cols}`,
                 });
             }).join('');
-            const free = freeBlocks(date).map(f => html`<button type="button" class="stil-week-free" style="--stil-start: ${f.start}; --stil-length: ${f.end - f.start}"
+            const free = freeBlocks(date).map(f => html`<button type="button" class="stil-week-free" style="--stil-event-start: ${f.start}; --stil-event-length: ${f.end - f.start}"
                 data-free="${key(date)}|${f.start}|${f.end}" aria-label="Free ${span(f.start, f.end)}, create an event">Free · ${hours(f.end - f.start)}</button>`).join('');
             const nowLine = sameDay(date, today) && minutesOf(now) >= gridStart && minutesOf(now) <= gridEnd
-                ? `<div class="stil-week-now" style="--stil-start: ${minutesOf(now)}" aria-hidden="true"></div>` : '';
+                ? `<div class="stil-week-now" style="--stil-event-start: ${minutesOf(now)}" aria-hidden="true"></div>` : '';
             return `<div class="stil-week-col${isWeekend(date) ? ' stil-week-col-muted' : ''}">${free}${events}${nowLine}</div>`;
         }).join('');
 

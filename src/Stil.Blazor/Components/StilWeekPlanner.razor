@@ -56,7 +56,7 @@
                     @if (ShowLoad)
                     {
                         <span class="stil-week-load" title="@string.Format(CurrentCulture, Localize(BookedOfFormat, "WeekPlanner.BookedOfFormat"), FormatHours(booked), FormatHours(WorkdayEndMinute - WorkdayStartMinute))">
-                            <span class="stil-week-load-bar" style="@($"--stil-load: {Css(Load(date))}")" aria-hidden="true"></span>
+                            <span class="stil-week-load-bar" style="@($"--stil-day-load: {Css(Load(date))}")" aria-hidden="true"></span>
                             <span>@(booked > 0 ? FormatHours(booked) : Localize(FreeText, "Calendar.Free"))</span>
                         </span>
                     }
@@ -65,7 +65,7 @@
             <div class="stil-week-times" aria-hidden="true">
                 @for (var hour = FirstHourShown; hour < LastHourShown; hour++)
                 {
-                    <span class="stil-week-time" style="@($"--stil-start: {hour * 60}")">@FormatTime(hour * 60)</span>
+                    <span class="stil-week-time" style="@($"--stil-event-start: {hour * 60}")">@FormatTime(hour * 60)</span>
                 }
             </div>
             @for (var i = 0; i < _days.Count; i++)
@@ -82,7 +82,7 @@
                             continue;
                         }
 
-                        var style = $"--stil-start: {start}; --stil-length: {end - start}";
+                        var style = $"--stil-event-start: {start}; --stil-event-length: {end - start}";
                         var text = $"{Localize(FreeText, "Calendar.Free")} · {FormatHours(end - start)}";
                         if (OnSlotSelect.HasDelegate)
                         {
@@ -101,7 +101,7 @@
                         var item = occurrence.Item;
                         var key = $"{occurrence.Index}-{dayIndex}";
                         _placed[key] = (placement, dayIndex);
-                        var position = $"--stil-start: {placement.Start}; --stil-length: {placement.End - placement.Start}; --stil-col: {placement.Column}; --stil-cols: {placement.Columns}";
+                        var position = $"--stil-event-start: {placement.Start}; --stil-event-length: {placement.End - placement.Start}; --stil-event-col: {placement.Column}; --stil-event-cols: {placement.Columns}";
                         // Events shorter than 45 minutes only have room for the title.
                         var meta = placement.End - placement.Start >= 45
                             ? JoinMeta(FormatRange(occurrence.StartMinute, occurrence.EndMinute), Details?.Invoke(item))
@@ -120,7 +120,7 @@
                     }
                     @if (date == Today && NowMinute >= gridStart && NowMinute <= gridEnd)
                     {
-                        <div class="stil-week-now" style="@($"--stil-start: {NowMinute}")" aria-hidden="true"></div>
+                        <div class="stil-week-now" style="@($"--stil-event-start: {NowMinute}")" aria-hidden="true"></div>
                     }
                 </div>
             }

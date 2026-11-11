@@ -38,7 +38,7 @@ public class StilWeekPlannerTests
         Assert.Equal(7, heads.Count);
         Assert.Equal("Mon", heads[0].QuerySelector(".stil-week-day-name")!.TextContent);
         Assert.Equal("date", heads[2].GetAttribute("aria-current"));
-        Assert.Equal("--stil-load: 0.39", heads[2].QuerySelector(".stil-week-load-bar")!.GetAttribute("style"));
+        Assert.Equal("--stil-day-load: 0.39", heads[2].QuerySelector(".stil-week-load-bar")!.GetAttribute("style"));
         Assert.Equal("3.5 h", heads[2].QuerySelector(".stil-week-load > span:last-child")!.TextContent);
         Assert.Equal("Free", heads[3].QuerySelector(".stil-week-load > span:last-child")!.TextContent);
 
@@ -74,16 +74,16 @@ public class StilWeekPlannerTests
 
         var cut = RenderWeek(context);
 
-        Assert.Equal("--stil-start: 510; --stil-length: 30; --stil-col: 0; --stil-cols: 1", Event(cut, "Standup").GetAttribute("style"));
-        Assert.Equal("--stil-start: 600; --stil-length: 90; --stil-col: 0; --stil-cols: 2", Event(cut, "Planning").GetAttribute("style"));
-        Assert.Equal("--stil-start: 660; --stil-length: 60; --stil-col: 1; --stil-cols: 2", Event(cut, "Review").GetAttribute("style"));
-        Assert.Equal("--stil-event-color: #9c36b5; --stil-start: 780; --stil-length: 60; --stil-col: 0; --stil-cols: 1",
+        Assert.Equal("--stil-event-start: 510; --stil-event-length: 30; --stil-event-col: 0; --stil-event-cols: 1", Event(cut, "Standup").GetAttribute("style"));
+        Assert.Equal("--stil-event-start: 600; --stil-event-length: 90; --stil-event-col: 0; --stil-event-cols: 2", Event(cut, "Planning").GetAttribute("style"));
+        Assert.Equal("--stil-event-start: 660; --stil-event-length: 60; --stil-event-col: 1; --stil-event-cols: 2", Event(cut, "Review").GetAttribute("style"));
+        Assert.Equal("--stil-event-color: #9c36b5; --stil-event-start: 780; --stil-event-length: 60; --stil-event-col: 0; --stil-event-cols: 1",
             Event(cut, "Lunch").GetAttribute("style"));
 
         // A short event only has room for its title.
         Assert.Null(Event(cut, "Standup").QuerySelector(".stil-event-meta"));
         Assert.Equal("10:00–11:30 · Room Fjord", Event(cut, "Planning").QuerySelector(".stil-event-meta")!.TextContent);
-        Assert.Equal("--stil-start: 620", cut.Find(".stil-week-now").GetAttribute("style"));
+        Assert.Equal("--stil-event-start: 620", cut.Find(".stil-week-now").GetAttribute("style"));
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public class StilWeekPlannerTests
         var cut = RenderWeek(context, items: items);
 
         Assert.Single(cut.FindAll(".stil-week-col > .stil-event"));
-        Assert.StartsWith("--stil-start: 420; --stil-length: 60;", Event(cut, "Early start").GetAttribute("style"));
+        Assert.StartsWith("--stil-event-start: 420; --stil-event-length: 60;", Event(cut, "Early start").GetAttribute("style"));
     }
 
     [Fact]
@@ -119,9 +119,9 @@ public class StilWeekPlannerTests
         Assert.Empty(columns[1].QuerySelectorAll(".stil-week-free"));
         var free = columns[2].QuerySelectorAll("button.stil-week-free");
         Assert.Equal(2, free.Length);
-        Assert.Equal("--stil-start: 720; --stil-length: 60", free[0].GetAttribute("style"));
+        Assert.Equal("--stil-event-start: 720; --stil-event-length: 60", free[0].GetAttribute("style"));
         Assert.Equal("Free Wednesday 12:00–13:00, create an event", free[0].GetAttribute("aria-label"));
-        Assert.Equal("--stil-start: 480; --stil-length: 540", columns[3].QuerySelector(".stil-week-free")!.GetAttribute("style"));
+        Assert.Equal("--stil-event-start: 480; --stil-event-length: 540", columns[3].QuerySelector(".stil-week-free")!.GetAttribute("style"));
         Assert.Empty(columns[5].QuerySelectorAll(".stil-week-free"));
 
         free[0].Click();

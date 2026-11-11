@@ -14,7 +14,7 @@
     --stil-color-text-muted: light-dark(#59636e, #9da7b3);
     --stil-color-border: light-dark(#d0d7de, #343a42);
     --stil-color-border-strong: light-dark(#818b98, #6e7781);
-    --stil-backdrop: #00000080;
+    --stil-color-backdrop: #00000080;
     --stil-font-family: "Lexend", sans-serif;
     --stil-font-family-mono: ui-monospace, "Cascadia Code", Consolas, monospace;
     --stil-font-size-xs: .75rem;
@@ -1950,7 +1950,7 @@
   }
 
   .stil-dialog::backdrop {
-    background-color: var(--stil-backdrop, #00000080);
+    background-color: var(--stil-color-backdrop, #00000080);
   }
 
   .stil-dialog-sm {
@@ -2314,7 +2314,7 @@
   }
 
   .stil-drawer::backdrop {
-    background-color: var(--stil-backdrop, #00000080);
+    background-color: var(--stil-color-backdrop, #00000080);
   }
 
   @keyframes stil-slide-in-start {
@@ -4673,7 +4673,7 @@
   }
 
   .stil-calendar-day {
-    --_load: var(--stil-load, 0);
+    --_load: var(--stil-day-load, 0);
     height: 7rem;
     padding: var(--stil-space-1);
     border-block-start: 1px solid var(--stil-color-border);
@@ -4947,14 +4947,14 @@
   .stil-week-load-bar {
     border-radius: var(--stil-radius-pill);
     background: linear-gradient(to right,
-        var(--stil-calendar-load, var(--_accent)) calc(var(--stil-load, 0) * 100%),
+        var(--stil-calendar-load, var(--_accent)) calc(var(--stil-day-load, 0) * 100%),
         var(--stil-color-surface-muted) 0);
     flex: 1;
     height: 4px;
   }
 
   :is(.stil-week-times, .stil-week-col) > * {
-    --_top: calc((var(--stil-start, 0) / 60 - var(--_from)) * var(--_hour));
+    --_top: calc((var(--stil-event-start, 0) / 60 - var(--_from)) * var(--_hour));
     top: var(--_top);
     position: absolute;
   }
@@ -4993,15 +4993,15 @@
   }
 
   .stil-week-col > :is(.stil-event, .stil-week-free) {
-    height: calc(var(--stil-length, 60) / 60 * var(--_hour));
+    height: calc(var(--stil-event-length, 60) / 60 * var(--_hour));
   }
 
   .stil-week-col > .stil-event {
-    width: calc((100% - 6px) * (1 - var(--stil-col, 0) / var(--stil-cols, 1)));
+    width: calc((100% - 6px) * (1 - var(--stil-event-col, 0) / var(--stil-event-cols, 1)));
     box-shadow: 0 0 0 1px var(--stil-color-surface);
-    z-index: calc(1 + var(--stil-col, 0));
+    z-index: calc(1 + var(--stil-event-col, 0));
     padding-block: .25rem;
-    inset-inline-start: calc(var(--stil-col, 0) / var(--stil-cols, 1) * (100% - 6px) + 3px);
+    inset-inline-start: calc(var(--stil-event-col, 0) / var(--stil-event-cols, 1) * (100% - 6px) + 3px);
   }
 
   .stil-week-free {
@@ -5251,7 +5251,7 @@
     padding-inline-start: var(--stil-space-1);
     position: absolute;
     inset-block-start: .5rem;
-    inset-inline-start: calc((var(--stil-start, 0) / 60 - var(--_from)) * var(--_hour));
+    inset-inline-start: calc((var(--stil-event-start, 0) / 60 - var(--_from)) * var(--_hour));
   }
 
   .stil-resource-name {
@@ -5288,10 +5288,10 @@
   }
 
   .stil-resource-track > .stil-event {
-    inset-inline-start: calc((var(--stil-start, 0) / 60 - var(--_from)) * var(--_hour) + 1px);
-    top: calc(var(--stil-col, 0) / var(--stil-cols, 1) * (100% - 6px) + 3px);
-    width: calc(var(--stil-length, 60) / 60 * var(--_hour) - 2px);
-    height: calc((100% - 6px) / var(--stil-cols, 1) - 1px);
+    inset-inline-start: calc((var(--stil-event-start, 0) / 60 - var(--_from)) * var(--_hour) + 1px);
+    top: calc(var(--stil-event-col, 0) / var(--stil-event-cols, 1) * (100% - 6px) + 3px);
+    width: calc(var(--stil-event-length, 60) / 60 * var(--_hour) - 2px);
+    height: calc((100% - 6px) / var(--stil-event-cols, 1) - 1px);
     box-shadow: 0 0 0 1px var(--stil-color-surface);
     padding-block: .15rem;
     position: absolute;
@@ -5305,7 +5305,7 @@
     width: 0;
     position: absolute;
     inset-block: 0;
-    inset-inline-start: calc((var(--stil-start, 0) / 60 - var(--_from)) * var(--_hour));
+    inset-inline-start: calc((var(--stil-event-start, 0) / 60 - var(--_from)) * var(--_hour));
   }
 
   .stil-resource[data-stil-editable] .stil-resource-track {

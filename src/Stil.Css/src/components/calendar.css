@@ -2,11 +2,11 @@
    (stil-agenda). They show how busy a period is and where the free time is.
 
    Inputs set by the markup (inline styles), all optional:
-     --stil-load          0–1 on a day or a load bar: how booked it is. Tints the day.
-     --stil-start         Minutes from midnight: where an event, free block, time label or the
+     --stil-day-load          0–1 on a day or a load bar: how booked it is. Tints the day.
+     --stil-event-start         Minutes from midnight: where an event, free block, time label or the
                           now line starts in the week grid.
-     --stil-length        Minutes: how long an event or a free block is.
-     --stil-col, --stil-cols
+     --stil-event-length        Minutes: how long an event or a free block is.
+     --stil-event-col, --stil-event-cols
                           The column of an event among overlapping ones, and how many there are.
      --stil-week-days, --stil-week-first-hour, --stil-week-hours
                           On stil-week: the number of day columns (7), the first hour shown (7)
@@ -162,9 +162,9 @@
     vertical-align: top;
 }
 
-/* A day. Its background is tinted by --stil-load (0 = free, 1 = fully booked). */
+/* A day. Its background is tinted by --stil-day-load (0 = free, 1 = fully booked). */
 .stil-calendar-day {
-    --_load: var(--stil-load, 0);
+    --_load: var(--stil-day-load, 0);
     height: 7rem;
     padding: var(--stil-space-1);
     border-block-start: 1px solid var(--stil-color-border);
@@ -394,13 +394,13 @@
     height: 4px;
     border-radius: var(--stil-radius-pill);
     background: linear-gradient(to right,
-        var(--stil-calendar-load, var(--_accent)) calc(var(--stil-load, 0) * 100%),
+        var(--stil-calendar-load, var(--_accent)) calc(var(--stil-day-load, 0) * 100%),
         var(--stil-color-surface-muted) 0);
 }
 
-/* Everything placed by time: --stil-start (and --stil-length) in minutes from midnight. */
+/* Everything placed by time: --stil-event-start (and --stil-event-length) in minutes from midnight. */
 :is(.stil-week-times, .stil-week-col) > * {
-    --_top: calc((var(--stil-start, 0) / 60 - var(--_from)) * var(--_hour));
+    --_top: calc((var(--stil-event-start, 0) / 60 - var(--_from)) * var(--_hour));
     position: absolute;
     top: var(--_top);
 }
@@ -435,16 +435,16 @@
 
 .stil-week-col-muted { background-color: color-mix(in srgb, var(--stil-color-surface-muted) 60%, transparent); }
 
-.stil-week-col > :is(.stil-event, .stil-week-free) { height: calc(var(--stil-length, 60) / 60 * var(--_hour)); }
+.stil-week-col > :is(.stil-event, .stil-week-free) { height: calc(var(--stil-event-length, 60) / 60 * var(--_hour)); }
 
 .stil-week-col > .stil-event {
     /* Overlapping events cascade: each one starts further in and runs to the end edge, on
        top of the earlier ones, so every title stays readable at its start. */
-    inset-inline-start: calc(var(--stil-col, 0) / var(--stil-cols, 1) * (100% - 6px) + 3px);
-    width: calc((100% - 6px) * (1 - var(--stil-col, 0) / var(--stil-cols, 1)));
+    inset-inline-start: calc(var(--stil-event-col, 0) / var(--stil-event-cols, 1) * (100% - 6px) + 3px);
+    width: calc((100% - 6px) * (1 - var(--stil-event-col, 0) / var(--stil-event-cols, 1)));
     padding-block: 0.25rem;
     box-shadow: 0 0 0 1px var(--stil-color-surface);
-    z-index: calc(1 + var(--stil-col, 0));
+    z-index: calc(1 + var(--stil-event-col, 0));
 }
 
 /* A free block in the working day: quiet until hovered or focused. */
@@ -637,13 +637,13 @@
    <div class="stil-resource" style="--stil-resource-first-hour: 7; --stil-resource-hours: 12">
      <div class="stil-resource-scroll"><div class="stil-resource-grid">
        <div class="stil-resource-corner"></div>
-       <div class="stil-resource-hours"><span class="stil-resource-hour" style="--stil-start: 420">07:00</span>…</div>
+       <div class="stil-resource-hours"><span class="stil-resource-hour" style="--stil-event-start: 420">07:00</span>…</div>
        <div class="stil-resource-name">Room Fjord <small>8 seats</small></div>
-       <div class="stil-resource-track"><div class="stil-event" style="--stil-start: 540; --stil-length: 60">…</div></div>
+       <div class="stil-resource-track"><div class="stil-event" style="--stil-event-start: 540; --stil-event-length: 60">…</div></div>
      </div></div>
    </div>
-   Times are minutes from midnight. Overlapping events share the row's height (--stil-col and
-   --stil-cols). With data-stil-editable, stil.js drags events across time and rows. */
+   Times are minutes from midnight. Overlapping events share the row's height (--stil-event-col and
+   --stil-event-cols). With data-stil-editable, stil.js drags events across time and rows. */
 
 .stil-resource {
     --_from: var(--stil-resource-first-hour, 7);
@@ -685,7 +685,7 @@
 .stil-resource-hour {
     position: absolute;
     inset-block-start: 0.5rem;
-    inset-inline-start: calc((var(--stil-start, 0) / 60 - var(--_from)) * var(--_hour));
+    inset-inline-start: calc((var(--stil-event-start, 0) / 60 - var(--_from)) * var(--_hour));
     padding-inline-start: var(--stil-space-1);
     color: var(--stil-color-text-muted);
     font-size: var(--stil-font-size-xs);
@@ -728,10 +728,10 @@
 /* Overlapping events split the row's height. */
 .stil-resource-track > .stil-event {
     position: absolute;
-    inset-inline-start: calc((var(--stil-start, 0) / 60 - var(--_from)) * var(--_hour) + 1px);
-    top: calc(var(--stil-col, 0) / var(--stil-cols, 1) * (100% - 6px) + 3px);
-    width: calc(var(--stil-length, 60) / 60 * var(--_hour) - 2px);
-    height: calc((100% - 6px) / var(--stil-cols, 1) - 1px);
+    inset-inline-start: calc((var(--stil-event-start, 0) / 60 - var(--_from)) * var(--_hour) + 1px);
+    top: calc(var(--stil-event-col, 0) / var(--stil-event-cols, 1) * (100% - 6px) + 3px);
+    width: calc(var(--stil-event-length, 60) / 60 * var(--_hour) - 2px);
+    height: calc((100% - 6px) / var(--stil-event-cols, 1) - 1px);
     padding-block: 0.15rem;
     overflow: hidden;
     box-shadow: 0 0 0 1px var(--stil-color-surface);
@@ -740,7 +740,7 @@
 .stil-resource-now {
     position: absolute;
     inset-block: 0;
-    inset-inline-start: calc((var(--stil-start, 0) / 60 - var(--_from)) * var(--_hour));
+    inset-inline-start: calc((var(--stil-event-start, 0) / 60 - var(--_from)) * var(--_hour));
     z-index: 9;
     width: 0;
     border-inline-start: 2px solid var(--_accent);

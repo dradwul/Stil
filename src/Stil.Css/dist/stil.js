@@ -305,7 +305,7 @@ function onPointerDown(event) {
     const week = column.closest('.stil-week, .stil-resource');
     const styles = getComputedStyle(week);
     const first = parseFloat(styles.getPropertyValue('--_from')) * 60;
-    const length = item ? parseFloat(item.style.getPropertyValue('--stil-length')) : 0;
+    const length = item ? parseFloat(item.style.getPropertyValue('--stil-event-length')) : 0;
     drag = {
         week,
         column,
@@ -315,7 +315,7 @@ function onPointerDown(event) {
         action: !item ? 'create' : target.closest('.stil-event-resize') ? 'resize' : 'move',
         first,
         last: first + parseFloat(styles.getPropertyValue('--_hours')) * 60,
-        start: item ? parseFloat(item.style.getPropertyValue('--stil-start')) : 0,
+        start: item ? parseFloat(item.style.getPropertyValue('--stil-event-start')) : 0,
         length,
         style: item?.getAttribute('style') ?? null,
         pointerId: event.pointerId,
@@ -371,13 +371,13 @@ function onPointerMove(event) {
             return distance < best.distance ? { column, distance } : best;
         }, { column: d.column, distance: Infinity }).column;
         day = columns.indexOf(target);
-        d.item.style.setProperty('--stil-start', start);
+        d.item.style.setProperty('--stil-event-start', start);
         const shift = target.getBoundingClientRect();
         d.item.style.translate = d.across ? `0 ${shift.top - rect.top}px` : `${shift.left - rect.left}px 0`;
     } else if (d.action === 'resize') {
         start = d.start;
         end = clamp(d.start + snap(d.length + (time(event) - origin) / perMinute), d.start + snapMinutes, d.last);
-        d.item.style.setProperty('--stil-length', end - start);
+        d.item.style.setProperty('--stil-event-length', end - start);
     } else {
         const edge = d.across ? (sign > 0 ? rect.left : -rect.right) : rect.top;
         const at = position => clamp(snap(d.first + (position - edge) / perMinute), d.first, d.last);
@@ -385,8 +385,8 @@ function onPointerMove(event) {
         const current = at(time(event));
         start = Math.min(anchor, current);
         end = Math.max(anchor, current, start + snapMinutes);
-        d.ghost.style.setProperty('--stil-start', start);
-        d.ghost.style.setProperty('--stil-length', end - start);
+        d.ghost.style.setProperty('--stil-event-start', start);
+        d.ghost.style.setProperty('--stil-event-length', end - start);
     }
 
     d.result = { day, start, end };

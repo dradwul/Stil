@@ -154,9 +154,9 @@ classes: `aria-current="page"`, `aria-selected="true"`,
 | Spinner | `stil-spinner`, `stil-spinner-sm`. It uses the current text color. |
 | Toast | `stil-toast-container` > `stil-toast` + `stil-toast-{variant}` > `stil-toast-body` (`stil-toast-title`) + `stil-close` |
 | Event | `stil-event` + `stil-event-{variant}`, or `--stil-event-color` for your own color, with `stil-event-title` (`stil-event-time`) and `stil-event-meta`. `stil-event-draft` marks an unsaved event. |
-| Calendar (month) | `stil-calendar` (`stil-calendar-mini` for a small month) > `stil-calendar-header` (`stil-calendar-title`) + `<table class="stil-calendar-grid" role="grid">`. Days are `<td role="gridcell" class="stil-calendar-day">` with `--stil-load` (0–1, tints the day), `aria-current="date"`, `aria-selected`, `stil-calendar-outside` and `stil-calendar-range`. Inside: `stil-calendar-date`, `stil-calendar-events` (event chips), `stil-calendar-more` and `stil-calendar-dots` (`stil-calendar-dot`, shown instead of chips on a narrow calendar). An optional week number column: `stil-calendar-week`. Key: `stil-calendar-legend` with `stil-calendar-legend-scale`. Filters: `stil-calendar-filter` with a variant class. |
-| Week | `stil-week` (`--stil-week-days`, `--stil-week-first-hour`, `--stil-week-hours`) > `stil-week-scroll` > `stil-week-grid` > `stil-week-corner`, `stil-week-day-head` (`stil-week-day-name`, `stil-calendar-date`, `stil-week-load` with `stil-week-load-bar`), `stil-week-times` (`stil-week-time`) and a `stil-week-col` per day (`stil-week-col-muted` for weekends). In a column, `stil-event`, `stil-week-free` and `stil-week-now` are placed by `--stil-start` and `--stil-length` (minutes from midnight); overlapping events get `--stil-col` and `--stil-cols`. With `data-stil-editable`, stil.js lets the user drag events (an optional `stil-event-resize` handle at the bottom of an event resizes it). `stil-week-auto` shows a `stil-agenda` child instead of the grid when the week is narrower than 36rem. |
-| Resource schedule | `stil-resource` (`--stil-resource-first-hour`, `--stil-resource-hours`, `--stil-resource-hour-width`, `--stil-resource-row-height`, `--stil-resource-name-width`) > `stil-resource-scroll` > `stil-resource-grid` > `stil-resource-corner`, `stil-resource-hours` (`stil-resource-hour`), and per row a `stil-resource-name` and a `stil-resource-track` with `stil-event`s placed by `--stil-start` and `--stil-length` and a `stil-resource-now` line. With `data-stil-editable`, stil.js drags events across time and rows. |
+| Calendar (month) | `stil-calendar` (`stil-calendar-mini` for a small month) > `stil-calendar-header` (`stil-calendar-title`) + `<table class="stil-calendar-grid" role="grid">`. Days are `<td role="gridcell" class="stil-calendar-day">` with `--stil-day-load` (0–1, tints the day), `aria-current="date"`, `aria-selected`, `stil-calendar-outside` and `stil-calendar-range`. Inside: `stil-calendar-date`, `stil-calendar-events` (event chips), `stil-calendar-more` and `stil-calendar-dots` (`stil-calendar-dot`, shown instead of chips on a narrow calendar). An optional week number column: `stil-calendar-week`. Key: `stil-calendar-legend` with `stil-calendar-legend-scale`. Filters: `stil-calendar-filter` with a variant class. |
+| Week | `stil-week` (`--stil-week-days`, `--stil-week-first-hour`, `--stil-week-hours`) > `stil-week-scroll` > `stil-week-grid` > `stil-week-corner`, `stil-week-day-head` (`stil-week-day-name`, `stil-calendar-date`, `stil-week-load` with `stil-week-load-bar`), `stil-week-times` (`stil-week-time`) and a `stil-week-col` per day (`stil-week-col-muted` for weekends). In a column, `stil-event`, `stil-week-free` and `stil-week-now` are placed by `--stil-event-start` and `--stil-event-length` (minutes from midnight); overlapping events get `--stil-event-col` and `--stil-event-cols`. With `data-stil-editable`, stil.js lets the user drag events (an optional `stil-event-resize` handle at the bottom of an event resizes it). `stil-week-auto` shows a `stil-agenda` child instead of the grid when the week is narrower than 36rem. |
+| Resource schedule | `stil-resource` (`--stil-resource-first-hour`, `--stil-resource-hours`, `--stil-resource-hour-width`, `--stil-resource-row-height`, `--stil-resource-name-width`) > `stil-resource-scroll` > `stil-resource-grid` > `stil-resource-corner`, `stil-resource-hours` (`stil-resource-hour`), and per row a `stil-resource-name` and a `stil-resource-track` with `stil-event`s placed by `--stil-event-start` and `--stil-event-length` and a `stil-resource-now` line. With `data-stil-editable`, stil.js drags events across time and rows. |
 | Agenda | `stil-agenda` > `stil-agenda-day` (`stil-agenda-day-title`) > `stil-agenda-list` > `stil-agenda-item` (`stil-agenda-time` + a `stil-event`). A free gap: `stil-agenda-item stil-agenda-free` with `stil-agenda-free-line`. |
 
 To see every class with its markup, open
@@ -248,6 +248,13 @@ no dependencies, adds a few behaviours:
   local storage (`stil-culture`), then reloads the page.
 
 Stil for Blazor loads it automatically.
+
+The exports named above, the `data-stil-*` attributes and the `stil*` events
+are stil.js's public API, and follow Semantic Versioning. Its other exports
+(`init`, `applyMask`, `insertMarkdown`, `markdownCommand`, `videoSize`,
+`downloadFile`, `pdfViewerEnabled`, `freezeColumns`, `showDialog`,
+`closeDialog`, `focusEditor` and `focusRow`) are how Stil for Blazor calls it,
+and may change in any version.
 
 ## Right to left
 
@@ -363,7 +370,7 @@ same form when you override them, or the override applies to both modes:
 | Typography | `--stil-font-family`, `--stil-font-family-mono`, `--stil-font-size-xs` … `-xl`, `--stil-font-weight-normal`, `-bold`, `--stil-line-height`, `--stil-letter-spacing`, `--stil-heading-margin` |
 | Spacing | `--stil-space-1` (0.25rem) … `--stil-space-7` (3rem) |
 | Layout | `--stil-container-max`, `--stil-sidebar-width`, `--stil-calendar-hour` (the height of an hour in `stil-week`) |
-| Shape | `--stil-radius-sm`, `-md`, `-lg`, `-pill`, `--stil-shadow-sm`, `-md`, `-lg`, `--stil-backdrop` |
+| Shape | `--stil-radius-sm`, `-md`, `-lg`, `-pill`, `--stil-shadow-sm`, `-md`, `-lg`, `--stil-color-backdrop` |
 | Focus | `--stil-focus-ring-width`, `--stil-focus-ring-offset` |
 | Layering | `--stil-z-dropdown`, `-sticky`, `-overlay`, `-modal`, `-popover`, `-toast` |
 | Motion | `--stil-duration-fast`, `--stil-duration-md`, `--stil-easing`. The durations are 0 when the user prefers reduced motion. |

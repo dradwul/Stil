@@ -25,7 +25,7 @@
     --stil-color-text-muted: light-dark(#59636e, #9da7b3);
     --stil-color-border: light-dark(#d0d7de, #343a42);
     --stil-color-border-strong: light-dark(#818b98, #6e7781);
-    --stil-backdrop: rgb(0 0 0 / 0.5);
+    --stil-color-backdrop: rgb(0 0 0 / 0.5);
 
     /* Typography */
     --stil-font-family: 'Lexend', sans-serif;

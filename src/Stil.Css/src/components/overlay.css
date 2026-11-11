@@ -20,7 +20,7 @@
 }
 
 /* ::backdrop does not inherit custom properties in every browser, hence the fallback. */
-.stil-dialog::backdrop { background-color: var(--stil-backdrop, rgb(0 0 0 / 0.5)); }
+.stil-dialog::backdrop { background-color: var(--stil-color-backdrop, rgb(0 0 0 / 0.5)); }
 
 .stil-dialog-sm { width: min(22rem, calc(100vw - 2 * var(--stil-space-4))); }
 .stil-dialog-lg { width: min(48rem, calc(100vw - 2 * var(--stil-space-4))); }
@@ -378,7 +378,7 @@
 
 .stil-drawer > .stil-dialog-body { flex: 1; }
 
-.stil-drawer::backdrop { background-color: var(--stil-backdrop, rgb(0 0 0 / 0.5)); }
+.stil-drawer::backdrop { background-color: var(--stil-color-backdrop, rgb(0 0 0 / 0.5)); }
 
 @keyframes stil-slide-in-start {
     from { translate: -100% 0; }
