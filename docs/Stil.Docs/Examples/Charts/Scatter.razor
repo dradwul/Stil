@@ -1,0 +1,16 @@
+<StilScatterChart Items="_stores" Category="s => s.Name" X="s => s.Visitors" Y="s => s.Revenue" Group="s => s.Region"
+                  Title="Stores" Description="Visitors and revenue per store, September"
+                  XAxisTitle="Visitors" YAxisTitle="Revenue (€)" Format="N0" XFormat="N0" />
+
+@code {
+    private static readonly Store[] _stores =
+    [
+        new("Kungsgatan", "City", 4_200, 61_000), new("Drottninggatan", "City", 5_100, 74_500),
+        new("Hamngatan", "City", 3_600, 49_800), new("Stortorget", "City", 2_900, 47_200),
+        new("Mall North", "Mall", 6_800, 81_300), new("Mall South", "Mall", 7_400, 79_900),
+        new("Mall West", "Mall", 5_900, 68_400), new("Airport", "Travel", 2_100, 38_600),
+        new("Central Station", "Travel", 3_300, 41_100), new("Harbour", "Travel", 1_400, 22_700),
+    ];
+
+    private sealed record Store(string Name, string Region, int Visitors, decimal Revenue);
+}

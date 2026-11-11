@@ -1,0 +1,14 @@
+<StilScatterChart Items="_products" Category="p => p.Name" X="p => p.Price" Y="p => p.Margin" Size="p => p.Sold"
+                  Title="Products" Description="Price, margin and units sold, last quarter"
+                  XAxisTitle="Price (€)" YAxisTitle="Margin (%)" SizeTitle="Units sold" Format="0.#" />
+
+@code {
+    private static readonly Product[] _products =
+    [
+        new("Oak desk", 549, 38, 210), new("Office chair", 329, 42, 640), new("Desk lamp", 59, 55, 1_480),
+        new("Bookcase", 189, 31, 390), new("Monitor arm", 99, 47, 820), new("Filing cabinet", 249, 26, 150),
+        new("Footrest", 39, 58, 560), new("Standing mat", 69, 51, 300),
+    ];
+
+    private sealed record Product(string Name, decimal Price, double Margin, int Sold);
+}

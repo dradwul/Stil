@@ -1,0 +1,20 @@
+<div class="stil-grid">
+    <StilGauge class="stil-col-md-6" Value="0.87" Target="0.9" Min="0" Max="1" Format="P0" Ranges="_ranges"
+               Title="Orders shipped on time" Description="This week" />
+    <StilGauge class="stil-col-md-6" Value="312" Max="500" Target="400" Format="N0" ValueText="312 of 500"
+               Title="Tickets closed" Description="October" />
+</div>
+
+<div class="stil-stack stil-mt-6">
+    <StilGauge Shape="StilGaugeShape.Bar" Value="0.64" Max="1" Format="P0" Target="0.75" Title="Storage used" />
+    <StilGauge Shape="StilGaugeShape.Bar" Value="0.42" Max="1" Format="P0" Ranges="_ranges" Title="Customer satisfaction" />
+</div>
+
+@code {
+    private static readonly StilGaugeRange[] _ranges =
+    [
+        new(0, 0.6, "var(--stil-color-danger)", "Poor"),
+        new(0.6, 0.85, "var(--stil-color-warning)", "Fair"),
+        new(0.85, 1, "var(--stil-color-success)", "Good"),
+    ];
+}

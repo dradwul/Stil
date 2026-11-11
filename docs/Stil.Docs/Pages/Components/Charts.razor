@@ -2,7 +2,7 @@
 @using Stil.Docs.Examples.Charts
 
 <DocsHeader Title="Charts" Eyebrow="Data">
-    <Lead>Line, area, bar, donut and sparkline charts as plain SVG, themed with the Stil tokens and readable by screen readers.</Lead>
+    <Lead>Line, area, bar, donut, scatter, bubble and sparkline charts and gauges as plain SVG, themed with the Stil tokens and readable by screen readers.</Lead>
 </DocsHeader>
 
 <p>
@@ -60,6 +60,38 @@
     </p>
 </DocExample>
 
+<h2 id="scatter">Scatter charts</h2>
+<DocExample Type="typeof(Scatter)">
+    <p>
+        <code>StilScatterChart</code> places one point per item by two values, <code>X</code> and <code>Y</code>, to show
+        whether they go together. <code>Group</code> colors the points and names the groups in the legend;
+        <code>Category</code> names each point in its tooltip and the data table. The axes fit the data; set
+        <code>BeginAtZero</code>, or <code>XMin</code>, <code>XMax</code>, <code>YMin</code> and <code>YMax</code>, to fix
+        them. The summary tells screen readers the ranges and whether Y tends to rise or fall with X.
+    </p>
+</DocExample>
+
+<h2 id="bubbles">Bubble charts</h2>
+<DocExample Type="typeof(Bubbles)">
+    <p>
+        With <code>Size</code>, the scatter chart is a bubble chart: the area of each bubble follows a third value, the
+        largest <code>MaxBubbleRadius</code> pixels (24) in radius. Bubbles are see-through and the small ones are drawn
+        on top, so overlapping points stay visible. <code>SizeTitle</code> names the value in tooltips, the summary and
+        the table.
+    </p>
+</DocExample>
+
+<h2 id="gauges">Gauges</h2>
+<DocExample Type="typeof(Gauges)">
+    <p>
+        <code>StilGauge</code> shows one value on a scale from <code>Min</code> to <code>Max</code>, as a half circle or,
+        with <code>Shape="StilGaugeShape.Bar"</code>, a bar. <code>Target</code> draws a line across the scale and writes
+        the target under it. <code>Ranges</code> tint stretches of the scale, and the value takes the color of the range it
+        is in. It is a <code>role="meter"</code>: screen readers hear the value, the range's name, the scale and the target.
+        Use it for a value against a goal; for change over time, use a line chart or a sparkline.
+    </p>
+</DocExample>
+
 <h2 id="sparklines">Sparklines</h2>
 <DocExample Type="typeof(Sparklines)">
     <p>
@@ -96,6 +128,8 @@
 <ApiTable Type="typeof(StilLineChart<>)" />
 <ApiTable Type="typeof(StilBarChart<>)" />
 <ApiTable Type="typeof(StilDonutChart<>)" />
+<ApiTable Type="typeof(StilScatterChart<>)" />
+<ApiTable Type="typeof(StilGauge)" />
 <ApiTable Type="typeof(StilChartSeries<,>)" />
 <ApiTable Type="typeof(StilSparkline)" />
 
