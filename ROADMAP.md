@@ -1103,18 +1103,30 @@ Ctrl+Z undoes it. The typography is a new Stil CSS class, `stil-prose`, which
 the rich text view will share. Markdig 1.4.2, the newest release that is at
 least two weeks old.
 
-### Phase 14.2: Rich text
+### Phase 14.2: Rich text ✅ Done
 
-- [ ] `StilRichTextEditor`: bold, italic, headings, lists, links, quotes and
+- [x] `StilRichTextEditor`: bold, italic, headings, lists, links, quotes and
   code, with a Stil toolbar and keyboard shortcuts, on top of
   `contenteditable`. The output is sanitized HTML (an allow-list of tags), or
   Markdown. Works in EditForm (`@bind-Value`, required, max length) and pastes
   cleanly from Word and web pages.
-- [ ] `StilRichTextView`: renders saved HTML or Markdown safely, with Stil's
+- [x] `StilRichTextView`: renders saved HTML or Markdown safely, with Stil's
   typography.
 
 **Done when:** a product description is written, pasted into from a web page,
-saved and shown safely.
+saved and shown safely. ✅ (The docs: a product description formatted with
+the toolbar, a web page pasted in, saved and shown; 22 tests, among them
+Word and Google Docs pastes, scripts, event attributes and javascript: links
+kept out.)
+
+**Changes from the plan:** a package of its own, `Stil.RichText`, on
+AngleSharp 1.8.1 (MIT) for parsing and on `Stil.Markdown` for Markdown, so
+the core package stays free of dependencies. The sanitizer writes the HTML
+anew from the parsed document and runs on the server for everything the
+editor sends and the view shows; stil.js also cleans pastes in the browser
+(`cleanRichText`). A clear formatting button was added to the toolbar.
+`StilMarkdownRenderer.IsSafeUrl` is now public, so both packages share one
+link check.
 
 ### Phase 14.3: Scatter and gauge
 

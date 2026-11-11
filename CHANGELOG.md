@@ -40,6 +40,19 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   static SSR and print sharply. `StilCodes` has the encoders (`QrSvg`,
   `QrModules`, `BarcodeSvg`, `BarcodeModules`, `EanCheckDigit`) for PDFs and
   label printers.
+- **Stil.RichText** (new package, on AngleSharp and Stil.Markdown):
+  `StilRichTextEditor` writes formatted text with a toolbar (bold, italic,
+  heading, lists, quote, code, link, clear formatting), Ctrl+B, Ctrl+I and
+  Ctrl+K, and clean pastes from Word, Google Docs and web pages; it stores
+  sanitized HTML or Markdown and works with EditForm validation.
+  `StilRichTextView` shows it, also in static SSR. `StilRichText.Sanitize`,
+  `ToMarkdown`, `FromMarkdown` and `HasText` work on the server.
+- **Stil CSS**: the rich text editor (`stil-richtext`, with a placeholder and
+  `--stil-richtext-height`). In stil.js, `[data-stil-richtext]` with toolbar
+  commands, shortcuts and paste cleaning, `initRichText` and
+  `cleanRichText`.
+- **Stil.Markdown**: `StilMarkdownRenderer.IsSafeUrl` tells whether a link or
+  image address is safe to show.
 - **Stil.Markdown** (new package, on Markdig): `StilMarkdown` shows Markdown
   safely (raw HTML as text, only safe links and images) with tables, task
   lists, autolinks and strikethrough, also in static SSR; `StilMarkdownEditor`
