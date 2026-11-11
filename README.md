@@ -17,7 +17,8 @@ Markdown view and editor ([`src/Stil.Markdown`](src/Stil.Markdown/README.md));
 `Stil.RichText`, a rich text editor and view
 ([`src/Stil.RichText`](src/Stil.RichText/README.md));
 `dotnet new stil-app`, a
-project template ([`templates/Stil.Templates`](templates/Stil.Templates/README.md));
+project template that can add features such as charts, editors and planners
+(`--Features`) ([`templates/Stil.Templates`](templates/Stil.Templates/README.md));
 and a documentation site with live examples and a theme builder
 ([`docs/Stil.Docs`](docs/Stil.Docs)).
 

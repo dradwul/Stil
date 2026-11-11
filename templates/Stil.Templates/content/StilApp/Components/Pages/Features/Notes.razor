@@ -1,0 +1,56 @@
+@page "/notes"
+@using System.ComponentModel.DataAnnotations
+@*#if (!UseServer)
+@rendermode InteractiveServer
+##endif*@
+
+<PageTitle>Notes</PageTitle>
+
+<h1 class="stil-mb-1">Notes</h1>
+<p class="stil-text-muted stil-mb-4">
+    Notes in Markdown, from Stil.Markdown. The editor has a toolbar and a preview; the view renders the saved text.
+</p>
+
+<EditForm Model="_note" OnValidSubmit="Save" class="stil-form app-form">
+    <DataAnnotationsValidator />
+    <StilMarkdownEditor @bind-Value="_note.Text" Label="Delivery note" Hint="Markdown: **bold**, _italic_, lists, links and tables." />
+    <div>
+        <StilButton Type="submit">Save</StilButton>
+    </div>
+</EditForm>
+
+@if (_saved is not null)
+{
+    <section class="stil-card stil-mt-4 app-form" aria-label="Saved note">
+        <StilMarkdown Value="@_saved" />
+    </section>
+}
+
+@code {
+    private readonly Note _note = new()
+    {
+        Text = """
+            ## Delivery
+            Leave at the **loading dock**, gate B. Call Erik on arrival.
+
+            - [x] Packed
+            - [ ] Shipped
+
+            | Item | Qty |
+            | --- | --- |
+            | Chairs | 12 |
+            | Desks | 4 |
+            """,
+    };
+
+    private string? _saved;
+
+    private void Save() => _saved = _note.Text;
+
+    private sealed class Note
+    {
+        [Required(ErrorMessage = "Write a note.")]
+        [MaxLength(2000)]
+        public string? Text { get; set; }
+    }
+}

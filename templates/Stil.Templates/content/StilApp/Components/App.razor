@@ -8,6 +8,9 @@
     <ResourcePreloader />
     @* Stil's stylesheet and the global theme from AddStil(). *@
     <StilHead />
+    @*#if (HasCharts)
+    <link rel="stylesheet" href="@Assets["_content/Stil.Charts/stil-charts.css"]" />
+    ##endif*@
     <link rel="stylesheet" href="@Assets["app.css"]" />
     <ImportMap />
     @*#if (UseServer)

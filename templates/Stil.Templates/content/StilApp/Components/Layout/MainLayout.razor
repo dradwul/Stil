@@ -12,9 +12,67 @@
                 ##else
                 <StilNavLink Href="" Match="NavLinkMatch.All" Icon="@StilIcons.Home">@L["Nav.Home"]</StilNavLink>
                 ##endif*@
+                @*#if (HasFeaturePages)
+                @* The example page of each feature chosen with --Features. *@
+                <StilDropdown Text="@L["Nav.Features"]" Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost">
+                ##endif*@
+                @*#if (HasCharts)
+                    <StilDropdownItem Href="charts">@L["Nav.Charts"]</StilDropdownItem>
+                ##endif*@
+                @*#if (HasDataGrid)
+                    <StilDropdownItem Href="sales">@L["Nav.Sales"]</StilDropdownItem>
+                ##endif*@
+                @*#if (HasCalendar)
+                    <StilDropdownItem Href="planner">@L["Nav.Planner"]</StilDropdownItem>
+                ##endif*@
+                @*#if (HasSchedule)
+                    <StilDropdownItem Href="bookings">@L["Nav.Bookings"]</StilDropdownItem>
+                ##endif*@
+                @*#if (HasKanban)
+                    <StilDropdownItem Href="board">@L["Nav.Board"]</StilDropdownItem>
+                ##endif*@
+                @*#if (HasGantt)
+                    <StilDropdownItem Href="project">@L["Nav.Project"]</StilDropdownItem>
+                ##endif*@
+                @*#if (HasMarkdown)
+                    <StilDropdownItem Href="notes">@L["Nav.Notes"]</StilDropdownItem>
+                ##endif*@
+                @*#if (HasRichText)
+                    <StilDropdownItem Href="product-text">@L["Nav.ProductText"]</StilDropdownItem>
+                ##endif*@
+                @*#if (HasChat)
+                    <StilDropdownItem Href="chat">@L["Nav.Chat"]</StilDropdownItem>
+                ##endif*@
+                @*#if (HasActivity)
+                    <StilDropdownItem Href="activity">@L["Nav.Activity"]</StilDropdownItem>
+                ##endif*@
+                @*#if (HasScanner)
+                    <StilDropdownItem Href="scan">@L["Nav.Scan"]</StilDropdownItem>
+                ##endif*@
+                @*#if (HasSignature)
+                    <StilDropdownItem Href="sign">@L["Nav.Sign"]</StilDropdownItem>
+                ##endif*@
+                @*#if (HasNotifications)
+                    <StilDropdownItem Href="notifications">@L["Nav.Notifications"]</StilDropdownItem>
+                ##endif*@
+                @*#if (HasFeaturePages)
+                </StilDropdown>
+                ##endif*@
             </StilNav>
         </ChildContent>
         <End>
+            @*#if (HasCommands && UseServer)
+            <AppCommands />
+            ##endif*@
+            @*#if (HasCommands && !UseServer)
+            <AppCommands @rendermode="InteractiveServer" />
+            ##endif*@
+            @*#if (HasNotifications && UseServer)
+            <StilNotificationCenter />
+            ##endif*@
+            @*#if (HasNotifications && !UseServer)
+            <StilNotificationCenter @rendermode="InteractiveServer" />
+            ##endif*@
             <StilLanguageSelector Cultures="AppCultures.All" Size="StilSize.Small" AlignEnd />
             @*#if (UseServer)
             <StilSelect @bind-Value="_mode" Size="StilSize.Small" aria-label="@L["ColorMode"]" />
@@ -50,6 +108,11 @@
         <a href="." class="reload">Reload</a>
         <span class="dismiss">🗙</span>
     </div>
+    ##endif*@
+    @*#if (HasNotifications && !UseServer)
+
+    @* Shows the toasts of the notifications page. *@
+    <StilToastHost @rendermode="InteractiveServer" />
     ##endif*@
 </StilThemeProvider>
 @*#if (UseServer)

@@ -10,6 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 #if (UseServer)
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+#elif (HasFeatures)
+// The app renders on the server without interactivity, except the feature pages and the parts of
+// the layout that need it: they set @rendermode InteractiveServer.
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
 #else
 builder.Services.AddRazorComponents();
 #endif
@@ -60,7 +65,7 @@ app.UseRequestLocalization(options => options
 app.UseAntiforgery();
 
 app.MapStaticAssets();
-#if (UseServer)
+#if (UseServer || HasFeatures)
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 #else

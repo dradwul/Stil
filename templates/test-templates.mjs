@@ -1,15 +1,17 @@
 #!/usr/bin/env node
 // Tests the dotnet new templates in templates/Stil.Templates.
 //
-// 1. Packs src/Stil.Blazor into a local feed in a temp folder.
+// 1. Packs src/Stil.Blazor and the extra packages (Stil.Charts, Stil.Markdown, Stil.RichText)
+//    into a local feed in a temp folder.
 // 2. Packs the template package and installs it into an isolated template hive
 //    (--debug:custom-hive). Nothing is installed into your own template list.
 // 3. Creates an app for each option combination below, with a NuGet.config that uses the local
 //    feed, nuget.org and a temp global packages folder.
 // 4. Checks the generated files and runs `dotnet build -warnaserror` on each app.
 //
-// Usage: node templates/test-templates.mjs [--keep]
-//   --keep  keep the temp folder (its path is printed) to look at the generated apps.
+// Usage: node templates/test-templates.mjs [--keep] [--only <text>]
+//   --keep         keep the temp folder (its path is printed) to look at the generated apps.
+//   --only <text>  only the cases whose name contains the text, for example --only Feature.
 //
 // Needs the .NET 10 SDK and Node.js 18 or later. Exits with a non-zero code on failure.
 
@@ -21,6 +23,7 @@ import { fileURLToPath } from 'node:url';
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const keep = process.argv.includes('--keep');
+const only = process.argv.includes('--only') ? process.argv[process.argv.indexOf('--only') + 1] : null;
 const tmp = mkdtempSync(join(tmpdir(), 'stil-templates-'));
 const feed = join(tmp, 'feed');
 const templatePackages = join(tmp, 'templates');
@@ -95,6 +98,80 @@ const cases = [
         absent: ['Data'],
     },
 ];
+
+// Each feature of --Features: its page, its route in the Features menu, and the package it adds.
+const features = [
+    { id: 'charts', page: 'Charts', route: 'charts', package: 'Stil.Charts', text: '<StilLineChart' },
+    { id: 'markdown', page: 'Notes', route: 'notes', package: 'Stil.Markdown', text: '<StilMarkdownEditor' },
+    { id: 'richtext', page: 'ProductText', route: 'product-text', package: 'Stil.RichText', text: '<StilRichTextEditor' },
+    { id: 'datagrid', page: 'Sales', route: 'sales', text: 'ShowExport' },
+    { id: 'calendar', page: 'Planner', route: 'planner', text: '<StilWeekPlanner' },
+    { id: 'kanban', page: 'Board', route: 'board', text: '<StilKanban' },
+    { id: 'gantt', page: 'Project', route: 'project', text: '<StilGantt' },
+    { id: 'schedule', page: 'Bookings', route: 'bookings', text: '<StilResourcePlanner' },
+    { id: 'chat', page: 'Chat', route: 'chat', text: '<StilComments' },
+    { id: 'activity', page: 'Activity', route: 'activity', text: '<StilActivityLog' },
+    { id: 'scanner', page: 'Scan', route: 'scan', text: '<StilScanInput' },
+    { id: 'signature', page: 'Sign', route: 'sign', text: '<StilSignaturePad' },
+    { id: 'commands' },
+    { id: 'notifications', page: 'Notifications', route: 'notifications', text: 'keep: true' },
+];
+const packages = features.filter(f => f.package).map(f => f.package);
+const pageOf = f => `Components/Pages/Features/${f.page}.razor`;
+
+// Every feature on its own, with nothing of the others.
+for (const feature of features) {
+    const others = features.filter(f => f !== feature);
+    cases.push({
+        name: `Feature.${feature.id}`,
+        options: ['--Features', feature.id],
+        expect: {
+            ...(feature.page ? { [pageOf(feature)]: [feature.text] } : {}),
+            'Components/Layout/MainLayout.razor': feature.page
+                ? [`<StilDropdownItem Href="${feature.route}">`]
+                : ['<AppCommands />'],
+            ...(feature.package ? { [`Feature.${feature.id}.csproj`]: [`Include="${feature.package}"`] } : {}),
+            ...(feature.id === 'charts' ? { 'Components/App.razor': ['stil-charts.css'] } : {}),
+            ...(feature.id === 'notifications' ? { 'Components/Layout/MainLayout.razor': ['<StilNotificationCenter />'] } : {}),
+        },
+        forbidden: {
+            [`Feature.${feature.id}.csproj`]: packages.filter(p => p !== feature.package),
+            'Components/Layout/MainLayout.razor': feature.page ? ['AppCommands', 'StilNotificationCenter'].filter(t => !(feature.id === 'notifications' && t === 'StilNotificationCenter')) : ['StilDropdown'],
+            'Components/App.razor': feature.id === 'charts' ? [] : ['stil-charts.css'],
+        },
+        absent: [
+            ...others.filter(f => f.page).map(pageOf),
+            ...(feature.id === 'commands' ? [] : ['Components/Layout/AppCommands.razor']),
+        ],
+    });
+}
+
+// All features, with server interactivity and without it.
+const allPages = Object.fromEntries(features.filter(f => f.page).map(f => [pageOf(f), [f.text]]));
+cases.push({
+    name: 'AllFeatures',
+    options: ['--Features', 'all', '--Culture', 'sv'],
+    expect: {
+        ...allPages,
+        'AllFeatures.csproj': packages.map(p => `Include="${p}"`),
+        'Components/Layout/MainLayout.razor': ['<AppCommands />', '<StilNotificationCenter />', ...features.filter(f => f.page).map(f => `Href="${f.route}"`)],
+        'Components/Layout/AppCommands.razor': ['Href = "orders/new"', ...features.filter(f => f.page).map(f => `Href = "${f.route}"`)],
+        'Locales/sv.json': ['"Features": "Funktioner"', '"Board": "Tavla"'],
+    },
+    forbidden: { [pageOf(features[0])]: ['@rendermode'] },
+});
+cases.push({
+    name: 'StaticAllFeatures',
+    options: ['--Features', 'all', '--Interactivity', 'None', '--IncludeSampleContent', 'false'],
+    expect: {
+        [pageOf(features[0])]: ['@rendermode InteractiveServer'],
+        'Program.cs': ['AddInteractiveServerComponents', 'AddInteractiveServerRenderMode'],
+        'Components/Layout/MainLayout.razor': ['<AppCommands @rendermode="InteractiveServer" />',
+            '<StilNotificationCenter @rendermode="InteractiveServer" />', '<StilToastHost @rendermode="InteractiveServer" />'],
+        'Components/Layout/AppCommands.razor': ['L["Nav.Home"]'],
+    },
+    forbidden: { 'Components/Layout/AppCommands.razor': ['orders/new'] },
+});
 
 // Text that must never be left in a generated app: template directives and placeholders.
 const leftovers = ['#if', '#endif', '##else', 'STIL_PRIMARY_COLOR', 'STIL_GOOGLE_FONT', 'STIL_PACKAGE_VERSION', 'localhost:5500', 'localhost:5501', 'StilApp', 'My Stil App'];
@@ -178,7 +255,9 @@ const failures = [];
 try {
     console.log(`Working folder: ${tmp}`);
 
-    run('dotnet', ['pack', 'src/Stil.Blazor', '-c', 'Release', '-o', feed, '--artifacts-path', join(tmp, 'artifacts'), ...isolatedBuild], { retries: 3 });
+    for (const project of ['src/Stil.Blazor', ...packages.map(p => `src/${p}`)]) {
+        run('dotnet', ['pack', project, '-c', 'Release', '-o', feed, '--artifacts-path', join(tmp, 'artifacts'), ...isolatedBuild], { retries: 3 });
+    }
     const stil = packageVersion(feed, 'Stil');
 
     run('dotnet', ['pack', 'templates/Stil.Templates', '-c', 'Release', '-o', templatePackages, '--artifacts-path', join(tmp, 'artifacts'), ...isolatedBuild]);
@@ -200,7 +279,7 @@ try {
 </configuration>
 `);
 
-    for (const testCase of cases) {
+    for (const testCase of cases.filter(c => !only || c.name.includes(only))) {
         const folder = join(apps, testCase.name);
         try {
             run('dotnet', ['new', 'stil-app', '-n', testCase.name, '-o', folder, '--no-restore',
@@ -233,4 +312,4 @@ if (failures.length > 0) {
     console.error(`\n${failures.length} failed: ${failures.join(', ')}`);
     process.exit(1);
 }
-console.log(`\nAll ${cases.length} template apps built with no warnings.`);
+console.log(`\nAll ${cases.filter(c => !only || c.name.includes(only)).length} template apps built with no warnings.`);

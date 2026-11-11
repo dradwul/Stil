@@ -1,0 +1,58 @@
+@page "/planner"
+@*#if (!UseServer)
+@rendermode InteractiveServer
+##endif*@
+
+<PageTitle>Planner</PageTitle>
+
+<h1 class="stil-mb-1">Planner</h1>
+<p class="stil-text-muted stil-mb-4">
+    Drag an event to move it, drag its bottom edge to resize it, or drag on empty time to create one.
+</p>
+
+<StilWeekPlanner TItem="Booking" Items="_bookings" Start="b => b.Start" End="b => b.End" Title="b => b.Title"
+                 Variant="b => b.Variant" Details="b => b.Place" Draft="b => b.IsDraft"
+                 View="_view" @bind-Date="_date" Editable
+                 OnItemClick="Show" OnItemChange="Move" OnSlotSelect="Create" />
+<p class="stil-text-muted stil-fs-sm stil-mt-2 stil-mb-0" aria-live="polite">@_message</p>
+
+@code {
+    private static readonly DateOnly Monday = DateOnly.FromDateTime(DateTime.Today)
+        .AddDays(-(((int)DateTime.Today.DayOfWeek + 6) % 7));
+
+    private static DateTime At(int day, int hour, int minute = 0) => Monday.AddDays(day).ToDateTime(new TimeOnly(hour, minute));
+
+    // Sample data: replace it with your own events.
+    private readonly List<Booking> _bookings =
+    [
+        new("Standup", At(0, 8, 30), At(0, 9), StilVariant.Success),
+        new("Q4 planning", At(0, 10), At(0, 11, 30), StilVariant.Primary, "Room Fjord"),
+        new("Design review", At(1, 9), At(1, 10), StilVariant.Primary),
+        new("Workshop", At(2, 9, 30), At(2, 12, 30), StilVariant.Primary, "Warehouse B"),
+        new("Price list due", At(2, 16), At(2, 16, 30), StilVariant.Danger),
+        new("Budget 2027", At(3, 9), At(3, 11), StilVariant.Primary),
+        new("Retrospective", At(4, 10), At(4, 11), StilVariant.Success),
+    ];
+
+    private readonly StilWeekView _view = StilWeekView.WorkWeek;
+    private DateOnly? _date;
+    private string? _message;
+
+    private void Show(Booking booking) => _message = $"{booking.Title}, {booking.Start:ddd} {booking.Start:t}–{booking.End:t}.";
+
+    // The planner does not change by itself: the app saves the change and the planner redraws.
+    private void Move(StilCalendarItemChange<Booking> change)
+    {
+        _bookings[_bookings.IndexOf(change.Item)] = change.Item with { Start = change.Start, End = change.End };
+        _message = $"Moved {change.Item.Title} to {change.Start:ddd} {change.Start:t}–{change.End:t}.";
+    }
+
+    private void Create(StilTimeSlot slot)
+    {
+        _bookings.Add(new("New event", slot.Start, slot.End, StilVariant.Primary, IsDraft: true));
+        _message = $"Created a draft {slot.Start:ddd} {slot.Start:t}–{slot.End:t}.";
+    }
+
+    private sealed record Booking(string Title, DateTime Start, DateTime End, StilVariant? Variant, string? Place = null,
+        bool IsDraft = false);
+}

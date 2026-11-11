@@ -1,0 +1,47 @@
+@page "/bookings"
+@*#if (!UseServer)
+@rendermode InteractiveServer
+##endif*@
+
+<PageTitle>Bookings</PageTitle>
+
+<h1 class="stil-mb-1">Bookings</h1>
+<p class="stil-text-muted stil-mb-4">
+    Rooms and vehicles as rows, the day across. Drag on a row to book it, or drag a booking to move it.
+</p>
+
+<StilResourcePlanner TItem="Booking" Items="_bookings" Resources="_resources" Resource="b => b.Resource"
+                     Start="b => b.Start" End="b => b.End" Title="b => b.Title" Variant="b => b.Variant"
+                     FirstHour="8" LastHour="18" Editable OnItemChange="Move" OnSlotSelect="Book" />
+
+@code {
+    private readonly StilResource[] _resources =
+    [
+        new("a", "Room A", "10 seats"),
+        new("b", "Room B", "4 seats"),
+        new("van", "Van", "Deliveries"),
+    ];
+
+    private static DateTime At(double hour) => DateTime.Today.AddHours(hour);
+
+    // Sample data: replace it with your own bookings.
+    private readonly List<Booking> _bookings =
+    [
+        new("Sales meeting", "a", At(9), At(10.5), StilVariant.Primary),
+        new("1:1", "b", At(10), At(10.5), StilVariant.Info),
+        new("Deliveries north", "van", At(8), At(12), StilVariant.Warning),
+        new("Training", "a", At(13), At(16), StilVariant.Success),
+    ];
+
+    private void Book(StilResourceSlot slot) => _bookings.Add(new("New booking", slot.Resource, slot.Start, slot.End));
+
+    private void Move(StilCalendarItemChange<Booking> change) =>
+        _bookings[_bookings.IndexOf(change.Item)] = change.Item with
+        {
+            Resource = change.Resource ?? change.Item.Resource,
+            Start = change.Start,
+            End = change.End,
+        };
+
+    private sealed record Booking(string Title, string Resource, DateTime Start, DateTime End, StilVariant? Variant = null);
+}

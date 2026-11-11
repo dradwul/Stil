@@ -1,0 +1,39 @@
+@page "/scan"
+@*#if (!UseServer)
+@rendermode InteractiveServer
+##endif*@
+
+<PageTitle>Scan</PageTitle>
+
+<h1 class="stil-mb-1">Scan</h1>
+<p class="stil-text-muted stil-mb-4">
+    Read barcodes and QR codes with the camera, or with a handheld scanner that types into a field.
+</p>
+
+<StilGrid Gap="5">
+    <StilCol Span="12" SpanLg="6">
+        <h2 class="stil-fs-lg">Camera</h2>
+        <StilScanner OnScan="Add" />
+    </StilCol>
+    <StilCol Span="12" SpanLg="6">
+        <h2 class="stil-fs-lg">Handheld scanner</h2>
+        <StilScanInput Label="Parcel" Hint="Scan the label, or type the number and press Enter." OnScan="Add" />
+
+        @if (_scans.Count > 0)
+        {
+            <h2 class="stil-fs-lg stil-mt-4">Scanned</h2>
+            <ul class="stil-list" aria-live="polite">
+                @foreach (var scan in _scans)
+                {
+                    <li class="stil-list-item">@scan.Value <span class="stil-text-muted">· @(scan.Format ?? scan.Source.ToString())</span></li>
+                }
+            </ul>
+        }
+    </StilCol>
+</StilGrid>
+
+@code {
+    private readonly List<StilScanResult> _scans = [];
+
+    private void Add(StilScanResult scan) => _scans.Insert(0, scan);
+}

@@ -1,5 +1,47 @@
 {
   "Nav": {
+    //#if (HasFeaturePages)
+    "Features": "Features",
+    //#endif
+    //#if (HasCharts)
+    "Charts": "Charts",
+    //#endif
+    //#if (HasDataGrid)
+    "Sales": "Sales",
+    //#endif
+    //#if (HasCalendar)
+    "Planner": "Planner",
+    //#endif
+    //#if (HasSchedule)
+    "Bookings": "Bookings",
+    //#endif
+    //#if (HasKanban)
+    "Board": "Board",
+    //#endif
+    //#if (HasGantt)
+    "Project": "Project plan",
+    //#endif
+    //#if (HasMarkdown)
+    "Notes": "Notes",
+    //#endif
+    //#if (HasRichText)
+    "ProductText": "Product text",
+    //#endif
+    //#if (HasChat)
+    "Chat": "Chat",
+    //#endif
+    //#if (HasActivity)
+    "Activity": "Activity",
+    //#endif
+    //#if (HasScanner)
+    "Scan": "Scan",
+    //#endif
+    //#if (HasSignature)
+    "Sign": "Signature",
+    //#endif
+    //#if (HasNotifications)
+    "Notifications": "Notifications",
+    //#endif
     "Main": "Main",
     "Home": "Home",
     "Dashboard": "Dashboard",

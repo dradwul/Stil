@@ -178,6 +178,17 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 - **Stil CSS**: `samples/Stil.Html/fonts.html` compares the fonts.
 - **Docs**: the theme builder previews the cdnfonts.com fonts and writes
   `options.Font` in its C#.
+- **Stil.Templates**: `dotnet new stil-app --Features …` adds features to the
+  app: `charts`, `markdown`, `richtext`, `datagrid`, `calendar`,
+  `schedule`, `kanban`, `gantt`, `chat`, `activity`, `scanner`,
+  `signature`, `commands`, `notifications`, or `all`. Each adds what it
+  needs (the package, the stylesheet and the `@using` for `Stil.Charts`,
+  `Stil.Markdown` and `Stil.RichText`), a page with sample data in
+  `Components/Pages/Features/`, and an item in the navbar's Features menu;
+  `commands` puts a command palette in the navbar and `notifications` a bell.
+  With `--Interactivity None` the feature pages are interactive on their own.
+  `templates/test-templates.mjs` builds every feature alone and all of them
+  together.
 
 ### Fixed
 

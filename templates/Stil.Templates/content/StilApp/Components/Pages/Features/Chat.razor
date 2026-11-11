@@ -1,0 +1,56 @@
+@page "/chat"
+@*#if (!UseServer)
+@rendermode InteractiveServer
+##endif*@
+
+<PageTitle>Chat</PageTitle>
+
+<h1 class="stil-mb-1">Chat</h1>
+<p class="stil-text-muted stil-mb-4">
+    A chat and a comment thread. Here the reply is simulated; in an app it comes over SignalR or similar.
+</p>
+
+<StilGrid Gap="5">
+    <StilCol Span="12" SpanLg="6">
+        <h2 class="stil-fs-lg">Reception</h2>
+        <StilChat Items="_messages" Time="m => m.Time" Title="m => m.Text" Actor="m => m.Author" Mine="m => m.Mine"
+                  ItemKey="m => m.Id" Typing="_typing" OnSend="SendAsync" Height="22rem" />
+    </StilCol>
+    <StilCol Span="12" SpanLg="6">
+        <h2 class="stil-fs-lg">Comments on the inspection</h2>
+        <StilComments Items="_comments" Time="c => c.Time" Title="c => c.Text" Actor="c => c.Author" ItemKey="c => c.Id" OnSend="Post" />
+    </StilCol>
+</StilGrid>
+
+@code {
+    private int _next = 10;
+    private IReadOnlyList<string>? _typing;
+
+    // Sample data: replace it with your own messages.
+    private readonly List<Message> _messages =
+    [
+        new(1, DateTime.Today.AddDays(-1).AddHours(16), "Reception", "Your visitor badge is ready at the desk."),
+        new(2, DateTime.Now.AddMinutes(-12), "You", "Thanks! Is room 4 free at two?", Mine: true),
+        new(3, DateTime.Now.AddMinutes(-11), "Reception", "It is. Shall I book it?"),
+    ];
+
+    private readonly List<Message> _comments =
+    [
+        new(1, DateTime.Now.AddHours(-5), "Jonas Ek", "The fire door in the stairwell does not close by itself."),
+        new(2, DateTime.Now.AddHours(-2), "Karin Dahl", "Ordered a new closer. It arrives Friday."),
+    ];
+
+    private async Task SendAsync(StilChatMessage message)
+    {
+        _messages.Add(new(_next++, DateTime.Now, "You", message.Text, Mine: true));
+        _typing = ["Reception"];
+        StateHasChanged();
+        await Task.Delay(1500);
+        _typing = null;
+        _messages.Add(new(_next++, DateTime.Now, "Reception", "Done, it's yours."));
+    }
+
+    private void Post(StilChatMessage message) => _comments.Add(new(_next++, DateTime.Now, "You", message.Text));
+
+    private sealed record Message(int Id, DateTime Time, string Author, string Text, bool Mine = false);
+}

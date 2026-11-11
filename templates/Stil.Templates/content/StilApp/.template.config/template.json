@@ -18,6 +18,62 @@
     {
       "modifiers": [
         {
+          "condition": "(!HasCharts)",
+          "exclude": [ "Components/Pages/Features/Charts.razor" ]
+        },
+        {
+          "condition": "(!HasMarkdown)",
+          "exclude": [ "Components/Pages/Features/Notes.razor" ]
+        },
+        {
+          "condition": "(!HasRichText)",
+          "exclude": [ "Components/Pages/Features/ProductText.razor" ]
+        },
+        {
+          "condition": "(!HasDataGrid)",
+          "exclude": [ "Components/Pages/Features/Sales.razor" ]
+        },
+        {
+          "condition": "(!HasCalendar)",
+          "exclude": [ "Components/Pages/Features/Planner.razor" ]
+        },
+        {
+          "condition": "(!HasKanban)",
+          "exclude": [ "Components/Pages/Features/Board.razor" ]
+        },
+        {
+          "condition": "(!HasGantt)",
+          "exclude": [ "Components/Pages/Features/Project.razor" ]
+        },
+        {
+          "condition": "(!HasSchedule)",
+          "exclude": [ "Components/Pages/Features/Bookings.razor" ]
+        },
+        {
+          "condition": "(!HasChat)",
+          "exclude": [ "Components/Pages/Features/Chat.razor" ]
+        },
+        {
+          "condition": "(!HasActivity)",
+          "exclude": [ "Components/Pages/Features/Activity.razor" ]
+        },
+        {
+          "condition": "(!HasScanner)",
+          "exclude": [ "Components/Pages/Features/Scan.razor" ]
+        },
+        {
+          "condition": "(!HasSignature)",
+          "exclude": [ "Components/Pages/Features/Sign.razor" ]
+        },
+        {
+          "condition": "(!HasNotifications)",
+          "exclude": [ "Components/Pages/Features/Notifications.razor" ]
+        },
+        {
+          "condition": "(!HasCommands)",
+          "exclude": [ "Components/Layout/AppCommands.razor" ]
+        },
+        {
           "condition": "(IncludeSampleContent)",
           "exclude": [ "Components/Pages/Home.Empty.razor" ]
         },
@@ -178,6 +234,95 @@
       "description": "Add a dashboard page with KPI cards and a data grid, and a form page with validation. Without it, the app has one empty Home page.",
       "datatype": "bool",
       "defaultValue": "true"
+    },
+    "Features": {
+      "type": "parameter",
+      "description": "Extra features, each with what it needs (a package, a stylesheet, a using) and an example page with sample data in the Features menu. Choose several, or all.",
+      "datatype": "choice",
+      "allowMultipleValues": true,
+      "enableQuotelessLiterals": true,
+      "choices": [
+        { "choice": "charts", "description": "Line, bar and donut charts (adds the Stil.Charts package)" },
+        { "choice": "markdown", "description": "Notes in Markdown, with an editor and a view (adds the Stil.Markdown package)" },
+        { "choice": "richtext", "description": "A rich text editor and view that store sanitized HTML (adds the Stil.RichText package)" },
+        { "choice": "datagrid", "description": "A data grid with filters, grouping, totals and CSV export" },
+        { "choice": "calendar", "description": "A week planner: drag to create, move and resize events" },
+        { "choice": "kanban", "description": "A kanban board with drag and drop and column limits" },
+        { "choice": "gantt", "description": "A Gantt chart with progress, dependencies and milestones" },
+        { "choice": "schedule", "description": "A resource schedule: rooms, people or vehicles as rows, the day across" },
+        { "choice": "chat", "description": "A chat and a comment thread" },
+        { "choice": "activity", "description": "An activity log with search and filters" },
+        { "choice": "scanner", "description": "Barcode and QR code scanning, with the camera or a handheld scanner" },
+        { "choice": "signature", "description": "A signature pad in a form" },
+        { "choice": "commands", "description": "A command palette (Ctrl+K) that finds every page" },
+        { "choice": "notifications", "description": "A notification bell in the navbar, and toasts that stay under it" },
+        { "choice": "all", "description": "Every feature above" }
+      ],
+      "defaultValue": ""
+    },
+    "HasCharts": {
+      "type": "computed",
+      "value": "(Features == \"charts\" || Features == \"all\")"
+    },
+    "HasMarkdown": {
+      "type": "computed",
+      "value": "(Features == \"markdown\" || Features == \"all\")"
+    },
+    "HasRichText": {
+      "type": "computed",
+      "value": "(Features == \"richtext\" || Features == \"all\")"
+    },
+    "HasDataGrid": {
+      "type": "computed",
+      "value": "(Features == \"datagrid\" || Features == \"all\")"
+    },
+    "HasCalendar": {
+      "type": "computed",
+      "value": "(Features == \"calendar\" || Features == \"all\")"
+    },
+    "HasKanban": {
+      "type": "computed",
+      "value": "(Features == \"kanban\" || Features == \"all\")"
+    },
+    "HasGantt": {
+      "type": "computed",
+      "value": "(Features == \"gantt\" || Features == \"all\")"
+    },
+    "HasSchedule": {
+      "type": "computed",
+      "value": "(Features == \"schedule\" || Features == \"all\")"
+    },
+    "HasChat": {
+      "type": "computed",
+      "value": "(Features == \"chat\" || Features == \"all\")"
+    },
+    "HasActivity": {
+      "type": "computed",
+      "value": "(Features == \"activity\" || Features == \"all\")"
+    },
+    "HasScanner": {
+      "type": "computed",
+      "value": "(Features == \"scanner\" || Features == \"all\")"
+    },
+    "HasSignature": {
+      "type": "computed",
+      "value": "(Features == \"signature\" || Features == \"all\")"
+    },
+    "HasCommands": {
+      "type": "computed",
+      "value": "(Features == \"commands\" || Features == \"all\")"
+    },
+    "HasNotifications": {
+      "type": "computed",
+      "value": "(Features == \"notifications\" || Features == \"all\")"
+    },
+    "HasFeatures": {
+      "type": "computed",
+      "value": "(HasCharts || HasMarkdown || HasRichText || HasDataGrid || HasCalendar || HasKanban || HasGantt || HasSchedule || HasChat || HasActivity || HasScanner || HasSignature || HasCommands || HasNotifications)"
+    },
+    "HasFeaturePages": {
+      "type": "computed",
+      "value": "(HasCharts || HasMarkdown || HasRichText || HasDataGrid || HasCalendar || HasKanban || HasGantt || HasSchedule || HasChat || HasActivity || HasScanner || HasSignature || HasNotifications)"
     },
     "StilVersion": {
       "type": "parameter",

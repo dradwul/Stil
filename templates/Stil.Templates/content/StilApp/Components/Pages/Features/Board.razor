@@ -1,0 +1,47 @@
+@page "/board"
+@*#if (!UseServer)
+@rendermode InteractiveServer
+##endif*@
+
+<PageTitle>Board</PageTitle>
+
+<h1 class="stil-mb-1">Board</h1>
+<p class="stil-text-muted stil-mb-4">
+    Drag a card to another column, or move it with the keyboard. Doing takes at most two cards.
+</p>
+
+<StilKanban TItem="Job" Items="_jobs" Columns="_columns" Column="j => j.Status" ItemKey="j => j.Id" Title="j => j.Title" OnCardMove="Move">
+    <CardTemplate Context="job">
+        <div class="stil-fw-bold">@job.Title</div>
+        <div class="stil-cluster stil-mt-1">
+            <StilBadge Variant="@(job.Urgent ? StilVariant.Danger : StilVariant.Secondary)">@(job.Urgent ? "Urgent" : "Normal")</StilBadge>
+            <span class="stil-text-muted stil-fs-sm">@job.Owner</span>
+        </div>
+    </CardTemplate>
+</StilKanban>
+
+@code {
+    private readonly StilKanbanColumn[] _columns =
+    [
+        new("todo", "To do"),
+        new("doing", "Doing", Limit: 2),
+        new("review", "Review"),
+        new("done", "Done"),
+    ];
+
+    // Sample data: replace it with your own tasks.
+    private readonly List<Job> _jobs =
+    [
+        new(1, "Order visitor badges", "Maja", "todo", Urgent: true),
+        new(2, "Book room 4 for Friday", "Erik", "todo"),
+        new(3, "Print the safety signs", "Sara", "doing"),
+        new(4, "Update the guest Wi-Fi", "Oskar", "doing"),
+        new(5, "New coffee machine", "Lina", "review"),
+        new(6, "Clean the reception desk", "Jonas", "done"),
+    ];
+
+    // The board does not change by itself: apply the move to the list (and save it).
+    private void Move(StilKanbanMove<Job> move) => move.ApplyTo(_jobs, (job, column) => job with { Status = column });
+
+    private sealed record Job(int Id, string Title, string Owner, string Status, bool Urgent = false);
+}

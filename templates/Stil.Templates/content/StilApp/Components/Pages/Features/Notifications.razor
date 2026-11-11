@@ -1,0 +1,29 @@
+@page "/notifications"
+@inject IStilToastService Toasts
+@inject IStilNotificationService NotificationService
+@*#if (!UseServer)
+@rendermode InteractiveServer
+##endif*@
+
+<PageTitle>Notifications</PageTitle>
+
+<h1 class="stil-mb-1">Notifications</h1>
+<p class="stil-text-muted stil-mb-4">
+    A toast shown with <code>keep: true</code> can be found again under the bell in the navbar after it closes.
+    Notifications can also be added without a toast.
+</p>
+
+<div class="stil-cluster">
+    <StilButton OnClick="Ship">Ship order #@_order</StilButton>
+    <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline" OnClick="Remind">Add a reminder</StilButton>
+</div>
+
+@code {
+    private int _order = 1042;
+
+    private void Ship() =>
+        Toasts.Show($"Order #{_order++} is on its way.", "Shipped", StilVariant.Success, keep: true);
+
+    private void Remind() =>
+        NotificationService.Add("The fire alarm is tested at 10:00 tomorrow.", "Reminder", StilVariant.Warning);
+}

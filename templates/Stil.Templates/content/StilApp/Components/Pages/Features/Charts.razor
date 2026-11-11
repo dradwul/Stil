@@ -1,0 +1,58 @@
+@page "/charts"
+@*#if (!UseServer)
+@rendermode InteractiveServer
+##endif*@
+
+<PageTitle>Charts</PageTitle>
+
+<h1 class="stil-mb-1">Charts</h1>
+<p class="stil-text-muted stil-mb-4">
+    SVG charts from Stil.Charts. They follow the theme and the color mode, and each has a data table for screen readers.
+</p>
+
+<StilGrid Gap="5">
+    <StilCol Span="12">
+        <StilLineChart Items="_months" Category="m => m.Month" Title="Revenue" Description="Thousands of euros per month"
+                       Format="N0" CategoryAxisTitle="Month" Height="280">
+            <StilChartSeries Name="Last year" Value="m => m.LastYear" />
+            <StilChartSeries Name="This year" Value="m => m.ThisYear" />
+        </StilLineChart>
+    </StilCol>
+    <StilCol Span="12" SpanLg="6">
+        <StilBarChart Items="_quarters" Category="q => q.Quarter" Title="Orders per quarter" Format="N0" Height="260">
+            <StilChartSeries Name="Web shop" Value="q => q.Web" />
+            <StilChartSeries Name="Stores" Value="q => q.Stores" />
+        </StilBarChart>
+    </StilCol>
+    <StilCol Span="12" SpanLg="6">
+        <StilDonutChart Items="_channels" Category="c => c.Channel" Title="Revenue by channel" Format="N0">
+            <StilChartSeries Name="Revenue" Value="c => c.Revenue" />
+        </StilDonutChart>
+    </StilCol>
+</StilGrid>
+
+@code {
+    // The months that have not happened yet have no value, so the line stops.
+    private static readonly MonthlyRevenue[] _months =
+    [
+        new("Jan", 182, 204), new("Feb", 175, 211), new("Mar", 198, 236), new("Apr", 210, 249),
+        new("May", 236, 268), new("Jun", 251, 290), new("Jul", 229, 284), new("Aug", 240, 301),
+        new("Sep", 262, 318), new("Oct", 270, null), new("Nov", 288, null), new("Dec", 320, null),
+    ];
+
+    private static readonly QuarterlyOrders[] _quarters =
+    [
+        new("Q1", 1840, 2210), new("Q2", 2310, 2050), new("Q3", 2790, 1980), new("Q4", 3420, 2600),
+    ];
+
+    private static readonly ChannelRevenue[] _channels =
+    [
+        new("Web shop", 118_400), new("Stores", 96_200), new("Wholesale", 54_900), new("Marketplaces", 21_300),
+    ];
+
+    private sealed record MonthlyRevenue(string Month, int LastYear, int? ThisYear);
+
+    private sealed record QuarterlyOrders(string Quarter, int Web, int Stores);
+
+    private sealed record ChannelRevenue(string Channel, decimal Revenue);
+}

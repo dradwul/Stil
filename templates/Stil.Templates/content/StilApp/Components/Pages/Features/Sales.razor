@@ -1,0 +1,37 @@
+@page "/sales"
+@*#if (!UseServer)
+@rendermode InteractiveServer
+##endif*@
+
+<PageTitle>Sales</PageTitle>
+
+<h1 class="stil-mb-1">Sales</h1>
+<p class="stil-text-muted stil-mb-4">
+    Filter the columns, group the rows with Group by, and download the filtered rows as CSV.
+</p>
+
+<StilDataGrid TItem="Sale" Items="_sales" Filterable PageSize="10" ShowGroupChooser @bind-GroupBy="_groupBy"
+              ShowExport ExportFileName="sales.csv" Caption="Sales in October">
+    <Columns>
+        <StilDataGridColumn Property="s => s.Date" Format="d MMM yyyy" Groupable="false" InitialSort="StilSortDirection.Descending" />
+        <StilDataGridColumn Property="s => s.Region" />
+        <StilDataGridColumn Property="s => s.Product" />
+        <StilDataGridColumn Property="s => s.Seller" />
+        <StilDataGridColumn Property="s => s.Amount" Format="N0" Align="StilTextAlign.End" Aggregate="StilAggregate.Sum" Filterable="false" />
+    </Columns>
+</StilDataGrid>
+
+@code {
+    private IReadOnlyList<string> _groupBy = ["Region"];
+
+    private static readonly string[] Regions = ["North", "South", "West"];
+    private static readonly string[] Products = ["Chairs", "Desks", "Lamps"];
+    private static readonly string[] Sellers = ["Aino", "Björn", "Freja", "Mads"];
+
+    // Sample data: replace it with a call to your own service.
+    private static readonly Sale[] _sales = Enumerable.Range(0, 30)
+        .Select(i => new Sale(new DateOnly(2026, 10, 1 + i), Regions[i * 7 % 3], Products[i % 3], Sellers[i % 4], 400m + i * 37 % 11 * 150m))
+        .ToArray();
+
+    private sealed record Sale(DateOnly Date, string Region, string Product, string Seller, decimal Amount);
+}

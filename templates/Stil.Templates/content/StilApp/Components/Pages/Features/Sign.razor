@@ -1,0 +1,46 @@
+@page "/sign"
+@using System.ComponentModel.DataAnnotations
+@*#if (!UseServer)
+@rendermode InteractiveServer
+##endif*@
+
+<PageTitle>Signature</PageTitle>
+
+<h1 class="stil-mb-1">Signature</h1>
+<p class="stil-text-muted stil-mb-4">
+    A check-in form that needs a signature, drawn with a finger, a pen or the mouse, or typed.
+</p>
+
+<EditForm Model="_visit" OnValidSubmit="Save" class="stil-form app-form">
+    <DataAnnotationsValidator />
+    <StilTextBox @bind-Value="_visit.Name" Label="Name" />
+    <StilSignaturePad @bind-Value="_visit.Signature" Label="Signature" Hint="I have read the safety rules for the site." />
+    <div>
+        <StilButton Type="submit">Check in</StilButton>
+    </div>
+</EditForm>
+
+@if (_svg is not null)
+{
+    <section class="stil-card stil-mt-4 app-form" aria-label="Saved signature">
+        <p class="stil-mb-2">@_visit.Name checked in at @DateTime.Now.ToString("t").</p>
+        @* ToSvg() gives the signature as SVG, to save or put in a PDF. *@
+        <div class="stil-signature-pad" style="height: auto">@((MarkupString)_svg)</div>
+    </section>
+}
+
+@code {
+    private readonly Visit _visit = new();
+    private string? _svg;
+
+    private void Save() => _svg = _visit.Signature!.ToSvg("currentColor");
+
+    private sealed class Visit
+    {
+        [Required(ErrorMessage = "Write your name.")]
+        public string? Name { get; set; }
+
+        [Required(ErrorMessage = "Sign to check in.")]
+        public StilSignature? Signature { get; set; }
+    }
+}

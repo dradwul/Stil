@@ -1,0 +1,45 @@
+@page "/product-text"
+@using System.ComponentModel.DataAnnotations
+@*#if (!UseServer)
+@rendermode InteractiveServer
+##endif*@
+
+<PageTitle>Product text</PageTitle>
+
+<h1 class="stil-mb-1">Product text</h1>
+<p class="stil-text-muted stil-mb-4">
+    Write with the toolbar, or paste from a web page or Word. Stil.RichText keeps only safe HTML.
+</p>
+
+<EditForm Model="_product" OnValidSubmit="Save" class="stil-form app-form">
+    <DataAnnotationsValidator />
+    <StilRichTextEditor @bind-Value="_product.Description" Label="Description" Placeholder="Describe the product…" />
+    <div>
+        <StilButton Type="submit">Save</StilButton>
+    </div>
+</EditForm>
+
+@if (_saved is not null)
+{
+    <section class="stil-card stil-mt-4 app-form" aria-label="Saved description">
+        <StilRichTextView Value="@_saved" />
+    </section>
+}
+
+@code {
+    private readonly Product _product = new()
+    {
+        Description = "<h2>Oak desk</h2><p>A <strong>solid oak</strong> desk with a <em>cable tray</em>.</p><ul><li>160 × 80 cm</li><li>Oiled finish</li></ul>",
+    };
+
+    private string? _saved;
+
+    private void Save() => _saved = _product.Description;
+
+    private sealed class Product
+    {
+        [Required(ErrorMessage = "Write a description.")]
+        [MaxLength(4000)]
+        public string? Description { get; set; }
+    }
+}

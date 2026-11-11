@@ -1,5 +1,47 @@
 {
   "Nav": {
+    //#if (HasFeaturePages)
+    "Features": "Funktioner",
+    //#endif
+    //#if (HasCharts)
+    "Charts": "Diagram",
+    //#endif
+    //#if (HasDataGrid)
+    "Sales": "Försäljning",
+    //#endif
+    //#if (HasCalendar)
+    "Planner": "Planering",
+    //#endif
+    //#if (HasSchedule)
+    "Bookings": "Bokningar",
+    //#endif
+    //#if (HasKanban)
+    "Board": "Tavla",
+    //#endif
+    //#if (HasGantt)
+    "Project": "Projektplan",
+    //#endif
+    //#if (HasMarkdown)
+    "Notes": "Anteckningar",
+    //#endif
+    //#if (HasRichText)
+    "ProductText": "Produkttext",
+    //#endif
+    //#if (HasChat)
+    "Chat": "Chatt",
+    //#endif
+    //#if (HasActivity)
+    "Activity": "Aktivitet",
+    //#endif
+    //#if (HasScanner)
+    "Scan": "Skanna",
+    //#endif
+    //#if (HasSignature)
+    "Sign": "Signatur",
+    //#endif
+    //#if (HasNotifications)
+    "Notifications": "Notiser",
+    //#endif
     "Main": "Huvudmeny",
     "Home": "Start",
     "Dashboard": "Översikt",

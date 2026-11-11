@@ -1,0 +1,58 @@
+@inject IStringLocalizer<MainLayout> L
+
+@* The command palette: Ctrl+K (Cmd+K on a Mac), or its button in the navbar. Add your own
+   pages and actions to the list; an action runs code instead of opening a page. *@
+<StilCommandPalette Commands="_commands" />
+
+@code {
+    private IReadOnlyList<StilCommand> _commands = [];
+
+    protected override void OnInitialized() => _commands =
+    [
+        @*#if (IncludeSampleContent)
+        new(L["Nav.Dashboard"], "Pages") { Href = "", Icon = StilIcons.Home },
+        new(L["Nav.NewOrder"], "Pages") { Href = "orders/new", Icon = StilIcons.Plus, Keywords = "order create" },
+        ##else
+        new(L["Nav.Home"], "Pages") { Href = "", Icon = StilIcons.Home },
+        ##endif*@
+        @*#if (HasCharts)
+        new(L["Nav.Charts"], "Pages") { Href = "charts", Keywords = "revenue graphs" },
+        ##endif*@
+        @*#if (HasDataGrid)
+        new(L["Nav.Sales"], "Pages") { Href = "sales", Keywords = "table grid export" },
+        ##endif*@
+        @*#if (HasCalendar)
+        new(L["Nav.Planner"], "Pages") { Href = "planner", Keywords = "calendar week" },
+        ##endif*@
+        @*#if (HasSchedule)
+        new(L["Nav.Bookings"], "Pages") { Href = "bookings", Keywords = "rooms schedule" },
+        ##endif*@
+        @*#if (HasKanban)
+        new(L["Nav.Board"], "Pages") { Href = "board", Keywords = "kanban tasks" },
+        ##endif*@
+        @*#if (HasGantt)
+        new(L["Nav.Project"], "Pages") { Href = "project", Keywords = "gantt plan" },
+        ##endif*@
+        @*#if (HasMarkdown)
+        new(L["Nav.Notes"], "Pages") { Href = "notes", Keywords = "markdown" },
+        ##endif*@
+        @*#if (HasRichText)
+        new(L["Nav.ProductText"], "Pages") { Href = "product-text", Keywords = "rich text editor" },
+        ##endif*@
+        @*#if (HasChat)
+        new(L["Nav.Chat"], "Pages") { Href = "chat", Keywords = "messages comments" },
+        ##endif*@
+        @*#if (HasActivity)
+        new(L["Nav.Activity"], "Pages") { Href = "activity", Keywords = "log history" },
+        ##endif*@
+        @*#if (HasScanner)
+        new(L["Nav.Scan"], "Pages") { Href = "scan", Keywords = "barcode qr camera" },
+        ##endif*@
+        @*#if (HasSignature)
+        new(L["Nav.Sign"], "Pages") { Href = "sign", Keywords = "signature" },
+        ##endif*@
+        @*#if (HasNotifications)
+        new(L["Nav.Notifications"], "Pages") { Href = "notifications", Keywords = "toasts bell" },
+        ##endif*@
+    ];
+}
