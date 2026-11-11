@@ -1,0 +1,20 @@
+<StilHeatMap Items="_orders" Row="o => o.Day" Column="o => o.Hour" Value="o => o.Orders" Rows="_days" ColumnFormat="00"
+             Title="Orders per hour" Description="Web shop, last four weeks" RowTitle="Day" ColumnTitle="Hour" Format="N0" />
+
+@code {
+    private static readonly object[] _days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+    // Lunch and evening peaks on weekdays, a later and flatter day at the weekend.
+    private static readonly HourOrders[] _orders =
+    [
+        .. from day in Enumerable.Range(0, 7)
+           from hour in Enumerable.Range(7, 16)
+           let weekend = day >= 5
+           let lunch = Math.Exp(-Math.Pow(hour - (weekend ? 13 : 12), 2) / 4)
+           let evening = Math.Exp(-Math.Pow(hour - 20, 2) / 3)
+           select new HourOrders((string)_days[day], hour,
+               (int)Math.Round(8 + 60 * lunch * (weekend ? 0.8 : 1) + 75 * evening * (day == 6 ? 1.3 : 1) + (day * 7 + hour) % 5))
+    ];
+
+    private sealed record HourOrders(string Day, int Hour, int Orders);
+}

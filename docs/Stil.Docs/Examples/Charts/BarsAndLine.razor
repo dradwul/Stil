@@ -1,0 +1,16 @@
+<StilBarChart Items="_months" Category="m => m.Month" Title="Revenue and margin" Description="2026, revenue in thousands of euros"
+              Format="N0" ValueAxisTitle="Revenue (k€)" SecondaryAxisTitle="Margin (%)" SecondaryMin="0" SecondaryMax="40">
+    <StilChartSeries Name="Revenue" Value="m => m.Revenue" />
+    <StilChartSeries Name="Margin" Value="m => m.Margin" Line="true" SecondaryAxis="true" Format="0.0'%'" />
+</StilBarChart>
+
+@code {
+    private static readonly MonthResult[] _months =
+    [
+        new("Jan", 182, 24.1), new("Feb", 171, 22.8), new("Mar", 204, 25.3), new("Apr", 219, 27.0),
+        new("May", 236, 28.4), new("Jun", 248, 27.9), new("Jul", 198, 23.5), new("Aug", 211, 25.2),
+        new("Sep", 257, 29.6), new("Oct", 263, 30.4),
+    ];
+
+    private sealed record MonthResult(string Month, int Revenue, double Margin);
+}

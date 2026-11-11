@@ -2,7 +2,7 @@
 @using Stil.Docs.Examples.Charts
 
 <DocsHeader Title="Charts" Eyebrow="Data">
-    <Lead>Line, area, bar, donut, scatter, bubble and sparkline charts and gauges as plain SVG, themed with the Stil tokens and readable by screen readers.</Lead>
+    <Lead>Line, area, bar, donut, scatter, bubble and sparkline charts, heat maps and gauges, drawn on the server, themed with the Stil tokens and readable by screen readers.</Lead>
 </DocsHeader>
 
 <p>
@@ -51,6 +51,18 @@
     </p>
 </DocExample>
 
+<h2 id="bars-and-line">Bars and a line</h2>
+<DocExample Type="typeof(BarsAndLine)">
+    <p>
+        A series with <code>Line="true"</code> is drawn as a line over the bars of a vertical bar chart, with a marker and a
+        tooltip at every point. <code>SecondaryAxis="true"</code> measures a series on a second value axis at the right, for
+        a value with another unit, such as a margin in percent over revenue in euros. <code>SecondaryAxisTitle</code>,
+        <code>SecondaryMin</code>, <code>SecondaryMax</code> and <code>SecondaryTickFormat</code> set it up, and line charts
+        can use it too. The summary tells screen readers which series are read on the right axis. Stacked totals count the
+        bars only.
+    </p>
+</DocExample>
+
 <h2 id="donut">Donut charts</h2>
 <DocExample Type="typeof(Donut)">
     <p>
@@ -78,6 +90,18 @@
         largest <code>MaxBubbleRadius</code> pixels (24) in radius. Bubbles are see-through and the small ones are drawn
         on top, so overlapping points stay visible. <code>SizeTitle</code> names the value in tooltips, the summary and
         the table.
+    </p>
+</DocExample>
+
+<h2 id="heat-maps">Heat maps</h2>
+<DocExample Type="typeof(HeatMap)">
+    <p>
+        <code>StilHeatMap</code> shows a value across two categories, such as orders by weekday and hour. <code>Row</code>
+        and <code>Column</code> put each item in a cell, and the cell's tint follows the sum of its <code>Value</code>s, or
+        the number of items when there is no <code>Value</code>. <code>Rows</code> and <code>Columns</code> set the order
+        and show empty rows; without them, numbers and dates are sorted and text keeps its order. The legend shows the
+        range, each cell has a tooltip, and the data table lists every cell. Crowded column labels thin out on narrow
+        screens; <code>ShowValues</code> writes the values in the cells when there is room.
     </p>
 </DocExample>
 
@@ -129,6 +153,7 @@
 <ApiTable Type="typeof(StilBarChart<>)" />
 <ApiTable Type="typeof(StilDonutChart<>)" />
 <ApiTable Type="typeof(StilScatterChart<>)" />
+<ApiTable Type="typeof(StilHeatMap<>)" />
 <ApiTable Type="typeof(StilGauge)" />
 <ApiTable Type="typeof(StilChartSeries<,>)" />
 <ApiTable Type="typeof(StilSparkline)" />
