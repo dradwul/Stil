@@ -9,6 +9,9 @@ a set of themeable Blazor components built on Stil CSS.
 
 > **Status:** early preview (`0.1.x`, prereleases on NuGet). Requires the .NET 10 SDK.
 
+> **The easiest way in:** the New app page (`/new-app`) on the [docs site](https://github.com/dradwul/Stil/tree/main/docs/Stil.Docs)
+> picks a starter, features and a theme with you, and gives the command.
+
 ## Install
 
 Install the templates from nuget.org (the latest version, a preview until
@@ -49,6 +52,7 @@ The app references the `Stil` version the templates were released with
 | `--Primary` | a CSS color, for example `#7048e8` | Stil's teal (`#34dbbf`) | The brand color. It is set with `AddStil()` in `Program.cs`, so it applies to the whole app. |
 | `--Font` | `lexend`, `br-shape`, `br-cobane`, `br-segma`, `br-sonoma`, `averral`, `sukplena`, `tasa-explorer`, `halcom`, `utara`, `geologica`, `blowreph`, `taster`, `warm-stories`, `system` | `lexend` | The font. Lexend is free for any use (SIL Open Font License) and comes from Google Fonts. The others come from cdnfonts.com: check their license there, the BR fonts are commercial. It is set with `options.Font` in `Program.cs`. `system` downloads nothing and uses the operating system's font. |
 | `--GoogleFont` | a Google font, for example `"Open Sans"` | none | Any Google font by its family name. It replaces `--Font`. |
+| `--Radius` | `sharp`, `small`, `default`, `large`, `round` | `default` | How round the corners are, of buttons, fields, cards and dialogs. It is set with `AddStil()` in `Program.cs`. |
 | `--ColorMode` | `light`, `dark`, `auto` | `auto` | The color mode the app starts in. `auto` follows the operating system. Users can change it with the switch in the navbar. |
 | `--Culture` | `en`, `sv`, `nb`, `da`, `fi` | `en` | The default language, for visitors whose browser asks for none of the offered ones. Users can change it with the language selector in the navbar. Stil's components have built-in texts in all five; the app's own texts are in `Locales/*.json` (English and Swedish to start with) and are read with `IStringLocalizer<T>`. |
 | `--StilVersion` | a version | `0.1.0` | The version of the `Stil` packages to reference (`Stil`, and `Stil.Charts`, `Stil.Markdown` and `Stil.RichText` when a feature adds them). |
@@ -121,8 +125,8 @@ turns on server interactivity for them.
 ## Examples
 
 ```shell
-# An app with a purple brand color that starts in dark mode
-dotnet new stil-app -n Contoso.Shop --Primary "#7048e8" --ColorMode dark
+# An app with a purple brand color and round corners that starts in dark mode
+dotnet new stil-app -n Contoso.Shop --Primary "#7048e8" --Radius round --ColorMode dark
 
 # Static server rendering, no sample pages
 dotnet new stil-app -n Contoso.Site --Interactivity None --IncludeSampleContent false

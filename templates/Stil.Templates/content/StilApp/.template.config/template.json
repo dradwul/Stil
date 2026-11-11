@@ -141,6 +141,71 @@
       "type": "computed",
       "value": "(Primary != \"\")"
     },
+    "Radius": {
+      "type": "parameter",
+      "description": "How round the corners are: of buttons, fields, cards and dialogs. It is set with AddStil() in Program.cs.",
+      "datatype": "choice",
+      "choices": [
+        { "choice": "sharp", "description": "Square corners" },
+        { "choice": "small", "description": "Slightly rounded" },
+        { "choice": "default", "description": "Stil's default" },
+        { "choice": "large", "description": "Rounder" },
+        { "choice": "round", "description": "Very round" }
+      ],
+      "defaultValue": "default"
+    },
+    "HasRadius": {
+      "type": "computed",
+      "value": "(Radius != \"default\")"
+    },
+    "RadiusSmall": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "STIL_RADIUS_SM",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          { "condition": "(Radius == \"sharp\")", "value": "0" },
+          { "condition": "(Radius == \"small\")", "value": "0.0625rem" },
+          { "condition": "(Radius == \"large\")", "value": "0.25rem" },
+          { "condition": "(Radius == \"round\")", "value": "0.5rem" },
+          { "condition": "", "value": "0.125rem" }
+        ]
+      }
+    },
+    "RadiusMedium": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "STIL_RADIUS_MD",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          { "condition": "(Radius == \"sharp\")", "value": "0" },
+          { "condition": "(Radius == \"small\")", "value": "0.125rem" },
+          { "condition": "(Radius == \"large\")", "value": "0.5rem" },
+          { "condition": "(Radius == \"round\")", "value": "1rem" },
+          { "condition": "", "value": "0.25rem" }
+        ]
+      }
+    },
+    "RadiusLarge": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "STIL_RADIUS_LG",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          { "condition": "(Radius == \"sharp\")", "value": "0" },
+          { "condition": "(Radius == \"small\")", "value": "0.25rem" },
+          { "condition": "(Radius == \"large\")", "value": "1rem" },
+          { "condition": "(Radius == \"round\")", "value": "2rem" },
+          { "condition": "", "value": "0.5rem" }
+        ]
+      }
+    },
     "Font": {
       "type": "parameter",
       "description": "The app's font. Lexend, the default, is free (SIL Open Font License) and comes from Google Fonts; the others come from cdnfonts.com (check their license there; the BR fonts are commercial). It is set with AddStil() in Program.cs. --GoogleFont takes any Google font instead.",

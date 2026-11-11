@@ -22,11 +22,20 @@ builder.Services.AddRazorComponents();
 // Stil's services, and the font and global theme that <StilHead /> writes to every page.
 builder.Services.AddStil(options =>
 {
-#if (HasPrimary)
+#if (HasPrimary && HasRadius)
+    options.Theme = new() { Primary = "STIL_PRIMARY_COLOR", Radius = "STIL_RADIUS_MD" };
+#elif (HasPrimary)
     options.Theme = new() { Primary = "STIL_PRIMARY_COLOR" };
+#elif (HasRadius)
+    options.Theme = new() { Radius = "STIL_RADIUS_MD" };
 #else
     // Your brand color for the whole app, for example:
     // options.Theme = new() { Primary = "#7048e8" };
+#endif
+#if (HasRadius)
+    // The corners: Radius above for most things, smaller for small ones, larger for cards and dialogs.
+    options.Theme.Tokens["--stil-radius-sm"] = "STIL_RADIUS_SM";
+    options.Theme.Tokens["--stil-radius-lg"] = "STIL_RADIUS_LG";
 #endif
 #if (HasGoogleFont)
     // Any Google font: StilFont.Google("…"). Or one from cdnfonts.com: StilFonts.Geologica, StilFont.CdnFonts("…").

@@ -80,9 +80,9 @@ const cases = [
     },
     {
         name: 'ThemedApp',
-        options: ['--Primary', '#7048e8', '--ColorMode', 'dark', '--Culture', 'sv', '--Font', 'br-cobane'],
+        options: ['--Primary', '#7048e8', '--ColorMode', 'dark', '--Culture', 'sv', '--Font', 'br-cobane', '--Radius', 'round'],
         expect: {
-            'Program.cs': ['options.Theme = new() { Primary = "#7048e8" }', 'options.Font = StilFonts.BrCobane;'],
+            'Program.cs': ['options.Theme = new() { Primary = "#7048e8", Radius = "1rem" }', 'Tokens["--stil-radius-sm"] = "0.5rem"', 'Tokens["--stil-radius-lg"] = "2rem"', 'options.Font = StilFonts.BrCobane;'],
             'Components/Layout/MainLayout.razor': ['StilThemeMode.Dark', 'StilLanguageSelector'],
             'AppCultures.cs': ['public const string Default = "sv";'],
             'Locales/sv.json': ['Ny beställning'],
@@ -233,8 +233,24 @@ cases.push({
     forbidden: { 'Components/Layout/MainLayout.razor': ['<StilDropdownItem Href="board">'] },
 });
 
+// The command the project wizard on the docs site gives for its example (Phase 15's "done when"):
+// the monitoring starter with the Gantt chart and the Markdown editor added, and a theme.
+cases.push({
+    name: 'Wizard.Monitoring',
+    options: ['--Starter', 'monitoring', '--Features', 'markdown', 'gantt', '--Primary', '#7048e8', '--Font', 'br-shape',
+        '--Radius', 'large', '--ColorMode', 'dark'],
+    expect: {
+        'Components/Pages/Monitoring/Overview.razor': ['<StilGauge'],
+        'Components/Pages/Features/Notes.razor': ['<StilMarkdownEditor'],
+        'Components/Pages/Features/Project.razor': ['<StilGantt'],
+        'Components/Layout/MainLayout.razor': ['Href="events"', '<StilDropdownItem Href="notes">', '<StilDropdownItem Href="project">', 'StilThemeMode.Dark'],
+        'Program.cs': ['Primary = "#7048e8", Radius = "0.5rem"', 'options.Font = StilFonts.BrShape;'],
+        'Wizard.Monitoring.csproj': ['Include="Stil.Charts"', 'Include="Stil.Markdown"'],
+    },
+});
+
 // Text that must never be left in a generated app: template directives and placeholders.
-const leftovers = ['#if', '#endif', '##else', 'STIL_PRIMARY_COLOR', 'STIL_GOOGLE_FONT', 'STIL_PACKAGE_VERSION', 'localhost:5500', 'localhost:5501', 'StilApp', 'My Stil App'];
+const leftovers = ['#if', '#endif', '##else', 'STIL_PRIMARY_COLOR', 'STIL_GOOGLE_FONT', 'STIL_PACKAGE_VERSION', 'STIL_RADIUS', 'localhost:5500', 'localhost:5501', 'StilApp', 'My Stil App'];
 
 function sleep(ms) {
     Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
