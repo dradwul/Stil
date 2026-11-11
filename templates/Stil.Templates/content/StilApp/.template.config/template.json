@@ -74,12 +74,40 @@
           "exclude": [ "Components/Layout/AppCommands.razor" ]
         },
         {
-          "condition": "(IncludeSampleContent)",
+          "condition": "(!HasOrders)",
+          "exclude": [ "Components/Pages/NewOrder.razor", "Data/Order.cs", "Data/OrderService.cs" ]
+        },
+        {
+          "condition": "(!IsAdmin)",
+          "exclude": [ "Components/Pages/Admin/**" ]
+        },
+        {
+          "condition": "(!IsDashboard)",
+          "exclude": [ "Components/Pages/Dashboard/**", "Data/SalesService.cs" ]
+        },
+        {
+          "condition": "(!IsMonitoring)",
+          "exclude": [ "Components/Pages/Monitoring/**", "Data/MonitoringService.cs" ]
+        },
+        {
+          "condition": "(!IsFinance)",
+          "exclude": [ "Components/Pages/Finance/**", "Data/FinanceService.cs" ]
+        },
+        {
+          "condition": "(!IsPlanner)",
+          "exclude": [ "Components/Pages/Planner/**" ]
+        },
+        {
+          "condition": "(!IsBlank)",
+          "exclude": [ "Components/Pages/Home.razor", "Components/Pages/Home.Empty.razor" ]
+        },
+        {
+          "condition": "(HasSampleOrders)",
           "exclude": [ "Components/Pages/Home.Empty.razor" ]
         },
         {
-          "condition": "(!IncludeSampleContent)",
-          "exclude": [ "Components/Pages/Home.razor", "Components/Pages/NewOrder.razor", "Data/**" ],
+          "condition": "(IsBlank && !IncludeSampleContent)",
+          "exclude": [ "Components/Pages/Home.razor" ],
           "rename": { "Components/Pages/Home.Empty.razor": "Components/Pages/Home.razor" }
         }
       ]
@@ -231,7 +259,7 @@
     },
     "IncludeSampleContent": {
       "type": "parameter",
-      "description": "Add a dashboard page with KPI cards and a data grid, and a form page with validation. Without it, the app has one empty Home page.",
+      "description": "Add a dashboard page with KPI cards and a data grid, and a form page with validation. Without it, the app has one empty Home page. Only for --Starter blank.",
       "datatype": "bool",
       "defaultValue": "true"
     },
@@ -278,19 +306,19 @@
     },
     "HasCalendar": {
       "type": "computed",
-      "value": "(Features == \"calendar\" || Features == \"all\")"
+      "value": "(Features == \"calendar\" || Features == \"all\" || IsPlanner)"
     },
     "HasKanban": {
       "type": "computed",
-      "value": "(Features == \"kanban\" || Features == \"all\")"
+      "value": "(Features == \"kanban\" || Features == \"all\" || IsPlanner)"
     },
     "HasGantt": {
       "type": "computed",
-      "value": "(Features == \"gantt\" || Features == \"all\")"
+      "value": "(Features == \"gantt\" || Features == \"all\" || IsPlanner)"
     },
     "HasSchedule": {
       "type": "computed",
-      "value": "(Features == \"schedule\" || Features == \"all\")"
+      "value": "(Features == \"schedule\" || Features == \"all\" || IsPlanner)"
     },
     "HasChat": {
       "type": "computed",
@@ -310,7 +338,7 @@
     },
     "HasCommands": {
       "type": "computed",
-      "value": "(Features == \"commands\" || Features == \"all\")"
+      "value": "(Features == \"commands\" || Features == \"all\" || IsAdmin || IsPlanner)"
     },
     "HasNotifications": {
       "type": "computed",
@@ -323,6 +351,76 @@
     "HasFeaturePages": {
       "type": "computed",
       "value": "(HasCharts || HasMarkdown || HasRichText || HasDataGrid || HasCalendar || HasKanban || HasGantt || HasSchedule || HasChat || HasActivity || HasScanner || HasSignature || HasNotifications)"
+    },
+    "HasFeatureMenu": {
+      "type": "computed",
+      "value": "(HasCharts || HasMarkdown || HasRichText || HasDataGrid || ((HasCalendar || HasKanban || HasGantt || HasSchedule) && !IsPlanner) || HasChat || HasActivity || HasScanner || HasSignature || HasNotifications)"
+    },
+    "Starter": {
+      "type": "parameter",
+      "description": "A complete app to start from: a set of features with its own pages, menu and sample data. The sample data sits behind a small interface in Data/, so the app can swap in real data without touching the pages.",
+      "datatype": "choice",
+      "choices": [
+        { "choice": "blank", "description": "A dashboard and an order form (with --IncludeSampleContent), or one empty page" },
+        { "choice": "admin", "description": "Orders in a data grid with editing, export and a change history" },
+        { "choice": "dashboard", "description": "KPI cards with sparklines, line, bar and donut charts, and a product list" },
+        { "choice": "monitoring", "description": "Gauges, sparklines and a heat map refreshed every few seconds, alerts under the bell, and an event log" },
+        { "choice": "finance", "description": "Budget against actuals, a margin line, month notes in Markdown, and transactions with totals and export" },
+        { "choice": "planner", "description": "A week planner, a resource schedule, a kanban board and a Gantt plan" }
+      ],
+      "defaultValue": "blank"
+    },
+    "IsBlank": {
+      "type": "computed",
+      "value": "(Starter == \"blank\")"
+    },
+    "IsAdmin": {
+      "type": "computed",
+      "value": "(Starter == \"admin\")"
+    },
+    "IsDashboard": {
+      "type": "computed",
+      "value": "(Starter == \"dashboard\")"
+    },
+    "IsMonitoring": {
+      "type": "computed",
+      "value": "(Starter == \"monitoring\")"
+    },
+    "IsFinance": {
+      "type": "computed",
+      "value": "(Starter == \"finance\")"
+    },
+    "IsPlanner": {
+      "type": "computed",
+      "value": "(Starter == \"planner\")"
+    },
+    "HasSampleOrders": {
+      "type": "computed",
+      "value": "(IsBlank && IncludeSampleContent)"
+    },
+    "HasOrders": {
+      "type": "computed",
+      "value": "(HasSampleOrders || IsAdmin)"
+    },
+    "HasNotificationBell": {
+      "type": "computed",
+      "value": "(HasNotifications || IsAdmin || IsMonitoring)"
+    },
+    "UseCharts": {
+      "type": "computed",
+      "value": "(HasCharts || IsDashboard || IsMonitoring || IsFinance)"
+    },
+    "UseMarkdown": {
+      "type": "computed",
+      "value": "(HasMarkdown || IsFinance)"
+    },
+    "UseRichText": {
+      "type": "computed",
+      "value": "(HasRichText)"
+    },
+    "NeedsInteractivity": {
+      "type": "computed",
+      "value": "(HasFeatures || !IsBlank)"
     },
     "StilVersion": {
       "type": "parameter",

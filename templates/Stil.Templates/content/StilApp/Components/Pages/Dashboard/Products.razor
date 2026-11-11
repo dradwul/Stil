@@ -1,0 +1,30 @@
+@page "/products"
+@inject ISalesService Sales
+@*#if (!UseServer)
+@rendermode InteractiveServer
+##endif*@
+
+<PageTitle>Products</PageTitle>
+
+<h1 class="stil-mb-1">Products</h1>
+<p class="stil-text-muted stil-mb-4">Units and revenue per product, and the units sold per week over the last twelve weeks.</p>
+
+<StilDataGrid TItem="ProductSales" Items="_products" Filterable PageSize="10" ShowExport ExportFileName="products.csv" Caption="Products">
+    <Columns>
+        <StilDataGridColumn Property="p => p.Name" Title="Product" />
+        <StilDataGridColumn Property="p => p.Category" />
+        <StilDataGridColumn Property="p => p.Price" Format="N0" Align="StilTextAlign.End" Filterable="false" />
+        <StilDataGridColumn Property="p => p.Units" Format="N0" Align="StilTextAlign.End" Aggregate="StilAggregate.Sum" Filterable="false" />
+        <StilDataGridColumn Property="p => p.Revenue" Format="N0" Align="StilTextAlign.End" Aggregate="StilAggregate.Sum"
+                            InitialSort="StilSortDirection.Descending" Filterable="false" />
+        <StilDataGridTemplateColumn Title="Last 12 weeks" Width="9rem" ExportValue="p => string.Join(' ', p.Weekly)">
+            <StilSparkline Values="context.Weekly" Label="@($"Units per week for {context.Name}")" Format="N0" Height="28" />
+        </StilDataGridTemplateColumn>
+    </Columns>
+</StilDataGrid>
+
+@code {
+    private IReadOnlyList<ProductSales> _products = [];
+
+    protected override void OnInitialized() => _products = Sales.Products();
+}

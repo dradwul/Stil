@@ -1,0 +1,30 @@
+@page "/transactions"
+@inject IFinanceService Finance
+@*#if (!UseServer)
+@rendermode InteractiveServer
+##endif*@
+
+<PageTitle>Transactions</PageTitle>
+
+<h1 class="stil-mb-1">Transactions</h1>
+<p class="stil-text-muted stil-mb-4">
+    The year's transactions. Filter them, group them by category with Group by, and download the filtered rows as CSV.
+</p>
+
+<StilDataGrid TItem="Transaction" Items="_transactions" Filterable PageSize="15" ShowGroupChooser @bind-GroupBy="_groupBy"
+              ShowExport ExportFileName="transactions.csv" Caption="Transactions">
+    <Columns>
+        <StilDataGridColumn Property="t => t.Date" Format="d MMM yyyy" Groupable="false" InitialSort="StilSortDirection.Descending" />
+        <StilDataGridColumn Property="t => t.Account" />
+        <StilDataGridColumn Property="t => t.Description" Groupable="false" />
+        <StilDataGridColumn Property="t => t.Category" />
+        <StilDataGridColumn Property="t => t.Amount" Format="N0" Align="StilTextAlign.End" Aggregate="StilAggregate.Sum" Filterable="false" />
+    </Columns>
+</StilDataGrid>
+
+@code {
+    private IReadOnlyList<Transaction> _transactions = [];
+    private IReadOnlyList<string> _groupBy = [];
+
+    protected override void OnInitialized() => _transactions = Finance.Transactions();
+}

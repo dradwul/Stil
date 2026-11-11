@@ -1,0 +1,32 @@
+@page "/"
+
+<PageTitle>Overview</PageTitle>
+
+<h1 class="stil-mb-1">Overview</h1>
+<p class="stil-text-muted stil-mb-4">
+    Four ways to plan. Each page keeps its sample data in one list at the bottom of the page; replace it with your own.
+</p>
+
+<StilGrid Gap="3">
+    @foreach (var tool in _tools)
+    {
+        <StilCol Span="12" SpanMd="6">
+            <StilCard class="stil-h-100">
+                <h2 class="stil-fs-lg"><a href="@tool.Href">@tool.Title</a></h2>
+                <p class="stil-text-muted stil-mb-0">@tool.Text</p>
+            </StilCard>
+        </StilCol>
+    }
+</StilGrid>
+
+@code {
+    private static readonly Tool[] _tools =
+    [
+        new("planner", "Planner", "The week's meetings and events. Drag to create, move and resize them."),
+        new("bookings", "Bookings", "Rooms and vehicles as rows, the day across. Drag on a row to book it."),
+        new("board", "Board", "Tasks on a kanban board, from to do to done, with a limit on work in progress."),
+        new("project", "Project plan", "A Gantt plan with progress, dependencies between steps and a launch milestone."),
+    ];
+
+    private sealed record Tool(string Href, string Title, string Text);
+}

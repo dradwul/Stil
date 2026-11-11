@@ -1,0 +1,129 @@
+@page "/"
+@implements IAsyncDisposable
+@inject IMonitoringService Monitoring
+@inject IStilNotificationService NotificationService
+@*#if (!UseServer)
+@rendermode InteractiveServer
+##endif*@
+
+<PageTitle>Overview</PageTitle>
+
+<div class="stil-d-flex stil-flex-wrap stil-justify-content-between stil-align-items-end stil-gap-3 stil-mb-4">
+    <div>
+        <h1 class="stil-mb-1">Overview</h1>
+        <p class="stil-text-muted stil-mb-0">
+            Updated @_updated.ToString("T"). The page refreshes every @Monitoring.Interval.TotalSeconds.ToString("N0") seconds;
+            an alert is added under the bell when a server's CPU goes above @AlertLevel.ToString("P0").
+        </p>
+    </div>
+    <StilSwitch @bind-Value="_paused" Label="Pause updates" />
+</div>
+
+<h2 class="stil-fs-lg">All servers</h2>
+<StilGrid Gap="3" class="stil-mb-5">
+    <StilCol Span="12" SpanMd="4">
+        <StilGauge Value="Average(s => s.Cpu)" Max="1" Format="P0" Ranges="_ranges" Title="CPU" Description="Average" Size="200" />
+    </StilCol>
+    <StilCol Span="12" SpanMd="4">
+        <StilGauge Value="Average(s => s.Memory)" Max="1" Format="P0" Ranges="_ranges" Title="Memory" Description="Average" Size="200" />
+    </StilCol>
+    <StilCol Span="12" SpanMd="4">
+        <StilGauge Value="Average(s => s.Disk)" Max="1" Format="P0" Ranges="_ranges" Title="Disk" Description="Average" Size="200" />
+    </StilCol>
+</StilGrid>
+
+<h2 class="stil-fs-lg">Servers</h2>
+<StilGrid Gap="3" class="stil-mb-5">
+    @foreach (var server in _servers)
+    {
+        <StilCol Span="12" SpanSm="6" SpanLg="3" @key="server.Name">
+            <StilStatCard Label="@($"{server.Name}, {server.Role}")" Value="@($"{server.Cpu:P0} CPU")"
+                          Description="@($"{server.ResponseMs} ms response, {server.Memory:P0} memory")">
+                <StilSparkline Values="server.CpuHistory" Area Height="40" Color="@ColorOf(server.Cpu)" class="stil-mt-3" />
+            </StilStatCard>
+        </StilCol>
+    }
+</StilGrid>
+
+<StilHeatMap Items="_errors" Row="e => e.Day" Column="e => e.Hour" Value="e => e.Errors" ColumnFormat="00"
+             Title="Errors per hour" Description="All servers, the last seven days" RowTitle="Day" ColumnTitle="Hour" Format="N0"
+             Color="var(--stil-color-danger)" />
+
+@code {
+    private const double AlertLevel = 0.9;
+
+    private static readonly StilGaugeRange[] _ranges =
+    [
+        new(0, 0.7, "var(--stil-color-success)", "Normal"),
+        new(0.7, 0.9, "var(--stil-color-warning)", "High"),
+        new(0.9, 1, "var(--stil-color-danger)", "Critical"),
+    ];
+
+    private IReadOnlyList<ServerStatus> _servers = [];
+    private IReadOnlyList<ErrorCount> _errors = [];
+    private DateTime _updated;
+    private bool _paused;
+    private PeriodicTimer? _timer;
+
+    protected override void OnInitialized()
+    {
+        _errors = Monitoring.Errors();
+        Refresh();
+    }
+
+    // The timer starts once the page is interactive, not while it is prerendered.
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _timer = new PeriodicTimer(Monitoring.Interval);
+            _ = RunAsync(_timer);
+        }
+    }
+
+    private async Task RunAsync(PeriodicTimer timer)
+    {
+        while (await timer.WaitForNextTickAsync())
+        {
+            if (!_paused)
+            {
+                await InvokeAsync(() =>
+                {
+                    Refresh();
+                    StateHasChanged();
+                });
+            }
+        }
+    }
+
+    private void Refresh()
+    {
+        var before = _servers;
+        _servers = Monitoring.Servers();
+        _updated = DateTime.Now;
+
+        // Only a server that crosses the level raises an alert, not one that stays above it.
+        foreach (var server in _servers.Where(s => s.Cpu >= AlertLevel))
+        {
+            if (before.FirstOrDefault(b => b.Name == server.Name) is { } previous && previous.Cpu < AlertLevel)
+            {
+                NotificationService.Add($"CPU on {server.Name} is {server.Cpu:P0}.", "High CPU", StilVariant.Danger, href: "events");
+            }
+        }
+    }
+
+    private double Average(Func<ServerStatus, double> value) => _servers.Count == 0 ? 0 : _servers.Average(value);
+
+    private static string ColorOf(double cpu) => cpu switch
+    {
+        >= AlertLevel => "var(--stil-color-danger)",
+        >= 0.7 => "var(--stil-color-warning)",
+        _ => "var(--stil-color-success)",
+    };
+
+    public ValueTask DisposeAsync()
+    {
+        _timer?.Dispose();
+        return ValueTask.CompletedTask;
+    }
+}

@@ -1,0 +1,115 @@
+@page "/"
+@inject IFinanceService Finance
+@inject IStilToastService Toasts
+@*#if (!UseServer)
+@rendermode InteractiveServer
+##endif*@
+
+<PageTitle>Overview</PageTitle>
+
+<h1 class="stil-mb-1">Overview</h1>
+<p class="stil-text-muted stil-mb-4">The year so far, in thousands, against the budget.</p>
+
+<StilGrid Gap="3" class="stil-mb-5">
+    <StilCol Span="12" SpanSm="6" SpanLg="3">
+        <StilStatCard Label="Revenue" Value="@($"{Revenue:N0} k")" Trend="@Change(Revenue, Budget)"
+                      TrendDirection="@(Revenue >= Budget ? StilTrendDirection.Up : StilTrendDirection.Down)"
+                      TrendVariant="@(Revenue >= Budget ? StilVariant.Success : StilVariant.Danger)" Description="vs budget" />
+    </StilCol>
+    <StilCol Span="12" SpanSm="6" SpanLg="3">
+        <StilStatCard Label="Costs" Value="@($"{Costs:N0} k")" Description="the year so far" />
+    </StilCol>
+    <StilCol Span="12" SpanSm="6" SpanLg="3">
+        <StilStatCard Label="Result" Value="@($"{Revenue - Costs:N0} k")" Description="revenue less costs" />
+    </StilCol>
+    <StilCol Span="12" SpanSm="6" SpanLg="3">
+        <StilStatCard Label="Margin" Value="@((Revenue == 0 ? 0 : (Revenue - Costs) / Revenue).ToString("P1"))" Description="result as a share of revenue" />
+    </StilCol>
+</StilGrid>
+
+<StilGrid Gap="5">
+    <StilCol Span="12" SpanLg="8">
+        <StilBarChart Items="_months" Category="m => m.Month" Title="Revenue and margin" Description="Thousands per month, against the budget"
+                      Format="N0" ValueAxisTitle="Thousands" SecondaryAxisTitle="Margin (%)" SecondaryMin="0" SecondaryMax="40" Height="300">
+            <StilChartSeries Name="Budget" Value="m => m.Budget" />
+            <StilChartSeries Name="Revenue" Value="m => m.Revenue" />
+            <StilChartSeries Name="Margin" Value="m => m.Margin" Line="true" SecondaryAxis="true" Format="0.0'%'" />
+        </StilBarChart>
+    </StilCol>
+    <StilCol Span="12" SpanLg="4">
+        <h2 class="stil-fs-lg">Budget used</h2>
+        <div class="stil-stack">
+            @foreach (var department in _budgets)
+            {
+                <StilGauge Shape="StilGaugeShape.Bar" Value="(double)(department.Spent / department.Budget)" Max="1" Format="P0"
+                           Target="@YearShare" TargetText="Share of the year gone" Title="@department.Department"
+                           Description="@($"{department.Spent:N0} of {department.Budget:N0}")" />
+            }
+        </div>
+    </StilCol>
+</StilGrid>
+
+<section class="stil-mt-5" aria-labelledby="notes-heading">
+    <div class="stil-d-flex stil-justify-content-between stil-align-items-center stil-gap-3 stil-mb-2">
+        <h2 id="notes-heading" class="stil-fs-lg stil-mb-0">Notes</h2>
+        @if (!_editing)
+        {
+            <StilButton Size="StilSize.Small" Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline" OnClick="() => _editing = true">Edit</StilButton>
+        }
+    </div>
+    @if (_editing)
+    {
+        <div class="stil-form">
+            <StilMarkdownEditor @bind-Value="_notes" Label="Notes" Hint="Markdown: **bold**, lists, links and tables." />
+            <StilCluster>
+                <StilButton OnClick="SaveNotes">Save</StilButton>
+                <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost" OnClick="Cancel">Cancel</StilButton>
+            </StilCluster>
+        </div>
+    }
+    else
+    {
+        <StilCard>
+            <StilMarkdown Value="@Finance.Notes" />
+        </StilCard>
+    }
+</section>
+
+@code {
+    private IReadOnlyList<MonthResult> _months = [];
+    private IReadOnlyList<DepartmentBudget> _budgets = [];
+    private bool _editing;
+    private string? _notes;
+
+    private IEnumerable<MonthResult> Ended => _months.Where(m => m.Revenue is not null);
+
+    private decimal Revenue => Ended.Sum(m => m.Revenue ?? 0);
+
+    private decimal Costs => Ended.Sum(m => m.Costs ?? 0);
+
+    private decimal Budget => Ended.Sum(m => m.Budget);
+
+    private static double YearShare => DateTime.Today.DayOfYear / (DateTime.IsLeapYear(DateTime.Today.Year) ? 366.0 : 365.0);
+
+    protected override void OnInitialized()
+    {
+        _months = Finance.Months();
+        _budgets = Finance.Budgets();
+        _notes = Finance.Notes;
+    }
+
+    private void SaveNotes()
+    {
+        Finance.Notes = _notes ?? "";
+        _editing = false;
+        Toasts.Success("The notes are saved.");
+    }
+
+    private void Cancel()
+    {
+        _notes = Finance.Notes;
+        _editing = false;
+    }
+
+    private static string Change(decimal now, decimal before) => before == 0 ? "" : $"{(now - before) / before:+0.0%;-0.0%}";
+}

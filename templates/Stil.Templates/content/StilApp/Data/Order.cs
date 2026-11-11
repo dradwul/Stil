@@ -30,4 +30,7 @@ public sealed class Order
     public DateOnly OrderDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
 
     public bool Express { get; set; }
+
+    /// <summary>A copy, so a form can change it without changing the stored order.</summary>
+    public Order Copy() => (Order)MemberwiseClone();
 }

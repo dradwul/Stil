@@ -1,0 +1,85 @@
+@page "/"
+@inject ISalesService Sales
+@*#if (!UseServer)
+@rendermode InteractiveServer
+##endif*@
+
+<PageTitle>Overview</PageTitle>
+
+<h1 class="stil-mb-1">Overview</h1>
+<p class="stil-text-muted stil-mb-4">Sales this year, with last year for comparison.</p>
+
+<StilGrid Gap="3" class="stil-mb-5">
+    <StilCol Span="12" SpanSm="6" SpanLg="3">
+        <StilStatCard Label="Revenue this year" Value="@($"{Revenue:N0} k")" Trend="@Change(Revenue, RevenueLastYear)"
+                      TrendDirection="StilTrendDirection.Up" Description="vs the same months last year">
+            <StilSparkline Values="Series(m => (double)(m.ThisYear ?? 0))" Area class="stil-mt-3" />
+        </StilStatCard>
+    </StilCol>
+    <StilCol Span="12" SpanSm="6" SpanLg="3">
+        <StilStatCard Label="Orders" Value="@Orders.ToString("N0")" Description="this year">
+            <StilSparkline Values="Series(m => m.Orders)" class="stil-mt-3" />
+        </StilStatCard>
+    </StilCol>
+    <StilCol Span="12" SpanSm="6" SpanLg="3">
+        <StilStatCard Label="Customers" Value="@Customers.ToString("N0")" Description="placed an order this year">
+            <StilSparkline Values="Series(m => m.Customers)" class="stil-mt-3" />
+        </StilStatCard>
+    </StilCol>
+    <StilCol Span="12" SpanSm="6" SpanLg="3">
+        <StilStatCard Label="Average order" Value="@((Revenue * 1000 / Math.Max(Orders, 1)).ToString("N0"))" Description="revenue per order">
+            <StilSparkline Values="Series(m => (double)((m.ThisYear ?? 0) * 1000 / Math.Max(m.Orders, 1)))" class="stil-mt-3" />
+        </StilStatCard>
+    </StilCol>
+</StilGrid>
+
+<StilGrid Gap="5">
+    <StilCol Span="12">
+        <StilLineChart Items="_months" Category="m => m.Month" Title="Revenue" Description="Thousands per month"
+                       Format="N0" CategoryAxisTitle="Month" Height="280">
+            <StilChartSeries Name="Last year" Value="m => m.LastYear" />
+            <StilChartSeries Name="This year" Value="m => m.ThisYear" />
+        </StilLineChart>
+    </StilCol>
+    <StilCol Span="12" SpanLg="7">
+        <StilBarChart Items="_quarters" Category="q => q.Quarter" Title="Orders per quarter" Description="By sales channel"
+                      Format="N0" Height="280" Stacked>
+            <StilChartSeries Name="Web shop" Value="q => q.WebShop" />
+            <StilChartSeries Name="Stores" Value="q => q.Stores" />
+            <StilChartSeries Name="Wholesale" Value="q => q.Wholesale" />
+        </StilBarChart>
+    </StilCol>
+    <StilCol Span="12" SpanLg="5">
+        <StilDonutChart Items="_regions" Category="r => r.Region" Title="Revenue by region" Description="This year" Format="N0">
+            <StilChartSeries Name="Revenue" Value="r => r.Revenue" />
+        </StilDonutChart>
+    </StilCol>
+</StilGrid>
+
+@code {
+    private IReadOnlyList<MonthlySales> _months = [];
+    private IReadOnlyList<QuarterlyOrders> _quarters = [];
+    private IReadOnlyList<RegionSales> _regions = [];
+
+    private IEnumerable<MonthlySales> Ended => _months.Where(m => m.ThisYear is not null);
+
+    private decimal Revenue => Ended.Sum(m => m.ThisYear ?? 0);
+
+    private decimal RevenueLastYear => Ended.Sum(m => m.LastYear);
+
+    private int Orders => Ended.Sum(m => m.Orders);
+
+    private int Customers => Ended.Sum(m => m.Customers);
+
+    protected override void OnInitialized()
+    {
+        _months = Sales.Months();
+        _quarters = Sales.Quarters();
+        _regions = Sales.Regions();
+    }
+
+    // The sparklines are decorative: each card says its value in words.
+    private double[] Series(Func<MonthlySales, double> value) => [.. Ended.Select(value)];
+
+    private static string Change(decimal now, decimal before) => before == 0 ? "" : $"{(now - before) / before:+0.0%;-0.0%}";
+}

@@ -1,0 +1,104 @@
+@page "/"
+@inject IOrderService OrderService
+@inject IStilToastService Toasts
+@*#if (!UseServer)
+@rendermode InteractiveServer
+##endif*@
+
+<PageTitle>Orders</PageTitle>
+
+<div class="stil-d-flex stil-flex-wrap stil-justify-content-between stil-align-items-center stil-gap-3 stil-mb-4">
+    <div>
+        <h1 class="stil-mb-1">Orders</h1>
+        <p class="stil-text-muted stil-mb-0">@_orders.Count orders, @Count(OrderStatus.Pending) waiting to ship.</p>
+    </div>
+    <StilButton Href="orders/new"><StilIcon Name="@StilIcons.Plus" /> New order</StilButton>
+</div>
+
+<StilDataGrid TItem="Order" Items="_orders" Filterable PageSize="10" ShowExport ExportFileName="orders.csv" Caption="Orders, newest first">
+    <Columns>
+        <StilDataGridColumn Property="o => o.Id" Title="Order" InitialSort="StilSortDirection.Descending" Width="7rem">
+            <Template>#@context.Id</Template>
+        </StilDataGridColumn>
+        <StilDataGridColumn Property="o => o.Customer" />
+        <StilDataGridColumn Property="o => o.OrderDate" Title="Date" Format="d MMM yyyy" />
+        <StilDataGridColumn Property="o => o.Status">
+            <Template><StilBadge Variant="@VariantOf(context.Status)" Subtle>@context.Status</StilBadge></Template>
+        </StilDataGridColumn>
+        <StilDataGridColumn Property="o => o.Amount" Format="N2" Align="StilTextAlign.End" Aggregate="StilAggregate.Sum" Filterable="false" />
+        <StilDataGridTemplateColumn Title="Actions" Align="StilTextAlign.End" Width="11rem">
+            <StilButton Size="StilSize.Small" Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Outline"
+                        OnClick="() => Edit(context)" aria-label="@($"Edit order {context.Id}")">Edit</StilButton>
+            <StilButton Size="StilSize.Small" Variant="StilVariant.Danger" Appearance="StilButtonAppearance.Ghost"
+                        OnClick="() => _deleting = context" aria-label="@($"Delete order {context.Id}")">Delete</StilButton>
+        </StilDataGridTemplateColumn>
+    </Columns>
+</StilDataGrid>
+
+@* The dialogs are in the page's own markup, so they work in every render mode. *@
+<StilDialog Open="_editing is not null" OpenChanged="open => { if (!open) _editing = null; }" Title="@($"Order #{_editing?.Id}")">
+    @if (_editing is not null)
+    {
+        <EditForm Model="_editing" OnValidSubmit="Save" class="stil-form" novalidate>
+            <DataAnnotationsValidator />
+            <StilTextBox @bind-Value="_editing.Customer" Label="Customer" />
+            <StilTextBox @bind-Value="_editing.Email" Label="Email" Type="email" />
+            <div class="stil-grid">
+                <StilNumeric @bind-Value="_editing.Amount" Label="Amount" Step="0.01" Min="0" class="stil-col-sm-6" />
+                <StilSelect @bind-Value="_editing.Status" Label="Status" class="stil-col-sm-6" />
+            </div>
+            <StilSwitch @bind-Value="_editing.Express" Label="Express delivery" />
+            <StilCluster class="stil-justify-content-end">
+                <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost" OnClick="() => _editing = null">Cancel</StilButton>
+                <StilButton Type="submit">Save</StilButton>
+            </StilCluster>
+        </EditForm>
+    }
+</StilDialog>
+
+<StilDialog Open="_deleting is not null" OpenChanged="open => { if (!open) _deleting = null; }" Title="@($"Delete order #{_deleting?.Id}?")">
+    <ChildContent>
+        <p class="stil-mb-0">The order for @_deleting?.Customer is deleted. This cannot be undone.</p>
+    </ChildContent>
+    <Footer>
+        <StilButton Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost" OnClick="() => _deleting = null">Cancel</StilButton>
+        <StilButton Variant="StilVariant.Danger" OnClick="Delete">Delete</StilButton>
+    </Footer>
+</StilDialog>
+
+@code {
+    private IReadOnlyList<Order> _orders = [];
+    private Order? _editing;
+    private Order? _deleting;
+
+    protected override void OnInitialized() => _orders = OrderService.All();
+
+    // The form changes a copy; the list changes when the copy is saved.
+    private void Edit(Order order) => _editing = order.Copy();
+
+    private void Save()
+    {
+        OrderService.Update(_editing!);
+        Toasts.Success($"Order #{_editing!.Id} saved.");
+        _editing = null;
+        _orders = OrderService.All();
+    }
+
+    private void Delete()
+    {
+        OrderService.Delete(_deleting!.Id);
+        Toasts.Show($"Order #{_deleting.Id} was deleted.", "Deleted", StilVariant.Danger, keep: true);
+        _deleting = null;
+        _orders = OrderService.All();
+    }
+
+    private int Count(OrderStatus status) => _orders.Count(o => o.Status == status);
+
+    private static StilVariant VariantOf(OrderStatus status) => status switch
+    {
+        OrderStatus.Pending => StilVariant.Warning,
+        OrderStatus.Shipped => StilVariant.Info,
+        OrderStatus.Delivered => StilVariant.Success,
+        _ => StilVariant.Danger,
+    };
+}

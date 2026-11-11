@@ -1,0 +1,29 @@
+@page "/history"
+@inject IOrderService OrderService
+@*#if (!UseServer)
+@rendermode InteractiveServer
+##endif*@
+
+<PageTitle>History</PageTitle>
+
+<h1 class="stil-mb-1">History</h1>
+<p class="stil-text-muted stil-mb-4">Every order that was created, changed or deleted, newest first.</p>
+
+<StilActivityLog Items="_events" Time="e => e.Time" Title="e => Title(e)" Actor="e => e.Customer" Type="e => e.Action"
+                 Variant="e => VariantOf(e.Action)" Details="e => e.Details" ItemKey="e => e.Id"
+                 Searchable Filterable Height="32rem" />
+
+@code {
+    private IReadOnlyList<OrderEvent> _events = [];
+
+    protected override void OnInitialized() => _events = OrderService.History();
+
+    private static string Title(OrderEvent e) => $"Order #{e.OrderId} {e.Action.ToLowerInvariant()}";
+
+    private static StilVariant? VariantOf(string action) => action switch
+    {
+        "Created" => StilVariant.Success,
+        "Deleted" => StilVariant.Danger,
+        _ => null,
+    };
+}

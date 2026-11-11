@@ -1,7 +1,7 @@
 using Stil.Blazor;
 using StilApp;
 using StilApp.Components;
-#if (IncludeSampleContent)
+#if (HasOrders || IsDashboard || IsMonitoring || IsFinance)
 using StilApp.Data;
 #endif
 
@@ -10,9 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 #if (UseServer)
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-#elif (HasFeatures)
-// The app renders on the server without interactivity, except the feature pages and the parts of
-// the layout that need it: they set @rendermode InteractiveServer.
+#elif (NeedsInteractivity)
+// The app renders on the server without interactivity, except the pages and the parts of the
+// layout that need it: they set @rendermode InteractiveServer.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 #else
@@ -42,8 +42,19 @@ builder.Services.AddStil(options =>
 });
 // The app's own texts from Locales/*.json, through IStringLocalizer<T>.
 builder.Services.AddStilLocalization();
-#if (IncludeSampleContent)
-builder.Services.AddSingleton<OrderStore>();
+// The sample data. Replace an implementation with your own to show real data; the pages only
+// know the interfaces.
+#if (HasOrders)
+builder.Services.AddSingleton<IOrderService, InMemoryOrderService>();
+#endif
+#if (IsDashboard)
+builder.Services.AddSingleton<ISalesService, SampleSalesService>();
+#endif
+#if (IsMonitoring)
+builder.Services.AddSingleton<IMonitoringService, SampleMonitoringService>();
+#endif
+#if (IsFinance)
+builder.Services.AddSingleton<IFinanceService, SampleFinanceService>();
 #endif
 
 var app = builder.Build();
@@ -65,7 +76,7 @@ app.UseRequestLocalization(options => options
 app.UseAntiforgery();
 
 app.MapStaticAssets();
-#if (UseServer || HasFeatures)
+#if (UseServer || NeedsInteractivity)
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 #else

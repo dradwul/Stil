@@ -40,13 +40,13 @@ const cases = [
         name: 'Contoso.Default',
         options: [],
         expect: {
-            'Program.cs': ['options.Font = StilFonts.Lexend;', 'AddInteractiveServerComponents', 'AddSingleton<OrderStore>'],
+            'Program.cs': ['options.Font = StilFonts.Lexend;', 'AddInteractiveServerComponents', 'AddSingleton<IOrderService, InMemoryOrderService>()'],
             'Components/App.razor': ['<StilHead />', '<Routes @rendermode="InteractiveServer" />'],
             'Components/Layout/MainLayout.razor': ['StilThemeMode.Auto', '<StilDialogHost />', '<StilToastHost />', 'CollapseBelow'],
             'Components/Pages/Home.razor': ['<StilDataGrid', '<StilStatCard', 'Filterable'],
             'Components/Pages/NewOrder.razor': ['<EditForm', 'IStilToastService'],
             'Components/Pages/NotFound.razor': ['@page "/not-found"'],
-            'Data/OrderStore.cs': ['namespace Contoso.Default.Data;'],
+            'Data/OrderService.cs': ['namespace Contoso.Default.Data;', 'interface IOrderService'],
             '.gitignore': ['[Oo]bj/'],
         },
         absent: ['Components/Pages/Home.Empty.razor'],
@@ -59,7 +59,7 @@ const cases = [
             'Components/Layout/MainLayout.razor': ['@L["Nav.Home"]</StilNavLink>', 'BrandText="Empty-App"'],
         },
         absent: ['Data', 'Components/Pages/NewOrder.razor', 'Components/Pages/Home.Empty.razor'],
-        forbidden: { 'Program.cs': ['OrderStore'], 'Components/_Imports.razor': ['.Data'] },
+        forbidden: { 'Program.cs': ['IOrderService'], 'Components/_Imports.razor': ['.Data'] },
     },
     {
         name: 'StaticApp',
@@ -171,6 +171,66 @@ cases.push({
         'Components/Layout/AppCommands.razor': ['L["Nav.Home"]'],
     },
     forbidden: { 'Components/Layout/AppCommands.razor': ['orders/new'] },
+});
+
+// Each starter: its pages and data, the packages it needs, and what it must not have.
+const starterPages = {
+    admin: ['Components/Pages/Admin/Orders.razor', 'Components/Pages/Admin/History.razor', 'Components/Pages/NewOrder.razor'],
+    dashboard: ['Components/Pages/Dashboard/Overview.razor', 'Components/Pages/Dashboard/Products.razor'],
+    monitoring: ['Components/Pages/Monitoring/Overview.razor', 'Components/Pages/Monitoring/Events.razor'],
+    finance: ['Components/Pages/Finance/Overview.razor', 'Components/Pages/Finance/Transactions.razor'],
+    planner: ['Components/Pages/Planner/Overview.razor', 'Components/Pages/Features/Planner.razor', 'Components/Pages/Features/Bookings.razor',
+        'Components/Pages/Features/Board.razor', 'Components/Pages/Features/Project.razor'],
+};
+const starters = [
+    { id: 'admin', data: { 'Data/OrderService.cs': ['void Update(Order order)', 'OrderEvent'] }, packages: [],
+        layout: ['Href="history"', '<AppCommands />', '<StilNotificationCenter />'] },
+    { id: 'dashboard', data: { 'Data/SalesService.cs': ['interface ISalesService'] }, packages: ['Stil.Charts'],
+        layout: ['Href="products"'] },
+    { id: 'monitoring', data: { 'Data/MonitoringService.cs': ['interface IMonitoringService'] }, packages: ['Stil.Charts'],
+        layout: ['Href="events"', '<StilNotificationCenter />'] },
+    { id: 'finance', data: { 'Data/FinanceService.cs': ['interface IFinanceService'] }, packages: ['Stil.Charts', 'Stil.Markdown'],
+        layout: ['Href="transactions"'] },
+    { id: 'planner', data: {}, packages: [], layout: ['Href="planner"', 'Href="project"', '<AppCommands />'] },
+];
+const allStarterPages = Object.values(starterPages).flat();
+for (const starter of starters) {
+    for (const interactive of [true, false]) {
+        const name = `Starter.${starter.id}${interactive ? '' : '.NoInteractivity'}`;
+        const pages = starterPages[starter.id];
+        cases.push({
+            name,
+            options: ['--Starter', starter.id, ...(interactive ? [] : ['--Interactivity', 'None'])],
+            expect: {
+                ...Object.fromEntries(pages.filter(p => p !== 'Components/Pages/NewOrder.razor').map(p => [p, ['@page']])),
+                ...starter.data,
+                [`${name}.csproj`]: starter.packages.map(p => `Include="${p}"`),
+                'Components/Layout/MainLayout.razor': starter.layout.map(t => interactive ? t : t.replace(' />', ' @rendermode="InteractiveServer" />')),
+                ...(interactive ? {} : { 'Program.cs': ['AddInteractiveServerRenderMode'] }),
+            },
+            forbidden: {
+                [`${name}.csproj`]: packages.filter(p => !starter.packages.includes(p)),
+                // The planner's pages are in the navbar, not in a Features menu.
+                'Components/Layout/MainLayout.razor': ['StilDropdown', 'Nav.Dashboard'],
+            },
+            absent: [
+                'Components/Pages/Home.razor',
+                ...allStarterPages.filter(p => !pages.includes(p)),
+                ...(starter.id === 'admin' ? [] : ['Data/Order.cs', 'Data/OrderService.cs']),
+            ],
+        });
+    }
+}
+
+// A starter with an extra feature: the feature is in the Features menu, the starter's pages are not.
+cases.push({
+    name: 'Starter.planner.charts',
+    options: ['--Starter', 'planner', '--Features', 'charts', 'kanban', '--Culture', 'sv'],
+    expect: {
+        'Components/Layout/MainLayout.razor': ['<StilDropdownItem Href="charts">'],
+        'Locales/sv.json': ['"Overview": "Översikt"', '"Charts": "Diagram"'],
+    },
+    forbidden: { 'Components/Layout/MainLayout.razor': ['<StilDropdownItem Href="board">'] },
 });
 
 // Text that must never be left in a generated app: template directives and placeholders.

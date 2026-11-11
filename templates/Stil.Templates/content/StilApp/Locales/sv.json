@@ -1,6 +1,22 @@
 {
   "Nav": {
-    //#if (HasFeaturePages)
+    //#if (IsAdmin)
+    "Orders": "Beställningar",
+    "History": "Historik",
+    //#endif
+    //#if (IsDashboard || IsMonitoring || IsFinance || IsPlanner)
+    "Overview": "Översikt",
+    //#endif
+    //#if (IsDashboard)
+    "Products": "Produkter",
+    //#endif
+    //#if (IsMonitoring)
+    "Events": "Händelser",
+    //#endif
+    //#if (IsFinance)
+    "Transactions": "Transaktioner",
+    //#endif
+    //#if (HasFeatureMenu)
     "Features": "Funktioner",
     //#endif
     //#if (HasCharts)

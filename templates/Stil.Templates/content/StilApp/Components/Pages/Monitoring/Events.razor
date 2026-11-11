@@ -1,0 +1,35 @@
+@page "/events"
+@inject IMonitoringService Monitoring
+@*#if (!UseServer)
+@rendermode InteractiveServer
+##endif*@
+
+<PageTitle>Events</PageTitle>
+
+<h1 class="stil-mb-1">Events</h1>
+<p class="stil-text-muted stil-mb-4">Alerts from the last hour, deployments and backups, newest first.</p>
+
+<StilActivityLog Items="_events" Time="e => e.Time" Title="e => e.Title" Actor="e => e.Source" Type="e => e.Type"
+                 Variant="e => VariantOf(e.Type)" Icon="e => IconOf(e.Type)" Details="e => e.Details" ItemKey="e => e.Id"
+                 Searchable Filterable Height="32rem" />
+
+@code {
+    private IReadOnlyList<MonitorEvent> _events = [];
+
+    protected override void OnInitialized() => _events = Monitoring.Events();
+
+    private static StilVariant? VariantOf(string type) => type switch
+    {
+        "Alert" => StilVariant.Danger,
+        "Deployment" => StilVariant.Info,
+        "Backup" => StilVariant.Success,
+        _ => null,
+    };
+
+    private static string? IconOf(string type) => type switch
+    {
+        "Alert" => StilIcons.Warning,
+        "Backup" => StilIcons.Check,
+        _ => null,
+    };
+}

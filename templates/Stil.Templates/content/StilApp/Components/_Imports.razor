@@ -6,18 +6,18 @@
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using Stil.Blazor
 @using Stil.Blazor.Components
-@*#if (HasCharts)
+@*#if (UseCharts)
 @using Stil.Charts
 ##endif*@
-@*#if (HasMarkdown)
+@*#if (UseMarkdown)
 @using Stil.Markdown
 ##endif*@
-@*#if (HasRichText)
+@*#if (UseRichText)
 @using Stil.RichText
 ##endif*@
 @using StilApp
 @using StilApp.Components
 @using StilApp.Components.Layout
-@*#if (IncludeSampleContent)
+@*#if (HasOrders || IsDashboard || IsMonitoring || IsFinance)
 @using StilApp.Data
 ##endif*@

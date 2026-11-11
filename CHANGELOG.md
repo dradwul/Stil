@@ -189,9 +189,26 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   With `--Interactivity None` the feature pages are interactive on their own.
   `templates/test-templates.mjs` builds every feature alone and all of them
   together.
+- **Stil.Templates**: `dotnet new stil-app --Starter …` starts from a complete
+  app: `admin` (orders in a grid with editing in dialogs, export and a change
+  history), `dashboard` (KPI cards with sparklines, line, bar and donut charts,
+  and a product list), `monitoring` (gauges, sparklines and a heat map
+  refreshed every five seconds, alerts under the bell, an event log),
+  `finance` (revenue against the budget with a margin line, budget used per
+  department, Markdown notes and transactions with totals and export) or
+  `planner` (the week planner, resource schedule, kanban board and Gantt
+  plan). `blank`, the default, is the app as before. Each starter's sample
+  data sits behind a small interface in `Data/` (`IOrderService`,
+  `ISalesService`, `IMonitoringService`, `IFinanceService`), so an app shows
+  real data by registering its own implementation. The blank app's
+  `OrderStore` is now `IOrderService` with `InMemoryOrderService`; apps made
+  from the template earlier are not affected.
 
 ### Fixed
 
+- **Stil.Markdown**: the checkboxes of a task list (`- [x] Done`) had no
+  accessible name, which axe reports. Each now has the task's text as its
+  `aria-label`.
 - **Stil CSS**: the keyboard shortcut in the command palette's button and list
   (`stil-command-kbd`) kept the dark fill of a plain `<kbd>` under its muted
   text, which failed the contrast check. It is now an outlined key.

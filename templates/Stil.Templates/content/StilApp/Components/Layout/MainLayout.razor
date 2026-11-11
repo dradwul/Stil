@@ -6,13 +6,38 @@
     <StilNavbar Sticky CollapseBelow="StilBreakpoint.Medium" BrandText="My Stil App">
         <ChildContent>
             <StilNav Label="@L["Nav.Main"]">
-                @*#if (IncludeSampleContent)
+                @*#if (HasSampleOrders)
                 <StilNavLink Href="" Match="NavLinkMatch.All" Icon="@StilIcons.Home">@L["Nav.Dashboard"]</StilNavLink>
                 <StilNavLink Href="orders/new" Icon="@StilIcons.Plus">@L["Nav.NewOrder"]</StilNavLink>
-                ##else
+                ##endif*@
+                @*#if (IsBlank && !IncludeSampleContent)
                 <StilNavLink Href="" Match="NavLinkMatch.All" Icon="@StilIcons.Home">@L["Nav.Home"]</StilNavLink>
                 ##endif*@
-                @*#if (HasFeaturePages)
+                @*#if (IsAdmin)
+                <StilNavLink Href="" Match="NavLinkMatch.All" Icon="@StilIcons.Home">@L["Nav.Orders"]</StilNavLink>
+                <StilNavLink Href="orders/new" Icon="@StilIcons.Plus">@L["Nav.NewOrder"]</StilNavLink>
+                <StilNavLink Href="history">@L["Nav.History"]</StilNavLink>
+                ##endif*@
+                @*#if (IsDashboard)
+                <StilNavLink Href="" Match="NavLinkMatch.All" Icon="@StilIcons.Home">@L["Nav.Overview"]</StilNavLink>
+                <StilNavLink Href="products">@L["Nav.Products"]</StilNavLink>
+                ##endif*@
+                @*#if (IsMonitoring)
+                <StilNavLink Href="" Match="NavLinkMatch.All" Icon="@StilIcons.Home">@L["Nav.Overview"]</StilNavLink>
+                <StilNavLink Href="events">@L["Nav.Events"]</StilNavLink>
+                ##endif*@
+                @*#if (IsFinance)
+                <StilNavLink Href="" Match="NavLinkMatch.All" Icon="@StilIcons.Home">@L["Nav.Overview"]</StilNavLink>
+                <StilNavLink Href="transactions">@L["Nav.Transactions"]</StilNavLink>
+                ##endif*@
+                @*#if (IsPlanner)
+                <StilNavLink Href="" Match="NavLinkMatch.All" Icon="@StilIcons.Home">@L["Nav.Overview"]</StilNavLink>
+                <StilNavLink Href="planner">@L["Nav.Planner"]</StilNavLink>
+                <StilNavLink Href="bookings">@L["Nav.Bookings"]</StilNavLink>
+                <StilNavLink Href="board">@L["Nav.Board"]</StilNavLink>
+                <StilNavLink Href="project">@L["Nav.Project"]</StilNavLink>
+                ##endif*@
+                @*#if (HasFeatureMenu)
                 @* The example page of each feature chosen with --Features. *@
                 <StilDropdown Text="@L["Nav.Features"]" Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost">
                 ##endif*@
@@ -22,16 +47,16 @@
                 @*#if (HasDataGrid)
                     <StilDropdownItem Href="sales">@L["Nav.Sales"]</StilDropdownItem>
                 ##endif*@
-                @*#if (HasCalendar)
+                @*#if (HasCalendar && !IsPlanner)
                     <StilDropdownItem Href="planner">@L["Nav.Planner"]</StilDropdownItem>
                 ##endif*@
-                @*#if (HasSchedule)
+                @*#if (HasSchedule && !IsPlanner)
                     <StilDropdownItem Href="bookings">@L["Nav.Bookings"]</StilDropdownItem>
                 ##endif*@
-                @*#if (HasKanban)
+                @*#if (HasKanban && !IsPlanner)
                     <StilDropdownItem Href="board">@L["Nav.Board"]</StilDropdownItem>
                 ##endif*@
-                @*#if (HasGantt)
+                @*#if (HasGantt && !IsPlanner)
                     <StilDropdownItem Href="project">@L["Nav.Project"]</StilDropdownItem>
                 ##endif*@
                 @*#if (HasMarkdown)
@@ -55,7 +80,7 @@
                 @*#if (HasNotifications)
                     <StilDropdownItem Href="notifications">@L["Nav.Notifications"]</StilDropdownItem>
                 ##endif*@
-                @*#if (HasFeaturePages)
+                @*#if (HasFeatureMenu)
                 </StilDropdown>
                 ##endif*@
             </StilNav>
@@ -67,10 +92,10 @@
             @*#if (HasCommands && !UseServer)
             <AppCommands @rendermode="InteractiveServer" />
             ##endif*@
-            @*#if (HasNotifications && UseServer)
+            @*#if (HasNotificationBell && UseServer)
             <StilNotificationCenter />
             ##endif*@
-            @*#if (HasNotifications && !UseServer)
+            @*#if (HasNotificationBell && !UseServer)
             <StilNotificationCenter @rendermode="InteractiveServer" />
             ##endif*@
             <StilLanguageSelector Cultures="AppCultures.All" Size="StilSize.Small" AlignEnd />
@@ -109,9 +134,9 @@
         <span class="dismiss">🗙</span>
     </div>
     ##endif*@
-    @*#if (HasNotifications && !UseServer)
+    @*#if ((HasNotificationBell || IsFinance) && !UseServer)
 
-    @* Shows the toasts of the notifications page. *@
+    @* Shows the toasts of the interactive pages. *@
     <StilToastHost @rendermode="InteractiveServer" />
     ##endif*@
 </StilThemeProvider>

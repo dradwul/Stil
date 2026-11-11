@@ -5,7 +5,7 @@ a set of themeable Blazor components built on Stil CSS.
 
 | Template | Short name | What you get |
 | --- | --- | --- |
-| Stil for Blazor App | `stil-app` | A Blazor Web App with Stil set up: a navbar, a color-mode switch, a theme, dialogs and toasts, optional sample pages, and the features you choose (charts, editors, planners and more). |
+| Stil for Blazor App | `stil-app` | A Blazor Web App with Stil set up: a navbar, a color-mode switch, a theme, dialogs and toasts, a starter (admin, dashboard, monitoring, finance or planner) or sample pages, and the features you choose (charts, editors, planners and more). |
 
 > **Status:** early preview (`0.1.x`, prereleases on NuGet). Requires the .NET 10 SDK.
 
@@ -43,8 +43,9 @@ The app references the `Stil` version the templates were released with
 | Option | Values | Default | Description |
 | --- | --- | --- | --- |
 | `--Interactivity` | `Server`, `None` | `Server` | `Server` makes the whole app interactive (Interactive Server). `None` gives static server rendering only. |
+| `--Starter` | `blank`, `admin`, `dashboard`, `monitoring`, `finance`, `planner` | `blank` | A complete app to start from, with its own pages, menu and sample data. See [Starters](#starters). |
 | `--Features` | one or more of the features below, or `all` | none | Extra features, each with what it needs and an example page. See [Features](#features). |
-| `--IncludeSampleContent` | `true`, `false` | `true` | Adds a dashboard with KPI cards (`StilStatCard`) and a `StilDataGrid`, and a form page with an `EditForm` and validation. With `false` the app has one empty Home page. |
+| `--IncludeSampleContent` | `true`, `false` | `true` | Adds a dashboard with KPI cards (`StilStatCard`) and a `StilDataGrid`, and a form page with an `EditForm` and validation. With `false` the app has one empty Home page. Only for `--Starter blank`. |
 | `--Primary` | a CSS color, for example `#7048e8` | Stil's teal (`#34dbbf`) | The brand color. It is set with `AddStil()` in `Program.cs`, so it applies to the whole app. |
 | `--Font` | `lexend`, `br-shape`, `br-cobane`, `br-segma`, `br-sonoma`, `averral`, `sukplena`, `tasa-explorer`, `halcom`, `utara`, `geologica`, `blowreph`, `taster`, `warm-stories`, `system` | `lexend` | The font. Lexend is free for any use (SIL Open Font License) and comes from Google Fonts. The others come from cdnfonts.com: check their license there, the BR fonts are commercial. It is set with `options.Font` in `Program.cs`. `system` downloads nothing and uses the operating system's font. |
 | `--GoogleFont` | a Google font, for example `"Open Sans"` | none | Any Google font by its family name. It replaces `--Font`. |
@@ -55,6 +56,29 @@ The app references the `Stil` version the templates were released with
 | `--no-restore` | | | Skips the restore after creating the app. |
 
 Run `dotnet new stil-app --help` for the full list.
+
+## Starters
+
+`--Starter` gives a complete app to start from instead of the sample pages:
+a set of features with its own pages, a menu and realistic sample data. The
+sample data sits behind a small interface in `Data/`, registered in
+`Program.cs`; register your own implementation there to show real data, and
+the pages stay as they are.
+
+| Starter | Pages | Data | What it shows |
+| --- | --- | --- | --- |
+| `blank` | Dashboard, New order (or one empty page) | `IOrderService` | Today's app: KPI cards, a data grid and a form (`--IncludeSampleContent`). |
+| `admin` | Orders, New order, History | `IOrderService` | Orders in a data grid with filters, totals and CSV export; edit and delete in dialogs; a change history in an activity log; the command palette and the notification bell. |
+| `dashboard` | Overview, Products | `ISalesService` | KPI cards with sparklines, a line chart, stacked bars and a donut; products in a grid with a sparkline per row. Adds `Stil.Charts`. |
+| `monitoring` | Overview, Events | `IMonitoringService` | Gauges, a card with a sparkline per server and a heat map of errors, refreshed every five seconds; an alert under the bell when a server's CPU goes too high; an event log. Adds `Stil.Charts`. |
+| `finance` | Overview, Transactions | `IFinanceService` | Revenue against the budget with the margin on a second axis, budget used per department, month notes in Markdown, and transactions in a grid with grouping, totals and export. Adds `Stil.Charts` and `Stil.Markdown`. |
+| `planner` | Overview, Planner, Bookings, Board, Project plan | | The `calendar`, `schedule`, `kanban` and `gantt` features in the navbar, and the command palette. |
+
+`--Features` adds more on top of a starter, in the Features menu:
+
+```shell
+dotnet new stil-app -n Contoso.Ops --Starter monitoring --Features chat
+```
 
 ## Features
 
@@ -89,9 +113,9 @@ dotnet new stil-app -n Contoso.Ops --Features charts kanban gantt markdown
 dotnet new stil-app -n Contoso.Ops --Features charts --Features kanban
 ```
 
-The feature pages are interactive. With `--Interactivity None` the rest of the
-app stays static: the feature pages and the bell and command palette in the
-navbar get `@rendermode InteractiveServer` of their own, and `Program.cs`
+The feature and starter pages are interactive. With `--Interactivity None` the
+rest of the app stays static: those pages and the bell and command palette in
+the navbar get `@rendermode InteractiveServer` of their own, and `Program.cs`
 turns on server interactivity for them.
 
 ## Examples
@@ -102,6 +126,9 @@ dotnet new stil-app -n Contoso.Shop --Primary "#7048e8" --ColorMode dark
 
 # Static server rendering, no sample pages
 dotnet new stil-app -n Contoso.Site --Interactivity None --IncludeSampleContent false
+
+# A finance app in Swedish
+dotnet new stil-app -n Contoso.Finance --Starter finance --Culture sv
 
 # Planning tools, Markdown notes and a command palette
 dotnet new stil-app -n Contoso.Planning --Features calendar schedule kanban gantt markdown commands
@@ -124,8 +151,11 @@ dotnet new stil-app -n Contoso.Planning --Features calendar schedule kanban gant
   keeps the choice in a cookie, and the data grid shows every row.
 - `Components/Pages/NotFound.razor` and `Error.razor`.
 - With the sample content: `Components/Pages/Home.razor` (the dashboard),
-  `Components/Pages/NewOrder.razor` (the form) and `Data/`, an in-memory
-  order store to replace with your own data access.
+  `Components/Pages/NewOrder.razor` (the form) and `Data/`, with
+  `IOrderService` and an in-memory implementation to replace with your own
+  data access.
+- With a starter: its pages in `Components/Pages/<Starter>/` and its data
+  service in `Data/`.
 - With `--Features`: a page per feature in `Components/Pages/Features/`,
   and `Components/Layout/AppCommands.razor` with the command palette.
 
@@ -137,7 +167,7 @@ for all components and theming.
 `templates/test-templates.mjs` packs `src/Stil.Blazor`, the extra packages and
 this package into a temp folder, installs the template into an isolated
 template hive, creates an app for several option combinations (every feature
-on its own, and all of them with and without interactivity) and builds each
+on its own, all of them, and every starter, with and without interactivity) and builds each
 with `-warnaserror`:
 
 ```shell

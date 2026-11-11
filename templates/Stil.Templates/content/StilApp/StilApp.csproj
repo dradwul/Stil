@@ -9,13 +9,13 @@
 
   <ItemGroup>
     <PackageReference Include="Stil" Version="STIL_PACKAGE_VERSION" />
-<!--#if (HasCharts) -->
+<!--#if (UseCharts) -->
     <PackageReference Include="Stil.Charts" Version="STIL_PACKAGE_VERSION" />
 <!--#endif -->
-<!--#if (HasMarkdown) -->
+<!--#if (UseMarkdown) -->
     <PackageReference Include="Stil.Markdown" Version="STIL_PACKAGE_VERSION" />
 <!--#endif -->
-<!--#if (HasRichText) -->
+<!--#if (UseRichText) -->
     <PackageReference Include="Stil.RichText" Version="STIL_PACKAGE_VERSION" />
 <!--#endif -->
   </ItemGroup>

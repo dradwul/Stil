@@ -1,5 +1,5 @@
 @page "/"
-@inject OrderStore Store
+@inject IOrderService Orders
 
 <PageTitle>Dashboard</PageTitle>
 
@@ -59,7 +59,7 @@
 
     private decimal Revenue => _orders.Where(o => o.Status != OrderStatus.Cancelled).Sum(o => o.Amount);
 
-    protected override void OnInitialized() => _orders = Store.All();
+    protected override void OnInitialized() => _orders = Orders.All();
 
     private int Count(OrderStatus status) => _orders.Count(o => o.Status == status);
 

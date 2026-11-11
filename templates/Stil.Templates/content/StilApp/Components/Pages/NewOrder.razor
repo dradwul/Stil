@@ -1,5 +1,5 @@
 @page "/orders/new"
-@inject OrderStore Store
+@inject IOrderService Orders
 @*#if (UseServer)
 @inject IStilToastService Toasts
 ##endif*@
@@ -13,7 +13,7 @@
 @if (_saved is not null)
 {
     <StilAlert Variant="StilVariant.Success" Title="Order saved" Dismissible>
-        Order #@_saved.Id for @_saved.Customer is on the <a href="">dashboard</a>.
+        Order #@_saved.Id for @_saved.Customer is saved. <a href="">See all orders</a>.
     </StilAlert>
 }
 
@@ -46,7 +46,7 @@
 
     private void Save()
     {
-        Store.Add(Model);
+        Orders.Add(Model);
         Toasts.Success($"Order #{Model.Id} for {Model.Customer} saved.");
         Model = new();
     }
@@ -63,7 +63,7 @@
 
     private void Save()
     {
-        Store.Add(Model);
+        Orders.Add(Model);
         _saved = Model;
         Model = new();
     }

@@ -9,11 +9,29 @@
 
     protected override void OnInitialized() => _commands =
     [
-        @*#if (IncludeSampleContent)
+        @*#if (HasSampleOrders)
         new(L["Nav.Dashboard"], "Pages") { Href = "", Icon = StilIcons.Home },
         new(L["Nav.NewOrder"], "Pages") { Href = "orders/new", Icon = StilIcons.Plus, Keywords = "order create" },
-        ##else
+        ##endif*@
+        @*#if (IsBlank && !IncludeSampleContent)
         new(L["Nav.Home"], "Pages") { Href = "", Icon = StilIcons.Home },
+        ##endif*@
+        @*#if (IsAdmin)
+        new(L["Nav.Orders"], "Pages") { Href = "", Icon = StilIcons.Home, Keywords = "list grid" },
+        new(L["Nav.NewOrder"], "Pages") { Href = "orders/new", Icon = StilIcons.Plus, Keywords = "order create" },
+        new(L["Nav.History"], "Pages") { Href = "history", Keywords = "log changes" },
+        ##endif*@
+        @*#if (IsDashboard || IsMonitoring || IsFinance || IsPlanner)
+        new(L["Nav.Overview"], "Pages") { Href = "", Icon = StilIcons.Home },
+        ##endif*@
+        @*#if (IsDashboard)
+        new(L["Nav.Products"], "Pages") { Href = "products", Keywords = "sales list" },
+        ##endif*@
+        @*#if (IsMonitoring)
+        new(L["Nav.Events"], "Pages") { Href = "events", Keywords = "log alerts" },
+        ##endif*@
+        @*#if (IsFinance)
+        new(L["Nav.Transactions"], "Pages") { Href = "transactions", Keywords = "ledger export" },
         ##endif*@
         @*#if (HasCharts)
         new(L["Nav.Charts"], "Pages") { Href = "charts", Keywords = "revenue graphs" },

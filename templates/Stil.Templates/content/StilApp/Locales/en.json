@@ -1,6 +1,22 @@
 {
   "Nav": {
-    //#if (HasFeaturePages)
+    //#if (IsAdmin)
+    "Orders": "Orders",
+    "History": "History",
+    //#endif
+    //#if (IsDashboard || IsMonitoring || IsFinance || IsPlanner)
+    "Overview": "Overview",
+    //#endif
+    //#if (IsDashboard)
+    "Products": "Products",
+    //#endif
+    //#if (IsMonitoring)
+    "Events": "Events",
+    //#endif
+    //#if (IsFinance)
+    "Transactions": "Transactions",
+    //#endif
+    //#if (HasFeatureMenu)
     "Features": "Features",
     //#endif
     //#if (HasCharts)
