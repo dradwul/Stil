@@ -24,7 +24,8 @@ something usable.
 | 13 | Boards and workspace: kanban, command palette, notifications, recurring events, resources, Gantt | Done |
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | ✅ Done |
 | 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | Planned |
-| V2 | Version 2, Stil Sites: section blocks, page model, a visual page builder, content | Planned (after 1.0) |
+| 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | Planned |
+| V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | Planned (after 1.0) |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -1265,6 +1266,57 @@ a phone.
 **Later, not in this phase:** downloading the app as a zip from the wizard. It
 needs the template run outside the browser, so it waits for a server.
 
+## Phase 16: Stil 1.0
+
+Goal: a `1.0.0` that apps can build on without surprises. Phase 6 prepared
+the release flow, but the packages are still `0.1` previews, and before `1.0`
+a minor version may break things. After `1.0`, breaking changes wait for
+`2.0` (Semantic Versioning), so names and APIs are settled here, once.
+
+**Done when (all parts):** `1.0.0` of every package is on nuget.org, the
+public API baseline is checked in CI, and the migration notes cover every
+breaking change since `0.1.0`.
+
+### Phase 16.1: API review
+
+- [ ] Every public component, parameter, service and type, in all packages:
+  consistent names (`Value`/`ValueChanged`, `Disabled`, `Size`, `Variant`,
+  `…Text` for texts), consistent defaults, and nothing public that should be
+  internal. The changes land together, as one list of breaking changes.
+- [ ] The same review for Stil CSS: class names, token names and the
+  `stil.js` exports.
+- [ ] Remove what is obsolete, and mark experimental what may still change
+  after `1.0` (`[Experimental]`, and "experimental" in the docs).
+
+**Done when:** the list of breaking changes is in the changelog and every
+package builds and passes its tests with them.
+
+### Phase 16.2: Guard the API
+
+- [ ] A public API baseline per package (`PublicAPI.Shipped.txt` and
+  `PublicAPI.Unshipped.txt` with the public API analyzers), so CI fails when
+  the public API changes without the baseline being updated.
+- [ ] A size budget in CI for `stil.min.css`, `stil.js` and the chart
+  stylesheet, so they cannot grow by accident.
+- [ ] Migration notes from `0.1` to `1.0`: every rename and removal, with the
+  new name next to the old.
+
+**Done when:** a renamed public parameter makes CI fail, and the migration
+notes are linked from the README.
+
+### Phase 16.3: Release
+
+- [ ] A last accessibility pass: axe on every docs page, and the main
+  components (forms, dialogs, data grid, calendar, charts, editors) checked
+  with a screen reader and the keyboard only.
+- [ ] Browser check of the samples and the demo in the browsers that
+  CONTRIBUTING.md lists.
+- [ ] Version `1.0.0` in `Directory.Build.props`, the changelog section, and
+  the README status notes changed from "early preview".
+
+**Done when:** the phase's own "done when" above. Publishing the CSS to npm,
+hosting the docs and pushing the tag are owner tasks (see the end).
+
 ---
 
 ## Version 2: Stil Sites (after 1.0)
@@ -1273,11 +1325,13 @@ Goal: Stil builds whole websites, not only apps and dashboards: marketing
 pages, product sites and content pages, made from Stil blocks and edited
 visually. Few Blazor libraries offer this. It is a product rather than a
 component, so it comes in four steps that are each useful on their own, and it
-starts once Phase 15 is done and `1.0` has a stable API.
+starts once Phase 16 has released `1.0`.
 
-Blocks and the page model (V2.1, V2.2) belong in `Stil`. The builder and the
-content tools (V2.3, V2.4) are a package of their own (`Stil.Builder`), so the
-core stays a component library.
+Blocks and the page model (V2.1, V2.2) are open source and belong in `Stil`,
+under the same MIT license as the rest. The builder and the content tools
+(V2.3, V2.4) are a hosted product, Stil Sites, and are not developed in this
+repository; they are listed here because they decide what the blocks and the
+page model must support. Nothing released under MIT moves behind it.
 
 ### Phase V2.1: Section blocks
 
@@ -1309,13 +1363,13 @@ score well in a Lighthouse SEO check.
 
 ### Phase V2.3: The builder
 
-- [ ] A visual editor in `Stil.Builder`: a canvas with the page, blocks dragged
+- [ ] A visual editor: a canvas with the page, blocks dragged
   in from a library and reordered, and a settings panel generated from each
   block's settings (text, Markdown, images, colors, links).
 - [ ] Undo and redo, a desktop and phone preview, drafts and publishing, and
   a history of published versions.
-- [ ] Storage through `IStilPageStore`, which the app implements (a database,
-  files or a headless CMS); Stil ships an in-memory and a file store.
+- [ ] Pages saved in the page model's JSON (V2.2), so a site made in the
+  builder can also be rendered by any app with `StilPage`.
 - [ ] Built with Stil's own components: splitter, wizard, popover, image
   cropper and the Markdown editor.
 
@@ -1368,6 +1422,10 @@ These need the repository or package owner.
   GitHub (see Releases in CONTRIBUTING.md).
 - [x] First release: `0.1.0-preview.1`, published to nuget.org from the tag
   `v0.1.0-preview.1` on 2026-10-30.
+- [ ] Before the next release: add `Stil.Markdown` and `Stil.RichText` to the
+  trusted publishing policy on nuget.org (new package IDs).
+- [ ] For `1.0` (Phase 16): publish `stil-css` to npm, host the docs site,
+  and push the `v1.0.0` tag.
 
 ## CSS backlog (no phase yet)
 
