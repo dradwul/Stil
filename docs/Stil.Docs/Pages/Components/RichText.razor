@@ -1,0 +1,37 @@
+@page "/components/rich-text"
+@using Stil.Docs.Examples.RichText
+
+<DocsHeader Title="Rich text" Eyebrow="Writing">
+    <Lead>Formatted text for people who do not write Markdown, safe to store and show.</Lead>
+</DocsHeader>
+
+<p>
+    <code>Stil.RichText</code> is a package of its own, built on AngleSharp and <a href="components/markdown">Stil.Markdown</a>:
+    <code>dotnet add package Stil.RichText --prerelease</code> and <code>@@using Stil.RichText</code>. Everything the editor
+    sends and the view shows goes through <code>StilRichText.Sanitize</code>, which keeps paragraphs, line breaks, bold,
+    italic, underline, strikethrough, headings, lists, links, quotes and code, drops every attribute except a safe link
+    address, and removes scripts and embedded content. It writes the HTML anew from the parsed document, so nothing from
+    the input is copied through.
+</p>
+
+<h2 id="editor">Write and show</h2>
+<DocExample Type="typeof(ProductDescription)">
+    <p>
+        <code>StilRichTextEditor</code> binds like a field and works with EditForm validation; empty text is null. Its
+        toolbar has bold, italic, heading, lists, quote, code, link and clear formatting, and Ctrl+B, Ctrl+I and Ctrl+K
+        work in the text. Paste from Word, Google Docs or a web page: the structure is kept and the rest is left out.
+        <code>Format="StilRichTextFormat.Markdown"</code> stores Markdown instead of HTML. <code>StilRichTextView</code>
+        shows saved HTML or Markdown with Stil's typography, also in static SSR. The editor needs an interactive render
+        mode.
+    </p>
+</DocExample>
+
+<h2 id="server">On the server</h2>
+<p>
+    <code>StilRichText.Sanitize(html)</code> cleans HTML from anywhere, <code>ToMarkdown(html)</code> and
+    <code>FromMarkdown(markdown)</code> convert, and <code>HasText(html)</code> tells whether there is any visible text.
+</p>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilRichTextEditor)" />
+<ApiTable Type="typeof(StilRichTextView)" />

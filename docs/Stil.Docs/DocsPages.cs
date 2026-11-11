@@ -58,6 +58,7 @@ public static class DocsPages
         new("Writing", StilIcons.Pencil,
         [
             new("Markdown", "components/markdown"),
+            new("Rich text", "components/rich-text"),
         ]),
         new("Boards", StilIcons.Menu,
         [
