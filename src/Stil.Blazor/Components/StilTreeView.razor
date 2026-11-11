@@ -28,7 +28,7 @@
 
     /// <summary>Returns an item's children, or null or an empty sequence for a leaf.</summary>
     [Parameter]
-    public Func<TItem, IEnumerable<TItem>?>? ChildrenSelector { get; set; }
+    public Func<TItem, IEnumerable<TItem>?>? Children { get; set; }
 
     /// <summary>The text of an item. Without it (and without ItemTemplate) the item's ToString() is shown.</summary>
     [Parameter]
@@ -120,7 +120,7 @@
         SelectedItem is { } selected && Equals(KeyOf(selected), key);
 
     private IReadOnlyList<TItem> ChildrenOf(TItem item) =>
-        ChildrenSelector?.Invoke(item)?.ToList() ?? (IReadOnlyList<TItem>)[];
+        Children?.Invoke(item)?.ToList() ?? (IReadOnlyList<TItem>)[];
 
     private List<Node> BuildVisible()
     {

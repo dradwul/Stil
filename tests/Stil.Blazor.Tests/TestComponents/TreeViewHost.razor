@@ -1,5 +1,5 @@
 @* A StilTreeView with two-way bound SelectedItem and ExpandedItems. *@
-<StilTreeView TItem="TreeNode" Items="Roots" ChildrenSelector="n => n.Children" ItemText="n => n.Name" ItemKey="n => n.Id"
+<StilTreeView TItem="TreeNode" Items="Roots" Children="n => n.Children" ItemText="n => n.Name" ItemKey="n => n.Id"
               Label="Files" @bind-SelectedItem="SelectedItem" @bind-ExpandedItems="ExpandedItems" />
 
 @code {

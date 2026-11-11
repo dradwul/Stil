@@ -18,7 +18,7 @@ public class StilNotificationCenterTests
         toasts.Show("Order 1042 was shipped", "Shipped", StilVariant.Info, keep: true);
 
         var kept = Assert.Single(notifications.Notifications);
-        Assert.Equal(("Order 1042 was shipped", "Shipped", StilVariant.Info, false), (kept.Message, kept.Title, kept.Variant, kept.Read));
+        Assert.Equal(("Order 1042 was shipped", "Shipped", StilVariant.Info, false), (kept.Message, kept.Title, kept.Variant, kept.IsRead));
         Assert.Equal(1, notifications.UnreadCount);
     }
 

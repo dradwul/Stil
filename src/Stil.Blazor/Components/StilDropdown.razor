@@ -4,7 +4,7 @@
    Stil for Blazor) closes it on an outside click, on Escape and after choosing an item, and
    moves between items with the arrow keys. *@
 <details @attributes="DetailsAttributes" class="@Classes("stil-dropdown")" open="@(Open && !Disabled)">
-    <summary class="@SummaryClass" aria-label="@AriaLabel"
+    <summary class="@SummaryClass" aria-label="@Label"
              aria-disabled="@StilCssClasses.AriaBool(Disabled)" tabindex="@(Disabled ? -1 : (int?)null)">
         @if (Toggle is not null)
         {
@@ -53,7 +53,7 @@
 
     /// <summary>The accessible name of the toggle when it only shows an icon.</summary>
     [Parameter]
-    public string? AriaLabel { get; set; }
+    public string? Label { get; set; }
 
     /// <summary>The color of the toggle. The default is Primary.</summary>
     [Parameter]

@@ -12,6 +12,32 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 
 ### Changed
 
+- **Breaking, all packages**: the API review before `1.0` (Phase 16.1). Names
+  that broke the library's own rules are changed, once:
+
+  | Was | Is now |
+  | --- | --- |
+  | `StilDropdown.AriaLabel`, `StilPopover.AriaLabel` | `Label` |
+  | `StilPopover.Top` | `DropUp`, as on `StilDropdown` |
+  | `StilKanban.CardTemplate` | `ItemTemplate` |
+  | `StilTreeView.ChildrenSelector`, `StilTreeGrid.ChildrenSelector` | `Children` |
+  | `StilColumn` (the column of `StilTable`) and its `Field` | `StilTableColumn` and `Value` |
+  | `StilStepper.Current` | `Step`, as on `StilWizard` |
+  | `StilNotification.Read` | `IsRead` |
+  | `Gridlines` on the line, bar and scatter charts | `ShowGridlines` |
+  | `--stil-backdrop` | `--stil-color-backdrop` |
+  | `--stil-start`, `--stil-length`, `--stil-col`, `--stil-cols` (placing an event in the week and resource grids) | `--stil-event-start`, `--stil-event-length`, `--stil-event-col`, `--stil-event-cols` |
+  | `--stil-load` (how booked a day is) | `--stil-day-load` |
+
+  Members that are public only so stil.js can call them (the `[JSInvokable]`
+  methods, the `Stil…EventArgs` of the `onstil…` events and
+  `StilConfirmDialogContent`) are hidden from IntelliSense. The Stil for
+  Blazor README lists the naming rules, and the Stil CSS README which stil.js
+  exports are its public API.
+- **Stil for Blazor**: `StilCameraCapture`, `StilScanner`, `StilScanInput`
+  and `StilSignaturePad` are marked experimental in the docs, until they are
+  checked on real devices.
+
 - **Stil CSS and Stil for Blazor**: open dropdown menus and the lists of
   `StilAutocomplete`, `StilMultiSelect` and `StilTimePicker` sit in the
   top layer (stil.js), placed under their toggle or field and following it on

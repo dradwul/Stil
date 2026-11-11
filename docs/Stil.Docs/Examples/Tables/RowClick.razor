@@ -2,10 +2,10 @@
     <StilTable TItem="Order" Items="PageOfOrders" OnRowClick="Open" Caption="Click a row to open the order"
                RowClass="@(o => o.Overdue ? "stil-text-danger" : null)">
         <Columns>
-            <StilColumn Title="Order" Field="@(o => $"#{o.Id}")" />
-            <StilColumn Title="Customer" Field="@(o => o.Customer)" />
-            <StilColumn Title="Payment" Field="@(o => o.Overdue ? "Overdue" : "On time")" />
-            <StilColumn Title="Amount (€)" Field="@(o => o.Amount)" Format="N2" Align="StilTextAlign.End" />
+            <StilTableColumn Title="Order" Value="@(o => $"#{o.Id}")" />
+            <StilTableColumn Title="Customer" Value="@(o => o.Customer)" />
+            <StilTableColumn Title="Payment" Value="@(o => o.Overdue ? "Overdue" : "On time")" />
+            <StilTableColumn Title="Amount (€)" Value="@(o => o.Amount)" Format="N2" Align="StilTextAlign.End" />
         </Columns>
     </StilTable>
     <StilCluster Justify="StilJustify.Between">

@@ -55,7 +55,7 @@ public class StilDropdownTests
             .Add(component => component.Appearance, StilButtonAppearance.Outline)
             .Add(component => component.Size, StilSize.Small)
             .Add(component => component.IconOnly, true)
-            .Add(component => component.AriaLabel, "More actions"));
+            .Add(component => component.Label, "More actions"));
 
         var summary = cut.Find("summary");
         Assert.Equal(["stil-btn", "stil-btn-secondary", "stil-btn-outline", "stil-btn-sm", "stil-btn-icon"], summary.ClassList);

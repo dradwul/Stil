@@ -23,15 +23,15 @@ public class StilTreeGrid<TItem> : StilDataGrid<TItem>
     /// LoadChildren, null means the children are not loaded yet.
     /// </summary>
     [Parameter]
-    public Func<TItem, IEnumerable<TItem>?>? ChildrenSelector
+    public Func<TItem, IEnumerable<TItem>?>? Children
     {
         get => TreeChildren;
         set => TreeChildren = value;
     }
 
     /// <summary>
-    /// Loads a row's children the first time it is expanded (when ChildrenSelector returns null
-    /// for it, or there is no ChildrenSelector). The row shows a spinner meanwhile.
+    /// Loads a row's children the first time it is expanded (when Children returns null
+    /// for it, or there is no Children). The row shows a spinner meanwhile.
     /// </summary>
     [Parameter]
     public Func<TItem, Task<IEnumerable<TItem>>>? LoadChildren

@@ -11,13 +11,13 @@
 </p>
 
 <StilKanban TItem="Job" Items="_jobs" Columns="_columns" Column="j => j.Status" ItemKey="j => j.Id" Title="j => j.Title" OnCardMove="Move">
-    <CardTemplate Context="job">
+    <ItemTemplate Context="job">
         <div class="stil-fw-bold">@job.Title</div>
         <div class="stil-cluster stil-mt-1">
             <StilBadge Variant="@(job.Urgent ? StilVariant.Danger : StilVariant.Secondary)">@(job.Urgent ? "Urgent" : "Normal")</StilBadge>
             <span class="stil-text-muted stil-fs-sm">@job.Owner</span>
         </div>
-    </CardTemplate>
+    </ItemTemplate>
 </StilKanban>
 
 @code {

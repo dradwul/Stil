@@ -1,5 +1,5 @@
 @* Departments roll up into divisions: the division rows show the totals of the rows below them. *@
-<StilTreeGrid @ref="_grid" TItem="CostCentre" Items="_divisions" ChildrenSelector="c => c.Children" ExpandedLevels="1"
+<StilTreeGrid @ref="_grid" TItem="CostCentre" Items="_divisions" Children="c => c.Children" ExpandedLevels="1"
               ItemKey="c => c.Name" Filterable Caption="Budget 2027">
     <Toolbar>
         <StilButton Size="StilSize.Small" Variant="StilVariant.Secondary" Appearance="StilButtonAppearance.Ghost" OnClick="() => _grid.ExpandAllAsync()">Expand all</StilButton>

@@ -16,13 +16,13 @@ else
 }
 
 @code {
-    private readonly List<StilColumn<TItem>> _columns = [];
+    private readonly List<StilTableColumn<TItem>> _columns = [];
 
     /// <summary>The rows.</summary>
     [Parameter]
     public IEnumerable<TItem>? Items { get; set; }
 
-    /// <summary>StilColumn components describing the columns.</summary>
+    /// <summary>StilTableColumn components describing the columns.</summary>
     [Parameter]
     public RenderFragment? Columns { get; set; }
 
@@ -62,7 +62,7 @@ else
     [Parameter]
     public Func<TItem, string?>? RowClass { get; set; }
 
-    internal void AddColumn(StilColumn<TItem> column)
+    internal void AddColumn(StilTableColumn<TItem> column)
     {
         if (!_columns.Contains(column))
         {
@@ -71,7 +71,7 @@ else
         }
     }
 
-    internal void RemoveColumn(StilColumn<TItem> column)
+    internal void RemoveColumn(StilTableColumn<TItem> column)
     {
         if (_columns.Remove(column))
         {

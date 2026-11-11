@@ -4,7 +4,7 @@
    step). Put it inside an EditForm: Next validates only the fields of the current step, so later
    steps do not show errors before the user gets there. *@
 <div @attributes="AdditionalAttributes" class="@Classes("stil-wizard")">
-    <StilStepper Steps="StepItems" Current="Step" OnStepClick="StepClick" />
+    <StilStepper Steps="StepItems" Step="Step" OnStepClick="StepClick" />
     <CascadingValue Value="this" IsFixed="true">
         <div class="stil-wizard-panel" tabindex="-1" @ref="_panel">
             @ChildContent

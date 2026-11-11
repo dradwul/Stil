@@ -16,7 +16,7 @@
 <h2 id="totals">Totals that roll up</h2>
 <DocExample Type="typeof(Budget)">
     <p>
-        <code>Items</code> are the top-level rows and <code>ChildrenSelector</code> returns a row's children.
+        <code>Items</code> are the top-level rows and <code>Children</code> returns a row's children.
         A row with children shows, in each column with an <code>Aggregate</code>, the total of the rows below it that have
         no children of their own; the footer adds up all of those. <code>ExpandedLevels</code> chooses how many levels
         start expanded, and <code>ExpandAllAsync</code> and <code>CollapseAllAsync</code> open and close every row.
@@ -29,7 +29,7 @@
     <p>
         <code>LoadChildren</code> loads a row's children the first time it is expanded, while the row shows a spinner.
         <code>HasChildren</code> tells which rows get an expand toggle before their children are known; a row whose loaded
-        children are none shows as a leaf. With both <code>ChildrenSelector</code> and <code>LoadChildren</code>, a
+        children are none shows as a leaf. With both <code>Children</code> and <code>LoadChildren</code>, a
         selector that returns null means "not loaded yet".
     </p>
 </DocExample>

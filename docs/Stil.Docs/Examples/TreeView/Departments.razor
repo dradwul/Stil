@@ -1,4 +1,4 @@
-<StilTreeView TItem="Department" Items="_departments" ChildrenSelector="d => d.Teams" ItemKey="d => d.Id"
+<StilTreeView TItem="Department" Items="_departments" Children="d => d.Teams" ItemKey="d => d.Id"
               ExpandAll Label="Departments" @bind-SelectedItem="_selected">
     <ItemTemplate>
         <span>@context.Name</span>

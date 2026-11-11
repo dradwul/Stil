@@ -70,7 +70,7 @@ public abstract class StilModalBase<TSelf> : StilComponentBase, IAsyncDisposable
     }
 
     /// <summary>Called by stil.js when the browser closes the dialog, for example on Escape.</summary>
-    [JSInvokable]
+    [JSInvokable, System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public async Task OnDialogClosed()
     {
         _shown = false;

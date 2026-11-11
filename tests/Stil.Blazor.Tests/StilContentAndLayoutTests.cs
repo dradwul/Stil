@@ -137,12 +137,12 @@ public class StilTableTests
     private static RenderFragment Column(string title, Func<Order, object?>? field = null, StilTextAlign align = StilTextAlign.Start,
         string? format = null, RenderFragment<Order>? template = null) => builder =>
     {
-        builder.OpenComponent<StilColumn<Order>>(0);
-        builder.AddComponentParameter(1, nameof(StilColumn<Order>.Title), title);
-        builder.AddComponentParameter(2, nameof(StilColumn<Order>.Field), field);
-        builder.AddComponentParameter(3, nameof(StilColumn<Order>.Align), align);
-        builder.AddComponentParameter(4, nameof(StilColumn<Order>.Format), format);
-        builder.AddComponentParameter(5, nameof(StilColumn<Order>.Template), template);
+        builder.OpenComponent<StilTableColumn<Order>>(0);
+        builder.AddComponentParameter(1, nameof(StilTableColumn<Order>.Title), title);
+        builder.AddComponentParameter(2, nameof(StilTableColumn<Order>.Value), field);
+        builder.AddComponentParameter(3, nameof(StilTableColumn<Order>.Align), align);
+        builder.AddComponentParameter(4, nameof(StilTableColumn<Order>.Format), format);
+        builder.AddComponentParameter(5, nameof(StilTableColumn<Order>.Template), template);
         builder.CloseComponent();
     };
 
@@ -235,7 +235,7 @@ public class StilTableTests
     {
         using var context = new BunitContext();
 
-        Assert.Throws<InvalidOperationException>(() => context.Render<StilColumn<Order>>());
+        Assert.Throws<InvalidOperationException>(() => context.Render<StilTableColumn<Order>>());
     }
 }
 

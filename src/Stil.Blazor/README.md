@@ -2,7 +2,7 @@
 | `StilResourcePlanner<TItem>` | `Resources` (`StilResource`: `Key`, `Name`, `Details`), `Resource`, `@bind-Date`, `FirstHour`/`LastHour`, `Editable`, `OnItemChange` (with the new `Resource`), `OnSlotSelect` (`StilResourceSlot`), `ShowNavigation`. One day, resources as rows and time across. |
 | `StilNotificationCenter` | A bell with the unread count and a popover with the notifications of `IStilNotificationService` (`Add`, `MarkRead`, `MarkAllRead`, `Remove`, `Clear`, `UnreadCount`). Toasts shown with `keep: true` (or `StilOptions.KeepToasts`) are kept there; `MaxNotifications` (50). `Label`, `EmptyText`. |
 | `StilCommandPalette` | `Commands` (`StilCommand`: `Title`, `Group`, `Href` or `Action`, `Keywords`, `Icon`, `Shortcut`), `ShowButton`, `RecentCount` (5), `RecentKey`, `OpenAsync()`. Ctrl+K (Cmd+K) opens it anywhere on the page; the combobox pattern; recent choices in local storage. |
-| `StilKanban<TItem>` | `Items`, `Columns` (`StilKanbanColumn`: `Key`, `Title`, `Limit`), `Column`, `ItemKey`, `Title`, `CardTemplate`, `OnCardMove` (`StilKanbanMove`: `Item`, `From`, `To`, `Index`, `Before`, `After`, `ApplyTo()`), `CollapsedColumns`, `Label`. Cards move by dragging and with the keyboard (Space, arrows, Escape), announced to screen readers. |
+| `StilKanban<TItem>` | `Items`, `Columns` (`StilKanbanColumn`: `Key`, `Title`, `Limit`), `Column`, `ItemKey`, `Title`, `ItemTemplate`, `OnCardMove` (`StilKanbanMove`: `Item`, `From`, `To`, `Index`, `Before`, `After`, `ApplyTo()`), `CollapsedColumns`, `Label`. Cards move by dragging and with the keyboard (Space, arrows, Escape), announced to screen readers. |
 | `StilChat<TItem>` | The activity log's selectors (`Title` is the text) plus `Mine`, `Avatar`, `ItemKey`, `OnSend` (`StilChatMessage`: `Text`, `Files`), `Typing`, `OnTyping`, `AllowAttachments`, `SendOnEnter`, `Height` (28rem), `Disabled`. Oldest first with day separators; stays at the newest message. The transport is the app's. |
 | `StilComments<TItem>` | The thread form of `StilChat`: no sides, a taller composer, Ctrl+Enter posts. |
 | `StilActivityLog<TItem>` | `Items` with `Time`, `Title`, `Actor`, `Type`, `Variant`, `Icon`, `Details` / `DetailsTemplate`; `ItemKey`, `Searchable`, `Filterable`, `Height`, `Virtualize` (`ItemSize`), `Now`. Newest first, grouped by day, relative times; new entries are highlighted and announced. |
@@ -87,6 +87,26 @@ The color components share the `StilVariant` enum: `Primary`, `Secondary`,
 `Small` and `Large`. Every component passes extra HTML attributes to its root
 element. A `class` you supply is added to the component's own classes and
 never replaces them.
+
+The parameters follow a few rules, so a name means the same everywhere:
+
+- `Value` and `ValueChanged` (`@bind-Value`) for what an input holds;
+  other two-way state is named for what it is (`@bind-Open`, `@bind-Step`,
+  `@bind-Date`, `@bind-SelectedItem`).
+- `Label` is the accessible name, or the visible label of a field. A visible
+  text is `…Text` (`EmptyText`, `NextText`), an accessible name of a part is
+  `…Label` (`CloseLabel`), and a text with placeholders is `…Format`.
+- `Items` are the data, `ItemKey` keeps rows apart, `ItemText` or
+  `ItemTemplate` shows one item, and a function per field picks a value from
+  an item (`Title`, `Start`, `Children`).
+- `Disabled`, `Size` (`StilSize`), `Variant` (`StilVariant`) and
+  `Appearance` (`StilButtonAppearance`) mean the same on every component.
+  On a picture or a chart, `Size` and `Height` are lengths instead.
+- `Show…` turns on a part (`ShowNavigation`, `ShowGridlines`), and `On…` is
+  an event (`OnClick`, `OnItemChange`).
+
+Components marked *experimental* below use device features that are not yet
+checked on real phones and scanners. Their API may still change after `1.0`.
 
 ### Icons
 
@@ -193,12 +213,12 @@ A row with `Href` becomes a link, and one with `OnClick` becomes a button.
 ```razor
 <StilTable Items="orders" Hover Caption="Recent orders" OnRowClick="Open">
     <Columns>
-        <StilColumn Title="Order" Field="@(o => $"#{o.Id}")" />
-        <StilColumn Title="Customer" Field="@(o => o.Customer)" />
-        <StilColumn Title="Amount" Field="@(o => o.Amount)" Format="N2" Align="StilTextAlign.End" />
-        <StilColumn Title="Status">
+        <StilTableColumn Title="Order" Value="@(o => $"#{o.Id}")" />
+        <StilTableColumn Title="Customer" Value="@(o => o.Customer)" />
+        <StilTableColumn Title="Amount" Value="@(o => o.Amount)" Format="N2" Align="StilTextAlign.End" />
+        <StilTableColumn Title="Status">
             <Template><StilBadge Variant="StilVariant.Success">@context.Status</StilBadge></Template>
-        </StilColumn>
+        </StilTableColumn>
     </Columns>
 </StilTable>
 ```
@@ -206,7 +226,7 @@ A row with `Href` becomes a link, and one with `OnClick` becomes a button.
 | Component | Parameters |
 | --- | --- |
 | `StilTable<TItem>` | `Items`, `Columns`, `Caption`, `EmptyContent`, `Striped`, `Hover`, `Compact`, `Bordered`, `Responsive` (default true), `OnRowClick`, `RowClass` |
-| `StilColumn<TItem>` | `Title`, `Field` (with `Format`) or `Template`, `Align`, `Class` |
+| `StilTableColumn<TItem>` | `Title`, `Field` (with `Format`) or `Template`, `Align`, `Class` |
 
 The table is a lightweight display component. For sorting, filtering,
 paging and selection, use `StilDataGrid`.
@@ -370,9 +390,9 @@ wrapper work as for the other fields.
 | `StilColorPicker` | `string` (`#rrggbb`) | `Swatches` (Stil's palette by default), `ShowContrast`, `Size`. |
 | `StilMaskedInput` | `string` | `Mask` (`0` digit, `A` letter, `*` any), `Placeholder`, `Size`. `StilMaskedInput.IsComplete(mask, text)` for validation. |
 | `StilPinInput` | `string` | `Length` (6), `Numeric`, `Secret`, `OnComplete`. One input drawn as cells (`autocomplete="one-time-code"`). |
-| `StilPopover` | | `Text` or `Toggle`, `Title`, `ChildContent`, `Top`, `Manual`, `Variant`, `Appearance`, `Size`, `IconOnly`, `AriaLabel`, `OnToggle`. The Popover API, so it works in static SSR. |
+| `StilPopover` | | `Text` or `Toggle`, `Title`, `ChildContent`, `DropUp`, `Manual`, `Variant`, `Appearance`, `Size`, `IconOnly`, `Label`, `OnToggle`. The Popover API, so it works in static SSR. |
 | `StilWizard` / `StilWizardStep` | `@bind-Step` | `OnFinish`, `AllowStepClick`, `BackText`/`NextText`/`FinishText`; a step has `Title`, `Description`, `HeadingLevel` and `Validate`. Inside an `EditForm`, Next validates only the current step's fields. |
-| `StilStepper` | | `Steps` (`StilStepItem`: Title, Description, State), `Current`, `OnStepClick`, `Label`. |
+| `StilStepper` | | `Steps` (`StilStepItem`: Title, Description, State), `Step`, `OnStepClick`, `Label`. |
 
 ### Layout and media
 
@@ -397,7 +417,7 @@ wrapper work as for the other fields.
 | `StilSplitter` | `First`, `Second`, `Vertical`, `@bind-Size` (percent of the first pane), `Min`, `Max`, `Label`. Resized by stil.js with the pointer and keyboard, also in static SSR. |
 | `StilCarousel<TItem>` | `Items`, `ItemTemplate`, `Label`, `@bind-Index`, `Autoplay` (with a pause button, off under reduced motion), `ShowDots`, `Height`, texts. |
 | `StilImageCropper` | `Source`, `AspectRatio`, `Round`, `AllowRotate`, `OutputWidth`, `OutputType`, `Quality`, `Label`. `CropAsync()` returns `StilImageData` (`DataUrl`, `Bytes`, `ContentType`, `FileName(...)`, `OpenReadStream()`). |
-| `StilCameraCapture` | `OnCapture` (`StilImageData`), `BackCamera`, `MaxFileSize`, `TakeText`. Falls back to choosing a photo without a camera. |
+| `StilCameraCapture` | *Experimental.* `OnCapture` (`StilImageData`), `BackCamera`, `MaxFileSize`, `TakeText`. Falls back to choosing a photo without a camera. |
 | `StilPdfViewer` | `Source`, `Title`, `FileName`, `Height`, `ShowPrint`, `ChildContent` (your own renderer). The browser's viewer with download, open and print; a message where the browser cannot show PDFs. |
 
 The cropper and the camera need an interactive render mode.
@@ -468,7 +488,7 @@ Recurring events and time zones are up to the app.
     </StilNavGroup>
 </StilNav>
 
-<StilTreeView TItem="Folder" Items="roots" ChildrenSelector="f => f.Children" ItemText="f => f.Name"
+<StilTreeView TItem="Folder" Items="roots" Children="f => f.Children" ItemText="f => f.Name"
               @bind-SelectedItem="folder" Label="Folders" />
 ```
 
@@ -481,8 +501,8 @@ Recurring events and time zones are up to the app.
 | `StilLanguageSelector` | `Cultures` (for example `["en", "sv", "fi"]`), `Current`, `IconOnly`, `Label`, `Variant`, `Appearance`, `Size`, `AlignEnd`, `DropUp`. A language menu; see [Localization](#localization). |
 | `StilPagination` | `@bind-Page` (1-based), `PageCount` or `TotalItems` + `PageSize`, `MaxVisiblePages` (default 7, with ellipses), `ShowFirstLast`, `HrefTemplate` (links, for example `"orders?page={0}"`), `Size`, `Label`, `PreviousText`/`NextText`/`FirstText`/`LastText` |
 | `StilNavGroup` | `Title`, `Icon`, `@bind-Expanded`, `StilNavLink` children. A collapsible group in a vertical `StilNav`; it opens by itself when one of its links is the current page. |
-| `StilTreeGrid<TItem>` | The data grid's columns and parameters (no grouping or `ItemsProvider`) plus `ChildrenSelector`, `LoadChildren` (on demand, with a spinner), `HasChildren`, `ExpandedLevels`, `ExpandAsync()`, `CollapseAsync()`, `ExpandAllAsync()`, `CollapseAllAsync()`. Rows with children show the totals of the rows below them. The WAI-ARIA treegrid pattern. |
-| `StilTreeView<TItem>` | `Items`, `ChildrenSelector`, `ItemText` or `ItemTemplate`, `ItemIcon`, `@bind-SelectedItem`, `@bind-ExpandedItems`, `ExpandAll`, `ItemKey`, `Label`. The WAI-ARIA tree pattern: arrow keys, Home and End move, Right and Left expand and collapse. |
+| `StilTreeGrid<TItem>` | The data grid's columns and parameters (no grouping or `ItemsProvider`) plus `Children`, `LoadChildren` (on demand, with a spinner), `HasChildren`, `ExpandedLevels`, `ExpandAsync()`, `CollapseAsync()`, `ExpandAllAsync()`, `CollapseAllAsync()`. Rows with children show the totals of the rows below them. The WAI-ARIA treegrid pattern. |
+| `StilTreeView<TItem>` | `Items`, `Children`, `ItemText` or `ItemTemplate`, `ItemIcon`, `@bind-SelectedItem`, `@bind-ExpandedItems`, `ExpandAll`, `ItemKey`, `Label`. The WAI-ARIA tree pattern: arrow keys, Home and End move, Right and Left expand and collapse. |
 | `StilDrawer` | Like `StilDialog` (`@bind-Open`, `Title`, `Footer`, …) plus `Position` (Start, End) and `Width`. A side panel for navigation, filters or details. |
 
 ### Tabs, dropdowns and tooltips
@@ -507,7 +527,7 @@ Recurring events and time zones are up to the app.
 | --- | --- |
 | `StilTabs` | `@bind-ActiveIndex`, or `@bind-ActiveId` with `Id` on each tab; `Appearance` (Underline, Pills); `KeepAlive` (keep inactive panels rendered); `Label`. Arrow keys, Home and End move between tabs; disabled tabs are skipped. |
 | `StilTab` | `Title`, `Id`, `Disabled`. Only the selected tab's content is rendered, unless `KeepAlive` is set. For navigation between pages, use `StilNav` instead of tabs. |
-| `StilDropdown` | `Text` or `Toggle`, `AriaLabel`, `Variant`, `Appearance`, `Size`, `IconOnly`, `AlignEnd`, `DropUp`, `Disabled`, `@bind-Open`, `Items` (`StilMenuItem.Action`, `.Link`, `.Header`, `.Divider`). The arrow keys move between items. |
+| `StilDropdown` | `Text` or `Toggle`, `Label`, `Variant`, `Appearance`, `Size`, `IconOnly`, `AlignEnd`, `DropUp`, `Disabled`, `@bind-Open`, `Items` (`StilMenuItem.Action`, `.Link`, `.Header`, `.Divider`). The arrow keys move between items. |
 | `StilDropdownItem` | `Href` or `OnClick`, `Disabled` |
 | `StilTooltip` | `Text`, `Position` (Top, Bottom). Screen readers do not read it, so the wrapped element needs its own accessible name. |
 
@@ -523,9 +543,9 @@ Recurring events and time zones are up to the app.
 | `StilProgress` | `Value`, `Max` (default 100), `Label`, `ShowValue`, `Variant`, `Size` (Medium, Large) |
 | `StilQrCode` | `Value`, `ErrorCorrection` (Low, Medium, Quartile, High), `Size` (default 10rem), `Label`. An SVG drawn in C#, also in static SSR. |
 | `StilBarcode` | `Value`, `Format` (Code128, Ean13, Ean8), `ShowText`, `Width` (default 16rem), `Label`. `StilCodes` has the encoders for PDFs and label printers. |
-| `StilScanner` | `OnScan` (`StilScanResult`: `Value`, `Format`, `Source`), `Formats`, `Sound`, `Cooldown`, `FrontCamera`, `ManualEntry`. Reads codes with the camera through the browser's `BarcodeDetector`, or a decoder the app registers with stil.js's `registerScanDecoder`; switches cameras and has a flashlight button. |
-| `StilScanInput` | A text field for handheld USB and Bluetooth scanners: `OnScan` on Enter, with `Source` Scanner or Keyboard (`MaxKeyInterval`, 50 ms), `ClearOnScan`, `AutoFocus`, and the usual field parameters. Enter never submits the form. |
-| `StilSignaturePad` | `@bind-Value` (`StilSignature`: `Strokes`, `TypedName`, `Width`, `Height`, `ToSvg()`; null when empty, so `[Required]` works), `Placeholder`, `NamePlaceholder`, `ToPngAsync()`. Drawn with pointer events and pressure, with undo and clear; typing a name is the keyboard alternative. Not a qualified electronic signature. |
+| `StilScanner` | *Experimental.* `OnScan` (`StilScanResult`: `Value`, `Format`, `Source`), `Formats`, `Sound`, `Cooldown`, `FrontCamera`, `ManualEntry`. Reads codes with the camera through the browser's `BarcodeDetector`, or a decoder the app registers with stil.js's `registerScanDecoder`; switches cameras and has a flashlight button. |
+| `StilScanInput` | *Experimental.* A text field for handheld USB and Bluetooth scanners: `OnScan` on Enter, with `Source` Scanner or Keyboard (`MaxKeyInterval`, 50 ms), `ClearOnScan`, `AutoFocus`, and the usual field parameters. Enter never submits the form. |
+| `StilSignaturePad` | *Experimental.* `@bind-Value` (`StilSignature`: `Strokes`, `TypedName`, `Width`, `Height`, `ToSvg()`; null when empty, so `[Required]` works), `Placeholder`, `NamePlaceholder`, `ToPngAsync()`. Drawn with pointer events and pressure, with undo and clear; typing a name is the keyboard alternative. Not a qualified electronic signature. |
 | `StilSpinner` | `Size` (Medium, Small), `Variant`, `Label` (for screen readers) |
 
 ### Dialogs
@@ -589,7 +609,7 @@ Warning toasts use `role="alert"`; the others use `"status"`.
 | `stil-alert` | `StilAlert` |
 | `stil-badge`, `stil-avatar` | `StilBadge`, `StilAvatar` |
 | `stil-list`, `stil-list-item` | `StilList`, `StilListItem` |
-| `stil-table` | `StilTable` with `StilColumn` |
+| `stil-table` | `StilTable` with `StilTableColumn` |
 | `stil-data-grid` | `StilDataGrid` with `StilDataGridColumn` and `StilDataGridTemplateColumn`; with `stil-tree-grid`, `StilTreeGrid` |
 | `stil-combobox`, `stil-multi-select`, `stil-chip` | `StilAutocomplete`, `StilMultiSelect` |
 | `stil-date-range` | `StilDateRangePicker` |

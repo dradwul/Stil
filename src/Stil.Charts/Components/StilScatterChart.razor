@@ -85,7 +85,7 @@
 
     /// <summary>Draws gridlines at the ticks of both axes. The default is true.</summary>
     [Parameter]
-    public bool Gridlines { get; set; } = true;
+    public bool ShowGridlines { get; set; } = true;
 
     /// <summary>The radius of the largest bubble in pixels. The default is 24.</summary>
     [Parameter]
@@ -329,7 +329,7 @@
                 <g class="stil-chart-axes">
                     @foreach (var tick in _y.Ticks)
                     {
-                        if (Gridlines && tick != _y.Baseline)
+                        if (ShowGridlines && tick != _y.Baseline)
                         {
                             <line class="stil-chart-gridline" x1="0" x2="100%" y1="@Crisp(layout.Y(_y, tick))" y2="@Crisp(layout.Y(_y, tick))" />
                         }
@@ -339,7 +339,7 @@
                     {
                         var tick = _x.Ticks[t];
                         var x = ChartText.Pct(_x.Fraction(tick));
-                        if (Gridlines && tick != _x.Baseline)
+                        if (ShowGridlines && tick != _x.Baseline)
                         {
                             <line class="stil-chart-gridline" x1="@x" x2="@x" y1="@ChartText.N(layout.PlotTop)" y2="@ChartText.N(layout.PlotBottom)" />
                         }

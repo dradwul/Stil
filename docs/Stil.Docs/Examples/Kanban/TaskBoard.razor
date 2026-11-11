@@ -1,12 +1,12 @@
 @* A small board. OnCardMove applies the move to the list, which keeps the cards in board order. *@
 <StilKanban TItem="Job" Items="_tasks" Columns="_columns" Column="t => t.Status" ItemKey="t => t.Id" Title="t => t.Title" OnCardMove="Move">
-    <CardTemplate Context="task">
+    <ItemTemplate Context="task">
         <div class="stil-fw-bold">@task.Title</div>
         <div class="stil-cluster stil-mt-1">
             <StilBadge Variant="@(task.Urgent ? StilVariant.Danger : StilVariant.Secondary)">@(task.Urgent ? "Urgent" : "Normal")</StilBadge>
             <span class="stil-text-muted stil-fs-sm">@task.Owner</span>
         </div>
-    </CardTemplate>
+    </ItemTemplate>
 </StilKanban>
 
 @code {

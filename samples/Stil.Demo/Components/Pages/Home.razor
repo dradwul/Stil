@@ -154,14 +154,14 @@
                     <StilTable TItem="DemoOrder" Items="PagedOrders" Hover Compact="_compact" Caption="Click a row to open it"
                                OnRowClick="@(order => Toasts.Info($"Order #{order.Id}: {order.Customer}"))">
                         <Columns>
-                            <StilColumn Title="Order" Field="@(o => $"#{o.Id}")" />
-                            <StilColumn Title="Customer">
+                            <StilTableColumn Title="Order" Value="@(o => $"#{o.Id}")" />
+                            <StilTableColumn Title="Customer">
                                 <Template><StilCluster><StilAvatar Name="@context.Customer" Size="StilSize.Small" />@context.Customer</StilCluster></Template>
-                            </StilColumn>
-                            <StilColumn Title="Amount" Field="@(o => o.Amount)" Format="N2" Align="StilTextAlign.End" />
-                            <StilColumn Title="Status">
+                            </StilTableColumn>
+                            <StilTableColumn Title="Amount" Value="@(o => o.Amount)" Format="N2" Align="StilTextAlign.End" />
+                            <StilTableColumn Title="Status">
                                 <Template><StilBadge Variant="@(context.Status == "Paid" ? StilVariant.Success : StilVariant.Warning)">@context.Status</StilBadge></Template>
-                            </StilColumn>
+                            </StilTableColumn>
                         </Columns>
                     </StilTable>
                 </div>
@@ -427,7 +427,7 @@
     <h2 id="trees">Tree view and navigation groups</h2>
     <div class="stil-grid">
         <div class="stil-col-md-6">
-            <StilTreeView TItem="DemoNode" Items="_tree" ChildrenSelector="n => n.Children" ItemText="n => n.Name"
+            <StilTreeView TItem="DemoNode" Items="_tree" Children="n => n.Children" ItemText="n => n.Name"
                           ItemIcon="n => n.Children.Length > 0 ? StilIcons.Folder : StilIcons.File"
                           @bind-SelectedItem="_node" @bind-ExpandedItems="_expanded" Label="Project files" />
             <p class="stil-text-muted stil-fs-sm stil-mt-2">Selected: @(_node?.Name ?? "nothing"). Use the arrow keys, Home and End.</p>

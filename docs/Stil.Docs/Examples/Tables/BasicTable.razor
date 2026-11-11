@@ -1,9 +1,9 @@
 <StilTable Items="_orders" Caption="Recent orders">
     <Columns>
-        <StilColumn Title="Order" Field="@(o => $"#{o.Id}")" />
-        <StilColumn Title="Customer" Field="@(o => o.Customer)" />
-        <StilColumn Title="Date" Field="@(o => o.Date)" Format="d MMM yyyy" />
-        <StilColumn Title="Amount (€)" Field="@(o => o.Amount)" Format="N2" Align="StilTextAlign.End" />
+        <StilTableColumn Title="Order" Value="@(o => $"#{o.Id}")" />
+        <StilTableColumn Title="Customer" Value="@(o => o.Customer)" />
+        <StilTableColumn Title="Date" Value="@(o => o.Date)" Format="d MMM yyyy" />
+        <StilTableColumn Title="Amount (€)" Value="@(o => o.Amount)" Format="N2" Align="StilTextAlign.End" />
     </Columns>
 </StilTable>
 

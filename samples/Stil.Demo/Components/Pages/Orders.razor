@@ -76,7 +76,7 @@
         <StilDataGridEditColumn TItem="Order" Frozen="StilFrozen.End" Reorderable="false" Resizable="false"
                                 EditLabel="@(o => $"Edit order {o.Id}")" />
         <StilDataGridTemplateColumn Title="Actions" Align="StilTextAlign.End" Frozen="StilFrozen.End" Hideable="false" Reorderable="false" Resizable="false">
-            <StilDropdown Text="⋯" AriaLabel="@($"Actions for order {context.Id}")" Appearance="StilButtonAppearance.Ghost"
+            <StilDropdown Text="⋯" Label="@($"Actions for order {context.Id}")" Appearance="StilButtonAppearance.Ghost"
                           Variant="StilVariant.Secondary" Size="StilSize.Small" AlignEnd IconOnly>
                 <StilDropdownItem OnClick="() => _viewing = context">Details…</StilDropdownItem>
                 <StilDropdownItem OnClick="() => Edit(context)">Edit all fields…</StilDropdownItem>

@@ -11,7 +11,7 @@ public sealed record StilNotification(string Message, string? Title, StilVariant
     public string? Href { get; init; }
 
     /// <summary>True once the user has read it.</summary>
-    public bool Read { get; internal set; }
+    public bool IsRead { get; internal set; }
 }
 
 /// <summary>
@@ -47,7 +47,7 @@ internal sealed class StilNotificationService(StilOptions options) : IStilNotifi
 
     public IReadOnlyList<StilNotification> Notifications => _notifications;
 
-    public int UnreadCount => _notifications.Count(n => !n.Read);
+    public int UnreadCount => _notifications.Count(n => !n.IsRead);
 
     public event Action? NotificationsChanged;
 
@@ -66,17 +66,17 @@ internal sealed class StilNotificationService(StilOptions options) : IStilNotifi
 
     public void MarkRead(StilNotification notification)
     {
-        if (!notification.Read && _notifications.Contains(notification))
+        if (!notification.IsRead && _notifications.Contains(notification))
         {
-            notification.Read = true;
+            notification.IsRead = true;
             NotificationsChanged?.Invoke();
         }
     }
 
     public void MarkAllRead()
     {
-        var unread = _notifications.Where(n => !n.Read).ToList();
-        unread.ForEach(n => n.Read = true);
+        var unread = _notifications.Where(n => !n.IsRead).ToList();
+        unread.ForEach(n => n.IsRead = true);
         if (unread.Count > 0)
         {
             NotificationsChanged?.Invoke();

@@ -328,7 +328,7 @@
     [Fact]
     public void GridlinesCanBeTurnedOff()
     {
-        var cut = Render(@<StilLineChart Items="_sales" Category="s => s.Month" Gridlines="false">
+        var cut = Render(@<StilLineChart Items="_sales" Category="s => s.Month" ShowGridlines="false">
             <StilChartSeries Name="Last year" Value="s => s.LastYear" />
         </StilLineChart>);
 

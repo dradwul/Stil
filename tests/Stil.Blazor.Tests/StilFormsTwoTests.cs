@@ -330,7 +330,7 @@ public class StilFormsTwoTests
 
         var cut = context.Render<StilStepper>(parameters => parameters
             .Add(component => component.Steps, new StilStepItem[] { new("Account"), new("Address", State: StilStepState.Error), new("Confirm") })
-            .Add(component => component.Current, 2)
+            .Add(component => component.Step, 2)
             .Add(component => component.OnStepClick, (int index) => clicked = index));
 
         var steps = cut.FindAll(".stil-step");

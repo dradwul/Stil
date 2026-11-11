@@ -1,5 +1,5 @@
 @* A tree grid of budget lines: divisions with departments, rolled up into totals. *@
-<StilTreeGrid @ref="Grid" TItem="BudgetLine" Items="Items" ChildrenSelector="ChildrenSelector" LoadChildren="LoadChildren"
+<StilTreeGrid @ref="Grid" TItem="BudgetLine" Items="Items" Children="Children" LoadChildren="LoadChildren"
               ExpandedLevels="ExpandedLevels" Filterable="Filterable" ItemKey="l => l.Name" Caption="Budget">
     <Columns>
         <StilDataGridColumn Property="l => l.Name" Title="Cost centre" />
@@ -14,7 +14,7 @@
     public List<BudgetLine> Items { get; set; } = [];
 
     [Parameter]
-    public Func<BudgetLine, IEnumerable<BudgetLine>?>? ChildrenSelector { get; set; } = line => line.Children;
+    public Func<BudgetLine, IEnumerable<BudgetLine>?>? Children { get; set; } = line => line.Children;
 
     [Parameter]
     public Func<BudgetLine, Task<IEnumerable<BudgetLine>>>? LoadChildren { get; set; }

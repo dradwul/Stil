@@ -59,7 +59,7 @@
     }
 
     /// <summary>Called by stil.js when Enter is pressed; returns whether to empty the field.</summary>
-    [JSInvokable]
+    [JSInvokable, System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public async Task<bool> OnEnter(string value, bool fromScanner)
     {
         var code = value.Trim();

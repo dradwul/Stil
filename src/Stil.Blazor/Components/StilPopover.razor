@@ -5,7 +5,7 @@
    stil.js (loaded automatically) places the panel under or above the button. *@
 <span class="stil-popover-anchor">
     <button type="button" class="@StilCssClasses.Button(Variant, Appearance, Size, IconOnly)" popovertarget="@PanelId"
-            aria-label="@AriaLabel" disabled="@Disabled">
+            aria-label="@Label" disabled="@Disabled">
         @if (Toggle is not null)
         {
             @Toggle
@@ -16,7 +16,7 @@
         }
     </button>
     <div @attributes="PanelAttributes" id="@PanelId" popover="@(Manual ? "manual" : "auto")" role="@Role"
-         aria-labelledby="@(string.IsNullOrWhiteSpace(Title) ? null : TitleId)" data-stil-placement="@(Top ? "top" : null)"
+         aria-labelledby="@(string.IsNullOrWhiteSpace(Title) ? null : TitleId)" data-stil-placement="@(DropUp ? "top" : null)"
          class="@Classes("stil-popover")">
         @if (!string.IsNullOrWhiteSpace(Title))
         {
@@ -43,7 +43,7 @@
 
     /// <summary>The button's accessible name, needed when it only shows an icon.</summary>
     [Parameter]
-    public string? AriaLabel { get; set; }
+    public string? Label { get; set; }
 
     /// <summary>A heading at the top of the panel; it also names the panel.</summary>
     [Parameter]
@@ -55,7 +55,7 @@
 
     /// <summary>Opens the panel above the button instead of below. It flips when there is no room.</summary>
     [Parameter]
-    public bool Top { get; set; }
+    public bool DropUp { get; set; }
 
     /// <summary>
     /// Keeps the panel open on an outside click and Escape; it gets a close button instead. Use it
@@ -76,7 +76,7 @@
     [Parameter]
     public StilSize Size { get; set; }
 
-    /// <summary>A square button for an icon; set AriaLabel.</summary>
+    /// <summary>A square button for an icon; set Label.</summary>
     [Parameter]
     public bool IconOnly { get; set; }
 

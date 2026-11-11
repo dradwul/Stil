@@ -18,7 +18,7 @@
                 <g class="stil-chart-axes">
                     @foreach (var tick in Scale.Ticks)
                     {
-                        if (Gridlines && tick != Scale.Baseline)
+                        if (ShowGridlines && tick != Scale.Baseline)
                         {
                             <line class="stil-chart-gridline" x1="0" x2="100%" y1="@Crisp(layout.Y(Scale, tick))" y2="@Crisp(layout.Y(Scale, tick))" />
                         }
@@ -80,7 +80,7 @@
                     {
                         var tick = Scale.Ticks[t];
                         var x = ChartText.Pct(Scale.Fraction(tick));
-                        if (Gridlines && tick != Scale.Baseline)
+                        if (ShowGridlines && tick != Scale.Baseline)
                         {
                             <line class="stil-chart-gridline" x1="@x" x2="@x" y1="@ChartText.N(layout.PlotTop)" y2="@ChartText.N(layout.PlotBottom)" />
                         }

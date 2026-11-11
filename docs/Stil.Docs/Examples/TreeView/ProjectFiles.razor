@@ -1,4 +1,4 @@
-<StilTreeView TItem="Node" Items="_tree" ChildrenSelector="n => n.Children" ItemText="n => n.Name"
+<StilTreeView TItem="Node" Items="_tree" Children="n => n.Children" ItemText="n => n.Name"
               ItemIcon="n => n.Children.Length > 0 ? StilIcons.Folder : StilIcons.File"
               @bind-SelectedItem="_selected" @bind-ExpandedItems="_expanded" Label="Project files" />
 <p class="stil-text-muted stil-fs-sm stil-mt-2 stil-mb-0">

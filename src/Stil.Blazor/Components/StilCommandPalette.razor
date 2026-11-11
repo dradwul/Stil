@@ -143,11 +143,11 @@
     }
 
     /// <summary>Called by stil.js on Ctrl+K or Cmd+K.</summary>
-    [JSInvokable]
+    [JSInvokable, System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public Task OpenFromKey() => _open ? CloseAsync() : OpenAsync();
 
     /// <summary>Called by stil.js when the dialog closes, whoever closed it.</summary>
-    [JSInvokable]
+    [JSInvokable, System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public void OnDialogClosed()
     {
         _open = false;

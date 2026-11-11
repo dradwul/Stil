@@ -24,7 +24,7 @@ public abstract partial class StilCartesianChartBase<TItem> : StilChartBase<TIte
 
     /// <summary>Draws a gridline at every value tick. The default is true.</summary>
     [Parameter]
-    public bool Gridlines { get; set; } = true;
+    public bool ShowGridlines { get; set; } = true;
 
     /// <summary>A format string for the value axis ticks. The default is Format, or a number with as many decimals as the ticks need.</summary>
     [Parameter]

@@ -9,8 +9,8 @@
             var index = i;
             var step = _steps[i];
             var state = StateOf(index, step);
-            <li class="@StepClass(state)" aria-current="@(index == Current ? "step" : null)">
-                @if (OnStepClick.HasDelegate && state == StilStepState.Done && index != Current)
+            <li class="@StepClass(state)" aria-current="@(index == Step ? "step" : null)">
+                @if (OnStepClick.HasDelegate && state == StilStepState.Done && index != Step)
                 {
                     <button type="button" class="stil-step-button" @onclick="() => OnStepClick.InvokeAsync(index)">@StepContent(index, step, state)</button>
                 }
@@ -32,7 +32,7 @@
 
     /// <summary>The index of the current step, starting at 0.</summary>
     [Parameter]
-    public int Current { get; set; }
+    public int Step { get; set; }
 
     /// <summary>Raised with a step's index when a done step is clicked; without it the steps are plain text.</summary>
     [Parameter]
@@ -46,7 +46,7 @@
 
     private StilStepState StateOf(int index, StilStepItem step) => step.State switch
     {
-        StilStepState.Auto when index < Current => StilStepState.Done,
+        StilStepState.Auto when index < Step => StilStepState.Done,
         StilStepState.Auto => StilStepState.Upcoming,
         var explicitState => explicitState
     };

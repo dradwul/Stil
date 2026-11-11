@@ -94,7 +94,7 @@
     }
 
     /// <summary>Called by stil.js with each finished stroke: x, y and pressure for each point.</summary>
-    [JSInvokable]
+    [JSInvokable, System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public async Task OnStroke(double[] points, double width, double height)
     {
         if (points.Length < 3 || Disabled)

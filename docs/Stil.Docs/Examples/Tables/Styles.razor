@@ -7,9 +7,9 @@
     </StilCluster>
     <StilTable Items="_stores" Striped="_striped" Hover="_hover" Compact="_compact" Bordered="_bordered">
         <Columns>
-            <StilColumn Title="Store" Field="@(s => s.City)" />
-            <StilColumn Title="Country" Field="@(s => s.Country)" />
-            <StilColumn Title="Staff" Field="@(s => s.Staff)" Align="StilTextAlign.End" />
+            <StilTableColumn Title="Store" Value="@(s => s.City)" />
+            <StilTableColumn Title="Country" Value="@(s => s.Country)" />
+            <StilTableColumn Title="Staff" Value="@(s => s.Staff)" Align="StilTextAlign.End" />
         </Columns>
     </StilTable>
 </div>

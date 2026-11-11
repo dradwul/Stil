@@ -7,7 +7,7 @@
    WebAssembly (see StilCulture.ApplyStoredAsync). Then the page reloads in that language. Without
    the script, the link still shows the page once in that language through ?culture=. *@
 <StilDropdown Variant="Variant" Appearance="Appearance" Size="Size" IconOnly="IconOnly" AlignEnd="AlignEnd" DropUp="DropUp"
-              AriaLabel="@(IconOnly ? $"{Localize(Label, "LanguageSelector.Label")}: {CurrentName}" : null)"
+              Label="@(IconOnly ? $"{Localize(Label, "LanguageSelector.Label")}: {CurrentName}" : null)"
               @attributes="AdditionalAttributes" class="stil-language-selector">
     <Toggle>
         <StilIcon Name="@StilIcons.Globe" />

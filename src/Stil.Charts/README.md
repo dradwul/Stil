@@ -65,7 +65,7 @@ in the current culture), `CategoryFormat`, `ShowLegend`, `DataTable`,
 `Summary` and the texts (`ShowDataText`, `EmptyText`, `CategoryText`,
 `MissingText`) for other languages. Line and bar charts also have
 `CategoryAxisTitle`, `ValueAxisTitle`, `Min`, `Max`, `TickFormat` and
-`Gridlines`, and a second value axis at the right for series with
+`ShowGridlines`, and a second value axis at the right for series with
 `SecondaryAxis="true"` (`SecondaryAxisTitle`, `SecondaryMin`, `SecondaryMax`,
 `SecondaryTickFormat`). The scatter chart has its own axis parameters (`XAxisTitle`,
 `YAxisTitle`, `XMin`, `XMax`, `YMin`, `YMax`, `XFormat`).

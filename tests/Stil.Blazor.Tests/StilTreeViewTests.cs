@@ -17,7 +17,7 @@ public class StilTreeViewTests
         {
             parameters
                 .Add(component => component.Items, roots ?? TreeNode.Sample())
-                .Add(component => component.ChildrenSelector, node => node.Children)
+                .Add(component => component.Children, node => node.Children)
                 .Add(component => component.ItemText, node => node.Name);
             configure?.Invoke(parameters);
         });
@@ -175,7 +175,7 @@ public class StilTreeViewTests
         Assert.Single(Row(Item(cut, "Node Docs")).Children, child => child.ClassList.Contains("stil-icon"));
         Assert.DoesNotContain(Row(Item(cut, "Node Readme")).Children, child => child.ClassList.Contains("stil-icon"));
 
-        // Without ChildrenSelector every item is a leaf.
+        // Without Children every item is a leaf.
         Assert.Empty(cut.FindAll("[aria-expanded]"));
 
         var templated = RenderTree(context, parameters => parameters

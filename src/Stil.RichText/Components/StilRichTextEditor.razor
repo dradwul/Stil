@@ -93,7 +93,7 @@
     }
 
     /// <summary>Called by stil.js shortly after the content changes.</summary>
-    [JSInvokable]
+    [JSInvokable, System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public async Task OnHtml(string html)
     {
         var clean = StilRichText.Sanitize(html);

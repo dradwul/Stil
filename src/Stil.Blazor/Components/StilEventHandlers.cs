@@ -1,8 +1,10 @@
+using System.ComponentModel;
 using Microsoft.AspNetCore.Components;
 
 namespace Stil.Blazor.Components;
 
 /// <summary>Arguments of the <c>@onstiltoggle</c> event: the new open state of a &lt;details&gt; element.</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public sealed class StilToggleEventArgs : EventArgs
 {
     public bool Open { get; set; }
@@ -12,6 +14,7 @@ public sealed class StilToggleEventArgs : EventArgs
 /// Arguments of the <c>@onstilcalendaredge</c> event: the arrow key that moved past the first or
 /// last day of a month grid, and that day as yyyy-MM-dd.
 /// </summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public sealed class StilCalendarEdgeEventArgs : EventArgs
 {
     public string Key { get; set; } = "";
@@ -22,6 +25,7 @@ public sealed class StilCalendarEdgeEventArgs : EventArgs
 /// <summary>
 /// Arguments of the <c>@onstilweekedit</c> event: an event was dragged in an editable week grid.
 /// </summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public sealed class StilWeekEditEventArgs : EventArgs
 {
     /// <summary>"move", "resize" or "create".</summary>
@@ -41,18 +45,21 @@ public sealed class StilWeekEditEventArgs : EventArgs
 }
 
 /// <summary>Arguments of the <c>@onstilsplit</c> event: a splitter's first pane is now this size, in percent.</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public sealed class StilSplitEventArgs : EventArgs
 {
     public double Size { get; set; }
 }
 
 /// <summary>Arguments of the <c>@onstilslide</c> event: the index of the slide a carousel now shows.</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public sealed class StilSlideEventArgs : EventArgs
 {
     public int Index { get; set; }
 }
 
 /// <summary>Arguments of the <c>@onstilcolumnresize</c> event: a data grid column's new width in pixels.</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public sealed class StilColumnResizeEventArgs : EventArgs
 {
     public string Key { get; set; } = "";
@@ -61,6 +68,7 @@ public sealed class StilColumnResizeEventArgs : EventArgs
 }
 
 /// <summary>Arguments of the <c>@onstilcolumnmove</c> event: a column was dragged before another one (or to the end when Before is null).</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public sealed class StilColumnMoveEventArgs : EventArgs
 {
     public string Key { get; set; } = "";
@@ -69,12 +77,14 @@ public sealed class StilColumnMoveEventArgs : EventArgs
 }
 
 /// <summary>Arguments of the <c>@onstilcropzoom</c> event: the zoom of an image cropper after the wheel or a key changed it.</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public sealed class StilCropZoomEventArgs : EventArgs
 {
     public double Zoom { get; set; }
 }
 
 /// <summary>Arguments of the <c>@onstilcardmove</c> event: a kanban card dropped by dragging.</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public sealed class StilCardMoveEventArgs : EventArgs
 {
     /// <summary>The data-stil-item attribute of the card.</summary>
@@ -101,6 +111,7 @@ public sealed class StilCardMoveEventArgs : EventArgs
 [EventHandler("onstilcolumnmove", typeof(StilColumnMoveEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
 [EventHandler("onstilcropzoom", typeof(StilCropZoomEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
 [EventHandler("onstilcardmove", typeof(StilCardMoveEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static class StilEventHandlers
 {
 }

@@ -1,7 +1,7 @@
 <StilTable Items="_returns" Compact>
     <Columns>
-        <StilColumn Title="Return" Field="@(r => r.Id)" />
-        <StilColumn Title="Reason" Field="@(r => r.Reason)" />
+        <StilTableColumn Title="Return" Value="@(r => r.Id)" />
+        <StilTableColumn Title="Reason" Value="@(r => r.Reason)" />
     </Columns>
     <EmptyContent>No returns this week. <a href="components/data-grid">See all orders</a>.</EmptyContent>
 </StilTable>

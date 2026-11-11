@@ -1,22 +1,22 @@
 <StilTable Items="_orders">
     <Columns>
-        <StilColumn Title="Order" Field="@(o => $"#{o.Id}")" />
-        <StilColumn Title="Customer">
+        <StilTableColumn Title="Order" Value="@(o => $"#{o.Id}")" />
+        <StilTableColumn Title="Customer">
             <Template>
                 <StilCluster>
                     <StilAvatar Name="@context.Contact" Size="StilSize.Small" />
                     <span>@context.Customer</span>
                 </StilCluster>
             </Template>
-        </StilColumn>
-        <StilColumn Title="Status">
+        </StilTableColumn>
+        <StilTableColumn Title="Status">
             <Template>
                 <StilBadge Variant="@(context.Paid ? StilVariant.Success : StilVariant.Warning)" Subtle>
                     @(context.Paid ? "Paid" : "Pending")
                 </StilBadge>
             </Template>
-        </StilColumn>
-        <StilColumn Title="Amount (€)" Field="@(o => o.Amount)" Format="N2" Align="StilTextAlign.End" />
+        </StilTableColumn>
+        <StilTableColumn Title="Amount (€)" Value="@(o => o.Amount)" Format="N2" Align="StilTextAlign.End" />
     </Columns>
 </StilTable>
 

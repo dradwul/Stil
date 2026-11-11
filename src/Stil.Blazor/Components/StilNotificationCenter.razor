@@ -33,7 +33,7 @@
             <ul class="stil-notification-list">
                 @foreach (var notification in Notifications.Notifications)
                 {
-                    <li class="@(notification.Read ? "stil-notification" : "stil-notification stil-notification-unread")" @key="notification.Id">
+                    <li class="@(notification.IsRead ? "stil-notification" : "stil-notification stil-notification-unread")" @key="notification.Id">
                         <span class="stil-log-marker @StilCssClasses.Variant("stil-log-marker", notification.Variant)" aria-hidden="true"></span>
                         <button type="button" class="stil-notification-body" @onclick="() => Open(notification)">
                             @if (!string.IsNullOrWhiteSpace(notification.Title))
@@ -44,7 +44,7 @@
                             <time class="stil-notification-time" datetime="@notification.Time.ToString("s", System.Globalization.CultureInfo.InvariantCulture)">
                                 @StilRelativeTime.Format(notification.Time, Now ?? DateTime.Now, key => Localize(null, key), TextCulture, withDate: true)
                             </time>
-                            @if (!notification.Read)
+                            @if (!notification.IsRead)
                             {
                                 <span class="stil-visually-hidden">, @Localize(null, "Notifications.Unread")</span>
                             }
@@ -89,7 +89,7 @@
     private void OnChanged()
     {
         var newest = Notifications.Notifications.FirstOrDefault();
-        if (newest is not null && newest.Id != _newest && !newest.Read)
+        if (newest is not null && newest.Id != _newest && !newest.IsRead)
         {
             _announcement = string.Format(TextCulture, Localize(null, "Notifications.NewFormat"), newest.Title ?? newest.Message);
         }

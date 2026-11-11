@@ -7,7 +7,7 @@
     <p class="stil-text-muted stil-mb-0">A cost-centre budget as a tree grid: departments roll up into divisions.</p>
 </div>
 
-<StilTreeGrid @ref="_grid" TItem="CostCentre" Items="_divisions" ChildrenSelector="c => c.Children" ExpandedLevels="1"
+<StilTreeGrid @ref="_grid" TItem="CostCentre" Items="_divisions" Children="c => c.Children" ExpandedLevels="1"
               ItemKey="c => c.Code" Filterable ShowExport ExportFileName="budget.csv" Caption="Budget 2027, in euros"
               RowClass="@(c => c.Remaining < 0 ? "stil-text-danger" : null)">
     <Toolbar>

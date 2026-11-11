@@ -39,9 +39,9 @@
                         var key = KeyOf(item);
                         <li class="stil-kanban-card" tabindex="0" data-stil-item="@key" data-stil-grabbed="@(_grabbed == key ? "" : null)"
                             aria-describedby="@_instructionsId" @key="key" @onkeydown="e => OnKeyAsync(e, item)">
-                            @if (CardTemplate is not null)
+                            @if (ItemTemplate is not null)
                             {
-                                @CardTemplate(item)
+                                @ItemTemplate(item)
                             }
                             else
                             {
@@ -86,13 +86,13 @@
     [Parameter, EditorRequired]
     public Func<TItem, object>? ItemKey { get; set; }
 
-    /// <summary>The card's text: shown when there is no CardTemplate, and always used in what is announced. The default is ToString().</summary>
+    /// <summary>The card's text: shown when there is no ItemTemplate, and always used in what is announced. The default is ToString().</summary>
     [Parameter]
     public Func<TItem, string>? Title { get; set; }
 
     /// <summary>The content of a card.</summary>
     [Parameter]
-    public RenderFragment<TItem>? CardTemplate { get; set; }
+    public RenderFragment<TItem>? ItemTemplate { get; set; }
 
     /// <summary>Raised when a card is dropped somewhere else, or moved a step with the keyboard.</summary>
     [Parameter]

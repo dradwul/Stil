@@ -131,7 +131,7 @@
     }
 
     /// <summary>Called by stil.js for each code the camera reads.</summary>
-    [JSInvokable]
+    [JSInvokable, System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public async Task OnScanned(string value, string? format)
     {
         _lastValue = value;
