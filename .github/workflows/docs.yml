@@ -1,7 +1,11 @@
 name: Docs
 
-# Builds the documentation site (docs/Stil.Docs, Blazor WebAssembly) to check that it compiles
-# and publishes. It is not deployed anywhere.
+# Builds the documentation site (docs/Stil.Docs, Blazor WebAssembly) on every push and pull
+# request, and deploys it to GitHub Pages from main: https://dradwul.github.io/Stil/
+#
+# One-time setup (owner): Settings > Pages > Build and deployment > Source: GitHub Actions.
+# Until then the deploy job fails with a message that Pages is not enabled; the build still
+# checks the site. GitHub Pages is free for public repositories.
 
 on:
   push:
@@ -11,6 +15,11 @@ on:
 
 permissions:
   contents: read
+
+# One deployment at a time; a newer push waits for the running one instead of cancelling it.
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -24,3 +33,33 @@ jobs:
 
       - name: Publish the docs site
         run: dotnet publish docs/Stil.Docs --configuration Release --output site
+
+      # Pages serves the site from /<repository>/, so the app's base path must say so. A deep
+      # link (/Stil/components/buttons) is not a file: Pages answers with 404.html, which is the
+      # app itself, and the app's router shows the page.
+      - name: Prepare the site for GitHub Pages
+        env:
+          BASE: /${{ github.event.repository.name }}/
+        run: |
+          sed -i "s|<base href=\"/\" />|<base href=\"$BASE\" />|" site/wwwroot/index.html
+          grep -q "<base href=\"$BASE\" />" site/wwwroot/index.html
+          cp site/wwwroot/index.html site/wwwroot/404.html
+
+      - uses: actions/upload-pages-artifact@v4
+        if: github.event_name != 'pull_request'
+        with:
+          path: site/wwwroot
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
