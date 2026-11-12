@@ -6,6 +6,7 @@ a set of themeable Blazor components built on Stil CSS.
 | Template | Short name | What you get |
 | --- | --- | --- |
 | Stil for Blazor App | `stil-app` | A Blazor Web App with Stil set up: a navbar, a color-mode switch, a theme, dialogs and toasts, a starter (admin, dashboard, monitoring, finance or planner) or sample pages, and the features you choose (charts, editors, planners and more). |
+| Stil for Blazor Site | `stil-site` | A product website built from Stil's page blocks, rendered on the server without interactivity: a home page, pricing, a blog with articles and a contact form, with no CSS of its own. |
 
 > **Status:** stable (`1.0`). Requires the .NET 10 SDK.
 
@@ -163,8 +164,32 @@ dotnet new stil-app -n Contoso.Planning --Features calendar schedule kanban gant
 - With `--Features`: a page per feature in `Components/Pages/Features/`,
   and `Components/Layout/AppCommands.razor` with the command palette.
 
+## A website: stil-site
+
+```shell
+dotnet new stil-site -n Contoso.Web --Primary "#7048e8"
+```
+
+`stil-site` takes the theme options of `stil-app` (`--Primary`, `--Font`,
+`--GoogleFont`, `--Radius`, `--ColorMode`). The site renders on the server
+without interactivity, so the pages are fast and search engines read them as
+they are; the mega menu, the navbar's menu button and the pricing switch work
+without it, and the contact form posts like any HTML form.
+
+- `Components/Layout/MainLayout.razor`: the header with a `StilMegaMenu` and
+  the `StilFooter`.
+- `Components/Pages/Home.razor` (hero, logos, features, numbers, testimonials
+  and a call to action), `Pricing.razor` (plans with a monthly/yearly switch,
+  and questions and answers), `Blog.razor` (posts with paging,
+  `blog?page=2`), `Post.razor` (an article with a table of contents and
+  related posts; an unknown post is a 404) and `Contact.razor` (the contact
+  block with a form that is checked on the server).
+- `Data/BlogService.cs`: `IBlogService` with sample posts; replace it with
+  your own source (a database, files or a CMS).
+- `wwwroot/site.css` is empty: the pages need no CSS of their own.
+
 See the [Stil for Blazor README](https://github.com/dradwul/Stil/tree/main/src/Stil.Blazor#readme)
-for all components and theming.
+for all components, the page blocks and theming.
 
 ## Development
 

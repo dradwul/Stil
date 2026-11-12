@@ -35,7 +35,8 @@ const apps = join(tmp, 'apps');
 // disturbed), and without build servers that would keep files in the temp folder locked.
 const isolatedBuild = ['-nodeReuse:false', '-p:UseSharedCompilation=false'];
 
-// Each case: the app name, the template options and checks on the generated files.
+// Each case: the template (stil-app unless set), the app name, the template options and checks on
+// the generated files.
 const cases = [
     {
         name: 'Contoso.Default',
@@ -250,8 +251,42 @@ cases.push({
     },
 });
 
+// dotnet new stil-site: the product website, with its default options and with a theme.
+cases.push(
+    {
+        template: 'stil-site',
+        name: 'Site.Default',
+        options: [],
+        expect: {
+            'Program.cs': ['AddRazorComponents();', 'options.Font = StilFonts.Lexend;', 'AddSingleton<IBlogService, SampleBlogService>()'],
+            'Components/App.razor': ['<StilHead Blocks />', '<Routes />'],
+            'Components/Layout/MainLayout.razor': ['<StilMegaMenu', '<StilFooter', 'BrandText="Site.Default"', 'StilThemeMode.Auto'],
+            'Components/Pages/Home.razor': ['<StilHero', '<StilFeatureGrid', '<StilStatsBand', '<StilTestimonials', '<StilCallToAction'],
+            'Components/Pages/Pricing.razor': ['<StilPricing PeriodSwitch', '<StilFaq'],
+            'Components/Pages/Blog.razor': ['<StilPostList', 'HrefTemplate="blog?page={0}"'],
+            'Components/Pages/Post.razor': ['<StilArticle'],
+            'Components/Pages/Contact.razor': ['<StilContact', 'FormName="contact"'],
+            'Data/BlogService.cs': ['namespace Site.Default.Data;'],
+            'Site.Default.csproj': ['Include="Stil"'],
+        },
+        forbidden: {
+            'Program.cs': ['AddInteractiveServerComponents'],
+            'Site.Default.csproj': ['Stil.Charts', 'Stil.Markdown'],
+        },
+    },
+    {
+        template: 'stil-site',
+        name: 'Site.Themed',
+        options: ['--Primary', '#e8590c', '--Radius', 'round', '--Font', 'geologica', '--ColorMode', 'light'],
+        expect: {
+            'Program.cs': ['Primary = "#e8590c", Radius = "1rem"', '"--stil-radius-lg"] = "2rem"', 'options.Font = StilFonts.Geologica;'],
+            'Components/Layout/MainLayout.razor': ['StilThemeMode.Light'],
+        },
+    },
+);
+
 // Text that must never be left in a generated app: template directives and placeholders.
-const leftovers = ['#if', '#endif', '##else', 'STIL_PRIMARY_COLOR', 'STIL_GOOGLE_FONT', 'STIL_PACKAGE_VERSION', 'STIL_RADIUS', 'localhost:5500', 'localhost:5501', 'StilApp', 'My Stil App'];
+const leftovers = ['#if', '#endif', '##else', 'STIL_PRIMARY_COLOR', 'STIL_GOOGLE_FONT', 'STIL_PACKAGE_VERSION', 'STIL_RADIUS', 'localhost:5500', 'localhost:5501', 'localhost:5600', 'localhost:5601', 'StilApp', 'My Stil App', 'StilSite', 'My Stil Site'];
 
 function sleep(ms) {
     Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
@@ -370,7 +405,7 @@ try {
     for (const testCase of cases.filter(c => !only || c.name.includes(only))) {
         const folder = join(apps, testCase.name);
         try {
-            run('dotnet', ['new', 'stil-app', '-n', testCase.name, '-o', folder, '--no-restore',
+            run('dotnet', ['new', testCase.template ?? 'stil-app', '-n', testCase.name, '-o', folder, '--no-restore',
                 '--StilVersion', stil.version, ...testCase.options, '--debug:custom-hive', hive]);
 
             const errors = check(testCase, folder);

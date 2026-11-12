@@ -1,0 +1,60 @@
+@page "/contact"
+
+<PageTitle>Contact · My Stil Site</PageTitle>
+<HeadContent>
+    <meta name="description" content="Questions, a demo or a quote: we answer within a working day." />
+</HeadContent>
+
+<StilSection>
+    <StilContact Title="Talk to us" HeadingLevel="1" Lead="Questions, a demo or a quote: we answer within a working day."
+                 Email="hello@example.com" Phone="+46 8 123 456 78"
+                 Address="@("My Stil Site AB\nStorgatan 1\n111 22 Stockholm, Sweden")"
+                 MapHref="https://www.openstreetmap.org/search?query=Storgatan%201%20Stockholm"
+                 Hours="Weekdays 9–17">
+        @if (_sent)
+        {
+            <StilAlert Variant="StilVariant.Success" Title="@($"Thanks, {Message.Name}")">
+                We have your message and will write back to @Message.Email within a working day.
+            </StilAlert>
+        }
+        else
+        {
+            @* A plain form post: the server checks the fields and answers with the page. *@
+            <EditForm Model="Message" FormName="contact" OnValidSubmit="Send" Enhance novalidate>
+                <DataAnnotationsValidator />
+                <StilTextBox @bind-Value="Message.Name" Label="Name" autocomplete="name" />
+                <StilTextBox @bind-Value="Message.Email" Label="E-mail" Type="email" autocomplete="email" />
+                <StilTextArea @bind-Value="Message.Text" Label="Message" Rows="5" />
+                <div><StilButton Type="submit">Send</StilButton></div>
+            </EditForm>
+        }
+    </StilContact>
+</StilSection>
+
+@code {
+    private bool _sent;
+
+    // The posted form fields are bound to this property.
+    [SupplyParameterFromForm(FormName = "contact")]
+    private ContactMessage Message { get; set; } = default!;
+
+    protected override void OnInitialized() => Message ??= new();
+
+    private void Send()
+    {
+        // Send the message here: by e-mail, to your CRM or to a database.
+        _sent = true;
+    }
+
+    private sealed class ContactMessage
+    {
+        [Required(ErrorMessage = "Enter your name.")]
+        public string? Name { get; set; }
+
+        [Required(ErrorMessage = "Enter your e-mail address."), EmailAddress(ErrorMessage = "Enter a valid e-mail address.")]
+        public string? Email { get; set; }
+
+        [Required(ErrorMessage = "Write a message.")]
+        public string? Text { get; set; }
+    }
+}

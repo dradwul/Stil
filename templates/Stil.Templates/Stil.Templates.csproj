@@ -6,7 +6,7 @@
     <PackageType>Template</PackageType>
     <PackageId>Stil.Templates</PackageId>
     <Title>Stil for Blazor templates</Title>
-    <Description>dotnet new templates for Stil for Blazor: stil-app creates a Blazor Web App with Stil's themeable components, a navbar, a color-mode switch, optional sample pages and the features you choose (charts, editors, planners, chat and more).</Description>
+    <Description>dotnet new templates for Stil for Blazor: stil-app creates a Blazor Web App with Stil's themeable components, a navbar, a color-mode switch, optional sample pages and the features you choose (charts, editors, planners, chat and more); stil-site creates a product website from Stil's page blocks, with pricing, a blog and a contact form.</Description>
     <PackageTags>dotnet-new;templates;Blazor;CSS;components;Stil</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
 

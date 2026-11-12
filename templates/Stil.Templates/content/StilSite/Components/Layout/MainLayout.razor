@@ -1,0 +1,45 @@
+@inherits LayoutComponentBase
+
+@* The frame of every page: the header with a mega menu, the page's sections and the footer.
+   StilThemeProvider sets the color mode for the whole site. *@
+<StilThemeProvider Mode="StilThemeMode.Auto">
+    <a class="stil-visually-hidden-focusable stil-btn stil-m-2" href="#main">Skip to main content</a>
+
+    <StilNavbar Sticky CollapseBelow="StilBreakpoint.Medium" BrandText="My Stil Site">
+        <ChildContent>
+            <StilNav Label="Main">
+                <StilMegaMenu Text="Product">
+                    <ChildContent>
+                        <StilMegaMenuColumn Title="Plan">
+                            <StilMegaMenuLink Href="#features" Icon="@StilIcons.Folder" Title="The week" Text="Tasks, bookings and time off in one calendar." />
+                            <StilMegaMenuLink Href="#features" Icon="@StilIcons.Home" Title="Rooms and resources" Text="Book the meeting room and the van." />
+                        </StilMegaMenuColumn>
+                        <StilMegaMenuColumn Title="Share">
+                            <StilMegaMenuLink Href="#features" Icon="@StilIcons.External" Title="Calendar link" Text="Subscribe from your calendar app." />
+                            <StilMegaMenuLink Href="#features" Icon="@StilIcons.Download" Title="Export" Text="Everything as CSV, any time." />
+                        </StilMegaMenuColumn>
+                    </ChildContent>
+                    <Footer>
+                        <p>New: time off in the planner.</p>
+                        <a class="stil-dropdown-item" href="blog/time-off">Read the news</a>
+                    </Footer>
+                </StilMegaMenu>
+                <StilNavLink Href="pricing">Pricing</StilNavLink>
+                <StilNavLink Href="blog">Blog</StilNavLink>
+                <StilNavLink Href="contact">Contact</StilNavLink>
+            </StilNav>
+        </ChildContent>
+        <End>
+            <StilButton Href="contact" Size="StilSize.Small">Start free</StilButton>
+        </End>
+    </StilNavbar>
+
+    <main id="main">
+        @Body
+    </main>
+
+    <StilFooter BrandText="My Stil Site" Text="Plan the week your team actually has." Copyright="@($"© {DateTime.Now.Year} My Stil Site")">
+        <StilFooterColumn Title="Product" Links="@([new StilLinkItem("Features", "#features"), new StilLinkItem("Pricing", "pricing")])" />
+        <StilFooterColumn Title="Company" Links="@([new StilLinkItem("Blog", "blog"), new StilLinkItem("Contact", "contact")])" />
+    </StilFooter>
+</StilThemeProvider>

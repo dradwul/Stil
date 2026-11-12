@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <ResourcePreloader />
+    @* Stil's stylesheet, the page blocks' stylesheet and the global theme from AddStil(). *@
+    <StilHead Blocks />
+    <link rel="stylesheet" href="@Assets["site.css"]" />
+    <ImportMap />
+    <HeadOutlet />
+</head>
+
+@* stil-scope lets Stil style the font, headings and links in your own markup too. *@
+<body class="stil-scope stil-m-0">
+    <Routes />
+    @* Enhanced navigation and forms; the site works without it too. *@
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
+</body>
+
+</html>

@@ -1,0 +1,38 @@
+@page "/pricing"
+
+<PageTitle>Pricing · My Stil Site</PageTitle>
+<HeadContent>
+    <meta name="description" content="Free for teams of up to five. Pay for the people who plan." />
+</HeadContent>
+
+<StilSection Eyebrow="Pricing" Title="Start small, grow when you need to" HeadingLevel="1" Centered
+             Lead="Every plan has every feature. Pay for the people who plan.">
+    @* The monthly/yearly switch works without interactivity: radio buttons and CSS. *@
+    <StilPricing PeriodSwitch YearlyNote="2 months free">
+        <StilPlan Name="Free" Price="€0" Period="for up to five people" Text="For small teams that plan together."
+                  Features="@(["Five people", "One calendar", "Export to CSV"])"
+                  ActionText="Start free" ActionHref="contact" />
+        <StilPlan Name="Team" Price="€6" Period="a person a month" YearlyPrice="€60" YearlyPeriod="a person a year"
+                  Text="For teams that share rooms and people." Featured Badge="Most popular"
+                  Features="@(["Unlimited people", "Rooms and resources", "Time off and holidays", "Priority support"])"
+                  ActionText="Try it for 30 days" ActionHref="contact" />
+        <StilPlan Name="Company" Price="€9" Period="a person a month" YearlyPrice="€90" YearlyPeriod="a person a year"
+                  Text="For several teams, with single sign-on."
+                  Features="@(["Everything in Team", "Single sign-on", "An audit log"])"
+                  ActionText="Talk to us" ActionHref="contact" />
+    </StilPricing>
+</StilSection>
+
+<StilSection Tone="StilBlockTone.Muted" aria-label="Questions and answers">
+    <StilFaq Title="Questions and answers" Lead="Something else? Write to us; we answer within a working day.">
+        <StilAccordionItem Title="Can I cancel any time?">
+            Yes. Cancel from the settings, and the plan runs to the end of the period you paid for.
+        </StilAccordionItem>
+        <StilAccordionItem Title="Does it work with our calendar app?">
+            It shares a calendar link that Outlook, Google Calendar and Apple Calendar can subscribe to.
+        </StilAccordionItem>
+        <StilAccordionItem Title="Where is our data stored?">
+            In the EU, and you can export all of it at any time.
+        </StilAccordionItem>
+    </StilFaq>
+</StilSection>

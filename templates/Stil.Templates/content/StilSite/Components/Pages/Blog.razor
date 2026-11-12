@@ -1,0 +1,39 @@
+@page "/blog"
+@inject IBlogService Posts
+
+<PageTitle>Blog · My Stil Site</PageTitle>
+<HeadContent>
+    <meta name="description" content="Notes on planning the week." />
+</HeadContent>
+
+<StilSection Eyebrow="Blog" Title="Notes on planning the week" HeadingLevel="1"
+             Lead="What we learn from the teams that plan with us.">
+    <StilPostList>
+        @foreach (var post in PagePosts)
+        {
+            <StilPostCard Href="@($"blog/{post.Slug}")" Title="@post.Title" Excerpt="@post.Excerpt" Image="@post.Image"
+                          Tags="@post.Tags.Select(tag => new StilLinkItem(tag))" Author="@post.Author" Date="post.Date"
+                          ReadingTime="@post.ReadingTime" Featured="@(post == All[0] && CurrentPage == 1)" />
+        }
+    </StilPostList>
+    @if (PageCount > 1)
+    {
+        <StilPagination Page="CurrentPage" PageCount="PageCount" HrefTemplate="blog?page={0}" Label="Pages" class="stil-mt-6" />
+    }
+</StilSection>
+
+@code {
+    private const int PageSize = 3;
+
+    // The page number from the address (blog?page=2), so paging needs no interactivity.
+    [SupplyParameterFromQuery(Name = "page")]
+    private int? PageNumber { get; set; }
+
+    private IReadOnlyList<BlogPost> All => Posts.All();
+
+    private int PageCount => Math.Max(1, (All.Count + PageSize - 1) / PageSize);
+
+    private int CurrentPage => Math.Clamp(PageNumber ?? 1, 1, PageCount);
+
+    private IEnumerable<BlogPost> PagePosts => All.Skip((CurrentPage - 1) * PageSize).Take(PageSize);
+}

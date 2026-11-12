@@ -1,0 +1,3 @@
+/* Your site's own styles. The pages are built from Stil's page blocks, so they need none to start
+   with. Stil's rules are in cascade layers, so the rules here always win over Stil. Use Stil's
+   tokens (var(--stil-…)) to follow the theme and the color mode. */

@@ -1,0 +1,447 @@
+{
+  "$schema": "https://json.schemastore.org/template",
+  "author": "Ludvig Andersson",
+  "classifications": [
+    "Web",
+    "Blazor",
+    "Website"
+  ],
+  "identity": "Stil.Templates.StilSite",
+  "groupIdentity": "Stil.Templates.StilSite",
+  "name": "Stil for Blazor Site",
+  "description": "A product website built from Stil's page blocks, rendered on the server without interactivity: a home page, pricing, a blog with articles, and a contact form.",
+  "shortName": "stil-site",
+  "defaultName": "StilSite",
+  "sourceName": "StilSite",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "symbols": {
+    "SiteTitle": {
+      "type": "derived",
+      "valueSource": "name",
+      "valueTransform": "identity",
+      "replaces": "My Stil Site"
+    },
+    "Framework": {
+      "type": "parameter",
+      "description": "The target framework for the project.",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "net10.0",
+          "description": "Target net10.0"
+        }
+      ],
+      "replaces": "net10.0",
+      "defaultValue": "net10.0"
+    },
+    "Primary": {
+      "type": "parameter",
+      "description": "The brand color, as a CSS color such as #7048e8. It is set with AddStil() in Program.cs. Without it, the site uses Stil's default teal (#34dbbf).",
+      "datatype": "text",
+      "defaultValue": "",
+      "replaces": "STIL_PRIMARY_COLOR"
+    },
+    "HasPrimary": {
+      "type": "computed",
+      "value": "(Primary != \"\")"
+    },
+    "Radius": {
+      "type": "parameter",
+      "description": "How round the corners are: of buttons, fields, cards and dialogs. It is set with AddStil() in Program.cs.",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "sharp",
+          "description": "Square corners"
+        },
+        {
+          "choice": "small",
+          "description": "Slightly rounded"
+        },
+        {
+          "choice": "default",
+          "description": "Stil's default"
+        },
+        {
+          "choice": "large",
+          "description": "Rounder"
+        },
+        {
+          "choice": "round",
+          "description": "Very round"
+        }
+      ],
+      "defaultValue": "default"
+    },
+    "HasRadius": {
+      "type": "computed",
+      "value": "(Radius != \"default\")"
+    },
+    "RadiusSmall": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "STIL_RADIUS_SM",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(Radius == \"sharp\")",
+            "value": "0"
+          },
+          {
+            "condition": "(Radius == \"small\")",
+            "value": "0.0625rem"
+          },
+          {
+            "condition": "(Radius == \"large\")",
+            "value": "0.25rem"
+          },
+          {
+            "condition": "(Radius == \"round\")",
+            "value": "0.5rem"
+          },
+          {
+            "condition": "",
+            "value": "0.125rem"
+          }
+        ]
+      }
+    },
+    "RadiusMedium": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "STIL_RADIUS_MD",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(Radius == \"sharp\")",
+            "value": "0"
+          },
+          {
+            "condition": "(Radius == \"small\")",
+            "value": "0.125rem"
+          },
+          {
+            "condition": "(Radius == \"large\")",
+            "value": "0.5rem"
+          },
+          {
+            "condition": "(Radius == \"round\")",
+            "value": "1rem"
+          },
+          {
+            "condition": "",
+            "value": "0.25rem"
+          }
+        ]
+      }
+    },
+    "RadiusLarge": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "STIL_RADIUS_LG",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(Radius == \"sharp\")",
+            "value": "0"
+          },
+          {
+            "condition": "(Radius == \"small\")",
+            "value": "0.25rem"
+          },
+          {
+            "condition": "(Radius == \"large\")",
+            "value": "1rem"
+          },
+          {
+            "condition": "(Radius == \"round\")",
+            "value": "2rem"
+          },
+          {
+            "condition": "",
+            "value": "0.5rem"
+          }
+        ]
+      }
+    },
+    "Font": {
+      "type": "parameter",
+      "description": "The site's font. Lexend, the default, is free (SIL Open Font License) and comes from Google Fonts; the others come from cdnfonts.com (check their license there; the BR fonts are commercial). It is set with AddStil() in Program.cs. --GoogleFont takes any Google font instead.",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "lexend",
+          "description": "Lexend, Stil's default (free, from Google Fonts)"
+        },
+        {
+          "choice": "br-shape",
+          "description": "BR Shape (commercial)"
+        },
+        {
+          "choice": "br-cobane",
+          "description": "BR Cobane (commercial)"
+        },
+        {
+          "choice": "br-segma",
+          "description": "BR Segma (commercial)"
+        },
+        {
+          "choice": "br-sonoma",
+          "description": "BR Sonoma (commercial)"
+        },
+        {
+          "choice": "averral",
+          "description": "Averral"
+        },
+        {
+          "choice": "sukplena",
+          "description": "Sukplena"
+        },
+        {
+          "choice": "tasa-explorer",
+          "description": "TASA Explorer"
+        },
+        {
+          "choice": "halcom",
+          "description": "Halcom"
+        },
+        {
+          "choice": "utara",
+          "description": "Utara"
+        },
+        {
+          "choice": "geologica",
+          "description": "Geologica"
+        },
+        {
+          "choice": "blowreph",
+          "description": "BLOWREPH (display font)"
+        },
+        {
+          "choice": "taster",
+          "description": "Taster (display font)"
+        },
+        {
+          "choice": "warm-stories",
+          "description": "WARM STORIES (display font)"
+        },
+        {
+          "choice": "system",
+          "description": "The operating system's font; nothing is downloaded"
+        }
+      ],
+      "defaultValue": "lexend"
+    },
+    "FontValue": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "StilFonts.Lexend",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(Font == \"br-shape\")",
+            "value": "StilFonts.BrShape"
+          },
+          {
+            "condition": "(Font == \"br-cobane\")",
+            "value": "StilFonts.BrCobane"
+          },
+          {
+            "condition": "(Font == \"br-segma\")",
+            "value": "StilFonts.BrSegma"
+          },
+          {
+            "condition": "(Font == \"br-sonoma\")",
+            "value": "StilFonts.BrSonoma"
+          },
+          {
+            "condition": "(Font == \"averral\")",
+            "value": "StilFonts.Averral"
+          },
+          {
+            "condition": "(Font == \"sukplena\")",
+            "value": "StilFonts.Sukplena"
+          },
+          {
+            "condition": "(Font == \"tasa-explorer\")",
+            "value": "StilFonts.TasaExplorer"
+          },
+          {
+            "condition": "(Font == \"halcom\")",
+            "value": "StilFonts.Halcom"
+          },
+          {
+            "condition": "(Font == \"utara\")",
+            "value": "StilFonts.Utara"
+          },
+          {
+            "condition": "(Font == \"geologica\")",
+            "value": "StilFonts.Geologica"
+          },
+          {
+            "condition": "(Font == \"blowreph\")",
+            "value": "StilFonts.Blowreph"
+          },
+          {
+            "condition": "(Font == \"taster\")",
+            "value": "StilFonts.Taster"
+          },
+          {
+            "condition": "(Font == \"warm-stories\")",
+            "value": "StilFonts.WarmStories"
+          },
+          {
+            "condition": "",
+            "value": "StilFonts.Lexend"
+          }
+        ]
+      }
+    },
+    "GoogleFont": {
+      "type": "parameter",
+      "description": "Any Google font by its family name, for example \"Inter\" or \"Open Sans\". It replaces --Font.",
+      "datatype": "text",
+      "defaultValue": "",
+      "replaces": "STIL_GOOGLE_FONT"
+    },
+    "HasGoogleFont": {
+      "type": "computed",
+      "value": "(GoogleFont != \"\")"
+    },
+    "HasWebFont": {
+      "type": "computed",
+      "value": "(GoogleFont == \"\" && Font != \"system\")"
+    },
+    "ColorMode": {
+      "type": "parameter",
+      "description": "The color mode of the site: light, dark, or following the visitor's operating system.",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "light",
+          "description": "Light mode"
+        },
+        {
+          "choice": "dark",
+          "description": "Dark mode"
+        },
+        {
+          "choice": "auto",
+          "description": "Follow the operating system setting"
+        }
+      ],
+      "defaultValue": "auto"
+    },
+    "ColorModeValue": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "StilThemeMode.Auto",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(ColorMode == \"light\")",
+            "value": "StilThemeMode.Light"
+          },
+          {
+            "condition": "(ColorMode == \"dark\")",
+            "value": "StilThemeMode.Dark"
+          },
+          {
+            "condition": "",
+            "value": "StilThemeMode.Auto"
+          }
+        ]
+      }
+    },
+    "StilVersion": {
+      "type": "parameter",
+      "description": "The version of the Stil NuGet package to reference.",
+      "datatype": "text",
+      "defaultValue": "1.0.0",
+      "replaces": "STIL_PACKAGE_VERSION"
+    },
+    "skipRestore": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "If specified, skips the automatic restore of the project on create.",
+      "defaultValue": "false"
+    },
+    "HttpPort": {
+      "type": "parameter",
+      "datatype": "integer",
+      "description": "Port number to use for the HTTP endpoint in launchSettings.json."
+    },
+    "HttpPortGenerated": {
+      "type": "generated",
+      "generator": "port",
+      "parameters": {
+        "low": 5000,
+        "high": 5300
+      }
+    },
+    "HttpPortReplacer": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "HttpPort",
+        "fallbackVariableName": "HttpPortGenerated"
+      },
+      "replaces": "5600"
+    },
+    "HttpsPort": {
+      "type": "parameter",
+      "datatype": "integer",
+      "description": "Port number to use for the HTTPS endpoint in launchSettings.json."
+    },
+    "HttpsPortGenerated": {
+      "type": "generated",
+      "generator": "port",
+      "parameters": {
+        "low": 7000,
+        "high": 7300
+      }
+    },
+    "HttpsPortReplacer": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "HttpsPort",
+        "fallbackVariableName": "HttpsPortGenerated"
+      },
+      "replaces": "5601"
+    }
+  },
+  "primaryOutputs": [
+    {
+      "path": "StilSite.csproj"
+    }
+  ],
+  "postActions": [
+    {
+      "id": "restore",
+      "condition": "(!skipRestore)",
+      "description": "Restore NuGet packages required by this project.",
+      "manualInstructions": [
+        {
+          "text": "Run 'dotnet restore'"
+        }
+      ],
+      "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
+      "continueOnError": true
+    }
+  ]
+}

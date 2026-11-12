@@ -1,0 +1,71 @@
+@page "/"
+
+<PageTitle>My Stil Site · Plan the week your team actually has</PageTitle>
+<HeadContent>
+    <meta name="description" content="Tasks, room bookings and time off in one calendar, so Monday's plan still holds on Thursday." />
+</HeadContent>
+
+@* The home page, built only from Stil's page blocks: no CSS of its own. Replace the texts with
+   your product's. *@
+<StilHero Eyebrow="New: time off in the planner" Title="Plan the week your team actually has"
+          Lead="Tasks, room bookings and time off in one calendar, so Monday's plan still holds on Thursday.">
+    <Actions>
+        <StilButton Href="contact" Size="StilSize.Large">Start free</StilButton>
+        <StilButton Href="#features" Size="StilSize.Large" Appearance="StilButtonAppearance.Outline">See how it works</StilButton>
+    </Actions>
+    <Media>
+        <svg viewBox="0 0 480 300" role="img" aria-label="A week with tasks spread over five days">
+            <rect x="0.5" y="0.5" width="479" height="299" rx="12" style="fill: var(--stil-color-surface); stroke: var(--stil-color-border)" />
+            @for (var day = 0; day < 5; day++)
+            {
+                <rect x="@(20 + day * 90)" y="20" width="80" height="260" rx="6" style="fill: var(--stil-color-surface-muted)" />
+                <rect x="@(28 + day * 90)" y="@(36 + day * 37 % 120)" width="64" height="52" rx="4" style="fill: var(--stil-color-primary)" />
+                <rect x="@(28 + day * 90)" y="@(150 + day * 23 % 60)" width="64" height="40" rx="4" style="fill: var(--stil-color-secondary)" />
+            }
+        </svg>
+    </Media>
+</StilHero>
+
+<StilSection Tone="StilBlockTone.Muted" aria-label="Customers">
+    <StilLogoCloud Title="Trusted by teams at" Muted>
+        <StilLogo>Nordvik Supply</StilLogo>
+        <StilLogo>Kallio Design</StilLogo>
+        <StilLogo>Østerby Marine</StilLogo>
+        <StilLogo>Fjord Analytics</StilLogo>
+    </StilLogoCloud>
+</StilSection>
+
+<StilSection id="features" Eyebrow="Features" Title="Everything the week needs, in one view" Centered
+             Lead="No more checking three tools to see who is free on Friday.">
+    <StilFeatureGrid>
+        <StilFeature Icon="@StilIcons.Folder" Title="One calendar" Text="Tasks, bookings and time off side by side, for the whole team." />
+        <StilFeature Icon="@StilIcons.Success" Title="Plans that hold" Text="A warning before a day is overbooked, not after." />
+        <StilFeature Icon="@StilIcons.Moon" Title="Light and dark" Text="Readable in both, with WCAG AA contrast everywhere." />
+        <StilFeature Icon="@StilIcons.Download" Title="Your data, your way" Text="Export to CSV or the calendar app you already use." />
+    </StilFeatureGrid>
+</StilSection>
+
+<StilSection Title="Teams plan better with My Stil Site" Lead="Numbers from our customers." Centered Tone="StilBlockTone.Brand">
+    <StilStatsBand>
+        <StilStatsItem Label="Teams planning their week" Value="4,800" />
+        <StilStatsItem Label="Fewer double bookings" Value="87%" />
+        <StilStatsItem Label="Hours saved a week" Value="3.5" />
+    </StilStatsBand>
+</StilSection>
+
+<StilSection Eyebrow="Customers" Title="Calmer Mondays, in their words" Centered>
+    <StilTestimonials>
+        <StilTestimonial Quote="We stopped double-booking the van the week we started." Name="Maja Lind" Role="Head of operations, Nordvik Supply" />
+        <StilTestimonial Quote="Time off and bookings in one view was the thing we did not know we needed." Name="Erik Holm" Role="Studio lead, Kallio Design" />
+        <StilTestimonial Quote="Set up in an afternoon. The crew plans the week on their phones now." Name="Lina Vik" Role="Harbour master, Østerby Marine" />
+    </StilTestimonials>
+</StilSection>
+
+<StilSection aria-label="Get started">
+    <StilCallToAction Title="Plan next week in ten minutes" Text="Free for teams of up to five. No card needed." Tone="StilBlockTone.Brand">
+        <Actions>
+            <StilButton Href="contact" Size="StilSize.Large">Start free</StilButton>
+            <StilButton Href="pricing" Size="StilSize.Large" Appearance="StilButtonAppearance.Outline">See pricing</StilButton>
+        </Actions>
+    </StilCallToAction>
+</StilSection>

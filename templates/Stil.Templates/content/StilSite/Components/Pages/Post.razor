@@ -1,0 +1,69 @@
+@page "/blog/{Slug}"
+@inject IBlogService Posts
+@inject NavigationManager Navigation
+
+@if (_post is { } post)
+{
+    <PageTitle>@post.Title · My Stil Site</PageTitle>
+    <HeadContent>
+        <meta name="description" content="@post.Excerpt" />
+    </HeadContent>
+
+    <StilSection>
+        <StilArticle Eyebrow="Blog" EyebrowHref="blog" Title="@post.Title" Lead="@post.Excerpt"
+                     Author="@post.Author" Date="post.Date" ReadingTime="@post.ReadingTime"
+                     Image="@post.Image" Tags="@post.Tags.Select(tag => new StilLinkItem(tag))"
+                     Contents="@post.Sections.Select(section => new StilLinkItem(section.Heading, $"blog/{post.Slug}#{section.Id}"))">
+            <ChildContent>
+                <p>@post.Intro</p>
+                @foreach (var section in post.Sections)
+                {
+                    <h2 id="@section.Id">@section.Heading</h2>
+                    @foreach (var paragraph in section.Paragraphs)
+                    {
+                        <p>@paragraph</p>
+                    }
+                }
+            </ChildContent>
+            <Footer>
+                <a href="blog">All posts</a>
+            </Footer>
+        </StilArticle>
+    </StilSection>
+
+    @if (Related.Any())
+    {
+        <StilSection Title="Read next" Tone="StilBlockTone.Muted">
+            <StilPostList>
+                @foreach (var related in Related)
+                {
+                    <StilPostCard Href="@($"blog/{related.Slug}")" Title="@related.Title" Image="@related.Image"
+                                  Author="@related.Author" Date="related.Date" HeadingLevel="3" />
+                }
+            </StilPostList>
+        </StilSection>
+    }
+}
+
+@code {
+    private BlogPost? _post;
+
+    [Parameter]
+    public string Slug { get; set; } = "";
+
+    // Up to two other posts, those that share a tag first.
+    private IEnumerable<BlogPost> Related => Posts.All()
+        .Where(other => other != _post)
+        .OrderByDescending(other => other.Tags.Intersect(_post!.Tags).Count())
+        .Take(2);
+
+    protected override void OnParametersSet()
+    {
+        _post = Posts.Find(Slug);
+        if (_post is null)
+        {
+            // Shows the not-found page, with status 404.
+            Navigation.NotFound();
+        }
+    }
+}
