@@ -25,7 +25,7 @@ something usable.
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | ✅ Done |
 | 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | Done |
 | 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | Done (`1.0.0` is ready; the tag is an owner task) |
-| V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | In progress (V2.1.1, V2.1.2 done) |
+| V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | In progress (V2.1.1 to V2.1.3 done) |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -1456,11 +1456,17 @@ namespace `Stil.Blazor.Blocks`. V2.1 comes in five parts:
   and axe passes in every palette, in light and dark mode, on both periods
   (2.2 KiB of the blocks' 8 KiB budget).
 
-#### V2.1.3: Header, footer and contact
+#### V2.1.3: Header, footer and contact ✅ Done
 
-- [ ] A site header with a mega menu (on the navbar and dropdowns, with the
+- [x] A site header with a mega menu (on the navbar and dropdowns, with the
   keyboard and on a phone), a footer with link columns, and a contact block
-  (form, address and map link).
+  (form, address and map link), in CSS and as Blazor components. The mega
+  menu is a stil-dropdown, so Escape, outside clicks and the arrow keys work
+  as in any dropdown; in a collapsed navbar stil.js now opens any dropdown in
+  place inside the menu. The contact block's labels are translated, and
+  three icons (mail, phone, map pin) were added for it. Checked with the
+  keyboard in Edge and WebKit, on a phone, and with axe in every palette in
+  light and dark mode with the menu open (2.7 KiB of the 8 KiB budget).
 
 #### V2.1.4: Blog
 

@@ -34,8 +34,19 @@ version could contain breaking changes; they are marked **Breaking**.
   accordion (`StilFaq`) and a team grid (`StilTeam`, `StilTeamMember`). The
   switch's texts are in all five languages. Cards on the brand color keep the
   page's colors inside.
-- **Docs**: a Website section, with the pages Sections and heroes, and
-  Pricing, testimonials and FAQ.
+- **Stil CSS and Stil for Blazor**: the frame of a site (Phase V2.1.3): a
+  mega menu for the navbar (`stil-mega`, `StilMegaMenu` with
+  `StilMegaMenuColumn` and `StilMegaMenuLink`), a footer with columns of
+  links (`stil-footer`, `StilFooter` with `StilFooterColumn`), and a contact
+  block (`stil-contact`, `StilContact`) with e-mail, phone, address, a map
+  link and opening hours beside your form. Their labels are in all five
+  languages.
+- **Stil CSS**: in a collapsed navbar (on a phone), `stil.js` opens a
+  dropdown in place inside the menu instead of floating over the page.
+- **Stil CSS and Stil for Blazor**: the icons `mail`, `phone` and `map-pin`
+  (`StilIcons.Mail`, `Phone`, `MapPin`).
+- **Docs**: a Website section, with the pages Sections and heroes; Pricing,
+  testimonials and FAQ; and Header, footer and contact.
 
 ### Fixed
 
