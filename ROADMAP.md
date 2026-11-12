@@ -25,7 +25,7 @@ something usable.
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | ✅ Done |
 | 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | Done |
 | 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | Done (`1.0.0` is ready; the tag is an owner task) |
-| V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | Planned (after 1.0) |
+| V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | In progress (V2.1.1 done) |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -1421,6 +1421,53 @@ page model must support. Nothing released under MIT moves behind it.
 **Done when:** a product site with a home, pricing, blog and contact page can
 be built from the blocks without custom CSS.
 
+The blocks are opt-in: their CSS is a separate stylesheet,
+`stil-blocks.css` (built next to `stil.css`, in the npm package and served
+by the `Stil` package as `_content/Stil/stil-blocks.css`), so apps that do
+not need them never load it. The Blazor blocks are in the `Stil` package,
+namespace `Stil.Blazor.Blocks`. V2.1 comes in five parts:
+
+#### V2.1.1: Sections and the first blocks ✅ Done
+
+- [x] `stil-blocks.css` and `stil-blocks.min.css`, with a size budget (8 KiB
+  gzipped for all of V2.1; 1.4 KiB now), served by the `Stil` package,
+  added by `<StilHead Blocks />`, in the npm package (`stil-css/blocks`)
+  and in the GitHub release.
+- [x] Page sections (`stil-section`, muted and brand backgrounds, a section
+  header with an eyebrow, title and lead), a hero (centered, or split with a
+  picture), a feature grid, a call to action, a stats band and a logo cloud,
+  in CSS and as Blazor components. Each section is a container, so the
+  blocks size their type and columns to it, not to the window (they also
+  fit a docs example or, later, the builder's preview). On the brand color,
+  links, focus rings and buttons take colors that read on it; axe passes
+  with all four sample palettes in light and dark mode.
+- [x] A plain-HTML sample page built from them (`samples/Stil.Html/site.html`,
+  in the CI axe checks), and a Website section in the docs (Sections and
+  heroes).
+
+#### V2.1.2: Selling
+
+- [ ] Pricing table (plans, a highlighted plan, a monthly/yearly switch),
+  testimonials, an FAQ on the accordion, and a team grid.
+
+#### V2.1.3: Header, footer and contact
+
+- [ ] A site header with a mega menu (on the navbar and dropdowns, with the
+  keyboard and on a phone), a footer with link columns, and a contact block
+  (form, address and map link).
+
+#### V2.1.4: Blog
+
+- [ ] A blog list (cards with picture, date, author and tags, and paging)
+  and an article layout (title, meta, picture, `stil-prose` body, a table of
+  contents and related posts).
+
+#### V2.1.5: The site template
+
+- [ ] `dotnet new stil-site`: a product site with a home, pricing, blog and
+  contact page built from the blocks, and a "website" starter in the docs
+  wizard.
+
 ### Phase V2.2: Page model
 
 - [ ] Pages as data: a list of blocks with their settings, stored as JSON.
@@ -1496,19 +1543,18 @@ These need the repository or package owner.
   GitHub (see Releases in CONTRIBUTING.md).
 - [x] First release: `0.1.0-preview.1`, published to nuget.org from the tag
   `v0.1.0-preview.1` on 2026-10-30.
-- [ ] Before the next release: add `Stil.Markdown` and `Stil.RichText` to the
-  trusted publishing policy on nuget.org (new package IDs).
+- [x] `Stil.Markdown` and `Stil.RichText` on nuget.org: the trusted publishing
+  policy covered the new package IDs, and `1.0.0` of both is published.
 - [x] Before the `v1.0.0` tag: go through the forms, a dialog, the data grid
   and the calendar with a screen reader (NVDA or Narrator on Windows,
   VoiceOver on a Mac or iPhone), and open the samples and the demo in Firefox
   and in Safari.
 - [x] Push the `v1.0.0` tag (2026-11-12); `release.yml` published the five
   NuGet packages.
-- [ ] Publish `stil-css` to npm: `npm.yml` does it from each tag once the
-  `NPM_TOKEN` secret exists (see One-time setup in CONTRIBUTING.md); run it
-  by hand on `v1.0.0` once.
-- [ ] Host the docs site: `docs.yml` deploys it to GitHub Pages from `main`
-  once Pages is set to deploy from GitHub Actions (one setting).
+- [x] Publish `stil-css` to npm: `npm.yml` published `1.0.0` (2026-11-12);
+  later tags publish by themselves.
+- [x] Host the docs site: `docs.yml` deploys it to
+  <https://dradwul.github.io/Stil/> from `main`.
 
 ## CSS backlog (no phase yet)
 

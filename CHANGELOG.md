@@ -11,6 +11,29 @@ version could contain breaking changes; they are marked **Breaking**.
 
 ## [Unreleased]
 
+### Added
+
+- **Stil CSS**: page blocks for websites, in a separate, opt-in stylesheet:
+  `stil-blocks.css` (`stil-css/blocks` on npm, and in the GitHub release).
+  This first part has sections (`stil-section`, with muted and brand
+  backgrounds and a header with an eyebrow, title and lead), a hero
+  (centered, or split with a picture), a feature grid, a call to action, a
+  stats band and a logo cloud. They size themselves to their section
+  (container queries), and on the brand color the text, links, focus rings
+  and buttons stay readable in every theme. A sample product site,
+  `samples/Stil.Html/site.html`, is built only from them.
+- **Stil for Blazor**: the same blocks as components in `Stil.Blazor.Blocks`:
+  `StilSection`, `StilHero`, `StilFeatureGrid` with `StilFeature`,
+  `StilCallToAction`, `StilStatsBand` with `StilStatsItem`, and
+  `StilLogoCloud` with `StilLogo`, and `StilBlockTone` for their
+  background. `<StilHead Blocks />` adds their stylesheet.
+- **Docs**: a Website section, with the page Sections and heroes.
+
+### Fixed
+
+- **Docs**: the Installation page still said the packages were not on NuGet
+  and npm, and the home page said "0.x preview".
+
 ## [1.0.0] - 2026-11-12
 
 The first stable version: from here on, names and APIs change only in a major
