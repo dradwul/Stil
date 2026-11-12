@@ -25,7 +25,7 @@ something usable.
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | ✅ Done |
 | 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | Done |
 | 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | Done (`1.0.0` is ready; the tag is an owner task) |
-| V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | In progress (V2.1.1 to V2.1.3 done) |
+| V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | In progress (V2.1.1 to V2.1.4 done) |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -1468,11 +1468,18 @@ namespace `Stil.Blazor.Blocks`. V2.1 comes in five parts:
   keyboard in Edge and WebKit, on a phone, and with axe in every palette in
   light and dark mode with the menu open (2.7 KiB of the 8 KiB budget).
 
-#### V2.1.4: Blog
+#### V2.1.4: Blog ✅ Done
 
-- [ ] A blog list (cards with picture, date, author and tags, and paging)
+- [x] A blog list (cards with picture, date, author and tags, and paging)
   and an article layout (title, meta, picture, `stil-prose` body, a table of
-  contents and related posts).
+  contents and related posts), in CSS and as Blazor components. A card is a
+  link as a whole (its title's link covers it), with a focus ring around the
+  card; paging uses StilPagination with an HrefTemplate; related posts are a
+  post list in a section. The table of contents sits beside the text and
+  stays in view on a wide article (container query). The sample site has a
+  blog and an article (`blog.html`, `article.html`), in the axe checks, and
+  axe passes in every palette in light and dark mode (3.3 KiB of the 8 KiB
+  budget).
 
 #### V2.1.5: The site template
 

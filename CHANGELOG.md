@@ -41,12 +41,18 @@ version could contain breaking changes; they are marked **Breaking**.
   block (`stil-contact`, `StilContact`) with e-mail, phone, address, a map
   link and opening hours beside your form. Their labels are in all five
   languages.
+- **Stil CSS and Stil for Blazor**: the blog (Phase V2.1.4): a post list
+  (`stil-posts`, `StilPostList` with `StilPostCard`) whose cards are links
+  as a whole, with tags, a featured post and paging, and an article layout
+  (`stil-article`, `StilArticle`) with a picture, larger reading type and a
+  table of contents beside the text. `StilPostMeta` shows who wrote a post
+  and when, in the current culture. The texts are in all five languages.
 - **Stil CSS**: in a collapsed navbar (on a phone), `stil.js` opens a
   dropdown in place inside the menu instead of floating over the page.
 - **Stil CSS and Stil for Blazor**: the icons `mail`, `phone` and `map-pin`
   (`StilIcons.Mail`, `Phone`, `MapPin`).
 - **Docs**: a Website section, with the pages Sections and heroes; Pricing,
-  testimonials and FAQ; and Header, footer and contact.
+  testimonials and FAQ; Header, footer and contact; and Blog.
 
 ### Fixed
 

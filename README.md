@@ -160,7 +160,8 @@ dotnet run --project samples/Stil.Demo --launch-profile http
 To see the plain CSS showcase, open `samples/Stil.Html/index.html` in a
 browser. It needs no server. `samples/Stil.Html/admin.html` is a complete
 admin dashboard built only with Stil CSS, and `samples/Stil.Html/site.html`
-a product site built from the page blocks (`stil-blocks.css`).
+a product site built from the page blocks (`stil-blocks.css`), with a blog
+(`blog.html`, `article.html`).
 
 Run the documentation site and open <http://localhost:5193>:
 
