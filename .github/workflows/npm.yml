@@ -1,8 +1,9 @@
 name: npm
 
 # Publishes Stil CSS (src/Stil.Css) to npm as stil-css when a version tag is pushed, next to the
-# NuGet release (release.yml). It can also be run by hand (Actions > npm > Run workflow, with the
-# tag picked under "Use workflow from") to publish a version that is already tagged.
+# NuGet release (release.yml). It can also be run by hand from main (Actions > npm > Run workflow)
+# with the tag to publish, for a version that was tagged before this workflow or before the
+# NPM_TOKEN secret existed.
 #
 # One-time setup (owner), free: an npm account, and either
 #   - a granular access token with "Read and write" for packages, stored as the repository
@@ -16,13 +17,17 @@ on:
   push:
     tags: ['v*']
   workflow_dispatch:
+    inputs:
+      tag:
+        description: The version tag to publish, such as v1.0.0
+        required: true
 
 permissions:
   contents: read
 
 jobs:
   publish:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -33,6 +38,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          # A run by hand publishes the given tag; a tag push, its own tag.
+          ref: ${{ inputs.tag || github.ref }}
 
       - uses: actions/setup-node@v7
         with:
@@ -44,11 +52,17 @@ jobs:
       # The package version must be the tag's: dist/ carries it in its banner.
       - name: Read the version
         id: version
+        env:
+          TAG: ${{ inputs.tag || github.ref_name }}
         run: |
-          version="${GITHUB_REF_NAME#v}"
+          if [[ "$TAG" != v* ]]; then
+            echo "::error::$TAG is not a version tag such as v1.0.0."
+            exit 1
+          fi
+          version="${TAG#v}"
           package=$(node -p "require('./package.json').version")
           if [[ "$version" != "$package" ]]; then
-            echo "::error::The tag is $GITHUB_REF_NAME, but package.json says $package. Set the version in src/Stil.Css/package.json, rebuild dist/ and tag again."
+            echo "::error::The tag is $TAG, but package.json says $package. Set the version in src/Stil.Css/package.json, rebuild dist/ and tag again."
             exit 1
           fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
@@ -73,7 +87,7 @@ jobs:
           # Trusted publishing needs npm 11.5.1 or later.
           npm install --global npm@11
           if [[ -z "$NODE_AUTH_TOKEN" ]] && ! npm view stil-css name >/dev/null 2>&1; then
-            echo "::notice::stil-css is not published: add the NPM_TOKEN secret (see the top of npm.yml), then run this workflow on the tag."
+            echo "::notice::stil-css is not published: add the NPM_TOKEN secret (see the top of npm.yml), then run this workflow by hand with the tag."
             exit 0
           fi
           npm publish --provenance --access public --tag "$DIST_TAG"

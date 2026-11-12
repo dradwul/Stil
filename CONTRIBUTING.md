@@ -317,7 +317,8 @@ retried. Published versions cannot be deleted from nuget.org, only unlisted.
   publish packages under it and Stil's packages show as verified.
 - **npm** (`npm.yml`, free): an npm account and a granular access token with
   "Read and write" for packages, stored as the repository secret `NPM_TOKEN`.
-  Then run *Actions > npm > Run workflow* on the latest tag once. After the
+  Then run *Actions > npm > Run workflow* once, from `main`, with the latest
+  tag (such as `v1.0.0`) as input. After the
   first publish, `stil-css` can get a trusted publisher on npmjs.com for this
   repository and `npm.yml`, and the token can be deleted. Until the secret
   exists, the workflow skips the publish with a notice.
