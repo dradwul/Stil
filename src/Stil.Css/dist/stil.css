@@ -2551,7 +2551,7 @@
   }
 
   .stil-data-grid[aria-busy="true"] tbody {
-    opacity: .6;
+    color: var(--stil-color-text-muted);
   }
 
   .stil-data-grid-toolbar, .stil-data-grid-footer {

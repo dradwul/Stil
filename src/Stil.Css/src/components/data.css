@@ -24,7 +24,9 @@
 .stil-data-grid > :last-child,
 .stil-data-grid .stil-table { margin-block-end: 0; }
 
-.stil-data-grid[aria-busy="true"] tbody { opacity: 0.6; }
+/* While the grid loads, the rows it shows are the old ones: muted, but still readable
+   (opacity would take the text below 4.5:1). */
+.stil-data-grid[aria-busy="true"] tbody { color: var(--stil-color-text-muted); }
 
 .stil-data-grid-toolbar,
 .stil-data-grid-footer {

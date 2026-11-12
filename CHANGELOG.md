@@ -259,6 +259,9 @@ list them all, with the new name next to the old.
 
 ### Fixed
 
+- **Stil CSS**: while a data grid loads (`aria-busy="true"`), its rows were
+  faded to 60%, which took the text below 4.5:1 in light mode. They now take
+  the muted text color, which stays readable.
 - **Stil CSS**: a closed dropdown menu, and a hidden tooltip, still took up
   room in the page's layout, so one near the right edge made the page scroll
   sideways on a phone. Both are now `display: none` while hidden; the tooltip
