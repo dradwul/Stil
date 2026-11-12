@@ -25,7 +25,7 @@ something usable.
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | ✅ Done |
 | 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | Done |
 | 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | Done (`1.0.0` is ready; the tag is an owner task) |
-| V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | In progress (V2.1.1 to V2.1.4 done) |
+| V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | In progress (V2.1 done) |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -1407,7 +1407,7 @@ under the same MIT license as the rest. The builder and the content tools
 repository; they are listed here because they decide what the blocks and the
 page model must support. Nothing released under MIT moves behind it.
 
-### Phase V2.1: Section blocks
+### Phase V2.1: Section blocks ✅ Done
 
 - [ ] Ready-made page sections in CSS and Blazor: hero, feature grid, pricing
   table, testimonials, logo cloud, call to action, FAQ (on the accordion),
@@ -1419,7 +1419,8 @@ page model must support. Nothing released under MIT moves behind it.
   offered as a "website" starter in the project wizard (Phase 15).
 
 **Done when:** a product site with a home, pricing, blog and contact page can
-be built from the blocks without custom CSS.
+be built from the blocks without custom CSS. ✅ `dotnet new stil-site` makes
+one, and its `site.css` has no rules.
 
 The blocks are opt-in: their CSS is a separate stylesheet,
 `stil-blocks.css` (built next to `stil.css`, in the npm package and served
@@ -1481,11 +1482,18 @@ namespace `Stil.Blazor.Blocks`. V2.1 comes in five parts:
   axe passes in every palette in light and dark mode (3.3 KiB of the 8 KiB
   budget).
 
-#### V2.1.5: The site template
+#### V2.1.5: The site template ✅ Done
 
-- [ ] `dotnet new stil-site`: a product site with a home, pricing, blog and
+- [x] `dotnet new stil-site`: a product site with a home, pricing, blog and
   contact page built from the blocks, and a "website" starter in the docs
-  wizard.
+  wizard. The site renders on the server without interactivity: the blog
+  pages through `?page=`, an unknown post answers 404, and the contact form
+  is a server-checked form post. It takes the theme options of `stil-app`.
+  Generated and run: every page passes axe in light and dark mode, works on
+  a phone (the mega menu opens in place), and has one `h1`. Two template
+  test cases build it with no warnings. The focus ring Blazor's
+  FocusOnNavigate left on the `h1` is now hidden by Stil itself, for every
+  app.
 
 ### Phase V2.2: Page model
 

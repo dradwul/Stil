@@ -47,6 +47,16 @@ version could contain breaking changes; they are marked **Breaking**.
   (`stil-article`, `StilArticle`) with a picture, larger reading type and a
   table of contents beside the text. `StilPostMeta` shows who wrote a post
   and when, in the current culture. The texts are in all five languages.
+- **Stil.Templates**: `dotnet new stil-site` (Phase V2.1.5), a product
+  website built from the page blocks and rendered without interactivity: a
+  home page, pricing with a monthly/yearly switch and questions, a blog with
+  paging and articles (an unknown post is a 404), and a contact form that is
+  checked on the server. It takes the theme options of `stil-app` and has no
+  CSS of its own.
+- **Docs**: the project wizard has a Website starter, which gives the
+  `dotnet new stil-site` command with the chosen theme.
+- **Stil CSS**: a heading that a script focuses (Blazor's `FocusOnNavigate`
+  gives the page's `h1` `tabindex="-1"`) no longer shows a focus ring.
 - **Stil CSS**: in a collapsed navbar (on a phone), `stil.js` opens a
   dropdown in place inside the menu instead of floating over the page.
 - **Stil CSS and Stil for Blazor**: the icons `mail`, `phone` and `map-pin`

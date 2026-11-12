@@ -18,7 +18,8 @@ Markdown view and editor ([`src/Stil.Markdown`](src/Stil.Markdown/README.md));
 ([`src/Stil.RichText`](src/Stil.RichText/README.md));
 `dotnet new stil-app`, a
 project template that can add features such as charts, editors and planners
-(`--Features`) ([`templates/Stil.Templates`](templates/Stil.Templates/README.md));
+(`--Features`), and `dotnet new stil-site`, a product website from the page
+blocks ([`templates/Stil.Templates`](templates/Stil.Templates/README.md));
 and a documentation site with live examples, a theme builder and a project wizard
 (<https://dradwul.github.io/Stil/>, source in [`docs/Stil.Docs`](docs/Stil.Docs)).
 
