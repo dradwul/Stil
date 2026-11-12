@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme-target data-stil-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog · Tidvy</title>
+    <meta name="description" content="Notes on planning the week, from the Tidvy team.">
+    <!-- The blog of the sample site, built only from Stil CSS and the page blocks: no custom styles. -->
+    <link rel="stylesheet" href="../../src/Stil.Css/dist/stil.css">
+    <link rel="stylesheet" href="../../src/Stil.Css/dist/stil-blocks.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&amp;display=swap" rel="stylesheet">
+</head>
+<body class="stil-scope stil-m-0">
+    <a class="stil-visually-hidden-focusable stil-btn stil-m-2" href="#main">Skip to main content</a>
+
+    <header class="stil-navbar stil-navbar-expand-md">
+        <a class="stil-navbar-brand" href="site.html">Tidvy</a>
+        <button type="button" class="stil-navbar-toggle" aria-controls="blog-menu" aria-expanded="false" data-stil-toggle>
+            <span class="stil-icon stil-icon-menu" aria-hidden="true"></span>
+            <span class="stil-visually-hidden">Menu</span>
+        </button>
+        <div class="stil-navbar-collapse" id="blog-menu">
+            <nav class="stil-nav" aria-label="Main">
+                <a class="stil-nav-link" href="site.html#features">Product</a>
+                <a class="stil-nav-link" href="site.html#pricing">Pricing</a>
+                <a class="stil-nav-link" href="blog.html" aria-current="page">Blog</a>
+                <a class="stil-nav-link" href="site.html#contact">Contact</a>
+            </nav>
+            <div class="stil-navbar-end">
+                <div class="stil-cluster">
+                    <select class="stil-select stil-select-sm stil-w-auto" data-theme-mode aria-label="Color mode">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                        <option value="auto">Auto (OS)</option>
+                    </select>
+                    <select class="stil-select stil-select-sm stil-w-auto" data-theme-palette aria-label="Palette">
+                        <option value="teal">Teal (default)</option>
+                        <option value="purple">Purple</option>
+                        <option value="forest">Forest</option>
+                        <option value="sunset">Sunset</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main id="main">
+        <section class="stil-section" aria-labelledby="blog-title">
+            <div class="stil-container">
+                <header class="stil-section-header">
+                    <p class="stil-eyebrow">Blog</p>
+                    <h1 class="stil-section-title" id="blog-title">Notes on planning the week</h1>
+                    <p class="stil-lead">What we learn from the teams that plan with Tidvy.</p>
+                </header>
+
+                <ul class="stil-posts">
+                    <li>
+                        <article class="stil-post-card stil-post-card-featured">
+                            <img class="stil-post-card-image" src="images/post-monday.svg" alt="">
+                            <div class="stil-post-card-body">
+                                <ul class="stil-post-tags" aria-label="Tags">
+                                    <li><a class="stil-post-tag" href="#">Planning</a></li>
+                                    <li><a class="stil-post-tag" href="#">Teams</a></li>
+                                </ul>
+                                <h2 class="stil-post-card-title"><a href="article.html">Five rules for a calm Monday</a></h2>
+                                <p class="stil-post-card-excerpt">The week is decided on Friday afternoon. Five habits from teams that start Monday with a plan instead of a scramble.</p>
+                                <p class="stil-post-meta"><span>Maja Lind</span> <time datetime="2026-11-03">3 November 2026</time> <span>5 min read</span></p>
+                            </div>
+                        </article>
+                    </li>
+                    <li>
+                        <article class="stil-post-card">
+                            <img class="stil-post-card-image" src="images/post-rooms.svg" alt="">
+                            <div class="stil-post-card-body">
+                                <ul class="stil-post-tags" aria-label="Tags">
+                                    <li><a class="stil-post-tag" href="#">Rooms</a></li>
+                                </ul>
+                                <h2 class="stil-post-card-title"><a href="article.html">Book the van, not the argument</a></h2>
+                                <p class="stil-post-card-excerpt">Shared resources cause more friction than shared tasks. How to book them so nobody has to ask.</p>
+                                <p class="stil-post-meta"><span>Erik Holm</span> <time datetime="2026-10-27">27 October 2026</time> <span>4 min read</span></p>
+                            </div>
+                        </article>
+                    </li>
+                    <li>
+                        <article class="stil-post-card">
+                            <img class="stil-post-card-image" src="images/post-export.svg" alt="">
+                            <div class="stil-post-card-body">
+                                <ul class="stil-post-tags" aria-label="Tags">
+                                    <li><a class="stil-post-tag" href="#">Data</a></li>
+                                </ul>
+                                <h2 class="stil-post-card-title"><a href="article.html">Your data leaves with you</a></h2>
+                                <p class="stil-post-card-excerpt">Why every plan exports to CSV, and what we do with the data we keep.</p>
+                                <p class="stil-post-meta"><span>Jonas Ek</span> <time datetime="2026-10-20">20 October 2026</time> <span>3 min read</span></p>
+                            </div>
+                        </article>
+                    </li>
+                    <li>
+                        <article class="stil-post-card">
+                            <div class="stil-post-card-body">
+                                <ul class="stil-post-tags" aria-label="Tags">
+                                    <li><span class="stil-post-tag">News</span></li>
+                                </ul>
+                                <h2 class="stil-post-card-title"><a href="article.html">Time off, now in the planner</a></h2>
+                                <p class="stil-post-card-excerpt">Holidays and sick days show up in the week, so nobody plans around a person who is away.</p>
+                                <p class="stil-post-meta"><span>Anna Niemi</span> <time datetime="2026-10-13">13 October 2026</time> <span>2 min read</span></p>
+                            </div>
+                        </article>
+                    </li>
+                </ul>
+
+                <nav aria-label="Pages" class="stil-mt-6">
+                    <ul class="stil-pagination">
+                        <li><a class="stil-page-link" role="link" aria-disabled="true">Previous</a></li>
+                        <li><a class="stil-page-link" href="blog.html" aria-current="page">1</a></li>
+                        <li><a class="stil-page-link" href="blog.html">2</a></li>
+                        <li><a class="stil-page-link" href="blog.html">3</a></li>
+                        <li><a class="stil-page-link" href="blog.html">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </section>
+    </main>
+
+    <footer class="stil-footer">
+        <div class="stil-container">
+            <div class="stil-footer-bottom">
+                <p>© 2026 Tidvy Oy. A sample site built from Stil's page blocks, with no custom CSS.</p>
+                <ul class="stil-footer-legal">
+                    <li><a href="site.html">Home</a></li>
+                    <li><a href="#">Privacy</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="../../src/Stil.Css/dist/stil.js"></script>
+    <script src="theme-picker.js"></script>
+</body>
+</html>

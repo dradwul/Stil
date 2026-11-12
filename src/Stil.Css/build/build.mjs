@@ -46,7 +46,7 @@ const layers = [
 
 // The page blocks (website sections): a separate, opt-in stylesheet loaded after stil.css. Its
 // rules join the stil.components layer, so the utilities still win over them.
-const blocks = ['blocks/sections.css', 'blocks/selling.css', 'blocks/site.css'];
+const blocks = ['blocks/sections.css', 'blocks/selling.css', 'blocks/site.css', 'blocks/blog.css'];
 
 const banner = `/*! Stil CSS v${pkg.version} | MIT License | https://github.com/dradwul/Stil */\n`;
 const blocksBanner = `/*! Stil CSS blocks v${pkg.version} | MIT License | https://github.com/dradwul/Stil */\n`;

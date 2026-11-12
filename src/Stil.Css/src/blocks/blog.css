@@ -1,0 +1,280 @@
+/* Page blocks for a blog: the list of posts and the article layout. */
+
+/* Post list: cards with a picture, tags, the title, an excerpt and who wrote it when. The title
+   is the card's link and covers the whole card; tags that are links stay clickable above it.
+   <ul class="stil-posts">
+     <li>
+       <article class="stil-post-card">
+         <img class="stil-post-card-image" src="…" alt="">
+         <div class="stil-post-card-body">
+           <ul class="stil-post-tags" aria-label="Tags"><li><a class="stil-post-tag" href="…">Planning</a></li></ul>
+           <h2 class="stil-post-card-title"><a href="…">Five rules for a calm Monday</a></h2>
+           <p class="stil-post-card-excerpt">…</p>
+           <p class="stil-post-meta"><span>Maja Lind</span> <time datetime="2026-11-03">3 November 2026</time> <span>5 min read</span></p>
+         </div>
+       </article>
+     </li>
+   </ul>
+   stil-post-card-featured puts the picture beside the text on a wide list, across all columns.
+   Page through the posts with a stil-pagination of links. */
+.stil-posts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+    gap: var(--stil-space-6) var(--stil-space-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stil-post-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-lg);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+}
+
+.stil-post-card-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background-color: var(--stil-color-surface-muted);
+}
+
+.stil-post-card-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--stil-space-2);
+    padding: var(--stil-space-5);
+}
+
+.stil-post-card-title {
+    margin: 0;
+    font-size: var(--stil-font-size-lg);
+    line-height: 1.3;
+    text-wrap: balance;
+}
+
+.stil-post-card-title > a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* The title's link covers the card, so the whole card is a target. */
+.stil-post-card-title > a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+}
+
+.stil-post-card:hover .stil-post-card-title > a { text-decoration: underline; }
+
+.stil-post-card:has(.stil-post-card-title > a:focus-visible) {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+}
+
+.stil-post-card-title > a:focus-visible { outline: none; }
+
+.stil-post-card-excerpt {
+    margin: 0;
+    color: var(--stil-color-text-muted);
+}
+
+.stil-post-card .stil-post-meta { margin-block-start: auto; }
+
+.stil-posts > li:has(> .stil-post-card-featured) { grid-column: 1 / -1; }
+
+@container (min-width: 48rem) {
+    .stil-post-card-featured { flex-direction: row; }
+
+    .stil-post-card-featured > .stil-post-card-image {
+        width: 50%;
+        aspect-ratio: auto;
+        min-height: 18rem;
+    }
+
+    .stil-post-card-featured .stil-post-card-body {
+        justify-content: center;
+        padding: var(--stil-space-6);
+    }
+
+    .stil-post-card-featured .stil-post-card-title { font-size: var(--stil-font-size-xl); }
+}
+
+.stil-post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--stil-space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stil-post-tag {
+    --_bg: var(--stil-color-surface-muted);
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    padding: 0.125rem var(--stil-space-2);
+    border-radius: var(--stil-radius-pill);
+    background-color: var(--stil-color-surface-muted);
+    color: var(--stil-color-text);
+    font-size: var(--stil-font-size-xs);
+    font-weight: var(--stil-font-weight-bold);
+    text-decoration: none;
+}
+
+a.stil-post-tag:hover { background-color: color-mix(in srgb, var(--stil-color-surface-muted), var(--stil-color-text) 10%); }
+
+a.stil-post-tag:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+}
+
+.stil-post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--stil-space-1) var(--stil-space-2);
+    margin: 0;
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+}
+
+/* A dot between the parts of the meta line. */
+.stil-post-meta > * + *::before {
+    content: "·";
+    margin-inline-end: var(--stil-space-2);
+}
+
+.stil-post-meta > .stil-avatar::before,
+.stil-post-meta > .stil-avatar + *::before { content: none; }
+
+/* Article: the header (eyebrow, title, lead and who wrote it when), a picture, the body in
+   stil-prose with an optional table of contents beside it on a wide article, and a footer.
+   <article class="stil-article">
+     <header class="stil-article-header">
+       <p class="stil-eyebrow"><a href="…">Blog</a></p>
+       <h1 class="stil-article-title">…</h1>
+       <p class="stil-lead">…</p>
+       <p class="stil-post-meta">…</p>
+     </header>
+     <figure class="stil-article-image"><img src="…" alt="…"><figcaption>…</figcaption></figure>
+     <div class="stil-article-layout">
+       <nav class="stil-toc" aria-labelledby="toc-title">
+         <p class="stil-toc-title" id="toc-title">On this page</p>
+         <ol class="stil-toc-list"><li><a href="#why">Why Mondays go wrong</a></li></ol>
+       </nav>
+       <div class="stil-article-body stil-prose">…</div>
+     </div>
+     <footer class="stil-article-footer">…</footer>
+   </article>
+   The article is a container: on a wide one the contents sit beside the text and stay in view. */
+.stil-article {
+    container-type: inline-size;
+    max-width: 64rem;
+    margin-inline: auto;
+}
+
+.stil-article-header {
+    max-width: 44rem;
+    margin-block-end: var(--stil-space-6);
+}
+
+.stil-article-title {
+    margin: 0 0 var(--stil-space-3);
+    font-size: clamp(2rem, 1.25rem + 3cqi, 3rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+}
+
+.stil-article-header > .stil-post-meta { margin-block-start: var(--stil-space-4); }
+
+.stil-article-image { margin: 0 0 var(--stil-space-6); }
+
+.stil-article-image > :is(img, svg, video) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--stil-radius-lg);
+}
+
+.stil-article-image > figcaption {
+    margin-block-start: var(--stil-space-2);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+}
+
+.stil-article-layout {
+    display: grid;
+    gap: var(--stil-space-6);
+}
+
+@container (min-width: 60rem) {
+    .stil-article-layout {
+        grid-template-columns: minmax(0, 44rem) minmax(0, 14rem);
+        justify-content: space-between;
+        align-items: start;
+    }
+
+    .stil-article-layout > .stil-toc {
+        position: sticky;
+        top: var(--stil-space-5);
+        order: 1;
+    }
+}
+
+/* Larger reading type than the compact stil-prose of apps. */
+.stil-article-body {
+    max-width: 44rem;
+    font-size: clamp(var(--stil-font-size-md), 0.95rem + 0.25cqi, 1.125rem);
+    line-height: 1.7;
+}
+
+.stil-article-body :is(p, ul, ol, blockquote, pre, table, figure) { margin-block: 0 1.25em; }
+
+.stil-article-body :is(h2, h3) {
+    margin-block: 1.75em 0.5em;
+    line-height: 1.3;
+    scroll-margin-block-start: var(--stil-space-5);
+}
+
+.stil-toc {
+    padding: var(--stil-space-4);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-lg);
+    background-color: var(--stil-color-surface);
+    font-size: var(--stil-font-size-sm);
+}
+
+.stil-toc-title {
+    margin: 0 0 var(--stil-space-2);
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-toc-list {
+    display: grid;
+    gap: var(--stil-space-2);
+    margin: 0;
+    padding-inline-start: var(--stil-space-4);
+}
+
+.stil-article-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--stil-space-3);
+    max-width: 44rem;
+    margin-block-start: var(--stil-space-6);
+    padding-block-start: var(--stil-space-4);
+    border-block-start: 1px solid var(--stil-color-border);
+}

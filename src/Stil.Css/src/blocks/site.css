@@ -180,6 +180,13 @@
     font-size: var(--stil-font-size-sm);
 }
 
+/* On its own, without the columns above it. */
+.stil-footer-bottom:first-child {
+    margin-block-start: 0;
+    padding-block-start: 0;
+    border-block-start: 0;
+}
+
 .stil-footer-bottom > p { margin: 0; }
 
 .stil-footer-legal {

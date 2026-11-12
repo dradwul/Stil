@@ -190,13 +190,17 @@ Each block is sized to its section (container queries), not the window.
 | Team | `<ul class="stil-team">` > `stil-team-member` with `stil-team-photo` (an `img` with `alt=""`, or a `stil-avatar` with initials), `stil-team-name`, `stil-team-role`, `stil-team-bio` and `stil-team-links`. |
 | Mega menu | A `<details class="stil-dropdown stil-mega">` in a navbar's `stil-nav`, with `<summary class="stil-nav-link">` and `stil-dropdown-menu stil-mega-menu` > `stil-mega-columns` > `stil-mega-column` (`stil-mega-title`, and `stil-dropdown-item stil-mega-link` links with an icon, `stil-mega-link-title` and `stil-mega-link-text`), and an optional `stil-mega-footer`. |
 | Footer | `<footer class="stil-footer">` > `stil-container` > `stil-footer-main` (`stil-footer-about` with `stil-footer-brand` and a `<p>`; `<nav class="stil-footer-columns">` with `stil-footer-title` and `stil-footer-links` per column) and `stil-footer-bottom` (a `<p>` and `stil-footer-legal`). |
+| Post list | `<ul class="stil-posts">` > `<article class="stil-post-card">` (`stil-post-card-featured`) with `stil-post-card-image`, `stil-post-card-body` > `stil-post-tags` (`stil-post-tag`), `stil-post-card-title` (its link covers the card), `stil-post-card-excerpt` and `stil-post-meta` (parts separated by dots). Page with a `stil-pagination` of links. |
+| Article | `<article class="stil-article">` > `stil-article-header` (`stil-eyebrow`, `stil-article-title`, `stil-lead`, `stil-post-meta`), `<figure class="stil-article-image">`, `stil-article-layout` > an optional `<nav class="stil-toc">` (`stil-toc-title`, `stil-toc-list`, beside the text on a wide article) and `stil-article-body stil-prose`, and `stil-article-footer`. |
 | Contact | `stil-contact` > `stil-contact-info` (a title, a lead and `<dl class="stil-contact-details">` > `stil-contact-item` > `stil-contact-label` + `stil-contact-value`) and `stil-contact-form` (a card for the form). |
 
 On `stil-section-brand` and `stil-cta-brand` the text, links, focus rings,
 eyebrows and outline buttons take the color that reads on the primary
 color, and a solid button turns to the surface color. For a product site
 built only from these, open
-[`samples/Stil.Html/site.html`](../../samples/Stil.Html/site.html).
+[`samples/Stil.Html/site.html`](../../samples/Stil.Html/site.html), with its
+[blog](../../samples/Stil.Html/blog.html) and an
+[article](../../samples/Stil.Html/article.html).
 
 ## Optional JavaScript
 
