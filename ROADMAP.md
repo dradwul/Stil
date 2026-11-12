@@ -1498,12 +1498,17 @@ These need the repository or package owner.
   `v0.1.0-preview.1` on 2026-10-30.
 - [ ] Before the next release: add `Stil.Markdown` and `Stil.RichText` to the
   trusted publishing policy on nuget.org (new package IDs).
-- [ ] Before the `v1.0.0` tag: go through the forms, a dialog, the data grid
+- [x] Before the `v1.0.0` tag: go through the forms, a dialog, the data grid
   and the calendar with a screen reader (NVDA or Narrator on Windows,
   VoiceOver on a Mac or iPhone), and open the samples and the demo in Firefox
   and in Safari.
-- [ ] For `1.0` (Phase 16): publish `stil-css` to npm, host the docs site,
-  and push the `v1.0.0` tag.
+- [x] Push the `v1.0.0` tag (2026-11-12); `release.yml` published the five
+  NuGet packages.
+- [ ] Publish `stil-css` to npm: `npm.yml` does it from each tag once the
+  `NPM_TOKEN` secret exists (see One-time setup in CONTRIBUTING.md); run it
+  by hand on `v1.0.0` once.
+- [ ] Host the docs site: `docs.yml` deploys it to GitHub Pages from `main`
+  once Pages is set to deploy from GitHub Actions (one setting).
 
 ## CSS backlog (no phase yet)
 

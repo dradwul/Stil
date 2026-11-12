@@ -20,7 +20,7 @@ Markdown view and editor ([`src/Stil.Markdown`](src/Stil.Markdown/README.md));
 project template that can add features such as charts, editors and planners
 (`--Features`) ([`templates/Stil.Templates`](templates/Stil.Templates/README.md));
 and a documentation site with live examples, a theme builder and a project wizard
-([`docs/Stil.Docs`](docs/Stil.Docs)).
+(<https://dradwul.github.io/Stil/>, source in [`docs/Stil.Docs`](docs/Stil.Docs)).
 
 The Blazor components render ordinary HTML with Stil CSS classes, so a page
 can mix components and hand-written markup. Every class starts with `stil-`

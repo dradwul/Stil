@@ -37,7 +37,9 @@ Use one of these options:
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/dradwul/Stil@v1.0.0/src/Stil.Css/dist/stil.min.css" />
   ```
 
-- **npm:** the package is prepared as `stil-css` but not published yet.
+- **npm:** `npm install stil-css`, then import `stil-css` (the stylesheet),
+  `stil-css/min` or `stil-css/js` (published from each release tag; see
+  CONTRIBUTING.md).
 - **Blazor/.NET:** the `Stil` NuGet package serves the files as
   `_content/Stil/stil.css`, `stil.min.css` and `stil.js`. See
   [Stil for Blazor](../Stil.Blazor/README.md).

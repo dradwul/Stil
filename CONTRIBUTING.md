@@ -186,7 +186,7 @@ first.
 | Package | Name | Status |
 | --- | --- | --- |
 | NuGet (Blazor + stylesheet) | `Stil` | Published from a version tag (see Releases). |
-| npm (CSS only) | `stil-css` | Free on npm. Prepared in `src/Stil.Css/package.json`. Not published yet. `stil` is taken by another package. |
+| npm (CSS only) | `stil-css` | Published by `npm.yml` from a version tag. `stil` is taken by another package. |
 | NuGet (charts) | `Stil.Charts` | Packed by `src/Stil.Charts`, published with `Stil`. |
 | NuGet (Markdown) | `Stil.Markdown` | Packed by `src/Stil.Markdown`, published with `Stil`. It depends on Markdig, so the core package does not. |
 | NuGet (rich text) | `Stil.RichText` | Packed by `src/Stil.RichText`, published with `Stil`. It depends on AngleSharp and `Stil.Markdown`. |
@@ -229,9 +229,10 @@ All packages share the version in `Directory.Build.props` and are listed in
    changes, at most once per phase. Only the axe checks run in CI, because
    the baselines are made on Windows; they catch accessibility regressions
    without a local run.
-6. Only a version tag pushed by the owner publishes anything (see
-   [Releases](#releases)). Pushes to `main` and pull requests only build,
-   test and pack. Nothing goes to npm, and the docs site is not deployed.
+6. Only a version tag pushed by the owner publishes packages (see
+   [Releases](#releases)). Pushes to `main` and pull requests build, test
+   and pack, and a push to `main` also deploys the docs site to GitHub Pages
+   (`docs.yml`).
 7. When you change a color formula in `src/derived.css`, update the mirror
    of it in `tools/check-contrast.mjs`. The script fails if the two drift
    apart.
@@ -314,3 +315,12 @@ retried. Published versions cannot be deleted from nuget.org, only unlisted.
   user name.
 - Optionally, request the `Stil.` ID prefix on nuget.org, so no one else can
   publish packages under it and Stil's packages show as verified.
+- **npm** (`npm.yml`, free): an npm account and a granular access token with
+  "Read and write" for packages, stored as the repository secret `NPM_TOKEN`.
+  Then run *Actions > npm > Run workflow* on the latest tag once. After the
+  first publish, `stil-css` can get a trusted publisher on npmjs.com for this
+  repository and `npm.yml`, and the token can be deleted. Until the secret
+  exists, the workflow skips the publish with a notice.
+- **GitHub Pages** (`docs.yml`, free): *Settings > Pages > Build and
+  deployment > Source: GitHub Actions*. Every push to `main` then deploys
+  the docs site to <https://dradwul.github.io/Stil/>.
