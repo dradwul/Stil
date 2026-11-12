@@ -18,7 +18,9 @@ and theme both with the same `--stil-*` tokens.
 
 > **Status:** early preview (`0.1.x`, prereleases on NuGet). Requires .NET 10.
 > APIs may still change before `1.0`. See the
-> [roadmap](https://github.com/dradwul/Stil/blob/main/ROADMAP.md).
+> [roadmap](https://github.com/dradwul/Stil/blob/main/ROADMAP.md), and the
+> [migration notes](https://github.com/dradwul/Stil/blob/main/MIGRATING-TO-1.0.md)
+> for the renames on the way to `1.0`.
 
 ## Get started
 

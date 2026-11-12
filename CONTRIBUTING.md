@@ -215,7 +215,9 @@ All packages share the version in `Directory.Build.props` and are listed in
    `dotnet test Stil.sln` before pushing. CI (`.github/workflows/ci.yml`)
    runs the same checks plus pack on every push to `main` and on every pull
    request. It fails if `dist/` is stale, if a token pair drops below WCAG
-   AA, or if a package is missing its stylesheet. It also runs
+   AA, if a file is over its size budget, if the public API changed without
+   its baseline (see [The public API](#the-public-api)), or if a package is
+   missing its stylesheet. It also runs
    `node templates/test-templates.mjs` and the axe checks of
    `tests/Stil.Visual`.
 5. Run as few Playwright tests in `tests/Stil.Visual` as you can, and only
@@ -237,18 +239,54 @@ All packages share the version in `Directory.Build.props` and are listed in
    [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`,
    `fix:`, `docs:`, `test:`, `chore:`).
 
+## The public API
+
+Each package (`src/Stil.Blazor`, `src/Stil.Charts`, `src/Stil.Markdown`,
+`src/Stil.RichText`) lists its public API in two files next to the project:
+`PublicAPI.Shipped.txt`, what a released version has, and
+`PublicAPI.Unshipped.txt`, what the next version adds or removes. The public
+API analyzers (set up in `src/Directory.Build.props`) fail the build when a
+public type or member is not listed (RS0016) or a listed one is gone
+(RS0017). A renamed parameter does both.
+
+So a change to the public API is always a change to these files too, and the
+review sees it. After such a change, run
+
+```shell
+node tools/update-public-api.mjs
+```
+
+which adds the new API to `PublicAPI.Unshipped.txt` and takes the removed API
+out (or marks it `*REMOVED*` there, if a release has it). Visual Studio and
+Rider do the same with the "Add to public API" fix on the error. Read the
+diff: a removed or renamed line breaks the apps that use it, so it belongs in
+a major version, with a line in `CHANGELOG.md` and in the migration notes.
+
+The same holds for Stil CSS, without a tool: class names, token names and
+the `stil.js` exports listed in its README are its API.
+
+Stil CSS has a size budget too: `tools/check-size.mjs` (part of
+`npm run check`) fails when `stil.min.css`, `stil.js` or the chart
+stylesheet grows past its gzipped budget. When a file grows on purpose, raise
+its budget in that script in the same change.
+
 ## Releases
 
 `.github/workflows/release.yml` publishes `Stil`, `Stil.Charts`,
 `Stil.Markdown`, `Stil.RichText` and `Stil.Templates` to nuget.org when the owner pushes a version tag. Nothing
 else publishes.
 
-1. In `CHANGELOG.md`, move the notes under `[Unreleased]` to a new section
+1. For a release without a suffix (not a preview), move the lines of each
+   `src/*/PublicAPI.Unshipped.txt` to `PublicAPI.Shipped.txt` (a `*REMOVED*`
+   line takes the line it names out of Shipped), so the next version starts
+   from an empty Unshipped file. The `0.1` previews never shipped a baseline;
+   `1.0.0` is the first release that does.
+2. In `CHANGELOG.md`, move the notes under `[Unreleased]` to a new section
    `## [0.2.0] - 2026-11-15` (the version and the date). The release fails
    without that section, and its text becomes the GitHub release notes.
-2. Set `<VersionPrefix>` in `Directory.Build.props` to the next version, so
-   local builds and CI packs carry it. Commit both and push.
-3. Tag the commit and push the tag. A tag with a suffix, such as
+3. Set `<VersionPrefix>` in `Directory.Build.props` to the next version, so
+   local builds and CI packs carry it. Commit the changes and push.
+4. Tag the commit and push the tag. A tag with a suffix, such as
    `v0.2.0-preview.1`, publishes a prerelease.
 
    ```shell

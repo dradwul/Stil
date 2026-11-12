@@ -24,7 +24,7 @@ something usable.
 | 13 | Boards and workspace: kanban, command palette, notifications, recurring events, resources, Gantt | Done |
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | ✅ Done |
 | 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | Done |
-| 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | In progress (16.1 done) |
+| 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | In progress (16.1, 16.2 done) |
 | V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | Planned (after 1.0) |
 
 A phase is done when every item in it is checked. Items that need the
@@ -1337,18 +1337,28 @@ breaking change since `0.1.0`.
 **Done when:** the list of breaking changes is in the changelog and every
 package builds and passes its tests with them.
 
-### Phase 16.2: Guard the API
+### Phase 16.2: Guard the API ✅ Done
 
-- [ ] A public API baseline per package (`PublicAPI.Shipped.txt` and
-  `PublicAPI.Unshipped.txt` with the public API analyzers), so CI fails when
-  the public API changes without the baseline being updated.
-- [ ] A size budget in CI for `stil.min.css`, `stil.js` and the chart
-  stylesheet, so they cannot grow by accident.
-- [ ] Migration notes from `0.1` to `1.0`: every rename and removal, with the
-  new name next to the old.
+- [x] A public API baseline per package (`PublicAPI.Shipped.txt` and
+  `PublicAPI.Unshipped.txt` with the public API analyzers, set up for every
+  package in `src/Directory.Build.props`), so CI fails when the public API
+  changes without the baseline being updated: a missing or a vanished entry
+  is a build error. The `0.1` previews never shipped a baseline, so all 3,000
+  entries are in Unshipped until `1.0.0` moves them to Shipped (a release
+  step in CONTRIBUTING.md). `tools/update-public-api.mjs` updates the lists
+  from the command line.
+- [x] A size budget in CI for `stil.min.css`, `stil.js` and the chart
+  stylesheet, so they cannot grow by accident: `tools/check-size.mjs`, on the
+  gzipped size, in `npm run check` (25, 24 and 4.5 KiB; today 23.0, 21.4 and
+  3.8).
+- [x] Migration notes from `0.1` to `1.0`: every rename and removal, with the
+  new name next to the old, in `MIGRATING-TO-1.0.md`. Nothing was removed.
+  The notes warn that an old parameter name still compiles (a component
+  passes unknown attributes on to its element), and give one search for all
+  the old names.
 
 **Done when:** a renamed public parameter makes CI fail, and the migration
-notes are linked from the README.
+notes are linked from the README. ✅
 
 ### Phase 16.3: Release
 

@@ -11,7 +11,7 @@
 
 Stil CSS is a themeable, framework-independent CSS class library. It is a
 Bootstrap replacement with dark mode and WCAG AA colors built in. It is a
-single stylesheet, about 16 kB minified and gzipped, with no JavaScript. It
+single stylesheet, about 23 kB minified and gzipped, with no JavaScript. It
 works with plain HTML, Razor, React, Vue, or any other front end.
 
 Every class starts with `stil-` and every token with `--stil-`, so Stil can

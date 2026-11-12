@@ -62,6 +62,16 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 
 ### Added
 
+- **All packages**: a public API baseline (Phase 16.2). Each package lists
+  its public API in `PublicAPI.Shipped.txt` and `PublicAPI.Unshipped.txt`,
+  and the build fails when the API changes without them, so a rename can no
+  longer slip into a release. `tools/update-public-api.mjs` updates the
+  lists after a deliberate change.
+- **Stil CSS**: a size budget for `stil.min.css`, `stil.js` and the chart
+  stylesheet (`tools/check-size.mjs`, part of `npm run check` and CI).
+- **Docs**: [migration notes from `0.1` to `1.0`](MIGRATING-TO-1.0.md),
+  with every rename and the new name next to the old, linked from the
+  README.
 - **Stil for Blazor**: `StilQrCode` and `StilBarcode` (Code 128, EAN-13,
   EAN-8) draw codes as SVG in C#, with no dependency, so they render in
   static SSR and print sharply. `StilCodes` has the encoders (`QrSvg`,
@@ -239,6 +249,9 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 
 ### Fixed
 
+- **Stil CSS**: `npm run check` reported `dist/` as out of date on Windows
+  right after `npm run build`, when Git had checked a source file out with
+  CRLF line endings. The build now reads the sources with LF line endings.
 - **Stil.Markdown**: the checkboxes of a task list (`- [x] Done`) had no
   accessible name, which axe reports. Each now has the task's text as its
   `aria-label`.

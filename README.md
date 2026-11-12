@@ -8,7 +8,7 @@ Stil is a themeable UI toolkit in two parts:
 
 | Part | What it is | Docs |
 | --- | --- | --- |
-| **Stil CSS** | A framework-independent CSS class library: layout, components and utilities, about 16 kB gzipped. Works with plain HTML or any framework. | [`src/Stil.Css`](src/Stil.Css/README.md) |
+| **Stil CSS** | A framework-independent CSS class library: layout, components and utilities, about 23 kB gzipped. Works with plain HTML or any framework. | [`src/Stil.Css`](src/Stil.Css/README.md) |
 | **Stil for Blazor** | A Blazor component library built on Stil CSS: forms with validation, a data grid, pickers, tree view, tabs, dropdowns, dialogs and toasts. Shipped as the `Stil` NuGet package. | [`src/Stil.Blazor`](src/Stil.Blazor/README.md) |
 
 Around them: `Stil.Charts`, themeable SVG charts for Blazor
@@ -31,7 +31,9 @@ library.
 
 > **Status:** early preview (`0.1.x`, prereleases on NuGet). Class names,
 > token names and component APIs may still change before `1.0`. See the
-> [roadmap](ROADMAP.md).
+> [roadmap](ROADMAP.md). Coming from a `0.1` preview? The
+> [migration notes](MIGRATING-TO-1.0.md) list every rename on the way to
+> `1.0`.
 
 ## Install
 
@@ -113,12 +115,13 @@ docs/Stil.Docs/      Documentation site (Blazor WebAssembly) with a theme builde
 samples/Stil.Html/   Plain-HTML showcase of every CSS class, plus an admin page built with Stil
 samples/Stil.Demo/   Blazor web app: gallery, orders with a dashboard, budget, check-in, task board, rooms and a project plan
 tests/               bUnit tests (Stil.Blazor.Tests, Stil.Charts.Tests, Stil.Markdown.Tests, Stil.RichText.Tests) and Playwright tests (Stil.Visual)
-tools/               check-contrast.mjs: WCAG contrast check run by CI
+tools/               CI checks (WCAG contrast, size budget) and update-public-api.mjs
 CHANGELOG.md         Changes in every package
-CONTRIBUTING.md      Naming rules, scope model, browser support, workflow
+CONTRIBUTING.md      Naming rules, scope model, browser support, workflow, the public API
+MIGRATING-TO-1.0.md  Every rename from 0.1 to 1.0, with the new name next to the old
 ROADMAP.md           Phase plan
 Stil.sln             Solution with the libraries, docs, demo, templates and tests
-Directory.Build.props  The shared version and package metadata
+Directory.Build.props  The shared version and package metadata (src/ adds the public API analyzers)
 ```
 
 The Blazor project does not keep its own copy of the stylesheet. It serves
@@ -145,7 +148,7 @@ CSS work happens in `src/Stil.Css`:
 cd src/Stil.Css
 npm install
 npm run watch    # rebuilds dist/ on every change
-npm run check    # dist/ up to date + WCAG contrast checks
+npm run check    # dist/ up to date + WCAG contrast checks + size budget
 ```
 
 Run the Blazor demo and open <http://localhost:5100>:
