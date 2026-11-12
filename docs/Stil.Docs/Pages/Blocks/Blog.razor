@@ -1,0 +1,41 @@
+@page "/blocks/blog"
+@using Stil.Docs.Examples.Blocks
+
+<DocsHeader Title="Blog" Eyebrow="Website">
+    <Lead>A list of posts with paging, and the layout of an article with a table of contents.</Lead>
+</DocsHeader>
+
+<p>
+    Like the other <a href="blocks/sections">page blocks</a>, these need <code>&lt;StilHead Blocks /&gt;</code> and
+    <code>@@using Stil.Blazor.Blocks</code>. Where the posts come from is up to you: a database, files, or Markdown
+    rendered with <a href="components/markdown">StilMarkdown</a> in the article's body.
+</p>
+
+<h2 id="posts">Post list</h2>
+<DocExample Type="typeof(Posts)">
+    <p>
+        <code>StilPostList</code> fits as many <code>StilPostCard</code> columns as there is room for. A card has a
+        picture (decorative by default, since the title follows), tags, the title, an excerpt and who wrote it when.
+        The title is the card's link and covers the whole card, and tags that are links stay clickable above it.
+        <code>Featured</code> spans the list with the picture beside the text. The date is shown in the current
+        culture (<code>DateFormat</code>, "d MMMM yyyy" by default) in a <code>time</code> element. Page with a
+        <a href="components/navigation#pagination">StilPagination</a> of links (<code>HrefTemplate</code>).
+    </p>
+</DocExample>
+
+<h2 id="article">Article</h2>
+<DocExample Type="typeof(Article)">
+    <p>
+        <code>StilArticle</code> has a header (an eyebrow that can link back to the blog, the title, a lead and
+        <code>StilPostMeta</code>), a picture with a caption, the body in <code>stil-prose</code> with larger reading
+        type, and a footer with the tags. <code>Contents</code> lists the headings (with <code>Href</code>
+        <code>#id</code>): beside the text on a wide article, where it stays in view, and above it on a narrow one.
+        Its title, "On this page", is translated. In a page, the title is the <code>h1</code>; here it is an
+        <code>h3</code> (<code>HeadingLevel</code>), under this page's headings.
+    </p>
+</DocExample>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilPostCard)" />
+<ApiTable Type="typeof(StilPostMeta)" />
+<ApiTable Type="typeof(StilArticle)" />
