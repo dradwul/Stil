@@ -29,7 +29,7 @@ jobs:
         working-directory: src/Stil.Css
         run: npm ci
 
-      - name: Check that dist/ matches the sources
+      - name: Check that dist/ matches the sources, the contrast and the size budget
         working-directory: src/Stil.Css
         run: npm run check
 
