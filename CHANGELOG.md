@@ -27,7 +27,15 @@ version could contain breaking changes; they are marked **Breaking**.
   `StilCallToAction`, `StilStatsBand` with `StilStatsItem`, and
   `StilLogoCloud` with `StilLogo`, and `StilBlockTone` for their
   background. `<StilHead Blocks />` adds their stylesheet.
-- **Docs**: a Website section, with the page Sections and heroes.
+- **Stil CSS and Stil for Blazor**: the blocks that sell (Phase V2.1.2): a
+  pricing table (`stil-pricing`, `StilPricing` with `StilPlan`) with a
+  highlighted plan and a monthly/yearly switch that needs no JavaScript,
+  testimonials (`StilTestimonials`, `StilTestimonial`), an FAQ on the
+  accordion (`StilFaq`) and a team grid (`StilTeam`, `StilTeamMember`). The
+  switch's texts are in all five languages. Cards on the brand color keep the
+  page's colors inside.
+- **Docs**: a Website section, with the pages Sections and heroes, and
+  Pricing, testimonials and FAQ.
 
 ### Fixed
 

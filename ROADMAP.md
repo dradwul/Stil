@@ -25,7 +25,7 @@ something usable.
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | ✅ Done |
 | 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | Done |
 | 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | Done (`1.0.0` is ready; the tag is an owner task) |
-| V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | In progress (V2.1.1 done) |
+| V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | In progress (V2.1.1, V2.1.2 done) |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -1445,10 +1445,16 @@ namespace `Stil.Blazor.Blocks`. V2.1 comes in five parts:
   in the CI axe checks), and a Website section in the docs (Sections and
   heroes).
 
-#### V2.1.2: Selling
+#### V2.1.2: Selling ✅ Done
 
-- [ ] Pricing table (plans, a highlighted plan, a monthly/yearly switch),
-  testimonials, an FAQ on the accordion, and a team grid.
+- [x] Pricing table (plans, a highlighted plan, a monthly/yearly switch),
+  testimonials, an FAQ on the accordion, and a team grid, in CSS and as
+  Blazor components. The switch is two radio buttons and `:has()`, so it
+  works in static SSR and plain HTML; its texts are in all five languages.
+  A card on the brand color (a plan, a testimonial, an accordion, a
+  stil-card) keeps the page's colors inside. The sample site has all four,
+  and axe passes in every palette, in light and dark mode, on both periods
+  (2.2 KiB of the blocks' 8 KiB budget).
 
 #### V2.1.3: Header, footer and contact
 
