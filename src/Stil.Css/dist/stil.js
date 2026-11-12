@@ -1,4 +1,4 @@
-/*! Stil CSS v0.1.0 | MIT License | https://github.com/dradwul/Stil */
+/*! Stil CSS v1.0.0 | MIT License | https://github.com/dradwul/Stil */
 // Optional behaviours for Stil CSS: an ES module with no dependencies.
 // <script type="module" src="stil.js"></script> turns on:
 //   - Dropdowns (<details class="stil-dropdown">): close on an outside click, on Escape and after

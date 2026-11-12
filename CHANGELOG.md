@@ -1,14 +1,22 @@
 # Changelog
 
 All notable changes to the Stil packages are listed here: `stil-css` (npm),
-`Stil`, `Stil.Charts` and `Stil.Templates` (NuGet). They share one version
-number.
+`Stil`, `Stil.Charts`, `Stil.Markdown`, `Stil.RichText` and
+`Stil.Templates` (NuGet). They share one version number.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and versions follow [Semantic Versioning](https://semver.org/). Before `1.0`,
-a minor version can contain breaking changes; they are marked **Breaking**.
+and versions follow [Semantic Versioning](https://semver.org/). From `1.0`
+on, breaking changes come only in a major version. Before `1.0`, a minor
+version could contain breaking changes; they are marked **Breaking**.
 
 ## [Unreleased]
+
+## [1.0.0] - 2026-11-12
+
+The first stable version: from here on, names and APIs change only in a major
+version. Apps on a `0.1` preview have a few renames to make; the
+[migration notes](https://github.com/dradwul/Stil/blob/main/MIGRATING-TO-1.0.md)
+list them all, with the new name next to the old.
 
 ### Changed
 
@@ -69,9 +77,11 @@ a minor version can contain breaking changes; they are marked **Breaking**.
   lists after a deliberate change.
 - **Stil CSS**: a size budget for `stil.min.css`, `stil.js` and the chart
   stylesheet (`tools/check-size.mjs`, part of `npm run check` and CI).
-- **Docs**: [migration notes from `0.1` to `1.0`](MIGRATING-TO-1.0.md),
+- **Docs**: [migration notes from `0.1` to `1.0`](https://github.com/dradwul/Stil/blob/main/MIGRATING-TO-1.0.md),
   with every rename and the new name next to the old, linked from the
   README.
+- **Docs**: the axe checks in CI cover every page of the documentation site,
+  in light and dark mode, next to the samples and the demo.
 - **Stil for Blazor**: `StilQrCode` and `StilBarcode` (Code 128, EAN-13,
   EAN-8) draw codes as SVG in C#, with no dependency, so they render in
   static SSR and print sharply. `StilCodes` has the encoders (`QrSvg`,
@@ -249,6 +259,21 @@ a minor version can contain breaking changes; they are marked **Breaking**.
 
 ### Fixed
 
+- **Stil CSS**: a closed dropdown menu, and a hidden tooltip, still took up
+  room in the page's layout, so one near the right edge made the page scroll
+  sideways on a phone. Both are now `display: none` while hidden; the tooltip
+  still fades in.
+- **Stil CSS**: a wide table (`stil-table-responsive`) or a splitter pane
+  that scrolls, with nothing focusable inside, could not be scrolled with the
+  keyboard. `stil.js` now makes such a box focusable while it scrolls, with a
+  focus ring.
+- **Stil CSS**: the time in your own chat messages
+  (`stil-chat-message-mine`) was faded, which took it below 4.5:1 on the
+  primary color. It now keeps the full text color.
+- **Stil CSS**: the PIN field (`stil-pin`) showed focus only by a change of
+  color, and the PDF viewer's frame not at all. Both now get the focus ring.
+- **Docs**: the Cards and alerts page never finished loading: its first
+  example had the page's own name, so the page showed itself, without end.
 - **Stil CSS**: `npm run check` reported `dist/` as out of date on Windows
   right after `npm run build`, when Git had checked a source file out with
   CRLF line endings. The build now reads the sources with LF line endings.
@@ -404,7 +429,8 @@ Tagged but not published: the release failed. These changes ship in
 - A documentation site with live examples, API tables and a theme builder.
 - A guide for migrating from Bootstrap.
 
-[Unreleased]: https://github.com/dradwul/Stil/compare/v0.1.0-preview.4...HEAD
+[Unreleased]: https://github.com/dradwul/Stil/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/dradwul/Stil/compare/v0.1.0-preview.4...v1.0.0
 [0.1.0-preview.4]: https://github.com/dradwul/Stil/compare/v0.1.0-preview.3...v0.1.0-preview.4
 [0.1.0-preview.3]: https://github.com/dradwul/Stil/compare/v0.1.0-preview.2...v0.1.0-preview.3
 [0.1.0-preview.2]: https://github.com/dradwul/Stil/compare/v0.1.0-preview.1...v0.1.0-preview.2

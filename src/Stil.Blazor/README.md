@@ -16,11 +16,10 @@ alerts, navigation, tabs, dropdowns, accordions, dialogs, drawers and toasts. Ev
 `stil-*` classes. You can mix the components with hand-written Stil markup,
 and theme both with the same `--stil-*` tokens.
 
-> **Status:** early preview (`0.1.x`, prereleases on NuGet). Requires .NET 10.
-> APIs may still change before `1.0`. See the
-> [roadmap](https://github.com/dradwul/Stil/blob/main/ROADMAP.md), and the
-> [migration notes](https://github.com/dradwul/Stil/blob/main/MIGRATING-TO-1.0.md)
-> for the renames on the way to `1.0`.
+> **Status:** stable (`1.0`). Requires .NET 10. The API changes only in a
+> major version ([Semantic Versioning](https://semver.org/)), except the
+> components marked *experimental* below. Coming from a `0.1` preview? See the
+> [migration notes](https://github.com/dradwul/Stil/blob/main/MIGRATING-TO-1.0.md).
 
 ## Get started
 
@@ -31,7 +30,7 @@ does all of these steps. To add Stil to an existing Blazor Web App:
 1. Install the package:
 
    ```shell
-   dotnet add package Stil --prerelease
+   dotnet add package Stil
    ```
 
 2. Register the services in `Program.cs`:

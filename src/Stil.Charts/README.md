@@ -11,8 +11,8 @@ the bars), donut, scatter, bubble and sparkline charts, heat maps and gauges.
 - Every chart has an accessible name, a generated description of the data and
   a data table, so screen reader users get the same information.
 
-> **Status:** early preview (`0.1.x`, prereleases on NuGet). Requires .NET 10
-> and the `Stil` package. APIs may still change before `1.0`.
+> **Status:** stable (`1.0`). Requires .NET 10 and the `Stil` package. The
+> API changes only in a major version ([Semantic Versioning](https://semver.org/)).
 
 ## Get started
 
@@ -20,7 +20,7 @@ the bars), donut, scatter, bubble and sparkline charts, heat maps and gauges.
    `_Imports.razor`:
 
    ```shell
-   dotnet add package Stil.Charts --prerelease
+   dotnet add package Stil.Charts
    ```
 
    ```razor

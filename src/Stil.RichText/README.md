@@ -16,8 +16,8 @@ Rich text for [Stil for Blazor](https://github.com/dradwul/Stil/tree/main/src/St
   on `Stil.Markdown` for Markdown. It is a package of its own, so the core
   `Stil` package stays free of dependencies.
 
-> **Status:** early preview (`0.1.x`, prereleases on NuGet). Requires .NET 10
-> and the `Stil` package. APIs may still change before `1.0`.
+> **Status:** stable (`1.0`). Requires .NET 10 and the `Stil` package. The
+> API changes only in a major version ([Semantic Versioning](https://semver.org/)).
 
 ## Get started
 
@@ -25,7 +25,7 @@ Rich text for [Stil for Blazor](https://github.com/dradwul/Stil/tree/main/src/St
    `_Imports.razor`:
 
    ```shell
-   dotnet add package Stil.RichText --prerelease
+   dotnet add package Stil.RichText
    ```
 
    ```razor

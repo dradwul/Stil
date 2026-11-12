@@ -282,16 +282,16 @@ else publishes.
    from an empty Unshipped file. The `0.1` previews never shipped a baseline;
    `1.0.0` is the first release that does.
 2. In `CHANGELOG.md`, move the notes under `[Unreleased]` to a new section
-   `## [0.2.0] - 2026-11-15` (the version and the date). The release fails
+   `## [1.1.0] - 2026-12-01` (the version and the date). The release fails
    without that section, and its text becomes the GitHub release notes.
 3. Set `<VersionPrefix>` in `Directory.Build.props` to the next version, so
    local builds and CI packs carry it. Commit the changes and push.
 4. Tag the commit and push the tag. A tag with a suffix, such as
-   `v0.2.0-preview.1`, publishes a prerelease.
+   `v1.1.0-preview.1`, publishes a prerelease.
 
    ```shell
-   git tag v0.2.0
-   git push origin v0.2.0
+   git tag v1.1.0
+   git push origin v1.1.0
    ```
 
 The workflow takes the version from the tag. It checks `dist/`, builds,

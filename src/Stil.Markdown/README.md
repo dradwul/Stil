@@ -12,8 +12,8 @@ writes it with a toolbar, keyboard shortcuts and a preview.
 - CommonMark with tables, task lists, autolinks and strikethrough. The text
   uses `stil-prose` from Stil CSS, so it follows your theme and dark mode.
 
-> **Status:** early preview (`0.1.x`, prereleases on NuGet). Requires .NET 10
-> and the `Stil` package. APIs may still change before `1.0`.
+> **Status:** stable (`1.0`). Requires .NET 10 and the `Stil` package. The
+> API changes only in a major version ([Semantic Versioning](https://semver.org/)).
 
 ## Get started
 
@@ -21,7 +21,7 @@ writes it with a toolbar, keyboard shortcuts and a preview.
    `_Imports.razor`:
 
    ```shell
-   dotnet add package Stil.Markdown --prerelease
+   dotnet add package Stil.Markdown
    ```
 
    ```razor

@@ -7,7 +7,7 @@
 
 <p>
     <code>Stil.RichText</code> is a package of its own, built on AngleSharp and <a href="components/markdown">Stil.Markdown</a>:
-    <code>dotnet add package Stil.RichText --prerelease</code> and <code>@@using Stil.RichText</code>. Everything the editor
+    <code>dotnet add package Stil.RichText</code> and <code>@@using Stil.RichText</code>. Everything the editor
     sends and the view shows goes through <code>StilRichText.Sanitize</code>, which keeps paragraphs, line breaks, bold,
     italic, underline, strikethrough, headings, lists, links, quotes and code, drops every attribute except a safe link
     address, and removes scripts and embedded content. It writes the HTML anew from the parsed document, so nothing from

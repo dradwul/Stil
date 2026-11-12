@@ -5,7 +5,7 @@
     published; the metadata only describes the packages that dotnet pack builds.
   -->
   <PropertyGroup>
-    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionPrefix>1.0.0</VersionPrefix>
     <Authors>Ludvig Andersson</Authors>
     <Copyright>Copyright (c) Ludvig Andersson</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

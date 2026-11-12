@@ -24,7 +24,7 @@ something usable.
 | 13 | Boards and workspace: kanban, command palette, notifications, recurring events, resources, Gantt | Done |
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | ✅ Done |
 | 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | Done |
-| 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | In progress (16.1, 16.2 done) |
+| 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | Done (`1.0.0` is ready; the tag is an owner task) |
 | V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | Planned (after 1.0) |
 
 A phase is done when every item in it is checked. Items that need the
@@ -1360,15 +1360,33 @@ package builds and passes its tests with them.
 **Done when:** a renamed public parameter makes CI fail, and the migration
 notes are linked from the README. ✅
 
-### Phase 16.3: Release
+### Phase 16.3: Release ✅ Done
 
-- [ ] A last accessibility pass: axe on every docs page, and the main
-  components (forms, dialogs, data grid, calendar, charts, editors) checked
-  with a screen reader and the keyboard only.
-- [ ] Browser check of the samples and the demo in the browsers that
-  CONTRIBUTING.md lists.
-- [ ] Version `1.0.0` in `Directory.Build.props`, the changelog section, and
-  the README status notes changed from "early preview".
+- [x] A last accessibility pass. axe runs on every docs page (38 pages, light
+  and dark) in CI now (`tests/Stil.Visual/tests/docs.spec.ts`). It found a
+  chat time below 4.5:1 and scrolling boxes the keyboard could not reach,
+  both fixed, and a docs page that never loaded (it showed itself as its own
+  example). Every focus stop on every docs page was tabbed through: all have
+  a name, and the PIN field and the PDF frame got the focus ring they lacked.
+  Forms (validation), dialogs (focus in and back), the data grid (sorting,
+  paging), the calendar (arrow keys), charts (names) and the editors
+  (Ctrl+B) were checked with the keyboard only, in Edge and WebKit. A run
+  with a real screen reader is an owner task (below): the names, roles and
+  states were checked in the accessibility tree instead.
+- [x] Browser check of the samples and the demo in Edge, Chrome and WebKit
+  (Safari's engine), light and dark, desktop and phone: no script errors, and
+  the drawers, dialogs, menus and grid editing work. On a phone, a closed
+  menu, a hidden tooltip, a table and a toast example made pages scroll
+  sideways; fixed. Playwright's Firefox does not start on the machine this
+  was checked on, so Firefox is an owner task (below). WebKit on Windows
+  draws Lexend's weight 600 as 400 (it ignores the weight axis of the
+  variable font); Safari on macOS does not.
+- [x] Version `1.0.0` in `Directory.Build.props` (and `stil-css` and the
+  template's default `Stil` version), the changelog section, and the README
+  status notes changed from "early preview" to stable. The public API
+  baseline moved to `PublicAPI.Shipped.txt`. The screenshot baselines,
+  stale since earlier phases (CI runs only the axe checks), were brought up
+  to date after a review of every difference.
 
 **Done when:** the phase's own "done when" above. Publishing the CSS to npm,
 hosting the docs and pushing the tag are owner tasks (see the end).
@@ -1480,6 +1498,10 @@ These need the repository or package owner.
   `v0.1.0-preview.1` on 2026-10-30.
 - [ ] Before the next release: add `Stil.Markdown` and `Stil.RichText` to the
   trusted publishing policy on nuget.org (new package IDs).
+- [ ] Before the `v1.0.0` tag: go through the forms, a dialog, the data grid
+  and the calendar with a screen reader (NVDA or Narrator on Windows,
+  VoiceOver on a Mac or iPhone), and open the samples and the demo in Firefox
+  and in Safari.
 - [ ] For `1.0` (Phase 16): publish `stil-css` to npm, host the docs site,
   and push the `v1.0.0` tag.
 

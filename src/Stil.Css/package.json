@@ -1,6 +1,6 @@
 {
   "name": "stil-css",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A themeable, framework-independent CSS class library with dark mode and WCAG AA colors, plus an optional behaviours module.",
   "keywords": [
     "css",

@@ -29,21 +29,21 @@ CSS without clashing. You change the look by overriding a small set of CSS
 custom properties (design tokens). You do not need to rebuild or fork the
 library.
 
-> **Status:** early preview (`0.1.x`, prereleases on NuGet). Class names,
-> token names and component APIs may still change before `1.0`. See the
-> [roadmap](ROADMAP.md). Coming from a `0.1` preview? The
-> [migration notes](MIGRATING-TO-1.0.md) list every rename on the way to
-> `1.0`.
+> **Status:** stable (`1.0`). Class names, token names and component APIs
+> change only in a major version ([Semantic Versioning](https://semver.org/));
+> CI checks the public .NET API against a baseline. Coming from a `0.1`
+> preview? The [migration notes](MIGRATING-TO-1.0.md) list every rename. See
+> the [roadmap](ROADMAP.md) for what comes next.
 
 ## Install
 
 | You want | Do this |
 | --- | --- |
 | A new Blazor app with Stil set up | `dotnet new install Stil.Templates`, then `dotnet new stil-app -n MyApp` ([templates](templates/Stil.Templates/README.md)) |
-| Stil in an existing Blazor app | `dotnet add package Stil --prerelease`, then follow [Get started](src/Stil.Blazor/README.md#get-started) |
-| Charts | `dotnet add package Stil.Charts --prerelease` ([charts](src/Stil.Charts/README.md)) |
-| Markdown | `dotnet add package Stil.Markdown --prerelease` ([Markdown](src/Stil.Markdown/README.md)) |
-| Rich text | `dotnet add package Stil.RichText --prerelease` ([rich text](src/Stil.RichText/README.md)) |
+| Stil in an existing Blazor app | `dotnet add package Stil`, then follow [Get started](src/Stil.Blazor/README.md#get-started) |
+| Charts | `dotnet add package Stil.Charts` ([charts](src/Stil.Charts/README.md)) |
+| Markdown | `dotnet add package Stil.Markdown` ([Markdown](src/Stil.Markdown/README.md)) |
+| Rich text | `dotnet add package Stil.RichText` ([rich text](src/Stil.RichText/README.md)) |
 | Only the CSS | Download `stil.min.css` from a [release](https://github.com/dradwul/Stil/releases), or link it from jsDelivr ([Stil CSS](src/Stil.Css/README.md#install)) |
 
 All packages require .NET 10. The latest version is on
@@ -201,16 +201,16 @@ reference that version from your app. Run the first two commands from the
 repository root:
 
 ```shell
-dotnet pack src/Stil.Blazor -o artifacts -p:Version=0.1.0-local.1
+dotnet pack src/Stil.Blazor -o artifacts -p:Version=1.0.1-local.1
 dotnet nuget add source "$PWD/artifacts" --name stil-local
 ```
 
 ```shell
-dotnet add package Stil --version 0.1.0-local.1
+dotnet add package Stil --version 1.0.1-local.1
 ```
 
 NuGet caches a package by its version, so give every new pack a new version
-(`0.1.0-local.2`, …). Or clear the cache with
+(`1.0.1-local.2`, …). Or clear the cache with
 `dotnet nuget locals global-packages --clear`. To stop using the folder, run
 `dotnet nuget remove source stil-local`.
 
