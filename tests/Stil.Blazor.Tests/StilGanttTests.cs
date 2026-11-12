@@ -50,7 +50,10 @@ public class StilGanttTests
         Assert.Equal(["Design", "Build", "Test", "Launch"], cut.FindAll(".stil-gantt-name").Select(n => n.TextContent));
         var bars = cut.FindAll(".stil-gantt-bar");
         Assert.Equal("--_start: 7; --_length: 5; --_row: 1; --_progress: 0.4", bars[1].GetAttribute("style"));
-        Assert.Equal("Build: Monday, 9 November 2026 to Friday, 13 November 2026, 40% done, after Design", bars[1].GetAttribute("aria-label"));
+        // The long date pattern differs between Windows and the ICU data on Linux ("Monday, 9
+        // November 2026" or "Monday 9 November 2026"), so the expected dates use it too.
+        var enGb = CultureInfo.GetCultureInfo("en-GB");
+        Assert.Equal($"Build: {Day(9).ToString("D", enGb)} to {Day(13).ToString("D", enGb)}, 40% done, after Design", bars[1].GetAttribute("aria-label"));
         Assert.Contains("stil-gantt-milestone", bars[3].ClassName);
         Assert.StartsWith("Launch: milestone on", bars[3].GetAttribute("aria-label"));
         Assert.Equal("--_start: 9", cut.Find(".stil-gantt-today").GetAttribute("style"));

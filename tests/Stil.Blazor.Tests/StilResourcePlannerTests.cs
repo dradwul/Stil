@@ -50,7 +50,8 @@ public class StilResourcePlannerTests
 
         var cut = Render(context, Bookings());
 
-        Assert.Equal("Wednesday, 14 October 2026", cut.Find(".stil-calendar-title").TextContent.Trim());
+        // The long date pattern differs between Windows and the ICU data on Linux.
+        Assert.Equal(At(0).ToString("D", CultureInfo.GetCultureInfo("en-GB")), cut.Find(".stil-calendar-title").TextContent.Trim());
         Assert.Equal(["Room Fjord", "Room Glacier"], cut.FindAll(".stil-resource-name > span").Select(n => n.TextContent));
         Assert.Equal(["8 seats", "4 seats"], cut.FindAll(".stil-resource-name > small").Select(n => n.TextContent));
         var tracks = cut.FindAll(".stil-resource-track");

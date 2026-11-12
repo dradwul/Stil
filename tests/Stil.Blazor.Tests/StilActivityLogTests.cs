@@ -135,7 +135,8 @@ public class StilActivityLogTests
 
         Assert.Equal("Visit history", cut.Find("ol").GetAttribute("aria-label"));
         var times = cut.FindAll("time").Select(t => t.TextContent).ToList();
-        Assert.Equal("October 30, 9:15 AM", times[0]);
+        // ICU (Linux) puts a narrow no-break space before AM; Windows a plain space.
+        Assert.Equal("October 30, 9:15 AM", times[0].Replace(' ', ' '));
         Assert.Equal("Just now", times[^1]);
         Assert.Equal("Inspection done", cut.Find(".stil-log-title").TextContent);
         Assert.Contains("· Jonas Ek", cut.Find(".stil-log-meta").TextContent);
