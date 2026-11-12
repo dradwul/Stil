@@ -1,0 +1,87 @@
+@inherits StilComponentBase
+
+@* The site's footer: its name and a line about it, columns of links (StilFooterColumn) in a
+   navigation landmark, and a bottom row with the copyright and the legal links. *@
+<footer @attributes="AdditionalAttributes" class="@Classes("stil-footer")">
+    <div class="stil-container">
+        <div class="stil-footer-main">
+            <div class="stil-footer-about">
+                @if (Brand is not null)
+                {
+                    @Brand
+                }
+                else if (!string.IsNullOrWhiteSpace(BrandText))
+                {
+                    <a class="stil-footer-brand" href="@BrandHref">@BrandText</a>
+                }
+                @if (!string.IsNullOrWhiteSpace(Text))
+                {
+                    <p>@Text</p>
+                }
+            </div>
+            @if (ChildContent is not null)
+            {
+                <nav class="stil-footer-columns" aria-label="@Localize(Label, "Footer.Label")">
+                    @ChildContent
+                </nav>
+            }
+        </div>
+        @if (!string.IsNullOrWhiteSpace(Copyright) || Legal?.Any() == true || Bottom is not null)
+        {
+            <div class="stil-footer-bottom">
+                @if (!string.IsNullOrWhiteSpace(Copyright))
+                {
+                    <p>@Copyright</p>
+                }
+                @Bottom
+                @if (Legal?.Any() == true)
+                {
+                    <ul class="stil-footer-legal">
+                        @foreach (var link in Legal)
+                        {
+                            <li><a href="@link.Href">@link.Text</a></li>
+                        }
+                    </ul>
+                }
+            </div>
+        }
+    </div>
+</footer>
+
+@code {
+    /// <summary>The site's name, as a link to the home page.</summary>
+    [Parameter]
+    public string? BrandText { get; set; }
+
+    /// <summary>Where the name links to. The default is the home page.</summary>
+    [Parameter]
+    public string BrandHref { get; set; } = "";
+
+    /// <summary>Your own brand markup (a logo) instead of BrandText.</summary>
+    [Parameter]
+    public RenderFragment? Brand { get; set; }
+
+    /// <summary>A line about the site, under the name.</summary>
+    [Parameter]
+    public string? Text { get; set; }
+
+    /// <summary>The copyright line, such as "© 2026 Tidvy Oy".</summary>
+    [Parameter]
+    public string? Copyright { get; set; }
+
+    /// <summary>The legal links in the bottom row, such as privacy and terms.</summary>
+    [Parameter]
+    public IEnumerable<StilLinkItem>? Legal { get; set; }
+
+    /// <summary>More content in the bottom row.</summary>
+    [Parameter]
+    public RenderFragment? Bottom { get; set; }
+
+    /// <summary>The accessible name of the link columns. The default is the localized "Footer".</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>The StilFooterColumn items.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

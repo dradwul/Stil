@@ -1,0 +1,149 @@
+@inherits StilComponentBase
+
+@* How to reach you (e-mail, phone, address with a map link, opening hours) beside a contact form,
+   or above it on a narrow section. Put the form (an EditForm or a form with Stil fields) in the
+   child content; the block puts it on a card. *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-contact")">
+    <div class="stil-contact-info">
+        @if (!string.IsNullOrWhiteSpace(Eyebrow))
+        {
+            <p class="stil-eyebrow">@Eyebrow</p>
+        }
+        @if (!string.IsNullOrWhiteSpace(Title))
+        {
+            <StilHeading Level="HeadingLevel" class="stil-section-title">@Title</StilHeading>
+        }
+        @if (!string.IsNullOrWhiteSpace(Lead))
+        {
+            <p class="stil-lead">@Lead</p>
+        }
+        @if (HasDetails)
+        {
+            <dl class="stil-contact-details">
+                @if (!string.IsNullOrWhiteSpace(Email))
+                {
+                    <div class="stil-contact-item">
+                        <dt class="stil-contact-label"><StilIcon Name="@StilIcons.Mail" /> @Localize(EmailLabel, "Contact.Email")</dt>
+                        <dd class="stil-contact-value"><a href="mailto:@Email">@Email</a></dd>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(Phone))
+                {
+                    <div class="stil-contact-item">
+                        <dt class="stil-contact-label"><StilIcon Name="@StilIcons.Phone" /> @Localize(PhoneLabel, "Contact.Phone")</dt>
+                        <dd class="stil-contact-value"><a href="@PhoneHref">@Phone</a></dd>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(Address))
+                {
+                    <div class="stil-contact-item">
+                        <dt class="stil-contact-label"><StilIcon Name="@StilIcons.MapPin" /> @Localize(AddressLabel, "Contact.Address")</dt>
+                        <dd class="stil-contact-value">
+                            <address>
+                                @foreach (var (line, index) in AddressLines.Select((line, index) => (line, index)))
+                                {
+                                    @if (index > 0)
+                                    {
+                                        <br />
+                                    }
+                                    @line
+                                }
+                            </address>
+                            @if (!string.IsNullOrWhiteSpace(MapHref))
+                            {
+                                <a href="@MapHref">@Localize(MapText, "Contact.Map")</a>
+                            }
+                        </dd>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(Hours))
+                {
+                    <div class="stil-contact-item">
+                        <dt class="stil-contact-label"><StilIcon Name="@StilIcons.Info" /> @Localize(HoursLabel, "Contact.Hours")</dt>
+                        <dd class="stil-contact-value">@Hours</dd>
+                    </div>
+                }
+            </dl>
+        }
+        @Info
+    </div>
+    @if (ChildContent is not null)
+    {
+        <div class="stil-contact-form">@ChildContent</div>
+    }
+</div>
+
+@code {
+    /// <summary>A short line above the title.</summary>
+    [Parameter]
+    public string? Eyebrow { get; set; }
+
+    /// <summary>The title, such as "Talk to us".</summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>A sentence under the title.</summary>
+    [Parameter]
+    public string? Lead { get; set; }
+
+    /// <summary>The heading level of the title, 1 to 6. The default is 2.</summary>
+    [Parameter]
+    public int HeadingLevel { get; set; } = 2;
+
+    /// <summary>The e-mail address, shown as a mailto link.</summary>
+    [Parameter]
+    public string? Email { get; set; }
+
+    /// <summary>The phone number as it is written, shown as a tel link.</summary>
+    [Parameter]
+    public string? Phone { get; set; }
+
+    /// <summary>The postal address; each line on its own line.</summary>
+    [Parameter]
+    public string? Address { get; set; }
+
+    /// <summary>A link to the address on a map, such as OpenStreetMap or Google Maps.</summary>
+    [Parameter]
+    public string? MapHref { get; set; }
+
+    /// <summary>The opening hours, such as "Weekdays 9–17".</summary>
+    [Parameter]
+    public string? Hours { get; set; }
+
+    /// <summary>The default is the localized "E-mail".</summary>
+    [Parameter]
+    public string? EmailLabel { get; set; }
+
+    /// <summary>The default is the localized "Phone".</summary>
+    [Parameter]
+    public string? PhoneLabel { get; set; }
+
+    /// <summary>The default is the localized "Address".</summary>
+    [Parameter]
+    public string? AddressLabel { get; set; }
+
+    /// <summary>The default is the localized "Opening hours".</summary>
+    [Parameter]
+    public string? HoursLabel { get; set; }
+
+    /// <summary>The map link's text. The default is the localized "Show on a map".</summary>
+    [Parameter]
+    public string? MapText { get; set; }
+
+    /// <summary>More content under the details.</summary>
+    [Parameter]
+    public RenderFragment? Info { get; set; }
+
+    /// <summary>The contact form, put on a card beside the details.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private bool HasDetails => !string.IsNullOrWhiteSpace(Email) || !string.IsNullOrWhiteSpace(Phone)
+        || !string.IsNullOrWhiteSpace(Address) || !string.IsNullOrWhiteSpace(Hours);
+
+    private IEnumerable<string> AddressLines =>
+        (Address ?? "").Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+    // tel: takes the digits and a leading plus only: "+358 20 123 4567" becomes "tel:+358201234567".
+    private string PhoneHref => "tel:" + new string((Phone ?? "").Where((c, i) => char.IsDigit(c) || (c == '+' && i == 0)).ToArray());
+}

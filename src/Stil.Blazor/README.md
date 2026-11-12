@@ -633,6 +633,9 @@ stylesheet is opt-in: `<StilHead Blocks />` adds it.
 | `StilTestimonials`, `StilTestimonial` | Per quote `Quote` (or child content), `Name`, `Role`, `Photo` (or initials), `Featured`. |
 | `StilFaq` | `Eyebrow`, `Title`, `Lead`, `Footer`, `Multiple`; the questions are `StilAccordionItem` items. |
 | `StilTeam`, `StilTeamMember` | Per person `Name`, `Role`, `Text`, `Photo` (or initials), `Links` (`StilLinkItem`). |
+| `StilMegaMenu`, `StilMegaMenuColumn`, `StilMegaMenuLink` | In a `StilNav`: `Text`, `AlignEnd`, `Footer`; per column `Title`; per link `Href`, `Title`, `Text`, `Icon`. Opens in place inside a collapsed navbar. |
+| `StilFooter`, `StilFooterColumn` | `BrandText` (or `Brand`), `Text`, `Copyright`, `Legal`, `Label`; per column `Title` and `Links`. |
+| `StilContact` | `Title`, `Lead`, `Email`, `Phone`, `Address` (one line each), `MapHref`, `Hours`, with translated labels; the form goes in the child content. |
 
 ## Stil CSS and the matching components
 

@@ -1,0 +1,20 @@
+@inherits StilComponentBase
+
+@* A column of StilMegaMenuLink items in a StilMegaMenu, under a small title. *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-mega-column")">
+    @if (!string.IsNullOrWhiteSpace(Title))
+    {
+        <p class="stil-mega-title">@Title</p>
+    }
+    @ChildContent
+</div>
+
+@code {
+    /// <summary>The column's title, such as "Plan".</summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>The StilMegaMenuLink items.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

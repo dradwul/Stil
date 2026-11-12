@@ -29,11 +29,14 @@ public static class StilIcons
     public const string Globe = "globe";
     public const string Home = "home";
     public const string Info = "info";
+    public const string Mail = "mail";
+    public const string MapPin = "map-pin";
     public const string Menu = "menu";
     public const string Minus = "minus";
     public const string Moon = "moon";
     public const string More = "more";
     public const string Pencil = "pencil";
+    public const string Phone = "phone";
     public const string Plus = "plus";
     public const string Search = "search";
     public const string Star = "star";

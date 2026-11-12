@@ -327,5 +327,15 @@
     "Period": "Betalingsperiode",
     "Monthly": "Månedligt",
     "Yearly": "Årligt"
+  },
+  "Footer": {
+    "Label": "Sidefod"
+  },
+  "Contact": {
+    "Email": "E-mail",
+    "Phone": "Telefon",
+    "Address": "Adresse",
+    "Hours": "Åbningstider",
+    "Map": "Vis på kort"
   }
 }

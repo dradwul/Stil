@@ -327,5 +327,15 @@
     "Period": "Billing period",
     "Monthly": "Monthly",
     "Yearly": "Yearly"
+  },
+  "Footer": {
+    "Label": "Footer"
+  },
+  "Contact": {
+    "Email": "E-mail",
+    "Phone": "Phone",
+    "Address": "Address",
+    "Hours": "Opening hours",
+    "Map": "Show on a map"
   }
 }

@@ -327,5 +327,15 @@
     "Period": "Betalingsperiode",
     "Monthly": "Månedlig",
     "Yearly": "Årlig"
+  },
+  "Footer": {
+    "Label": "Bunntekst"
+  },
+  "Contact": {
+    "Email": "E-post",
+    "Phone": "Telefon",
+    "Address": "Adresse",
+    "Hours": "Åpningstider",
+    "Map": "Vis på kart"
   }
 }

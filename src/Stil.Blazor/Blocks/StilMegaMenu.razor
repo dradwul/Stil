@@ -1,0 +1,34 @@
+@inherits StilComponentBase
+
+@* A dropdown in the navbar with columns of links (StilMegaMenuColumn). Put it in a StilNav
+   beside the StilNavLink items. It is a <details> dropdown, so it opens without JavaScript, and
+   stil.js closes it, moves between the links with the arrow keys and, in a collapsed navbar (on a
+   phone), opens it in place inside the menu. *@
+<details @attributes="AdditionalAttributes" class="@Classes("stil-dropdown", "stil-mega")">
+    <summary class="stil-nav-link">@Text</summary>
+    <div class="@(AlignEnd ? "stil-dropdown-menu stil-mega-menu stil-dropdown-menu-end" : "stil-dropdown-menu stil-mega-menu")">
+        <div class="stil-mega-columns">@ChildContent</div>
+        @if (Footer is not null)
+        {
+            <div class="stil-mega-footer">@Footer</div>
+        }
+    </div>
+</details>
+
+@code {
+    /// <summary>The toggle's text, such as "Product".</summary>
+    [Parameter, EditorRequired]
+    public string? Text { get; set; }
+
+    /// <summary>Lines the menu up with the toggle's end edge, for a toggle near the end of the navbar.</summary>
+    [Parameter]
+    public bool AlignEnd { get; set; }
+
+    /// <summary>A row under the columns, such as a sentence and a link.</summary>
+    [Parameter]
+    public RenderFragment? Footer { get; set; }
+
+    /// <summary>The StilMegaMenuColumn items.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

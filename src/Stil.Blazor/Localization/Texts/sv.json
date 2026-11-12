@@ -327,5 +327,15 @@
     "Period": "Betalningsperiod",
     "Monthly": "Månadsvis",
     "Yearly": "Årsvis"
+  },
+  "Footer": {
+    "Label": "Sidfot"
+  },
+  "Contact": {
+    "Email": "E-post",
+    "Phone": "Telefon",
+    "Address": "Adress",
+    "Hours": "Öppettider",
+    "Map": "Visa på karta"
   }
 }

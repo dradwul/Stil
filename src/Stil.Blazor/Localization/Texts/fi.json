@@ -327,5 +327,15 @@
     "Period": "Laskutusjakso",
     "Monthly": "Kuukausittain",
     "Yearly": "Vuosittain"
+  },
+  "Footer": {
+    "Label": "Alatunniste"
+  },
+  "Contact": {
+    "Email": "Sähköposti",
+    "Phone": "Puhelin",
+    "Address": "Osoite",
+    "Hours": "Aukioloajat",
+    "Map": "Näytä kartalla"
   }
 }

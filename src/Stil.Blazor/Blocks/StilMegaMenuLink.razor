@@ -1,0 +1,34 @@
+@inherits StilComponentBase
+
+@* A link in a StilMegaMenu: a title, a line about where it goes and an optional decorative icon. *@
+<a @attributes="AdditionalAttributes" class="@Classes("stil-dropdown-item", "stil-mega-link")" href="@Href">
+    @if (!string.IsNullOrWhiteSpace(Icon))
+    {
+        <StilIcon Name="@Icon" />
+    }
+    <span>
+        <span class="stil-mega-link-title">@Title</span>
+        @if (!string.IsNullOrWhiteSpace(Text))
+        {
+            @(" ")<span class="stil-mega-link-text">@Text</span>
+        }
+    </span>
+</a>
+
+@code {
+    /// <summary>Where the link goes.</summary>
+    [Parameter, EditorRequired]
+    public string? Href { get; set; }
+
+    /// <summary>The link's title.</summary>
+    [Parameter, EditorRequired]
+    public string? Title { get; set; }
+
+    /// <summary>A line about where it goes.</summary>
+    [Parameter]
+    public string? Text { get; set; }
+
+    /// <summary>The name of a built-in icon (see StilIcons). It is decorative.</summary>
+    [Parameter]
+    public string? Icon { get; set; }
+}

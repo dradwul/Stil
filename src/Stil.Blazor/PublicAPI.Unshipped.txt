@@ -19,6 +19,40 @@ Stil.Blazor.Blocks.StilCallToAction.Title.get -> string?
 Stil.Blazor.Blocks.StilCallToAction.Title.set -> void
 Stil.Blazor.Blocks.StilCallToAction.Tone.get -> Stil.Blazor.Blocks.StilBlockTone
 Stil.Blazor.Blocks.StilCallToAction.Tone.set -> void
+Stil.Blazor.Blocks.StilContact
+Stil.Blazor.Blocks.StilContact.Address.get -> string?
+Stil.Blazor.Blocks.StilContact.Address.set -> void
+Stil.Blazor.Blocks.StilContact.AddressLabel.get -> string?
+Stil.Blazor.Blocks.StilContact.AddressLabel.set -> void
+Stil.Blazor.Blocks.StilContact.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilContact.ChildContent.set -> void
+Stil.Blazor.Blocks.StilContact.Email.get -> string?
+Stil.Blazor.Blocks.StilContact.Email.set -> void
+Stil.Blazor.Blocks.StilContact.EmailLabel.get -> string?
+Stil.Blazor.Blocks.StilContact.EmailLabel.set -> void
+Stil.Blazor.Blocks.StilContact.Eyebrow.get -> string?
+Stil.Blazor.Blocks.StilContact.Eyebrow.set -> void
+Stil.Blazor.Blocks.StilContact.HeadingLevel.get -> int
+Stil.Blazor.Blocks.StilContact.HeadingLevel.set -> void
+Stil.Blazor.Blocks.StilContact.Hours.get -> string?
+Stil.Blazor.Blocks.StilContact.Hours.set -> void
+Stil.Blazor.Blocks.StilContact.HoursLabel.get -> string?
+Stil.Blazor.Blocks.StilContact.HoursLabel.set -> void
+Stil.Blazor.Blocks.StilContact.Info.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilContact.Info.set -> void
+Stil.Blazor.Blocks.StilContact.Lead.get -> string?
+Stil.Blazor.Blocks.StilContact.Lead.set -> void
+Stil.Blazor.Blocks.StilContact.MapHref.get -> string?
+Stil.Blazor.Blocks.StilContact.MapHref.set -> void
+Stil.Blazor.Blocks.StilContact.MapText.get -> string?
+Stil.Blazor.Blocks.StilContact.MapText.set -> void
+Stil.Blazor.Blocks.StilContact.Phone.get -> string?
+Stil.Blazor.Blocks.StilContact.Phone.set -> void
+Stil.Blazor.Blocks.StilContact.PhoneLabel.get -> string?
+Stil.Blazor.Blocks.StilContact.PhoneLabel.set -> void
+Stil.Blazor.Blocks.StilContact.StilContact() -> void
+Stil.Blazor.Blocks.StilContact.Title.get -> string?
+Stil.Blazor.Blocks.StilContact.Title.set -> void
 Stil.Blazor.Blocks.StilFaq
 Stil.Blazor.Blocks.StilFaq.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
 Stil.Blazor.Blocks.StilFaq.ChildContent.set -> void
@@ -53,6 +87,36 @@ Stil.Blazor.Blocks.StilFeatureGrid.Cards.set -> void
 Stil.Blazor.Blocks.StilFeatureGrid.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
 Stil.Blazor.Blocks.StilFeatureGrid.ChildContent.set -> void
 Stil.Blazor.Blocks.StilFeatureGrid.StilFeatureGrid() -> void
+Stil.Blazor.Blocks.StilFooter
+Stil.Blazor.Blocks.StilFooter.Bottom.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilFooter.Bottom.set -> void
+Stil.Blazor.Blocks.StilFooter.Brand.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilFooter.Brand.set -> void
+Stil.Blazor.Blocks.StilFooter.BrandHref.get -> string!
+Stil.Blazor.Blocks.StilFooter.BrandHref.set -> void
+Stil.Blazor.Blocks.StilFooter.BrandText.get -> string?
+Stil.Blazor.Blocks.StilFooter.BrandText.set -> void
+Stil.Blazor.Blocks.StilFooter.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilFooter.ChildContent.set -> void
+Stil.Blazor.Blocks.StilFooter.Copyright.get -> string?
+Stil.Blazor.Blocks.StilFooter.Copyright.set -> void
+Stil.Blazor.Blocks.StilFooter.Label.get -> string?
+Stil.Blazor.Blocks.StilFooter.Label.set -> void
+Stil.Blazor.Blocks.StilFooter.Legal.get -> System.Collections.Generic.IEnumerable<Stil.Blazor.Components.StilLinkItem!>?
+Stil.Blazor.Blocks.StilFooter.Legal.set -> void
+Stil.Blazor.Blocks.StilFooter.StilFooter() -> void
+Stil.Blazor.Blocks.StilFooter.Text.get -> string?
+Stil.Blazor.Blocks.StilFooter.Text.set -> void
+Stil.Blazor.Blocks.StilFooterColumn
+Stil.Blazor.Blocks.StilFooterColumn.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilFooterColumn.ChildContent.set -> void
+Stil.Blazor.Blocks.StilFooterColumn.HeadingLevel.get -> int
+Stil.Blazor.Blocks.StilFooterColumn.HeadingLevel.set -> void
+Stil.Blazor.Blocks.StilFooterColumn.Links.get -> System.Collections.Generic.IEnumerable<Stil.Blazor.Components.StilLinkItem!>?
+Stil.Blazor.Blocks.StilFooterColumn.Links.set -> void
+Stil.Blazor.Blocks.StilFooterColumn.StilFooterColumn() -> void
+Stil.Blazor.Blocks.StilFooterColumn.Title.get -> string?
+Stil.Blazor.Blocks.StilFooterColumn.Title.set -> void
 Stil.Blazor.Blocks.StilHero
 Stil.Blazor.Blocks.StilHero.Actions.get -> Microsoft.AspNetCore.Components.RenderFragment?
 Stil.Blazor.Blocks.StilHero.Actions.set -> void
@@ -91,6 +155,32 @@ Stil.Blazor.Blocks.StilLogoCloud.Muted.set -> void
 Stil.Blazor.Blocks.StilLogoCloud.StilLogoCloud() -> void
 Stil.Blazor.Blocks.StilLogoCloud.Title.get -> string?
 Stil.Blazor.Blocks.StilLogoCloud.Title.set -> void
+Stil.Blazor.Blocks.StilMegaMenu
+Stil.Blazor.Blocks.StilMegaMenu.AlignEnd.get -> bool
+Stil.Blazor.Blocks.StilMegaMenu.AlignEnd.set -> void
+Stil.Blazor.Blocks.StilMegaMenu.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilMegaMenu.ChildContent.set -> void
+Stil.Blazor.Blocks.StilMegaMenu.Footer.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilMegaMenu.Footer.set -> void
+Stil.Blazor.Blocks.StilMegaMenu.StilMegaMenu() -> void
+Stil.Blazor.Blocks.StilMegaMenu.Text.get -> string?
+Stil.Blazor.Blocks.StilMegaMenu.Text.set -> void
+Stil.Blazor.Blocks.StilMegaMenuColumn
+Stil.Blazor.Blocks.StilMegaMenuColumn.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilMegaMenuColumn.ChildContent.set -> void
+Stil.Blazor.Blocks.StilMegaMenuColumn.StilMegaMenuColumn() -> void
+Stil.Blazor.Blocks.StilMegaMenuColumn.Title.get -> string?
+Stil.Blazor.Blocks.StilMegaMenuColumn.Title.set -> void
+Stil.Blazor.Blocks.StilMegaMenuLink
+Stil.Blazor.Blocks.StilMegaMenuLink.Href.get -> string?
+Stil.Blazor.Blocks.StilMegaMenuLink.Href.set -> void
+Stil.Blazor.Blocks.StilMegaMenuLink.Icon.get -> string?
+Stil.Blazor.Blocks.StilMegaMenuLink.Icon.set -> void
+Stil.Blazor.Blocks.StilMegaMenuLink.StilMegaMenuLink() -> void
+Stil.Blazor.Blocks.StilMegaMenuLink.Text.get -> string?
+Stil.Blazor.Blocks.StilMegaMenuLink.Text.set -> void
+Stil.Blazor.Blocks.StilMegaMenuLink.Title.get -> string?
+Stil.Blazor.Blocks.StilMegaMenuLink.Title.set -> void
 Stil.Blazor.Blocks.StilPlan
 Stil.Blazor.Blocks.StilPlan.ActionHref.get -> string?
 Stil.Blazor.Blocks.StilPlan.ActionHref.set -> void
@@ -205,13 +295,22 @@ Stil.Blazor.Blocks.StilTestimonials.ChildContent.set -> void
 Stil.Blazor.Blocks.StilTestimonials.StilTestimonials() -> void
 Stil.Blazor.Components.StilHead.Blocks.get -> bool
 Stil.Blazor.Components.StilHead.Blocks.set -> void
+const Stil.Blazor.Components.StilIcons.Mail = "mail" -> string!
+const Stil.Blazor.Components.StilIcons.MapPin = "map-pin" -> string!
+const Stil.Blazor.Components.StilIcons.Phone = "phone" -> string!
 ~override Stil.Blazor.Blocks.StilCallToAction.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Blazor.Blocks.StilContact.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilFaq.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilFeature.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilFeatureGrid.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Blazor.Blocks.StilFooter.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Blazor.Blocks.StilFooterColumn.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilHero.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilLogo.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilLogoCloud.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Blazor.Blocks.StilMegaMenu.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Blazor.Blocks.StilMegaMenuColumn.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Blazor.Blocks.StilMegaMenuLink.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilPlan.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilPricing.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilSection.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
