@@ -188,6 +188,9 @@ Each block is sized to its section (container queries), not the window.
 | Testimonials | `stil-testimonials` > `<figure class="stil-testimonial">` (`stil-testimonial-featured` for one large quote) > `<blockquote class="stil-testimonial-quote">` and `<figcaption class="stil-testimonial-author">` (`stil-avatar`, `stil-testimonial-name`, `stil-testimonial-role`). |
 | FAQ | `stil-faq` > `stil-faq-header` (`stil-section-title`, `stil-lead`) and a `stil-accordion`; the header sits beside the questions when the section is at least 56rem wide. |
 | Team | `<ul class="stil-team">` > `stil-team-member` with `stil-team-photo` (an `img` with `alt=""`, or a `stil-avatar` with initials), `stil-team-name`, `stil-team-role`, `stil-team-bio` and `stil-team-links`. |
+| Mega menu | A `<details class="stil-dropdown stil-mega">` in a navbar's `stil-nav`, with `<summary class="stil-nav-link">` and `stil-dropdown-menu stil-mega-menu` > `stil-mega-columns` > `stil-mega-column` (`stil-mega-title`, and `stil-dropdown-item stil-mega-link` links with an icon, `stil-mega-link-title` and `stil-mega-link-text`), and an optional `stil-mega-footer`. |
+| Footer | `<footer class="stil-footer">` > `stil-container` > `stil-footer-main` (`stil-footer-about` with `stil-footer-brand` and a `<p>`; `<nav class="stil-footer-columns">` with `stil-footer-title` and `stil-footer-links` per column) and `stil-footer-bottom` (a `<p>` and `stil-footer-legal`). |
+| Contact | `stil-contact` > `stil-contact-info` (a title, a lead and `<dl class="stil-contact-details">` > `stil-contact-item` > `stil-contact-label` + `stil-contact-value`) and `stil-contact-form` (a card for the form). |
 
 On `stil-section-brand` and `stil-cta-brand` the text, links, focus rings,
 eyebrows and outline buttons take the color that reads on the primary
@@ -205,7 +208,9 @@ no dependencies, adds a few behaviours:
 ```
 
 - Dropdowns close on an outside click, on Escape and after you choose an
-  item. Opening one closes the others.
+  item. Opening one closes the others. In a collapsed navbar (on a phone), a
+  dropdown opens in place inside the menu (`data-stil-inline`) instead of
+  floating over the page.
 - `data-stil-dismiss` on a button removes the closest alert or toast, or the
   element that matches the attribute's value (a CSS selector).
 - `data-stil-dialog-open="id"` opens that `<dialog>` (dialog or drawer) as a

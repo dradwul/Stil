@@ -3,6 +3,7 @@
 //   - Dropdowns (<details class="stil-dropdown">): close on an outside click, on Escape and after
 //     choosing an item; opening one closes the others. Arrow keys move between the items, and
 //     ArrowDown on the toggle opens the menu.
+//     In a collapsed navbar (on a phone) a dropdown opens in place, inside the menu.
 //   - data-stil-dismiss on a button removes the closest .stil-alert or .stil-toast, or the element
 //     matched by the attribute's value (a CSS selector).
 //   - data-stil-dialog-open="dialog-id" opens that <dialog> as a modal; data-stil-dialog-close
@@ -871,8 +872,21 @@ function placeNextTo(panel, anchorElement, { gap = 4, top: wantsTop = false, end
 // placed next to the component; the DOM stays the same, so clicks and keys work as before.
 const liftedPanels = new Set();
 
+// In a collapsed navbar (its toggle is shown), a dropdown opens in place, inside the menu, rather
+// than floating over the page: data-stil-inline marks it, and the CSS puts it in the flow.
+function inCollapsedNavbar(panel) {
+    const collapse = panel.closest('.stil-navbar-collapse');
+    const toggle = collapse?.parentElement?.querySelector(':scope > .stil-navbar-toggle');
+    return !!toggle && getComputedStyle(toggle).display !== 'none';
+}
+
 function liftPanel(panel) {
     if (!('showPopover' in panel) || !panel.isConnected) return;
+    if (inCollapsedNavbar(panel)) {
+        panel.setAttribute('data-stil-inline', '');
+        return;
+    }
+    panel.removeAttribute('data-stil-inline');
     if (!panel.hasAttribute('popover')) panel.setAttribute('popover', 'manual');
     if (!panel.matches(':popover-open')) panel.showPopover();
     liftedPanels.add(panel);

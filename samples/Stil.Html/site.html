@@ -23,10 +23,42 @@
         </button>
         <div class="stil-navbar-collapse" id="site-menu">
             <nav class="stil-nav" aria-label="Main">
-                <a class="stil-nav-link" href="#features">Features</a>
-                <a class="stil-nav-link" href="#customers">Customers</a>
+                <details class="stil-dropdown stil-mega">
+                    <summary class="stil-nav-link">Product</summary>
+                    <div class="stil-dropdown-menu stil-mega-menu">
+                        <div class="stil-mega-columns">
+                            <div class="stil-mega-column">
+                                <p class="stil-mega-title">Plan</p>
+                                <a class="stil-dropdown-item stil-mega-link" href="#features">
+                                    <span class="stil-icon stil-icon-folder" aria-hidden="true"></span>
+                                    <span><span class="stil-mega-link-title">The week</span> <span class="stil-mega-link-text">Tasks, bookings and time off in one calendar.</span></span>
+                                </a>
+                                <a class="stil-dropdown-item stil-mega-link" href="#features">
+                                    <span class="stil-icon stil-icon-home" aria-hidden="true"></span>
+                                    <span><span class="stil-mega-link-title">Rooms and resources</span> <span class="stil-mega-link-text">Book the meeting room and the van.</span></span>
+                                </a>
+                            </div>
+                            <div class="stil-mega-column">
+                                <p class="stil-mega-title">Share</p>
+                                <a class="stil-dropdown-item stil-mega-link" href="#features">
+                                    <span class="stil-icon stil-icon-external" aria-hidden="true"></span>
+                                    <span><span class="stil-mega-link-title">Calendar link</span> <span class="stil-mega-link-text">Subscribe from Outlook, Google or Apple.</span></span>
+                                </a>
+                                <a class="stil-dropdown-item stil-mega-link" href="#features">
+                                    <span class="stil-icon stil-icon-download" aria-hidden="true"></span>
+                                    <span><span class="stil-mega-link-title">Export</span> <span class="stil-mega-link-text">Everything as CSV, any time.</span></span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="stil-mega-footer">
+                            <p>New: time off in the planner.</p>
+                            <a class="stil-dropdown-item" href="#testimonials">Read what teams say</a>
+                        </div>
+                    </div>
+                </details>
                 <a class="stil-nav-link" href="#pricing">Pricing</a>
                 <a class="stil-nav-link" href="#faq">Questions</a>
+                <a class="stil-nav-link" href="#contact">Contact</a>
             </nav>
             <div class="stil-navbar-end">
                 <div class="stil-cluster">
@@ -312,12 +344,90 @@
                 </div>
             </div>
         </section>
+        <section class="stil-section" id="contact" aria-labelledby="contact-title">
+            <div class="stil-container">
+                <div class="stil-contact">
+                    <div class="stil-contact-info">
+                        <h2 class="stil-section-title" id="contact-title">Talk to us</h2>
+                        <p class="stil-lead">Questions, a demo or a quote: we answer within a working day.</p>
+                        <dl class="stil-contact-details">
+                            <div class="stil-contact-item">
+                                <dt class="stil-contact-label"><span class="stil-icon stil-icon-mail" aria-hidden="true"></span> E-mail</dt>
+                                <dd class="stil-contact-value"><a href="mailto:hello@tidvy.example">hello@tidvy.example</a></dd>
+                            </div>
+                            <div class="stil-contact-item">
+                                <dt class="stil-contact-label"><span class="stil-icon stil-icon-phone" aria-hidden="true"></span> Phone</dt>
+                                <dd class="stil-contact-value"><a href="tel:+358201234567">+358 20 123 4567</a></dd>
+                            </div>
+                            <div class="stil-contact-item">
+                                <dt class="stil-contact-label"><span class="stil-icon stil-icon-map-pin" aria-hidden="true"></span> Address</dt>
+                                <dd class="stil-contact-value">
+                                    <address>Tidvy Oy<br>Linnankatu 12<br>20100 Turku, Finland</address>
+                                    <a href="https://www.openstreetmap.org/search?query=Linnankatu%2012%20Turku">Show on a map</a>
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                    <form class="stil-contact-form" action="#contact">
+                        <div class="stil-field">
+                            <label class="stil-label" for="contact-name">Name</label>
+                            <input class="stil-input" id="contact-name" name="name" autocomplete="name" required>
+                        </div>
+                        <div class="stil-field">
+                            <label class="stil-label" for="contact-email">E-mail</label>
+                            <input class="stil-input" id="contact-email" name="email" type="email" autocomplete="email" required>
+                        </div>
+                        <div class="stil-field">
+                            <label class="stil-label" for="contact-message">Message</label>
+                            <textarea class="stil-input" id="contact-message" name="message" rows="4" required></textarea>
+                        </div>
+                        <div><button type="submit" class="stil-btn">Send</button></div>
+                    </form>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <footer class="stil-section-muted stil-py-5">
-        <div class="stil-container stil-cluster stil-justify-content-between">
-            <p class="stil-m-0">Tidvy, a sample site built with Stil.</p>
-            <p class="stil-m-0 stil-text-muted">No custom CSS on this page.</p>
+    <footer class="stil-footer">
+        <div class="stil-container">
+            <div class="stil-footer-main">
+                <div class="stil-footer-about">
+                    <a class="stil-footer-brand" href="#">Tidvy</a>
+                    <p>Plan the week your team actually has. A sample site built from Stil's page blocks, with no custom CSS.</p>
+                </div>
+                <nav class="stil-footer-columns" aria-label="Footer">
+                    <div>
+                        <h2 class="stil-footer-title">Product</h2>
+                        <ul class="stil-footer-links">
+                            <li><a href="#features">Features</a></li>
+                            <li><a href="#pricing">Pricing</a></li>
+                            <li><a href="#faq">Questions</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h2 class="stil-footer-title">Company</h2>
+                        <ul class="stil-footer-links">
+                            <li><a href="#team">Team</a></li>
+                            <li><a href="#testimonials">Customers</a></li>
+                            <li><a href="#contact">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h2 class="stil-footer-title">Help</h2>
+                        <ul class="stil-footer-links">
+                            <li><a href="#faq">Getting started</a></li>
+                            <li><a href="#contact">Support</a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+            <div class="stil-footer-bottom">
+                <p>© 2026 Tidvy Oy</p>
+                <ul class="stil-footer-legal">
+                    <li><a href="#">Privacy</a></li>
+                    <li><a href="#">Terms</a></li>
+                </ul>
+            </div>
         </div>
     </footer>
 

@@ -124,6 +124,17 @@
     inset-inline-end: 0;
 }
 
+/* In a collapsed navbar, stil.js opens the menu in place instead (data-stil-inline): in the
+   flow of the menu, indented under its toggle, without the floating card. */
+.stil-dropdown > .stil-dropdown-menu[data-stil-inline] {
+    position: static;
+    min-width: 0;
+    padding: 0 0 0 var(--stil-space-3);
+    border: 0;
+    background-color: transparent;
+    box-shadow: none;
+}
+
 /* stil.js moves an open menu to the top layer and places it under the toggle. */
 .stil-dropdown > .stil-dropdown-menu[popover] {
     position: fixed;

@@ -1,0 +1,254 @@
+/* Page blocks for the frame of a site: the mega menu in the header, the footer and the contact
+   block. */
+
+/* Mega menu: a dropdown in the navbar with columns of links, each with a title, a line and an
+   optional icon. It is a stil-dropdown, so it opens without JavaScript, and stil.js closes it,
+   moves between the links with the arrow keys and, in a collapsed navbar, opens it in place.
+   <nav class="stil-nav" aria-label="Main">
+     <details class="stil-dropdown stil-mega">
+       <summary class="stil-nav-link">Product</summary>
+       <div class="stil-dropdown-menu stil-mega-menu">
+         <div class="stil-mega-columns">
+           <div class="stil-mega-column">
+             <p class="stil-mega-title">Plan</p>
+             <a class="stil-dropdown-item stil-mega-link" href="…">
+               <span class="stil-icon stil-icon-folder" aria-hidden="true"></span>
+               <span><span class="stil-mega-link-title">Calendar</span> <span class="stil-mega-link-text">…</span></span>
+             </a>
+           </div>
+         </div>
+         <div class="stil-mega-footer">…</div>
+       </div>
+     </details>
+   </nav> */
+.stil-mega-menu {
+    width: min(48rem, calc(100vw - 2rem));
+    padding: var(--stil-space-4);
+}
+
+.stil-mega-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    gap: var(--stil-space-4) var(--stil-space-5);
+}
+
+.stil-mega-column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stil-space-1);
+    min-width: 0;
+}
+
+.stil-mega-title {
+    margin: 0 0 var(--stil-space-1);
+    padding-inline: var(--stil-space-3);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-xs);
+    font-weight: var(--stil-font-weight-bold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.stil-mega-link {
+    align-items: flex-start;
+    gap: var(--stil-space-3);
+    white-space: normal;
+}
+
+.stil-mega-link > .stil-icon {
+    flex: none;
+    margin-block-start: 0.2em;
+    color: var(--_accent);
+}
+
+.stil-mega-link-title {
+    display: block;
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-mega-link-text {
+    display: block;
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+}
+
+.stil-mega-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--stil-space-3);
+    margin-block-start: var(--stil-space-4);
+    padding-block-start: var(--stil-space-3);
+    border-block-start: 1px solid var(--stil-color-border);
+}
+
+/* Text lines up with the links (stil-dropdown-item) beside it. */
+.stil-mega-footer > p {
+    margin: 0;
+    padding-inline: var(--stil-space-3);
+}
+
+/* In place, in a collapsed navbar: one column, no card. */
+.stil-mega-menu[data-stil-inline] { width: auto; }
+
+.stil-mega-menu[data-stil-inline] .stil-mega-columns { grid-template-columns: 1fr; }
+
+/* Footer: the site's name and a line about it, columns of links, and a bottom row with the
+   copyright and the legal links.
+   <footer class="stil-footer">
+     <div class="stil-container">
+       <div class="stil-footer-main">
+         <div class="stil-footer-about"><a class="stil-footer-brand" href="/">Tidvy</a><p>…</p></div>
+         <nav class="stil-footer-columns" aria-label="Footer">
+           <div><h2 class="stil-footer-title">Product</h2><ul class="stil-footer-links"><li><a href="…">Pricing</a></li></ul></div>
+         </nav>
+       </div>
+       <div class="stil-footer-bottom"><p>© 2026 Tidvy</p><ul class="stil-footer-legal"><li><a href="…">Privacy</a></li></ul></div>
+     </div>
+   </footer> */
+.stil-footer {
+    container-type: inline-size;
+    padding-block: var(--stil-space-7) var(--stil-space-5);
+    background-color: var(--stil-color-surface-muted);
+}
+
+.stil-footer-main {
+    display: grid;
+    gap: var(--stil-space-6);
+}
+
+@container (min-width: 48rem) {
+    .stil-footer-main { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+}
+
+.stil-footer-brand {
+    color: inherit;
+    font-size: var(--stil-font-size-lg);
+    font-weight: var(--stil-font-weight-bold);
+    text-decoration: none;
+}
+
+.stil-footer-about > p {
+    max-width: 24rem;
+    margin: var(--stil-space-3) 0 0;
+    color: var(--stil-color-text-muted);
+}
+
+.stil-footer-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+    gap: var(--stil-space-5);
+}
+
+.stil-footer-title {
+    margin: 0 0 var(--stil-space-3);
+    font-size: var(--stil-font-size-sm);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.stil-footer-links,
+.stil-footer-legal {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stil-footer-links {
+    display: grid;
+    gap: var(--stil-space-2);
+}
+
+:is(.stil-footer-links, .stil-footer-legal) a {
+    color: inherit;
+    text-decoration: none;
+}
+
+:is(.stil-footer-links, .stil-footer-legal) a:hover { text-decoration: underline; }
+
+.stil-footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--stil-space-3);
+    margin-block-start: var(--stil-space-6);
+    padding-block-start: var(--stil-space-4);
+    border-block-start: 1px solid var(--stil-color-border);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+}
+
+.stil-footer-bottom > p { margin: 0; }
+
+.stil-footer-legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--stil-space-1) var(--stil-space-4);
+}
+
+/* Contact: how to reach you beside a contact form (above it on narrow sections). The details are
+   a description list; put the form (Stil fields and a button) in stil-contact-form.
+   <div class="stil-contact">
+     <div class="stil-contact-info">
+       <h2 class="stil-section-title">Talk to us</h2><p class="stil-lead">…</p>
+       <dl class="stil-contact-details">
+         <div class="stil-contact-item">
+           <dt class="stil-contact-label"><span class="stil-icon stil-icon-mail" aria-hidden="true"></span> E-mail</dt>
+           <dd class="stil-contact-value"><a href="mailto:…">hello@tidvy.example</a></dd>
+         </div>
+       </dl>
+     </div>
+     <form class="stil-contact-form">…</form>
+   </div> */
+.stil-contact {
+    display: grid;
+    align-items: start;
+    gap: var(--stil-space-6);
+}
+
+@container (min-width: 56rem) {
+    .stil-contact { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+
+.stil-contact-details {
+    display: grid;
+    gap: var(--stil-space-4);
+    margin: var(--stil-space-5) 0 0;
+}
+
+.stil-contact-label {
+    display: flex;
+    align-items: center;
+    gap: var(--stil-space-2);
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-contact-label > .stil-icon { color: var(--_accent); }
+
+.stil-contact-value {
+    margin: var(--stil-space-1) 0 0;
+    padding-inline-start: calc(1em + var(--stil-space-2));
+}
+
+.stil-contact-value > address { font-style: normal; }
+
+.stil-contact-form {
+    display: grid;
+    gap: var(--stil-space-4);
+    padding: var(--stil-space-6);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-lg);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+}
+
+/* A form inside it (such as Blazor's EditForm) gets the same gaps. */
+.stil-contact-form > form {
+    display: grid;
+    gap: var(--stil-space-4);
+}
+
+.stil-contact-form > :last-child,
+.stil-contact-form > form > :last-child { margin-block-end: 0; }
