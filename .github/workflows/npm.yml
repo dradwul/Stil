@@ -1,0 +1,79 @@
+name: npm
+
+# Publishes Stil CSS (src/Stil.Css) to npm as stil-css when a version tag is pushed, next to the
+# NuGet release (release.yml). It can also be run by hand (Actions > npm > Run workflow, with the
+# tag picked under "Use workflow from") to publish a version that is already tagged.
+#
+# One-time setup (owner), free: an npm account, and either
+#   - a granular access token with "Read and write" for packages, stored as the repository
+#     secret NPM_TOKEN (Settings > Secrets and variables > Actions), or
+#   - once stil-css exists on npm: a trusted publisher for this repository and this workflow
+#     file (npmjs.com > stil-css > Settings), after which NPM_TOKEN can be deleted.
+# Without either, the job skips the publish with a notice instead of failing, and the CSS stays
+# available from the GitHub release and jsDelivr.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # npm provenance and trusted publishing
+    defaults:
+      run:
+        working-directory: src/Stil.Css
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+          cache: npm
+          cache-dependency-path: src/Stil.Css/package-lock.json
+
+      # The package version must be the tag's: dist/ carries it in its banner.
+      - name: Read the version
+        id: version
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          package=$(node -p "require('./package.json').version")
+          if [[ "$version" != "$package" ]]; then
+            echo "::error::The tag is $GITHUB_REF_NAME, but package.json says $package. Set the version in src/Stil.Css/package.json, rebuild dist/ and tag again."
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          # A prerelease goes to the "next" dist-tag, so npm install stil-css stays on the latest release.
+          [[ "$version" == *-* ]] && echo "tag=next" >> "$GITHUB_OUTPUT" || echo "tag=latest" >> "$GITHUB_OUTPUT"
+
+      - name: Check that dist/ matches the sources
+        run: |
+          npm ci
+          npm run check
+
+      - name: Publish to npm
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          DIST_TAG: ${{ steps.version.outputs.tag }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if npm view "stil-css@$VERSION" version >/dev/null 2>&1; then
+            echo "::notice::stil-css $VERSION is already on npm."
+            exit 0
+          fi
+          # Trusted publishing needs npm 11.5.1 or later.
+          npm install --global npm@11
+          if [[ -z "$NODE_AUTH_TOKEN" ]] && ! npm view stil-css name >/dev/null 2>&1; then
+            echo "::notice::stil-css is not published: add the NPM_TOKEN secret (see the top of npm.yml), then run this workflow on the tag."
+            exit 0
+          fi
+          npm publish --provenance --access public --tag "$DIST_TAG"

@@ -145,7 +145,7 @@ jobs:
         run: |
           flags=()
           [[ "$PRERELEASE" == "true" ]] && flags+=(--prerelease)
-          # Stil CSS has no npm package yet, so the release carries the CSS files for plain HTML.
+          # The release also carries the CSS files, for plain HTML without npm (npm.yml publishes stil-css).
           gh release create "$GITHUB_REF_NAME" artifacts/*.nupkg artifacts/*.snupkg \
             src/Stil.Css/dist/stil.css src/Stil.Css/dist/stil.min.css src/Stil.Css/dist/stil.js \
             --title "Stil $VERSION" --notes-file release-notes.md "${flags[@]}"
