@@ -5,8 +5,9 @@
 //    into a local feed in a temp folder.
 // 2. Packs the template package and installs it into an isolated template hive
 //    (--debug:custom-hive). Nothing is installed into your own template list.
-// 3. Creates an app for each option combination below, with a NuGet.config that uses the local
-//    feed, nuget.org and a temp global packages folder.
+// 3. Creates an app for each option combination below, with a NuGet.config that takes Stil's
+//    packages from the local feed and everything else from nuget.org, into a temp global
+//    packages folder.
 // 4. Checks the generated files and runs `dotnet build -warnaserror` on each app.
 //
 // Usage: node templates/test-templates.mjs [--keep] [--only <text>]
@@ -352,6 +353,17 @@ try {
     <add key="local" value="${feed}" />
     <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
   </packageSources>
+  <!-- Stil's own packages only from the local feed: the same version may be on nuget.org too,
+       and the test is of the code in this repository, not of a published package. -->
+  <packageSourceMapping>
+    <packageSource key="local">
+      <package pattern="Stil" />
+      <package pattern="Stil.*" />
+    </packageSource>
+    <packageSource key="nuget.org">
+      <package pattern="*" />
+    </packageSource>
+  </packageSourceMapping>
 </configuration>
 `);
 
