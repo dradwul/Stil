@@ -61,6 +61,10 @@ public static class DocsPages
             new("Markdown", "components/markdown"),
             new("Rich text", "components/rich-text"),
         ]),
+        new("Website", StilIcons.Globe,
+        [
+            new("Sections and heroes", "blocks/sections"),
+        ]),
         new("Boards", StilIcons.Menu,
         [
             new("Kanban board", "components/kanban"),

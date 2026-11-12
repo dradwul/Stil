@@ -1,0 +1,93 @@
+@page "/blocks/sections"
+@using Stil.Docs.Examples.Blocks
+
+<DocsHeader Title="Sections and heroes" Eyebrow="Website">
+    <Lead>Ready-made page sections for a product site: a hero, section headers, a feature grid, numbers, logos and a call to action.</Lead>
+</DocsHeader>
+
+<p>
+    The page blocks are for websites rather than apps. They follow the theme and dark mode, render in static server
+    rendering without JavaScript, and meet WCAG AA. Their CSS is a separate stylesheet, so apps that do not use them
+    never load it. In a Blazor app, add it with <code>&lt;StilHead Blocks /&gt;</code> and
+    <code>@@using Stil.Blazor.Blocks</code> in <code>_Imports.razor</code>. With Stil CSS on its own, load
+    <code>stil-blocks.css</code> after <code>stil.css</code>; the class names are in the
+    <a href="https://github.com/dradwul/Stil/blob/main/samples/Stil.Html/site.html">sample product site</a>.
+</p>
+<CodeBlock Language="razor" Code="@HeadSnippet" />
+
+<h2 id="hero">Hero</h2>
+<DocExample Type="typeof(Hero)">
+    <p>
+        The first section of a page: an eyebrow, the page's <code>h1</code>, a lead and the main actions, centered.
+        <code>StilHero</code> is a section named by its title.
+    </p>
+</DocExample>
+
+<h2 id="hero-split">Hero with a picture</h2>
+<DocExample Type="typeof(HeroSplit)">
+    <p>
+        With <code>Media</code>, the picture sits beside the text on wide screens and under it on a phone. Give a
+        picture its alt text, or an SVG <code>role="img"</code> and a label.
+    </p>
+</DocExample>
+
+<h2 id="sections">Sections and features</h2>
+<DocExample Type="typeof(Features)">
+    <p>
+        <code>StilSection</code> is a band across the page with a container inside and an optional header: an
+        eyebrow, a title (which names the section for screen readers) and a lead. <code>StilFeatureGrid</code> fits
+        as many columns as there is room for, and each <code>StilFeature</code> has a decorative icon, a title and a
+        sentence.
+    </p>
+</DocExample>
+
+<DocExample Type="typeof(FeatureCards)" Title="Features on cards, on a muted section">
+    <p>
+        <code>Cards</code> puts each feature on a card. <code>Tone</code> gives a section the muted surface or the
+        primary color. Two sections in a row on the same background share one gap.
+    </p>
+</DocExample>
+
+<h2 id="stats">Stats band</h2>
+<DocExample Type="typeof(Stats)">
+    <p>
+        Large numbers with a label, in a description list, so a screen reader reads "Fewer double bookings, 87%".
+        On the primary color (<code>StilBlockTone.Brand</code>), the text, links, focus rings and buttons take
+        colors that read on it, in every theme.
+    </p>
+</DocExample>
+
+<h2 id="logos">Logo cloud</h2>
+<DocExample Type="typeof(Logos)">
+    <p>
+        <code>StilLogo</code> shows a picture with the company's name as its alt text, or child content such as an
+        inline SVG. <code>Muted</code> shows them in gray, and <code>Height</code> sets their height (2rem).
+    </p>
+</DocExample>
+
+<h2 id="cta">Call to action</h2>
+<DocExample Type="typeof(CallToAction)">
+    <p>
+        A banner that asks for one thing. On the primary color, a solid button turns to the page's surface color so
+        it stands out. <code>Centered</code> stacks the text over the buttons.
+    </p>
+</DocExample>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilHero)" />
+<ApiTable Type="typeof(StilSection)" />
+<ApiTable Type="typeof(StilFeatureGrid)" />
+<ApiTable Type="typeof(StilFeature)" />
+<ApiTable Type="typeof(StilStatsItem)" />
+<ApiTable Type="typeof(StilLogoCloud)" />
+<ApiTable Type="typeof(StilLogo)" />
+<ApiTable Type="typeof(StilCallToAction)" />
+
+@code {
+    private const string HeadSnippet = """
+        <head>
+            ...
+            <StilHead Blocks />
+        </head>
+        """;
+}

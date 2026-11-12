@@ -1,0 +1,17 @@
+<StilHero Title="Your week, in one view" Lead="See who is free, what is booked and what is due, for the whole team."
+          Tone="StilBlockTone.Muted">
+    <Actions>
+        <StilButton Href="#start">Start free</StilButton>
+    </Actions>
+    <Media>
+        @* An inline drawing; a screenshot works the same: <img src="…" alt="…" />. *@
+        <svg viewBox="0 0 480 300" role="img" aria-label="A week with tasks spread over five days">
+            <rect x="0.5" y="0.5" width="479" height="299" rx="12" style="fill: var(--stil-color-surface); stroke: var(--stil-color-border)" />
+            @for (var day = 0; day < 5; day++)
+            {
+                <rect x="@(20 + day * 90)" y="20" width="80" height="260" rx="6" style="fill: var(--stil-color-surface-muted)" />
+                <rect x="@(28 + day * 90)" y="@(36 + day * 37 % 120)" width="64" height="52" rx="4" style="fill: var(--stil-color-primary)" />
+            }
+        </svg>
+    </Media>
+</StilHero>
