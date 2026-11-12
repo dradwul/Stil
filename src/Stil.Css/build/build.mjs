@@ -50,7 +50,9 @@ function bundle() {
     const parts = [`@layer ${layers.map(([name]) => name).join(', ')};`];
     for (const [layer, sources] of layers) {
         const body = sources
-            .map(source => (typeof source === 'function' ? source() : readFileSync(join(src, source), 'utf8')))
+            // Git may check the sources out with CRLF line endings on Windows, and the pretty
+            // output keeps a line break inside a value as it is, so make them LF first.
+            .map(source => (typeof source === 'function' ? source() : readFileSync(join(src, source), 'utf8').replace(/\r\n/g, '\n')))
             .join('\n\n');
         parts.push(`@layer ${layer} {\n${body}\n}`);
     }
