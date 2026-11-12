@@ -298,7 +298,9 @@
 /* On the brand color (stil-section-brand, stil-cta-brand): the text takes the color that reads
    on the primary color, and so do links, focus rings, eyebrows and muted text. A solid button
    turns to the page's surface color so it stands out, and outline and ghost buttons take the
-   text color. --_on is that text color, worked out once on the brand box. */
+   text color. --_on is that text color, worked out once on the brand box. A card on it (a
+   stil-card, an accordion, a plan, a testimonial) keeps the page's colors inside, so these rules
+   skip what is in one. */
 .stil-section-brand,
 .stil-cta-brand {
     --_bg: var(--stil-color-primary);
@@ -309,21 +311,21 @@
     color: var(--_fg);
 }
 
-:is(.stil-section-brand, .stil-cta-brand) :is(.stil-lead, .stil-stats-label, .stil-logos-title, .stil-feature > p, .stil-text-muted) {
+:is(.stil-section-brand, .stil-cta-brand) :is(.stil-lead, .stil-stats-label, .stil-logos-title, .stil-feature > p, .stil-text-muted, .stil-team-role, .stil-team-bio):not(:is(.stil-card, .stil-accordion, .stil-plan, .stil-testimonial:not(.stil-testimonial-featured)) *) {
     color: inherit;
 }
 
-:is(.stil-section-brand, .stil-cta-brand) a:not(.stil-btn) { color: inherit; }
+:is(.stil-section-brand, .stil-cta-brand) a:not(.stil-btn):not(:is(.stil-card, .stil-accordion, .stil-plan, .stil-testimonial:not(.stil-testimonial-featured)) *) { color: inherit; }
 
-:is(.stil-section-brand, .stil-cta-brand) .stil-btn:not(.stil-btn-outline, .stil-btn-ghost) {
+:is(.stil-section-brand, .stil-cta-brand) .stil-btn:not(.stil-btn-outline, .stil-btn-ghost):not(:is(.stil-card, .stil-accordion, .stil-plan, .stil-testimonial:not(.stil-testimonial-featured)) *) {
     --_bg: var(--stil-color-surface);
 }
 
-:is(.stil-section-brand, .stil-cta-brand) :is(.stil-btn-outline, .stil-btn-ghost) {
+:is(.stil-section-brand, .stil-cta-brand) :is(.stil-btn-outline, .stil-btn-ghost):not(:is(.stil-card, .stil-accordion, .stil-plan, .stil-testimonial:not(.stil-testimonial-featured)) *) {
     --_ink: var(--_on);
 }
 
-:is(.stil-section-brand, .stil-cta-brand) .stil-btn-outline:hover {
+:is(.stil-section-brand, .stil-cta-brand) .stil-btn-outline:not(:is(.stil-card, .stil-accordion, .stil-plan, .stil-testimonial:not(.stil-testimonial-featured)) *):hover {
     border-color: var(--_on);
     background-color: var(--_on);
     color: var(--_on-bg);
@@ -337,4 +339,9 @@
 .stil-section-brand .stil-features-cards .stil-feature {
     border-color: color-mix(in srgb, currentColor 25%, transparent);
     background-color: transparent;
+}
+
+:is(.stil-section-brand, .stil-cta-brand) :is(.stil-card, .stil-accordion, .stil-plan, .stil-testimonial:not(.stil-testimonial-featured)) {
+    --stil-color-accent: initial;
+    color: var(--stil-color-text);
 }

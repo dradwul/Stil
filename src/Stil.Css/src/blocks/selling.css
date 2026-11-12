@@ -1,0 +1,325 @@
+/* Page blocks that sell: the pricing table, testimonials, the FAQ and the team grid. */
+
+/* Pricing table: plans on cards, with an optional monthly/yearly switch that needs no
+   JavaScript (radio buttons and :has()). Each price comes twice, one per period.
+   <div class="stil-pricing">
+     <fieldset class="stil-pricing-period">
+       <legend class="stil-visually-hidden">Billing period</legend>
+       <label class="stil-pricing-option"><input type="radio" name="period" checked> Monthly</label>
+       <label class="stil-pricing-option"><input type="radio" name="period" class="stil-pricing-yearly"> Yearly</label>
+     </fieldset>
+     <ul class="stil-plans">
+       <li class="stil-plan stil-plan-featured">
+         <p class="stil-plan-badge">Most popular</p>
+         <h3 class="stil-plan-name">Team</h3>
+         <p class="stil-plan-price">
+           <span class="stil-plan-monthly"><span class="stil-plan-amount">€6</span> a person a month</span>
+           <span class="stil-plan-yearly"><span class="stil-plan-amount">€58</span> a person a year</span>
+         </p>
+         <p class="stil-plan-text">…</p>
+         <ul class="stil-plan-features"><li><span class="stil-icon stil-icon-check" aria-hidden="true"></span> …</li></ul>
+         <a class="stil-btn stil-plan-action" href="…">Start</a>
+       </li>
+     </ul>
+   </div>
+   Without the switch, leave out the fieldset and the stil-plan-yearly parts. */
+.stil-pricing {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stil-space-6);
+}
+
+.stil-pricing-period {
+    display: inline-flex;
+    align-self: center;
+    gap: var(--stil-space-1);
+    margin: 0;
+    padding: var(--stil-space-1);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-pill);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+}
+
+.stil-pricing-option {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--stil-space-2);
+    padding: var(--stil-space-1) var(--stil-space-4);
+    border-radius: var(--stil-radius-pill);
+    cursor: pointer;
+}
+
+.stil-pricing-option > input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.stil-pricing-option:has(input:checked) {
+    --_bg: var(--stil-color-primary);
+    background-color: var(--_bg);
+    color: var(--_fg);
+}
+
+.stil-pricing-option:has(input:focus-visible) {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+}
+
+.stil-pricing:not(:has(.stil-pricing-yearly:checked)) .stil-plan-yearly,
+.stil-pricing:has(.stil-pricing-yearly:checked) .stil-plan-monthly {
+    display: none;
+}
+
+.stil-plans {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: var(--stil-space-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stil-plan {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stil-space-3);
+    padding: var(--stil-space-6);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-lg);
+    background-color: var(--stil-color-surface);
+}
+
+.stil-plan-featured {
+    border-color: var(--_accent);
+    box-shadow: 0 0 0 1px var(--_accent), var(--stil-shadow-lg);
+}
+
+.stil-plan-badge {
+    --_bg: var(--stil-color-primary);
+    align-self: flex-start;
+    margin: 0;
+    padding: 0.125rem var(--stil-space-3);
+    border-radius: var(--stil-radius-pill);
+    background-color: var(--_bg);
+    color: var(--_fg);
+    font-size: var(--stil-font-size-xs);
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-plan-name {
+    margin: 0;
+    font-size: var(--stil-font-size-lg);
+}
+
+.stil-plan-price {
+    margin: 0;
+    color: var(--stil-color-text-muted);
+}
+
+.stil-plan-amount {
+    margin-inline-end: var(--stil-space-1);
+    color: var(--stil-color-text);
+    font-size: clamp(2rem, 1.5rem + 1.5cqi, 2.75rem);
+    font-weight: var(--stil-font-weight-bold);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+
+.stil-plan-text {
+    margin: 0;
+    color: var(--stil-color-text-muted);
+}
+
+.stil-plan-features {
+    display: grid;
+    flex: 1;
+    align-content: start;
+    gap: var(--stil-space-2);
+    margin: var(--stil-space-2) 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stil-plan-features > li {
+    display: flex;
+    gap: var(--stil-space-2);
+}
+
+.stil-plan-features .stil-icon {
+    flex: none;
+    margin-block-start: 0.2em;
+    color: var(--_accent);
+}
+
+.stil-plan-action { width: 100%; }
+
+/* Testimonials: what customers say, as figures, as many columns as fit.
+   <div class="stil-testimonials">
+     <figure class="stil-testimonial">
+       <blockquote class="stil-testimonial-quote"><p>…</p></blockquote>
+       <figcaption class="stil-testimonial-author">
+         <img class="stil-avatar" src="…" alt="">
+         <span><span class="stil-testimonial-name">Maja Lind</span> <span class="stil-testimonial-role">Head of operations, Nordvik</span></span>
+       </figcaption>
+     </figure>
+   </div>
+   The photo is decorative (alt=""), since the name follows it. stil-testimonial-featured is one
+   large quote, without a card, on its own. */
+.stil-testimonials {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    gap: var(--stil-space-5);
+}
+
+.stil-testimonial {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stil-space-4);
+    margin: 0;
+    padding: var(--stil-space-5);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-lg);
+    background-color: var(--stil-color-surface);
+}
+
+/* Plain text, without the side bar and muted color of a blockquote in the base styles. */
+.stil-testimonial-quote {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    color: inherit;
+    text-wrap: pretty;
+}
+
+.stil-testimonial-quote > :last-child { margin-block-end: 0; }
+
+.stil-testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: var(--stil-space-3);
+    margin-block-start: auto;
+}
+
+.stil-testimonial-name {
+    display: block;
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-testimonial-role {
+    display: block;
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+}
+
+.stil-testimonial-featured {
+    align-items: center;
+    max-width: 48rem;
+    margin-inline: auto;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: center;
+}
+
+.stil-testimonial-featured .stil-testimonial-quote {
+    font-size: clamp(var(--stil-font-size-lg), 1rem + 1.5cqi, var(--stil-font-size-xl));
+    line-height: 1.4;
+}
+
+.stil-testimonial-featured .stil-testimonial-author { text-align: start; }
+
+:is(.stil-section-brand, .stil-cta-brand) .stil-testimonial-featured .stil-testimonial-role { color: inherit; }
+
+/* FAQ: a header beside the questions on wide sections, above them on narrow ones. The
+   questions are a stil-accordion.
+   <div class="stil-faq">
+     <header class="stil-faq-header"><h2 class="stil-section-title">Questions</h2><p class="stil-lead">…</p></header>
+     <div class="stil-accordion">…</div>
+   </div> */
+.stil-faq {
+    display: grid;
+    align-items: start;
+    gap: var(--stil-space-6);
+}
+
+@container (min-width: 56rem) {
+    .stil-faq { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+}
+
+.stil-faq-header > :last-child { margin-block-end: 0; }
+
+/* Team: people with a photo (or their initials), name, role, a line about them and links.
+   <ul class="stil-team">
+     <li class="stil-team-member">
+       <img class="stil-team-photo" src="…" alt="">
+       <h3 class="stil-team-name">Maja Lind</h3>
+       <p class="stil-team-role">Founder</p>
+       <p class="stil-team-bio">…</p>
+       <ul class="stil-team-links"><li><a href="…">LinkedIn</a></li></ul>
+     </li>
+   </ul>
+   The photo is decorative (alt=""), since the name follows it. Without a photo:
+   <span class="stil-avatar stil-team-photo" aria-hidden="true">ML</span>. */
+.stil-team {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    gap: var(--stil-space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stil-team-member {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--stil-space-1);
+    text-align: center;
+}
+
+.stil-team-photo {
+    width: 6rem;
+    height: 6rem;
+    margin-block-end: var(--stil-space-3);
+    border-radius: 50%;
+    object-fit: cover;
+    font-size: var(--stil-font-size-xl);
+}
+
+/* Initials instead of a photo: on the surface with a border, so they show on a muted section. */
+.stil-team-photo:not(img) {
+    border: 1px solid var(--stil-color-border);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+}
+
+.stil-team-name {
+    margin: 0;
+    font-size: var(--stil-font-size-lg);
+}
+
+.stil-team-role {
+    margin: 0;
+    color: var(--stil-color-text-muted);
+}
+
+.stil-team-bio {
+    margin: var(--stil-space-2) 0 0;
+    font-size: var(--stil-font-size-sm);
+}
+
+.stil-team-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--stil-space-1) var(--stil-space-3);
+    margin: var(--stil-space-2) 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--stil-font-size-sm);
+}

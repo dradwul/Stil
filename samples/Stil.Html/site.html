@@ -26,6 +26,7 @@
                 <a class="stil-nav-link" href="#features">Features</a>
                 <a class="stil-nav-link" href="#customers">Customers</a>
                 <a class="stil-nav-link" href="#pricing">Pricing</a>
+                <a class="stil-nav-link" href="#faq">Questions</a>
             </nav>
             <div class="stil-navbar-end">
                 <div class="stil-cluster">
@@ -150,22 +151,148 @@
             </div>
         </section>
 
-        <section class="stil-section" id="pricing" aria-labelledby="pricing-title">
+        <section class="stil-section" id="testimonials" aria-labelledby="testimonials-title">
             <div class="stil-container">
-                <header class="stil-section-header">
-                    <p class="stil-eyebrow">Built for teams</p>
-                    <h2 class="stil-section-title" id="pricing-title">Start small, grow when you need to</h2>
+                <header class="stil-section-header stil-section-header-center">
+                    <p class="stil-eyebrow">Customers</p>
+                    <h2 class="stil-section-title" id="testimonials-title">Calmer Mondays, in their words</h2>
                 </header>
-                <ul class="stil-features stil-features-cards">
-                    <li class="stil-feature">
-                        <h3 class="stil-feature-title">Free for five</h3>
-                        <p>Every feature for teams of up to five people, for as long as you like.</p>
-                        <a href="#start">Start free</a>
+                <div class="stil-testimonials">
+                    <figure class="stil-testimonial">
+                        <blockquote class="stil-testimonial-quote"><p>We stopped double-booking the van the week we started. Nobody misses the spreadsheet.</p></blockquote>
+                        <figcaption class="stil-testimonial-author">
+                            <span class="stil-avatar" aria-hidden="true">ML</span>
+                            <span><span class="stil-testimonial-name">Maja Lind</span> <span class="stil-testimonial-role">Head of operations, Nordvik Supply</span></span>
+                        </figcaption>
+                    </figure>
+                    <figure class="stil-testimonial">
+                        <blockquote class="stil-testimonial-quote"><p>Time off and bookings in the same view was the thing we did not know we needed.</p></blockquote>
+                        <figcaption class="stil-testimonial-author">
+                            <span class="stil-avatar" aria-hidden="true">EH</span>
+                            <span><span class="stil-testimonial-name">Erik Holm</span> <span class="stil-testimonial-role">Studio lead, Kallio Design</span></span>
+                        </figcaption>
+                    </figure>
+                    <figure class="stil-testimonial">
+                        <blockquote class="stil-testimonial-quote"><p>Set up in an afternoon. The crew plans the week on their phones now.</p></blockquote>
+                        <figcaption class="stil-testimonial-author">
+                            <span class="stil-avatar" aria-hidden="true">LV</span>
+                            <span><span class="stil-testimonial-name">Lina Vik</span> <span class="stil-testimonial-role">Harbour master, Østerby Marine</span></span>
+                        </figcaption>
+                    </figure>
+                </div>
+            </div>
+        </section>
+
+        <section class="stil-section stil-section-muted" id="pricing" aria-labelledby="pricing-title">
+            <div class="stil-container">
+                <header class="stil-section-header stil-section-header-center">
+                    <p class="stil-eyebrow">Pricing</p>
+                    <h2 class="stil-section-title" id="pricing-title">Start small, grow when you need to</h2>
+                    <p class="stil-lead">Every plan has every feature. Pay for the people who plan.</p>
+                </header>
+                <div class="stil-pricing">
+                    <fieldset class="stil-pricing-period">
+                        <legend class="stil-visually-hidden">Billing period</legend>
+                        <label class="stil-pricing-option"><input type="radio" name="tidvy-period" checked> Monthly</label>
+                        <label class="stil-pricing-option"><input type="radio" name="tidvy-period" class="stil-pricing-yearly"> Yearly <span class="stil-badge stil-badge-success stil-badge-subtle">2 months free</span></label>
+                    </fieldset>
+                    <ul class="stil-plans">
+                        <li class="stil-plan">
+                            <h3 class="stil-plan-name">Free</h3>
+                            <p class="stil-plan-price"><span class="stil-plan-amount">€0</span> for up to five people</p>
+                            <p class="stil-plan-text">For small teams that plan together.</p>
+                            <ul class="stil-plan-features">
+                                <li><span class="stil-icon stil-icon-check" aria-hidden="true"></span> Five people</li>
+                                <li><span class="stil-icon stil-icon-check" aria-hidden="true"></span> One calendar</li>
+                                <li><span class="stil-icon stil-icon-check" aria-hidden="true"></span> Export to CSV</li>
+                            </ul>
+                            <a class="stil-btn stil-btn-outline stil-plan-action" href="#start">Start free</a>
+                        </li>
+                        <li class="stil-plan stil-plan-featured">
+                            <p class="stil-plan-badge">Most popular</p>
+                            <h3 class="stil-plan-name">Team</h3>
+                            <p class="stil-plan-price">
+                                <span class="stil-plan-monthly"><span class="stil-plan-amount">€6</span> a person a month</span>
+                                <span class="stil-plan-yearly"><span class="stil-plan-amount">€60</span> a person a year</span>
+                            </p>
+                            <p class="stil-plan-text">For teams that share rooms and people.</p>
+                            <ul class="stil-plan-features">
+                                <li><span class="stil-icon stil-icon-check" aria-hidden="true"></span> Unlimited people</li>
+                                <li><span class="stil-icon stil-icon-check" aria-hidden="true"></span> Rooms and resources</li>
+                                <li><span class="stil-icon stil-icon-check" aria-hidden="true"></span> Time off and holidays</li>
+                                <li><span class="stil-icon stil-icon-check" aria-hidden="true"></span> Priority support</li>
+                            </ul>
+                            <a class="stil-btn stil-plan-action" href="#start">Try it for 30 days</a>
+                        </li>
+                        <li class="stil-plan">
+                            <h3 class="stil-plan-name">Company</h3>
+                            <p class="stil-plan-price">
+                                <span class="stil-plan-monthly"><span class="stil-plan-amount">€9</span> a person a month</span>
+                                <span class="stil-plan-yearly"><span class="stil-plan-amount">€90</span> a person a year</span>
+                            </p>
+                            <p class="stil-plan-text">For several teams, with single sign-on.</p>
+                            <ul class="stil-plan-features">
+                                <li><span class="stil-icon stil-icon-check" aria-hidden="true"></span> Everything in Team</li>
+                                <li><span class="stil-icon stil-icon-check" aria-hidden="true"></span> Single sign-on</li>
+                                <li><span class="stil-icon stil-icon-check" aria-hidden="true"></span> An audit log</li>
+                            </ul>
+                            <a class="stil-btn stil-btn-outline stil-plan-action" href="#start">Talk to us</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="stil-section" id="faq" aria-labelledby="faq-title">
+            <div class="stil-container">
+                <div class="stil-faq">
+                    <header class="stil-faq-header">
+                        <h2 class="stil-section-title" id="faq-title">Questions and answers</h2>
+                        <p class="stil-lead">Something else? <a href="#start">Write to us</a>; we answer within a working day.</p>
+                    </header>
+                    <div class="stil-accordion">
+                        <details class="stil-accordion-item" name="tidvy-faq">
+                            <summary class="stil-accordion-header">Can I cancel any time?</summary>
+                            <div class="stil-accordion-body">Yes. Cancel from the settings, and the plan runs to the end of the period you paid for.</div>
+                        </details>
+                        <details class="stil-accordion-item" name="tidvy-faq">
+                            <summary class="stil-accordion-header">Does it work with our calendar app?</summary>
+                            <div class="stil-accordion-body">Tidvy shares a calendar link that Outlook, Google Calendar and Apple Calendar can subscribe to.</div>
+                        </details>
+                        <details class="stil-accordion-item" name="tidvy-faq">
+                            <summary class="stil-accordion-header">Where is our data stored?</summary>
+                            <div class="stil-accordion-body">In the EU, in Stockholm and Helsinki, and you can export all of it at any time.</div>
+                        </details>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="stil-section stil-section-muted" id="team" aria-labelledby="team-title">
+            <div class="stil-container">
+                <header class="stil-section-header stil-section-header-center">
+                    <h2 class="stil-section-title" id="team-title">The people behind Tidvy</h2>
+                    <p class="stil-lead">A small team in Turku and Bergen.</p>
+                </header>
+                <ul class="stil-team">
+                    <li class="stil-team-member">
+                        <span class="stil-avatar stil-team-photo" aria-hidden="true">SB</span>
+                        <h3 class="stil-team-name">Sara Berg</h3>
+                        <p class="stil-team-role">Founder</p>
+                        <p class="stil-team-bio">Planned warehouse shifts for ten years before writing Tidvy.</p>
                     </li>
-                    <li class="stil-feature">
-                        <h3 class="stil-feature-title">Team, €6 a person</h3>
-                        <p>Unlimited people, rooms and calendars, with priority support.</p>
-                        <a href="#start">Try it for 30 days</a>
+                    <li class="stil-team-member">
+                        <span class="stil-avatar stil-team-photo" aria-hidden="true">JE</span>
+                        <h3 class="stil-team-name">Jonas Ek</h3>
+                        <p class="stil-team-role">Engineering</p>
+                        <p class="stil-team-bio">Makes the calendar fast on slow phones.</p>
+                    </li>
+                    <li class="stil-team-member">
+                        <span class="stil-avatar stil-team-photo" aria-hidden="true">AN</span>
+                        <h3 class="stil-team-name">Anna Niemi</h3>
+                        <p class="stil-team-role">Customer success</p>
+                        <p class="stil-team-bio">Answers your questions, usually before lunch.</p>
+                        <ul class="stil-team-links"><li><a href="#start">Write to Anna</a></li></ul>
                     </li>
                 </ul>
             </div>

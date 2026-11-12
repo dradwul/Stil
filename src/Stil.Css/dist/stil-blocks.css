@@ -269,19 +269,19 @@
     color: var(--_fg);
   }
 
-  :is(.stil-section-brand, .stil-cta-brand) :is(.stil-lead, .stil-stats-label, .stil-logos-title, .stil-feature > p, .stil-text-muted), :is(.stil-section-brand, .stil-cta-brand) a:not(.stil-btn) {
+  :is(.stil-section-brand, .stil-cta-brand) :is(.stil-lead, .stil-stats-label, .stil-logos-title, .stil-feature > p, .stil-text-muted, .stil-team-role, .stil-team-bio):not(:is(.stil-card, .stil-accordion, .stil-plan, .stil-testimonial:not(.stil-testimonial-featured)) *), :is(.stil-section-brand, .stil-cta-brand) a:not(.stil-btn):not(:is(.stil-card, .stil-accordion, .stil-plan, .stil-testimonial:not(.stil-testimonial-featured)) *) {
     color: inherit;
   }
 
-  :is(.stil-section-brand, .stil-cta-brand) .stil-btn:not(.stil-btn-outline, .stil-btn-ghost) {
+  :is(.stil-section-brand, .stil-cta-brand) .stil-btn:not(.stil-btn-outline, .stil-btn-ghost):not(:is(.stil-card, .stil-accordion, .stil-plan, .stil-testimonial:not(.stil-testimonial-featured)) *) {
     --_bg: var(--stil-color-surface);
   }
 
-  :is(.stil-section-brand, .stil-cta-brand) :is(.stil-btn-outline, .stil-btn-ghost) {
+  :is(.stil-section-brand, .stil-cta-brand) :is(.stil-btn-outline, .stil-btn-ghost):not(:is(.stil-card, .stil-accordion, .stil-plan, .stil-testimonial:not(.stil-testimonial-featured)) *) {
     --_ink: var(--_on);
   }
 
-  :is(.stil-section-brand, .stil-cta-brand) .stil-btn-outline:hover {
+  :is(.stil-section-brand, .stil-cta-brand) .stil-btn-outline:not(:is(.stil-card, .stil-accordion, .stil-plan, .stil-testimonial:not(.stil-testimonial-featured)) *):hover {
     border-color: var(--_on);
     background-color: var(--_on);
     color: var(--_on-bg);
@@ -295,5 +295,290 @@
   .stil-section-brand .stil-features-cards .stil-feature {
     border-color: color-mix(in srgb, currentColor 25%, transparent);
     background-color: #0000;
+  }
+
+  :is(.stil-section-brand, .stil-cta-brand) :is(.stil-card, .stil-accordion, .stil-plan, .stil-testimonial:not(.stil-testimonial-featured)) {
+    --stil-color-accent: initial;
+    color: var(--stil-color-text);
+  }
+
+  .stil-pricing {
+    gap: var(--stil-space-6);
+    flex-direction: column;
+    display: flex;
+  }
+
+  .stil-pricing-period {
+    align-self: center;
+    gap: var(--stil-space-1);
+    padding: var(--stil-space-1);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-pill);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+    margin: 0;
+    display: inline-flex;
+  }
+
+  .stil-pricing-option {
+    align-items: center;
+    gap: var(--stil-space-2);
+    padding: var(--stil-space-1) var(--stil-space-4);
+    border-radius: var(--stil-radius-pill);
+    cursor: pointer;
+    display: inline-flex;
+    position: relative;
+  }
+
+  .stil-pricing-option > input {
+    opacity: 0;
+    cursor: pointer;
+    margin: 0;
+    position: absolute;
+    inset: 0;
+  }
+
+  .stil-pricing-option:has(input:checked) {
+    --_bg: var(--stil-color-primary);
+    background-color: var(--_bg);
+    color: var(--_fg);
+  }
+
+  .stil-pricing-option:has(input:focus-visible) {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+  }
+
+  .stil-pricing:not(:has(.stil-pricing-yearly:checked)) .stil-plan-yearly, .stil-pricing:has(.stil-pricing-yearly:checked) .stil-plan-monthly {
+    display: none;
+  }
+
+  .stil-plans {
+    gap: var(--stil-space-5);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+  }
+
+  .stil-plan {
+    gap: var(--stil-space-3);
+    padding: var(--stil-space-6);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-lg);
+    background-color: var(--stil-color-surface);
+    flex-direction: column;
+    display: flex;
+  }
+
+  .stil-plan-featured {
+    border-color: var(--_accent);
+    box-shadow: 0 0 0 1px var(--_accent), var(--stil-shadow-lg);
+  }
+
+  .stil-plan-badge {
+    --_bg: var(--stil-color-primary);
+    padding: .125rem var(--stil-space-3);
+    border-radius: var(--stil-radius-pill);
+    background-color: var(--_bg);
+    color: var(--_fg);
+    font-size: var(--stil-font-size-xs);
+    font-weight: var(--stil-font-weight-bold);
+    align-self: flex-start;
+    margin: 0;
+  }
+
+  .stil-plan-name {
+    font-size: var(--stil-font-size-lg);
+    margin: 0;
+  }
+
+  .stil-plan-price {
+    color: var(--stil-color-text-muted);
+    margin: 0;
+  }
+
+  .stil-plan-amount {
+    color: var(--stil-color-text);
+    font-size: clamp(2rem, 1.5rem + 1.5cqi, 2.75rem);
+    font-weight: var(--stil-font-weight-bold);
+    font-variant-numeric: tabular-nums;
+    margin-inline-end: var(--stil-space-1);
+    line-height: 1.1;
+  }
+
+  .stil-plan-text {
+    color: var(--stil-color-text-muted);
+    margin: 0;
+  }
+
+  .stil-plan-features {
+    align-content: start;
+    gap: var(--stil-space-2);
+    margin: var(--stil-space-2) 0;
+    flex: 1;
+    padding: 0;
+    list-style: none;
+    display: grid;
+  }
+
+  .stil-plan-features > li {
+    gap: var(--stil-space-2);
+    display: flex;
+  }
+
+  .stil-plan-features .stil-icon {
+    color: var(--_accent);
+    flex: none;
+    margin-block-start: .2em;
+  }
+
+  .stil-plan-action {
+    width: 100%;
+  }
+
+  .stil-testimonials {
+    gap: var(--stil-space-5);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    display: grid;
+  }
+
+  .stil-testimonial {
+    gap: var(--stil-space-4);
+    padding: var(--stil-space-5);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-lg);
+    background-color: var(--stil-color-surface);
+    flex-direction: column;
+    margin: 0;
+    display: flex;
+  }
+
+  .stil-testimonial-quote {
+    color: inherit;
+    text-wrap: pretty;
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .stil-testimonial-quote > :last-child {
+    margin-block-end: 0;
+  }
+
+  .stil-testimonial-author {
+    align-items: center;
+    gap: var(--stil-space-3);
+    margin-block-start: auto;
+    display: flex;
+  }
+
+  .stil-testimonial-name {
+    font-weight: var(--stil-font-weight-bold);
+    display: block;
+  }
+
+  .stil-testimonial-role {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+    display: block;
+  }
+
+  .stil-testimonial-featured {
+    text-align: center;
+    background: none;
+    border: 0;
+    align-items: center;
+    max-width: 48rem;
+    margin-inline: auto;
+    padding: 0;
+  }
+
+  .stil-testimonial-featured .stil-testimonial-quote {
+    font-size: clamp(var(--stil-font-size-lg), 1rem + 1.5cqi, var(--stil-font-size-xl));
+    line-height: 1.4;
+  }
+
+  .stil-testimonial-featured .stil-testimonial-author {
+    text-align: start;
+  }
+
+  :is(.stil-section-brand, .stil-cta-brand) .stil-testimonial-featured .stil-testimonial-role {
+    color: inherit;
+  }
+
+  .stil-faq {
+    align-items: start;
+    gap: var(--stil-space-6);
+    display: grid;
+  }
+
+  @container (width >= 56rem) {
+    .stil-faq {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    }
+  }
+
+  .stil-faq-header > :last-child {
+    margin-block-end: 0;
+  }
+
+  .stil-team {
+    gap: var(--stil-space-6);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+  }
+
+  .stil-team-member {
+    align-items: center;
+    gap: var(--stil-space-1);
+    text-align: center;
+    flex-direction: column;
+    display: flex;
+  }
+
+  .stil-team-photo {
+    width: 6rem;
+    height: 6rem;
+    object-fit: cover;
+    font-size: var(--stil-font-size-xl);
+    border-radius: 50%;
+    margin-block-end: var(--stil-space-3);
+  }
+
+  .stil-team-photo:not(img) {
+    border: 1px solid var(--stil-color-border);
+    background-color: var(--stil-color-surface);
+    color: var(--stil-color-text);
+  }
+
+  .stil-team-name {
+    font-size: var(--stil-font-size-lg);
+    margin: 0;
+  }
+
+  .stil-team-role {
+    color: var(--stil-color-text-muted);
+    margin: 0;
+  }
+
+  .stil-team-bio {
+    margin: var(--stil-space-2) 0 0;
+    font-size: var(--stil-font-size-sm);
+  }
+
+  .stil-team-links {
+    justify-content: center;
+    gap: var(--stil-space-1) var(--stil-space-3);
+    margin: var(--stil-space-2) 0 0;
+    font-size: var(--stil-font-size-sm);
+    flex-wrap: wrap;
+    padding: 0;
+    list-style: none;
+    display: flex;
   }
 }

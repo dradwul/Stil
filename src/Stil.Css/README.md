@@ -184,6 +184,10 @@ Each block is sized to its section (container queries), not the window.
 | Call to action | `stil-cta` (`stil-cta-center`, `stil-cta-brand`) > `stil-cta-body` (`stil-cta-title`, `<p>`) and `stil-cta-actions`. |
 | Stats band | `<dl class="stil-stats">` > `stil-stats-item` > `<dt class="stil-stats-label">` + `<dd class="stil-stats-value">`. |
 | Logo cloud | `stil-logos` (`stil-logos-muted`, `--stil-logos-height`) > `stil-logos-title` and `<ul class="stil-logos-list">`. |
+| Pricing table | `stil-pricing` > an optional `<fieldset class="stil-pricing-period">` with two `<label class="stil-pricing-option">` radio buttons (the yearly one with `stil-pricing-yearly`), and `<ul class="stil-plans">` > `stil-plan` (`stil-plan-featured`) with `stil-plan-badge`, `stil-plan-name`, `stil-plan-price` (`stil-plan-amount`, and `stil-plan-monthly`/`stil-plan-yearly` parts for the switch, which needs no JavaScript), `stil-plan-text`, `stil-plan-features` and `stil-plan-action`. |
+| Testimonials | `stil-testimonials` > `<figure class="stil-testimonial">` (`stil-testimonial-featured` for one large quote) > `<blockquote class="stil-testimonial-quote">` and `<figcaption class="stil-testimonial-author">` (`stil-avatar`, `stil-testimonial-name`, `stil-testimonial-role`). |
+| FAQ | `stil-faq` > `stil-faq-header` (`stil-section-title`, `stil-lead`) and a `stil-accordion`; the header sits beside the questions when the section is at least 56rem wide. |
+| Team | `<ul class="stil-team">` > `stil-team-member` with `stil-team-photo` (an `img` with `alt=""`, or a `stil-avatar` with initials), `stil-team-name`, `stil-team-role`, `stil-team-bio` and `stil-team-links`. |
 
 On `stil-section-brand` and `stil-cta-brand` the text, links, focus rings,
 eyebrows and outline buttons take the color that reads on the primary
