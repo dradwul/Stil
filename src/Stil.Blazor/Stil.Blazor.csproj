@@ -41,7 +41,8 @@
   <!--
     The stylesheet is built from src/Stil.Css into src/Stil.Css/dist (committed, so this build
     needs no Node.js). Register the built files as static web assets with that folder as content
-    root, so they are served as _content/Stil/stil.css, stil.min.css and stil.js, packed into the NuGet
+    root, so they are served as _content/Stil/stil.css, stil.min.css, stil-blocks.css (the opt-in page
+    blocks) and stil.js, packed into the NuGet
     package, and picked up live (no copy) when running the demo with "npm run watch".
   -->
   <PropertyGroup>
@@ -52,6 +53,8 @@
     <ItemGroup>
       <_StilCssCandidate Include="$(StilCssDirectory)stil.css" RelativePath="stil.css" />
       <_StilCssCandidate Include="$(StilCssDirectory)stil.min.css" RelativePath="stil.min.css" />
+      <_StilCssCandidate Include="$(StilCssDirectory)stil-blocks.css" RelativePath="stil-blocks.css" />
+      <_StilCssCandidate Include="$(StilCssDirectory)stil-blocks.min.css" RelativePath="stil-blocks.min.css" />
       <_StilCssCandidate Include="$(StilCssDirectory)stil.js" RelativePath="stil.js" />
     </ItemGroup>
 

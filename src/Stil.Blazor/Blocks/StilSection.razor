@@ -1,0 +1,67 @@
+@inherits StilComponentBase
+
+@* A full-width band of a page, with an optional header (eyebrow, title and lead) and the content
+   in a container. With a title, the section is a landmark named by it. *@
+<section @attributes="AdditionalAttributes" class="@Classes("stil-section", ToneClass)" aria-labelledby="@(HasTitle ? _titleId : null)">
+    <div class="stil-container">
+        @if (HasTitle || !string.IsNullOrWhiteSpace(Eyebrow) || !string.IsNullOrWhiteSpace(Lead))
+        {
+            <header class="@(Centered ? "stil-section-header stil-section-header-center" : "stil-section-header")">
+                @if (!string.IsNullOrWhiteSpace(Eyebrow))
+                {
+                    <p class="stil-eyebrow">@Eyebrow</p>
+                }
+                @if (HasTitle)
+                {
+                    <StilHeading Level="HeadingLevel" class="stil-section-title" id="@_titleId">@Title</StilHeading>
+                }
+                @if (!string.IsNullOrWhiteSpace(Lead))
+                {
+                    <p class="stil-lead">@Lead</p>
+                }
+            </header>
+        }
+        @ChildContent
+    </div>
+</section>
+
+@code {
+    private readonly string _titleId = StilIds.Next("section");
+
+    /// <summary>A short line above the title, such as the section's topic.</summary>
+    [Parameter]
+    public string? Eyebrow { get; set; }
+
+    /// <summary>The section title, rendered as a heading. It also names the section for screen readers.</summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>A sentence or two under the title.</summary>
+    [Parameter]
+    public string? Lead { get; set; }
+
+    /// <summary>The heading level of the title, 1 to 6. The default is 2.</summary>
+    [Parameter]
+    public int HeadingLevel { get; set; } = 2;
+
+    /// <summary>Centers the header.</summary>
+    [Parameter]
+    public bool Centered { get; set; }
+
+    /// <summary>The background: the page, the muted surface or the primary color.</summary>
+    [Parameter]
+    public StilBlockTone Tone { get; set; }
+
+    /// <summary>The section's content, under the header.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private bool HasTitle => !string.IsNullOrWhiteSpace(Title);
+
+    private string? ToneClass => Tone switch
+    {
+        StilBlockTone.Muted => "stil-section-muted",
+        StilBlockTone.Brand => "stil-section-brand",
+        _ => null,
+    };
+}

@@ -2,6 +2,10 @@
 
 @* Put <StilHead /> in the <head> of App.razor: it adds the stylesheet, the font and the global theme. *@
 <link rel="stylesheet" href="@Assets[Minified ? "_content/Stil/stil.min.css" : "_content/Stil/stil.css"]" />
+@if (Blocks)
+{
+    <link rel="stylesheet" href="@Assets[Minified ? "_content/Stil/stil-blocks.min.css" : "_content/Stil/stil-blocks.css"]" />
+}
 @if (Options.Font?.StylesheetUrl is { } fontUrl)
 {
     <link rel="stylesheet" href="@fontUrl" />
@@ -15,6 +19,10 @@
     /// <summary>Use the minified stylesheet. The default is true.</summary>
     [Parameter]
     public bool Minified { get; set; } = true;
+
+    /// <summary>Also adds the stylesheet of the page blocks (Stil.Blazor.Blocks: hero, sections, features and more), for websites.</summary>
+    [Parameter]
+    public bool Blocks { get; set; }
 
     protected override void OnParametersSet() => Options.Font?.Validate();
 

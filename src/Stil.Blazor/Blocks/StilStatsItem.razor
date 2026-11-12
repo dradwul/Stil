@@ -1,0 +1,18 @@
+@inherits StilComponentBase
+
+@* One number in a StilStatsBand. The value is shown above the label; a screen reader reads the
+   label first ("Customers, 12,000"). *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-stats-item")">
+    <dt class="stil-stats-label">@Label</dt>
+    <dd class="stil-stats-value">@Value</dd>
+</div>
+
+@code {
+    /// <summary>What the number counts, such as "Customers".</summary>
+    [Parameter, EditorRequired]
+    public string? Label { get; set; }
+
+    /// <summary>The number, formatted, such as "12,000" or "99.9%".</summary>
+    [Parameter, EditorRequired]
+    public string? Value { get; set; }
+}

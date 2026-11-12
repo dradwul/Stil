@@ -1,0 +1,32 @@
+@inherits StilComponentBase
+
+@* The logos of customers or partners, under an optional title. Put StilLogo items in it. *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-logos", Muted ? "stil-logos-muted" : null)" style="@HeightStyle">
+    @if (!string.IsNullOrWhiteSpace(Title))
+    {
+        <p class="stil-logos-title">@Title</p>
+    }
+    <ul class="stil-logos-list">
+        @ChildContent
+    </ul>
+</div>
+
+@code {
+    /// <summary>A line above the logos, such as "Trusted by teams at".</summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>Shows the logos in gray.</summary>
+    [Parameter]
+    public bool Muted { get; set; }
+
+    /// <summary>The height of the logos, as a CSS length. The default is 2rem.</summary>
+    [Parameter]
+    public string? Height { get; set; }
+
+    /// <summary>The StilLogo items.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string? HeightStyle => string.IsNullOrWhiteSpace(Height) ? null : $"--stil-logos-height: {Height}";
+}

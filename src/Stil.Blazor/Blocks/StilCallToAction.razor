@@ -1,0 +1,47 @@
+@inherits StilComponentBase
+
+@* A banner that asks for one action: a title, a sentence and buttons. *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-cta", Centered ? "stil-cta-center" : null, Tone == StilBlockTone.Brand ? "stil-cta-brand" : null)">
+    <div class="stil-cta-body">
+        <StilHeading Level="HeadingLevel" class="stil-cta-title">@Title</StilHeading>
+        @if (!string.IsNullOrWhiteSpace(Text))
+        {
+            <p>@Text</p>
+        }
+        @ChildContent
+    </div>
+    @if (Actions is not null)
+    {
+        <div class="stil-cta-actions">@Actions</div>
+    }
+</div>
+
+@code {
+    /// <summary>The title, rendered as a heading.</summary>
+    [Parameter, EditorRequired]
+    public string? Title { get; set; }
+
+    /// <summary>A sentence under the title.</summary>
+    [Parameter]
+    public string? Text { get; set; }
+
+    /// <summary>The heading level of the title, 1 to 6. The default is 2.</summary>
+    [Parameter]
+    public int HeadingLevel { get; set; } = 2;
+
+    /// <summary>The buttons or links.</summary>
+    [Parameter]
+    public RenderFragment? Actions { get; set; }
+
+    /// <summary>Stacks the text over the actions, centered.</summary>
+    [Parameter]
+    public bool Centered { get; set; }
+
+    /// <summary>Brand gives the banner the primary color; the others show it on the muted surface.</summary>
+    [Parameter]
+    public StilBlockTone Tone { get; set; }
+
+    /// <summary>More content under the text.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

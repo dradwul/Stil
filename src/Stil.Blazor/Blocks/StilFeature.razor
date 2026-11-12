@@ -1,0 +1,37 @@
+@inherits StilComponentBase
+
+@* One feature in a StilFeatureGrid: a decorative icon, a title and a sentence. *@
+<li @attributes="AdditionalAttributes" class="@Classes("stil-feature")">
+    @if (!string.IsNullOrWhiteSpace(Icon))
+    {
+        <span class="stil-feature-icon"><StilIcon Name="@Icon" /></span>
+    }
+    <StilHeading Level="HeadingLevel" class="stil-feature-title">@Title</StilHeading>
+    @if (!string.IsNullOrWhiteSpace(Text))
+    {
+        <p>@Text</p>
+    }
+    @ChildContent
+</li>
+
+@code {
+    /// <summary>The name of a built-in icon (see StilIcons), shown above the title. It is decorative.</summary>
+    [Parameter]
+    public string? Icon { get; set; }
+
+    /// <summary>The feature's title.</summary>
+    [Parameter, EditorRequired]
+    public string? Title { get; set; }
+
+    /// <summary>A sentence about the feature.</summary>
+    [Parameter]
+    public string? Text { get; set; }
+
+    /// <summary>The heading level of the title, 1 to 6. The default is 3.</summary>
+    [Parameter]
+    public int HeadingLevel { get; set; } = 3;
+
+    /// <summary>More content under the text, such as a link.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

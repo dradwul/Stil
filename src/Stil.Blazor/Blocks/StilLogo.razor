@@ -1,0 +1,43 @@
+@inherits StilComponentBase
+
+@* One logo in a StilLogoCloud: a picture with its company name as alt text, or child content
+   such as an inline SVG or a name in text. With Href it is a link. *@
+<li @attributes="AdditionalAttributes" class="@Classes("stil-logos-item")">
+    @if (!string.IsNullOrWhiteSpace(Href))
+    {
+        <a href="@Href">@Logo</a>
+    }
+    else
+    {
+        @Logo
+    }
+</li>
+
+@code {
+    /// <summary>The URL of the logo picture.</summary>
+    [Parameter]
+    public string? Src { get; set; }
+
+    /// <summary>The company's name, as the picture's alt text.</summary>
+    [Parameter]
+    public string? Alt { get; set; }
+
+    /// <summary>A link to the company or the case study.</summary>
+    [Parameter]
+    public string? Href { get; set; }
+
+    /// <summary>The logo itself, instead of Src: an inline SVG (with a title or aria-label) or a name in text.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private RenderFragment Logo => @<text>
+        @if (ChildContent is not null)
+        {
+            @ChildContent
+        }
+        else
+        {
+            <img src="@Src" alt="@Alt" loading="lazy" />
+        }
+    </text>;
+}

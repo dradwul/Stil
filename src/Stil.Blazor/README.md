@@ -598,6 +598,38 @@ Toasts.Show("Saved", duration: TimeSpan.Zero);   // stays until closed
 Toasts close after `StilOptions.DefaultToastDuration` (5 seconds). Danger and
 Warning toasts use `role="alert"`; the others use `"status"`.
 
+### Page blocks
+
+Sections for websites, in the namespace `Stil.Blazor.Blocks`. Their
+stylesheet is opt-in: `<StilHead Blocks />` adds it.
+
+```razor
+@using Stil.Blazor.Blocks
+
+<StilHero Eyebrow="New" Title="Plan the week your team actually has" Lead="Tasks, bookings and time off in one calendar.">
+    <Actions><StilButton Href="start" Size="StilSize.Large">Start free</StilButton></Actions>
+</StilHero>
+
+<StilSection Eyebrow="Features" Title="Everything the week needs" Centered>
+    <StilFeatureGrid>
+        <StilFeature Icon="@StilIcons.Moon" Title="Light and dark" Text="Readable in both." />
+    </StilFeatureGrid>
+</StilSection>
+
+<StilSection Title="Teams plan better" Tone="StilBlockTone.Brand" Centered>
+    <StilStatsBand><StilStatsItem Label="Teams" Value="4,800" /></StilStatsBand>
+</StilSection>
+```
+
+| Component | Notes |
+| --- | --- |
+| `StilSection` | `Eyebrow`, `Title` (names the section), `Lead`, `HeadingLevel` (2), `Centered`, `Tone` (`StilBlockTone` Default, Muted or Brand). The content goes in a container. |
+| `StilHero` | `Eyebrow`, `Title` (an `h1` by default), `Lead`, `Actions`, `Media` (a picture beside the text), `Tone`. |
+| `StilFeatureGrid`, `StilFeature` | `Cards`; per feature `Icon` (decorative), `Title`, `Text`, `HeadingLevel` (3) and child content. |
+| `StilCallToAction` | `Title`, `Text`, `Actions`, `Centered`, `Tone` (Brand for the primary color). |
+| `StilStatsBand`, `StilStatsItem` | A description list; per item `Label` and `Value`. |
+| `StilLogoCloud`, `StilLogo` | `Title`, `Muted`, `Height`; per logo `Src` and `Alt`, or child content, and `Href`. |
+
 ## Stil CSS and the matching components
 
 | Stil CSS | Blazor component |

@@ -1,0 +1,16 @@
+@inherits StilComponentBase
+
+@* A grid of features, as many columns as fit. Put StilFeature items in it. *@
+<ul @attributes="AdditionalAttributes" class="@Classes("stil-features", Cards ? "stil-features-cards" : null)">
+    @ChildContent
+</ul>
+
+@code {
+    /// <summary>Puts each feature on a card.</summary>
+    [Parameter]
+    public bool Cards { get; set; }
+
+    /// <summary>The StilFeature items.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

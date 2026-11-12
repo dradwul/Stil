@@ -57,6 +57,7 @@ jobs:
         run: |
           unzip -l "$(ls artifacts/Stil.[0-9]*.nupkg)" | tee stil.txt
           grep -q 'staticwebassets/stil.css' stil.txt
+          grep -q 'staticwebassets/stil-blocks.css' stil.txt
           grep -q 'README.md' stil.txt
           unzip -l "$(ls artifacts/Stil.Charts.[0-9]*.nupkg)" | tee charts.txt
           grep -q 'staticwebassets/stil-charts.css' charts.txt

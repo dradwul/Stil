@@ -1,0 +1,71 @@
+@inherits StilComponentBase
+
+@* The first section of a page: an eyebrow, the page title (h1), a lead and actions, centered, or
+   beside a picture when Media is set. *@
+<section @attributes="AdditionalAttributes" class="@Classes("stil-section", "stil-hero", Media is not null ? "stil-hero-split" : null, ToneClass)" aria-labelledby="@_titleId">
+    <div class="stil-container stil-hero-body">
+        <div class="stil-hero-content">
+            @if (!string.IsNullOrWhiteSpace(Eyebrow))
+            {
+                <p class="stil-eyebrow">@Eyebrow</p>
+            }
+            <StilHeading Level="HeadingLevel" class="stil-hero-title" id="@_titleId">@Title</StilHeading>
+            @if (!string.IsNullOrWhiteSpace(Lead))
+            {
+                <p class="stil-lead">@Lead</p>
+            }
+            @ChildContent
+            @if (Actions is not null)
+            {
+                <div class="stil-hero-actions">@Actions</div>
+            }
+        </div>
+        @if (Media is not null)
+        {
+            <div class="stil-hero-media">@Media</div>
+        }
+    </div>
+</section>
+
+@code {
+    private readonly string _titleId = StilIds.Next("hero");
+
+    /// <summary>A short line above the title.</summary>
+    [Parameter]
+    public string? Eyebrow { get; set; }
+
+    /// <summary>The title, usually the page's main heading.</summary>
+    [Parameter, EditorRequired]
+    public string? Title { get; set; }
+
+    /// <summary>A sentence or two under the title.</summary>
+    [Parameter]
+    public string? Lead { get; set; }
+
+    /// <summary>The heading level of the title, 1 to 6. The default is 1.</summary>
+    [Parameter]
+    public int HeadingLevel { get; set; } = 1;
+
+    /// <summary>Buttons or links under the text, such as "Start free" and "See pricing".</summary>
+    [Parameter]
+    public RenderFragment? Actions { get; set; }
+
+    /// <summary>A picture beside the text on wide screens (above it on narrow ones). Give an img its alt text.</summary>
+    [Parameter]
+    public RenderFragment? Media { get; set; }
+
+    /// <summary>The background: the page, the muted surface or the primary color.</summary>
+    [Parameter]
+    public StilBlockTone Tone { get; set; }
+
+    /// <summary>More content under the lead, before the actions.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string? ToneClass => Tone switch
+    {
+        StilBlockTone.Muted => "stil-section-muted",
+        StilBlockTone.Brand => "stil-section-brand",
+        _ => null,
+    };
+}

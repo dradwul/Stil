@@ -1,0 +1,12 @@
+@inherits StilComponentBase
+
+@* Large numbers with a label, in a description list. Put StilStatsItem items in it. *@
+<dl @attributes="AdditionalAttributes" class="@Classes("stil-stats")">
+    @ChildContent
+</dl>
+
+@code {
+    /// <summary>The StilStatsItem items.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

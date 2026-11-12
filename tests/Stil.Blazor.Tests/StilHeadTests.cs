@@ -35,6 +35,19 @@ public class StilHeadTests
     }
 
     [Fact]
+    public void AddsTheBlocksStylesheetAfterStilWhenAskedFor()
+    {
+        using var context = new BunitContext();
+        context.Services.AddStil();
+
+        var cut = context.Render<StilHead>(parameters => parameters.Add(component => component.Blocks, true));
+
+        Assert.Equal(
+            ["_content/Stil/stil.min.css", "_content/Stil/stil-blocks.min.css"],
+            cut.FindAll("link").Select(link => link.GetAttribute("href")));
+    }
+
+    [Fact]
     public void ResolvesFingerprintedAssetUrl()
     {
         using var context = new BunitContext();
