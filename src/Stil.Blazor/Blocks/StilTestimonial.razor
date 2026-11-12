@@ -1,0 +1,62 @@
+@inherits StilComponentBase
+
+@* What a customer says: a quote and who said it. Featured is one large quote, without a card. *@
+<figure @attributes="AdditionalAttributes" class="@Classes("stil-testimonial", Featured ? "stil-testimonial-featured" : null)">
+    <blockquote class="stil-testimonial-quote">
+        @if (ChildContent is not null)
+        {
+            @ChildContent
+        }
+        else
+        {
+            <p>@Quote</p>
+        }
+    </blockquote>
+    <figcaption class="stil-testimonial-author">
+        @if (!string.IsNullOrWhiteSpace(Photo))
+        {
+            <img class="stil-avatar" src="@Photo" alt="" />
+        }
+        else if (ShowInitials)
+        {
+            <span class="stil-avatar" aria-hidden="true">@StilAvatar.InitialsOf(Name)</span>
+        }
+        <span>
+            <span class="stil-testimonial-name">@Name</span>
+            @if (!string.IsNullOrWhiteSpace(Role))
+            {
+                <span class="stil-testimonial-role">@Role</span>
+            }
+        </span>
+    </figcaption>
+</figure>
+
+@code {
+    /// <summary>The quote. For more than one paragraph, use child content instead.</summary>
+    [Parameter]
+    public string? Quote { get; set; }
+
+    /// <summary>Who said it.</summary>
+    [Parameter, EditorRequired]
+    public string? Name { get; set; }
+
+    /// <summary>Their role and company, such as "Head of operations, Nordvik Supply".</summary>
+    [Parameter]
+    public string? Role { get; set; }
+
+    /// <summary>A photo of them. It is decorative, since the name follows it.</summary>
+    [Parameter]
+    public string? Photo { get; set; }
+
+    /// <summary>Shows their initials when there is no photo. The default is true.</summary>
+    [Parameter]
+    public bool ShowInitials { get; set; } = true;
+
+    /// <summary>One large quote, centered, without a card.</summary>
+    [Parameter]
+    public bool Featured { get; set; }
+
+    /// <summary>The quote as markup, instead of Quote.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

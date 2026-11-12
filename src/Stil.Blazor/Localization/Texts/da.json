@@ -322,5 +322,10 @@
     "Print": "Udskriv",
     "Fallback": "Denne browser kan ikke vise PDF-filen her. Download den eller åbn den i en ny fane.",
     "Frame": "PDF-dokument"
+  },
+  "Pricing": {
+    "Period": "Betalingsperiode",
+    "Monthly": "Månedligt",
+    "Yearly": "Årligt"
   }
 }

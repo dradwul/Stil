@@ -1,0 +1,12 @@
+@inherits StilComponentBase
+
+@* A grid of StilTestimonial quotes, as many columns as fit. *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-testimonials")">
+    @ChildContent
+</div>
+
+@code {
+    /// <summary>The StilTestimonial items.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

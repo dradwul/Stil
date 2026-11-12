@@ -1,0 +1,58 @@
+@inherits StilComponentBase
+
+@* Questions and answers: a header beside the questions on wide sections, above them on narrow
+   ones. The questions are StilAccordionItem items, so they open with the keyboard and work
+   without JavaScript. *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-faq")">
+    @if (!string.IsNullOrWhiteSpace(Title) || !string.IsNullOrWhiteSpace(Lead))
+    {
+        <header class="stil-faq-header">
+            @if (!string.IsNullOrWhiteSpace(Eyebrow))
+            {
+                <p class="stil-eyebrow">@Eyebrow</p>
+            }
+            @if (!string.IsNullOrWhiteSpace(Title))
+            {
+                <StilHeading Level="HeadingLevel" class="stil-section-title">@Title</StilHeading>
+            }
+            @if (!string.IsNullOrWhiteSpace(Lead))
+            {
+                <p class="stil-lead">@Lead</p>
+            }
+            @Footer
+        </header>
+    }
+    <StilAccordion Multiple="Multiple">
+        @ChildContent
+    </StilAccordion>
+</div>
+
+@code {
+    /// <summary>A short line above the title.</summary>
+    [Parameter]
+    public string? Eyebrow { get; set; }
+
+    /// <summary>The title, such as "Questions and answers".</summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>A sentence under the title.</summary>
+    [Parameter]
+    public string? Lead { get; set; }
+
+    /// <summary>More content under the lead, such as a link to contact you.</summary>
+    [Parameter]
+    public RenderFragment? Footer { get; set; }
+
+    /// <summary>The heading level of the title, 1 to 6. The default is 2.</summary>
+    [Parameter]
+    public int HeadingLevel { get; set; } = 2;
+
+    /// <summary>Lets several answers be open at once. By default, opening one closes the others.</summary>
+    [Parameter]
+    public bool Multiple { get; set; }
+
+    /// <summary>The questions: StilAccordionItem items, with the question as Title and the answer as content.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

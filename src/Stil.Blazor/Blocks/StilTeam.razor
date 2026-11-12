@@ -1,0 +1,12 @@
+@inherits StilComponentBase
+
+@* A grid of StilTeamMember people, as many columns as fit. *@
+<ul @attributes="AdditionalAttributes" class="@Classes("stil-team")">
+    @ChildContent
+</ul>
+
+@code {
+    /// <summary>The StilTeamMember items.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

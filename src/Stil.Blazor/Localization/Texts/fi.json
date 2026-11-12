@@ -322,5 +322,10 @@
     "Print": "Tulosta",
     "Fallback": "Tämä selain ei voi näyttää PDF-tiedostoa tässä. Lataa se tai avaa se uudessa välilehdessä.",
     "Frame": "PDF-asiakirja"
+  },
+  "Pricing": {
+    "Period": "Laskutusjakso",
+    "Monthly": "Kuukausittain",
+    "Yearly": "Vuosittain"
   }
 }

@@ -1,0 +1,57 @@
+@inherits StilComponentBase
+
+@* Plans on cards (StilPlan items), with an optional monthly/yearly switch that works without
+   JavaScript, so also in static server rendering: radio buttons, and CSS that shows the prices of
+   the checked period. *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-pricing")">
+    @if (PeriodSwitch)
+    {
+        <fieldset class="stil-pricing-period">
+            <legend class="stil-visually-hidden">@Localize(PeriodLabel, "Pricing.Period")</legend>
+            <label class="stil-pricing-option"><input type="radio" name="@_name" checked="@(!Yearly)" /> @Localize(MonthlyText, "Pricing.Monthly")</label>
+            <label class="stil-pricing-option">
+                <input type="radio" name="@_name" class="stil-pricing-yearly" checked="@Yearly" /> @Localize(YearlyText, "Pricing.Yearly")
+                @if (!string.IsNullOrWhiteSpace(YearlyNote))
+                {
+                    @* A real space, so a screen reader does not run the note into "Yearly". *@
+                    @(" ")<StilBadge Variant="StilVariant.Success" Subtle>@YearlyNote</StilBadge>
+                }
+            </label>
+        </fieldset>
+    }
+    <ul class="stil-plans">
+        @ChildContent
+    </ul>
+</div>
+
+@code {
+    private readonly string _name = StilIds.Next("pricing");
+
+    /// <summary>Shows the monthly/yearly switch. Give each plan a YearlyPrice.</summary>
+    [Parameter]
+    public bool PeriodSwitch { get; set; }
+
+    /// <summary>Starts on the yearly prices.</summary>
+    [Parameter]
+    public bool Yearly { get; set; }
+
+    /// <summary>A note beside "Yearly", such as "2 months free".</summary>
+    [Parameter]
+    public string? YearlyNote { get; set; }
+
+    /// <summary>The switch's accessible name. The default is the localized "Billing period".</summary>
+    [Parameter]
+    public string? PeriodLabel { get; set; }
+
+    /// <summary>The default is the localized "Monthly".</summary>
+    [Parameter]
+    public string? MonthlyText { get; set; }
+
+    /// <summary>The default is the localized "Yearly".</summary>
+    [Parameter]
+    public string? YearlyText { get; set; }
+
+    /// <summary>The StilPlan items.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

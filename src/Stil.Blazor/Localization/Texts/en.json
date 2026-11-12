@@ -322,5 +322,10 @@
     "Print": "Print",
     "Fallback": "This browser cannot show the PDF here. Download it or open it in a new tab.",
     "Frame": "PDF document"
+  },
+  "Pricing": {
+    "Period": "Billing period",
+    "Monthly": "Monthly",
+    "Yearly": "Yearly"
   }
 }

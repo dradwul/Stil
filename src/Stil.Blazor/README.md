@@ -629,6 +629,10 @@ stylesheet is opt-in: `<StilHead Blocks />` adds it.
 | `StilCallToAction` | `Title`, `Text`, `Actions`, `Centered`, `Tone` (Brand for the primary color). |
 | `StilStatsBand`, `StilStatsItem` | A description list; per item `Label` and `Value`. |
 | `StilLogoCloud`, `StilLogo` | `Title`, `Muted`, `Height`; per logo `Src` and `Alt`, or child content, and `Href`. |
+| `StilPricing`, `StilPlan` | `PeriodSwitch` (a monthly/yearly switch without JavaScript), `Yearly`, `YearlyNote`; per plan `Name`, `Price`, `Period`, `YearlyPrice`, `YearlyPeriod`, `Text`, `Features`, `Featured`, `Badge`, `ActionText`, `ActionHref` or `Actions`. |
+| `StilTestimonials`, `StilTestimonial` | Per quote `Quote` (or child content), `Name`, `Role`, `Photo` (or initials), `Featured`. |
+| `StilFaq` | `Eyebrow`, `Title`, `Lead`, `Footer`, `Multiple`; the questions are `StilAccordionItem` items. |
+| `StilTeam`, `StilTeamMember` | Per person `Name`, `Role`, `Text`, `Photo` (or initials), `Links` (`StilLinkItem`). |
 
 ## Stil CSS and the matching components
 

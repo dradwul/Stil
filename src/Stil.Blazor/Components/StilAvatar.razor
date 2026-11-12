@@ -25,17 +25,17 @@
     public StilSize Size { get; set; }
 
     /// <summary>The first letter of the first and last word, for example "Anna Berg" gives "AB".</summary>
-    internal string Initials
+    internal string Initials => InitialsOf(Name);
+
+    /// <summary>The initials of a name, as on the avatar.</summary>
+    internal static string InitialsOf(string? name)
     {
-        get
+        var words = (name ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        return words.Length switch
         {
-            var words = (Name ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-            return words.Length switch
-            {
-                0 => "",
-                1 => words[0][..1].ToUpperInvariant(),
-                _ => (words[0][..1] + words[^1][..1]).ToUpperInvariant()
-            };
-        }
+            0 => "",
+            1 => words[0][..1].ToUpperInvariant(),
+            _ => (words[0][..1] + words[^1][..1]).ToUpperInvariant()
+        };
     }
 }

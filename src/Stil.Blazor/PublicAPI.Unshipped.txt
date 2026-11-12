@@ -19,6 +19,22 @@ Stil.Blazor.Blocks.StilCallToAction.Title.get -> string?
 Stil.Blazor.Blocks.StilCallToAction.Title.set -> void
 Stil.Blazor.Blocks.StilCallToAction.Tone.get -> Stil.Blazor.Blocks.StilBlockTone
 Stil.Blazor.Blocks.StilCallToAction.Tone.set -> void
+Stil.Blazor.Blocks.StilFaq
+Stil.Blazor.Blocks.StilFaq.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilFaq.ChildContent.set -> void
+Stil.Blazor.Blocks.StilFaq.Eyebrow.get -> string?
+Stil.Blazor.Blocks.StilFaq.Eyebrow.set -> void
+Stil.Blazor.Blocks.StilFaq.Footer.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilFaq.Footer.set -> void
+Stil.Blazor.Blocks.StilFaq.HeadingLevel.get -> int
+Stil.Blazor.Blocks.StilFaq.HeadingLevel.set -> void
+Stil.Blazor.Blocks.StilFaq.Lead.get -> string?
+Stil.Blazor.Blocks.StilFaq.Lead.set -> void
+Stil.Blazor.Blocks.StilFaq.Multiple.get -> bool
+Stil.Blazor.Blocks.StilFaq.Multiple.set -> void
+Stil.Blazor.Blocks.StilFaq.StilFaq() -> void
+Stil.Blazor.Blocks.StilFaq.Title.get -> string?
+Stil.Blazor.Blocks.StilFaq.Title.set -> void
 Stil.Blazor.Blocks.StilFeature
 Stil.Blazor.Blocks.StilFeature.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
 Stil.Blazor.Blocks.StilFeature.ChildContent.set -> void
@@ -75,6 +91,52 @@ Stil.Blazor.Blocks.StilLogoCloud.Muted.set -> void
 Stil.Blazor.Blocks.StilLogoCloud.StilLogoCloud() -> void
 Stil.Blazor.Blocks.StilLogoCloud.Title.get -> string?
 Stil.Blazor.Blocks.StilLogoCloud.Title.set -> void
+Stil.Blazor.Blocks.StilPlan
+Stil.Blazor.Blocks.StilPlan.ActionHref.get -> string?
+Stil.Blazor.Blocks.StilPlan.ActionHref.set -> void
+Stil.Blazor.Blocks.StilPlan.ActionText.get -> string?
+Stil.Blazor.Blocks.StilPlan.ActionText.set -> void
+Stil.Blazor.Blocks.StilPlan.Actions.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilPlan.Actions.set -> void
+Stil.Blazor.Blocks.StilPlan.Badge.get -> string?
+Stil.Blazor.Blocks.StilPlan.Badge.set -> void
+Stil.Blazor.Blocks.StilPlan.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilPlan.ChildContent.set -> void
+Stil.Blazor.Blocks.StilPlan.Featured.get -> bool
+Stil.Blazor.Blocks.StilPlan.Featured.set -> void
+Stil.Blazor.Blocks.StilPlan.Features.get -> System.Collections.Generic.IEnumerable<string!>?
+Stil.Blazor.Blocks.StilPlan.Features.set -> void
+Stil.Blazor.Blocks.StilPlan.HeadingLevel.get -> int
+Stil.Blazor.Blocks.StilPlan.HeadingLevel.set -> void
+Stil.Blazor.Blocks.StilPlan.Name.get -> string?
+Stil.Blazor.Blocks.StilPlan.Name.set -> void
+Stil.Blazor.Blocks.StilPlan.Period.get -> string?
+Stil.Blazor.Blocks.StilPlan.Period.set -> void
+Stil.Blazor.Blocks.StilPlan.Price.get -> string?
+Stil.Blazor.Blocks.StilPlan.Price.set -> void
+Stil.Blazor.Blocks.StilPlan.StilPlan() -> void
+Stil.Blazor.Blocks.StilPlan.Text.get -> string?
+Stil.Blazor.Blocks.StilPlan.Text.set -> void
+Stil.Blazor.Blocks.StilPlan.YearlyPeriod.get -> string?
+Stil.Blazor.Blocks.StilPlan.YearlyPeriod.set -> void
+Stil.Blazor.Blocks.StilPlan.YearlyPrice.get -> string?
+Stil.Blazor.Blocks.StilPlan.YearlyPrice.set -> void
+Stil.Blazor.Blocks.StilPricing
+Stil.Blazor.Blocks.StilPricing.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilPricing.ChildContent.set -> void
+Stil.Blazor.Blocks.StilPricing.MonthlyText.get -> string?
+Stil.Blazor.Blocks.StilPricing.MonthlyText.set -> void
+Stil.Blazor.Blocks.StilPricing.PeriodLabel.get -> string?
+Stil.Blazor.Blocks.StilPricing.PeriodLabel.set -> void
+Stil.Blazor.Blocks.StilPricing.PeriodSwitch.get -> bool
+Stil.Blazor.Blocks.StilPricing.PeriodSwitch.set -> void
+Stil.Blazor.Blocks.StilPricing.StilPricing() -> void
+Stil.Blazor.Blocks.StilPricing.Yearly.get -> bool
+Stil.Blazor.Blocks.StilPricing.Yearly.set -> void
+Stil.Blazor.Blocks.StilPricing.YearlyNote.get -> string?
+Stil.Blazor.Blocks.StilPricing.YearlyNote.set -> void
+Stil.Blazor.Blocks.StilPricing.YearlyText.get -> string?
+Stil.Blazor.Blocks.StilPricing.YearlyText.set -> void
 Stil.Blazor.Blocks.StilSection
 Stil.Blazor.Blocks.StilSection.Centered.get -> bool
 Stil.Blazor.Blocks.StilSection.Centered.set -> void
@@ -101,14 +163,61 @@ Stil.Blazor.Blocks.StilStatsItem.Label.set -> void
 Stil.Blazor.Blocks.StilStatsItem.StilStatsItem() -> void
 Stil.Blazor.Blocks.StilStatsItem.Value.get -> string?
 Stil.Blazor.Blocks.StilStatsItem.Value.set -> void
+Stil.Blazor.Blocks.StilTeam
+Stil.Blazor.Blocks.StilTeam.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilTeam.ChildContent.set -> void
+Stil.Blazor.Blocks.StilTeam.StilTeam() -> void
+Stil.Blazor.Blocks.StilTeamMember
+Stil.Blazor.Blocks.StilTeamMember.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilTeamMember.ChildContent.set -> void
+Stil.Blazor.Blocks.StilTeamMember.HeadingLevel.get -> int
+Stil.Blazor.Blocks.StilTeamMember.HeadingLevel.set -> void
+Stil.Blazor.Blocks.StilTeamMember.Links.get -> System.Collections.Generic.IEnumerable<Stil.Blazor.Components.StilLinkItem!>?
+Stil.Blazor.Blocks.StilTeamMember.Links.set -> void
+Stil.Blazor.Blocks.StilTeamMember.Name.get -> string?
+Stil.Blazor.Blocks.StilTeamMember.Name.set -> void
+Stil.Blazor.Blocks.StilTeamMember.Photo.get -> string?
+Stil.Blazor.Blocks.StilTeamMember.Photo.set -> void
+Stil.Blazor.Blocks.StilTeamMember.Role.get -> string?
+Stil.Blazor.Blocks.StilTeamMember.Role.set -> void
+Stil.Blazor.Blocks.StilTeamMember.StilTeamMember() -> void
+Stil.Blazor.Blocks.StilTeamMember.Text.get -> string?
+Stil.Blazor.Blocks.StilTeamMember.Text.set -> void
+Stil.Blazor.Blocks.StilTestimonial
+Stil.Blazor.Blocks.StilTestimonial.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilTestimonial.ChildContent.set -> void
+Stil.Blazor.Blocks.StilTestimonial.Featured.get -> bool
+Stil.Blazor.Blocks.StilTestimonial.Featured.set -> void
+Stil.Blazor.Blocks.StilTestimonial.Name.get -> string?
+Stil.Blazor.Blocks.StilTestimonial.Name.set -> void
+Stil.Blazor.Blocks.StilTestimonial.Photo.get -> string?
+Stil.Blazor.Blocks.StilTestimonial.Photo.set -> void
+Stil.Blazor.Blocks.StilTestimonial.Quote.get -> string?
+Stil.Blazor.Blocks.StilTestimonial.Quote.set -> void
+Stil.Blazor.Blocks.StilTestimonial.Role.get -> string?
+Stil.Blazor.Blocks.StilTestimonial.Role.set -> void
+Stil.Blazor.Blocks.StilTestimonial.ShowInitials.get -> bool
+Stil.Blazor.Blocks.StilTestimonial.ShowInitials.set -> void
+Stil.Blazor.Blocks.StilTestimonial.StilTestimonial() -> void
+Stil.Blazor.Blocks.StilTestimonials
+Stil.Blazor.Blocks.StilTestimonials.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilTestimonials.ChildContent.set -> void
+Stil.Blazor.Blocks.StilTestimonials.StilTestimonials() -> void
 Stil.Blazor.Components.StilHead.Blocks.get -> bool
 Stil.Blazor.Components.StilHead.Blocks.set -> void
 ~override Stil.Blazor.Blocks.StilCallToAction.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Blazor.Blocks.StilFaq.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilFeature.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilFeatureGrid.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilHero.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilLogo.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilLogoCloud.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Blazor.Blocks.StilPlan.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Blazor.Blocks.StilPricing.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilSection.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilStatsBand.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilStatsItem.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Blazor.Blocks.StilTeam.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Blazor.Blocks.StilTeamMember.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Blazor.Blocks.StilTestimonial.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Blazor.Blocks.StilTestimonials.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void

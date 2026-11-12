@@ -1,0 +1,100 @@
+@inherits StilComponentBase
+
+@* One plan in a StilPricing: its name, price, a sentence, what is included and an action. *@
+<li @attributes="AdditionalAttributes" class="@Classes("stil-plan", Featured ? "stil-plan-featured" : null)">
+    @if (!string.IsNullOrWhiteSpace(Badge))
+    {
+        <p class="stil-plan-badge">@Badge</p>
+    }
+    <StilHeading Level="HeadingLevel" class="stil-plan-name">@Name</StilHeading>
+    <p class="stil-plan-price">
+        <span class="@(HasYearly ? "stil-plan-monthly" : null)"><span class="stil-plan-amount">@Price</span> @Period</span>
+        @if (HasYearly)
+        {
+            <span class="stil-plan-yearly"><span class="stil-plan-amount">@YearlyPrice</span> @YearlyPeriod</span>
+        }
+    </p>
+    @if (!string.IsNullOrWhiteSpace(Text))
+    {
+        <p class="stil-plan-text">@Text</p>
+    }
+    @if (Features is not null)
+    {
+        <ul class="stil-plan-features">
+            @foreach (var feature in Features)
+            {
+                <li><StilIcon Name="@StilIcons.Check" /> @feature</li>
+            }
+        </ul>
+    }
+    @ChildContent
+    @if (Actions is not null)
+    {
+        @Actions
+    }
+    else if (!string.IsNullOrWhiteSpace(ActionText))
+    {
+        <StilButton Href="@ActionHref" class="stil-plan-action"
+                    Appearance="@(Featured ? StilButtonAppearance.Solid : StilButtonAppearance.Outline)">@ActionText</StilButton>
+    }
+</li>
+
+@code {
+    /// <summary>The plan's name.</summary>
+    [Parameter, EditorRequired]
+    public string? Name { get; set; }
+
+    /// <summary>The price, formatted, such as "€6" or "Free".</summary>
+    [Parameter, EditorRequired]
+    public string? Price { get; set; }
+
+    /// <summary>What the price is for, after it, such as "a person a month".</summary>
+    [Parameter]
+    public string? Period { get; set; }
+
+    /// <summary>The yearly price, shown when the StilPricing switch is on yearly.</summary>
+    [Parameter]
+    public string? YearlyPrice { get; set; }
+
+    /// <summary>What the yearly price is for, such as "a person a year".</summary>
+    [Parameter]
+    public string? YearlyPeriod { get; set; }
+
+    /// <summary>A sentence about who the plan is for.</summary>
+    [Parameter]
+    public string? Text { get; set; }
+
+    /// <summary>What is included, one line each, with a check mark.</summary>
+    [Parameter]
+    public IEnumerable<string>? Features { get; set; }
+
+    /// <summary>Highlights the plan, with a solid action button.</summary>
+    [Parameter]
+    public bool Featured { get; set; }
+
+    /// <summary>A label above the name, such as "Most popular".</summary>
+    [Parameter]
+    public string? Badge { get; set; }
+
+    /// <summary>The text of the action button.</summary>
+    [Parameter]
+    public string? ActionText { get; set; }
+
+    /// <summary>Where the action button leads.</summary>
+    [Parameter]
+    public string? ActionHref { get; set; }
+
+    /// <summary>Your own actions instead of ActionText and ActionHref.</summary>
+    [Parameter]
+    public RenderFragment? Actions { get; set; }
+
+    /// <summary>The heading level of the name, 1 to 6. The default is 3.</summary>
+    [Parameter]
+    public int HeadingLevel { get; set; } = 3;
+
+    /// <summary>More content above the action.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private bool HasYearly => !string.IsNullOrWhiteSpace(YearlyPrice);
+}
