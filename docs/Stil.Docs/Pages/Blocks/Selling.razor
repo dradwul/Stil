@@ -1,0 +1,57 @@
+@page "/blocks/selling"
+@using Stil.Docs.Examples.Blocks
+
+<DocsHeader Title="Pricing, testimonials and FAQ" Eyebrow="Website">
+    <Lead>Blocks that sell: a pricing table with a monthly/yearly switch, what customers say, questions and answers, and the team.</Lead>
+</DocsHeader>
+
+<p>
+    Like the other <a href="blocks/sections">page blocks</a>, these need <code>&lt;StilHead Blocks /&gt;</code> and
+    <code>@@using Stil.Blazor.Blocks</code>, and work in static server rendering without JavaScript. Put each in a
+    <code>StilSection</code>.
+</p>
+
+<h2 id="pricing">Pricing table</h2>
+<DocExample Type="typeof(Pricing)">
+    <p>
+        <code>StilPricing</code> lists <code>StilPlan</code> cards: a name, a price and what it is for, a sentence, what
+        is included and an action. <code>Featured</code> highlights a plan and <code>Badge</code> labels it.
+        <code>PeriodSwitch</code> adds a monthly/yearly switch: two radio buttons, and CSS that shows the prices of the
+        checked one, so it needs no JavaScript and no render mode. Give each plan a <code>YearlyPrice</code>; a plan
+        without one shows the same price in both. The switch's texts are translated; <code>MonthlyText</code>,
+        <code>YearlyText</code> and <code>PeriodLabel</code> replace them.
+    </p>
+</DocExample>
+
+<h2 id="testimonials">Testimonials</h2>
+<DocExample Type="typeof(Testimonials)">
+    <p>
+        Each <code>StilTestimonial</code> is a figure with a block quote and who said it, with their photo or initials
+        (decorative, since the name follows). <code>StilTestimonials</code> fits as many columns as there is room for;
+        <code>Featured</code> is one large quote on its own.
+    </p>
+</DocExample>
+
+<h2 id="faq">FAQ</h2>
+<DocExample Type="typeof(Faq)">
+    <p>
+        <code>StilFaq</code> puts a title and lead beside the questions on a wide section and above them on a narrow
+        one. The questions are <code>StilAccordionItem</code> items: they open with the keyboard and without
+        JavaScript, and opening one closes the others unless <code>Multiple</code> is set.
+    </p>
+</DocExample>
+
+<h2 id="team">Team</h2>
+<DocExample Type="typeof(Team)">
+    <p>
+        <code>StilTeamMember</code> shows a photo or the person's initials, their name as a heading, their role, a
+        line about them and links.
+    </p>
+</DocExample>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilPricing)" />
+<ApiTable Type="typeof(StilPlan)" />
+<ApiTable Type="typeof(StilTestimonial)" />
+<ApiTable Type="typeof(StilFaq)" />
+<ApiTable Type="typeof(StilTeamMember)" />
