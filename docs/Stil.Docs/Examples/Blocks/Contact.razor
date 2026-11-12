@@ -1,0 +1,37 @@
+@using System.ComponentModel.DataAnnotations
+
+<StilContact Title="Talk to us" Lead="Questions, a demo or a quote: we answer within a working day."
+             Email="hello@tidvy.example" Phone="+358 20 123 4567"
+             Address="@("Tidvy Oy\nLinnankatu 12\n20100 Turku, Finland")"
+             MapHref="https://www.openstreetmap.org/search?query=Linnankatu%2012%20Turku">
+    <EditForm Model="_message" OnValidSubmit="Send" novalidate>
+        <DataAnnotationsValidator />
+        <StilTextBox @bind-Value="_message.Name" Label="Name" autocomplete="name" />
+        <StilTextBox @bind-Value="_message.Email" Label="E-mail" Type="email" autocomplete="email" />
+        <StilTextArea @bind-Value="_message.Text" Label="Message" Rows="4" />
+        <div><StilButton Type="submit">Send</StilButton></div>
+        @if (_sent)
+        {
+            <StilAlert Variant="StilVariant.Success" Subtle>Thanks, @_message.Name. We will write back soon.</StilAlert>
+        }
+    </EditForm>
+</StilContact>
+
+@code {
+    private readonly Message _message = new();
+    private bool _sent;
+
+    private void Send() => _sent = true;
+
+    private sealed class Message
+    {
+        [Required(ErrorMessage = "Enter your name.")]
+        public string? Name { get; set; }
+
+        [Required(ErrorMessage = "Enter your e-mail address."), EmailAddress(ErrorMessage = "Enter a valid e-mail address.")]
+        public string? Email { get; set; }
+
+        [Required(ErrorMessage = "Write a message.")]
+        public string? Text { get; set; }
+    }
+}

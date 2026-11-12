@@ -1,0 +1,49 @@
+@page "/blocks/frame"
+@using Stil.Docs.Examples.Blocks
+
+<DocsHeader Title="Header, footer and contact" Eyebrow="Website">
+    <Lead>The frame of a site: a navbar with a mega menu, a footer with columns of links, and a contact block beside a form.</Lead>
+</DocsHeader>
+
+<p>
+    Like the other <a href="blocks/sections">page blocks</a>, these need <code>&lt;StilHead Blocks /&gt;</code> and
+    <code>@@using Stil.Blazor.Blocks</code>.
+</p>
+
+<h2 id="mega-menu">Mega menu</h2>
+<DocExample Type="typeof(MegaMenu)">
+    <p>
+        <code>StilMegaMenu</code> goes in a <code>StilNav</code> beside the links. It is a <code>&lt;details&gt;</code>
+        dropdown with columns (<code>StilMegaMenuColumn</code>) of links with a title, a line and an icon
+        (<code>StilMegaMenuLink</code>), and an optional <code>Footer</code> row. It opens without JavaScript;
+        <code>stil.js</code> closes it on Escape and outside clicks, and the arrow keys move between the links. In a
+        collapsed navbar (make the window narrow), it opens in place inside the menu instead of floating over the page.
+    </p>
+</DocExample>
+
+<h2 id="footer">Footer</h2>
+<DocExample Type="typeof(Footer)">
+    <p>
+        <code>StilFooter</code> has the site's name and a line about it, columns of links
+        (<code>StilFooterColumn</code>) in a navigation landmark named "Footer" (translated), and a bottom row with the
+        copyright and the legal links. The columns sit beside the name on a wide footer and under it on a narrow one.
+    </p>
+</DocExample>
+
+<h2 id="contact">Contact</h2>
+<DocExample Type="typeof(Contact)">
+    <p>
+        <code>StilContact</code> lists how to reach you, each with a translated label and an icon: <code>Email</code>
+        (a mailto link), <code>Phone</code> (a tel link), <code>Address</code> (one line each, with a
+        <code>MapHref</code> link to a map) and <code>Hours</code>. Your form goes in the child content and is put on a
+        card beside them, or under them on a narrow section. The block does not send anything: handle the form as you
+        would any other.
+    </p>
+</DocExample>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilMegaMenu)" />
+<ApiTable Type="typeof(StilMegaMenuLink)" />
+<ApiTable Type="typeof(StilFooter)" />
+<ApiTable Type="typeof(StilFooterColumn)" />
+<ApiTable Type="typeof(StilContact)" />
