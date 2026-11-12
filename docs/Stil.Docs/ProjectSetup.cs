@@ -6,7 +6,7 @@ using Stil.Blazor.Components;
 
 namespace Stil.Docs;
 
-/// <summary>A starter of <c>dotnet new stil-app --Starter</c>.</summary>
+/// <summary>A starter of <c>dotnet new stil-app --Starter</c>, or the website (<c>dotnet new stil-site</c>).</summary>
 public sealed record StarterChoice(string Id, string Title, string Text, string Pages, IReadOnlyList<string> Includes);
 
 /// <summary>A feature of <c>dotnet new stil-app --Features</c>.</summary>
@@ -35,6 +35,8 @@ public sealed partial class ProjectSetup
             "Overview, Transactions", []),
         new("planner", "Planner", "A week planner, a resource schedule, a kanban board and a Gantt plan.",
             "Overview, Planner, Bookings, Board, Project plan", ["calendar", "schedule", "kanban", "gantt", "commands"]),
+        new("website", "Website", "A product site built from the page blocks, rendered without interactivity: a mega menu, pricing, a blog and a contact form.",
+            "Home, Pricing, Blog, Article, Contact", []),
     ];
 
     public static readonly IReadOnlyList<FeatureGroup> FeatureGroups =
@@ -115,18 +117,26 @@ public sealed partial class ProjectSetup
     /// <summary>True when the starter already has the feature.</summary>
     public bool Includes(string feature) => StarterChoice.Includes.Contains(feature);
 
+    /// <summary>The website is its own template, stil-site, with the theme options only.</summary>
+    public bool IsWebsite => Starter == "website";
+
     public bool IsValidName => NameRegex().IsMatch(Name);
 
     public bool IsValidPrimary => HexColor().IsMatch(Primary);
 
     /// <summary>The features to pass, without the ones the starter has.</summary>
-    public IReadOnlyList<string> ChosenFeatures => [.. AllFeatures.Select(f => f.Id).Where(id => Features.Contains(id) && !Includes(id))];
+    public IReadOnlyList<string> ChosenFeatures => IsWebsite ? [] : [.. AllFeatures.Select(f => f.Id).Where(id => Features.Contains(id) && !Includes(id))];
 
     /// <summary>The packages the app gets, besides Stil.</summary>
     public IReadOnlyList<string> Packages
     {
         get
         {
+            if (IsWebsite)
+            {
+                return [];
+            }
+
             var packages = AllFeatures.Where(f => f.Package is not null && Features.Contains(f.Id)).Select(f => f.Package!).ToList();
             if (Starter is "dashboard" or "monitoring" or "finance")
             {
@@ -168,12 +178,18 @@ public sealed partial class ProjectSetup
 
     private bool IsDefaultPrimary => string.Equals(Primary, DefaultPrimary, StringComparison.OrdinalIgnoreCase);
 
-    /// <summary>The <c>dotnet new stil-app</c> command, with every choice that is not the default.</summary>
+    /// <summary>The <c>dotnet new stil-app</c> (or <c>stil-site</c>) command, with every choice that is not the default.</summary>
     public string Command
     {
         get
         {
-            var command = new StringBuilder("dotnet new stil-app -n ").Append(IsValidName ? Name : DefaultName);
+            var command = new StringBuilder(IsWebsite ? "dotnet new stil-site -n " : "dotnet new stil-app -n ").Append(IsValidName ? Name : DefaultName);
+            if (IsWebsite)
+            {
+                AppendTheme(command);
+                return command.ToString();
+            }
+
             if (Starter != "blank")
             {
                 command.Append(" --Starter ").Append(Starter);
@@ -189,25 +205,7 @@ public sealed partial class ProjectSetup
                 command.Append(" --Features ").Append(Features.Count == AllFeatures.Count ? "all" : string.Join(' ', features));
             }
 
-            if (IsValidPrimary && !IsDefaultPrimary)
-            {
-                command.Append(" --Primary \"").Append(Primary.ToLowerInvariant()).Append('"');
-            }
-
-            if (Font != "lexend")
-            {
-                command.Append(" --Font ").Append(Font);
-            }
-
-            if (Radius != "default")
-            {
-                command.Append(" --Radius ").Append(Radius);
-            }
-
-            if (ColorMode != StilThemeMode.Auto)
-            {
-                command.Append(" --ColorMode ").Append(ColorMode.ToString().ToLowerInvariant());
-            }
+            AppendTheme(command);
 
             if (!Interactive)
             {
@@ -220,6 +218,30 @@ public sealed partial class ProjectSetup
             }
 
             return command.ToString();
+        }
+    }
+
+    // The theme options, the same in both templates.
+    private void AppendTheme(StringBuilder command)
+    {
+        if (IsValidPrimary && !IsDefaultPrimary)
+        {
+            command.Append(" --Primary \"").Append(Primary.ToLowerInvariant()).Append('"');
+        }
+
+        if (Font != "lexend")
+        {
+            command.Append(" --Font ").Append(Font);
+        }
+
+        if (Radius != "default")
+        {
+            command.Append(" --Radius ").Append(Radius);
+        }
+
+        if (ColorMode != StilThemeMode.Auto)
+        {
+            command.Append(" --ColorMode ").Append(ColorMode.ToString().ToLowerInvariant());
         }
     }
 

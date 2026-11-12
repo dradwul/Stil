@@ -40,6 +40,15 @@
     </StilWizardStep>
 
     <StilWizardStep Title="Features" Description="What to add">
+        @if (_setup.IsWebsite)
+        {
+            <p>
+                A website has no features to add: its pages are built from the <a href="blocks/sections">page blocks</a>,
+                which are in the Stil package. Go on to the theme.
+            </p>
+        }
+        else
+        {
         <p class="stil-text-muted">
             Each feature adds a page with sample data, in the app's Features menu, and the package it needs.
         </p>
@@ -62,6 +71,7 @@
             <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Outline" OnClick="SelectAll">Select all</StilButton>
             <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Ghost" Variant="StilVariant.Secondary" OnClick="() => _setup.Features.Clear()">Clear</StilButton>
         </StilCluster>
+        }
     </StilWizardStep>
 
     <StilWizardStep Title="Theme" Description="Color, font and corners">
@@ -105,11 +115,18 @@
                         Start with a letter, and use letters, digits, dots, hyphens and underscores.
                     </p>
                 }
-                <StilRadioGroup TValue="bool" @bind-Value="_setup.Interactive" Items="[true, false]"
-                                ItemText="on => on ? InteractiveText : StaticText" Label="Rendering" />
-                <StilSelect TValue="string" @bind-Value="_setup.Culture" Items="ProjectSetup.Cultures.Select(c => c.Id)"
-                            ItemText="id => ProjectSetup.Cultures.First(c => c.Id == id).Name" Label="Default language"
-                            Hint="Users can change it in the navbar. The components have texts in all five." />
+                @if (_setup.IsWebsite)
+                {
+                    <p class="stil-text-muted stil-mb-0">The website renders on the server without interactivity, in English.</p>
+                }
+                else
+                {
+                    <StilRadioGroup TValue="bool" @bind-Value="_setup.Interactive" Items="[true, false]"
+                                    ItemText="on => on ? InteractiveText : StaticText" Label="Rendering" />
+                    <StilSelect TValue="string" @bind-Value="_setup.Culture" Items="ProjectSetup.Cultures.Select(c => c.Id)"
+                                ItemText="id => ProjectSetup.Cultures.First(c => c.Id == id).Name" Label="Default language"
+                                Hint="Users can change it in the navbar. The components have texts in all five." />
+                }
             </div>
             <div class="stil-col-md-6">
                 <h3 class="stil-fs-md">The app</h3>
