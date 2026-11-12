@@ -337,5 +337,11 @@
     "Address": "Address",
     "Hours": "Opening hours",
     "Map": "Show on a map"
+  },
+  "Post": {
+    "Tags": "Tags"
+  },
+  "Article": {
+    "Contents": "On this page"
   }
 }

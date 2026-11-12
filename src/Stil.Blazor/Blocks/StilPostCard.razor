@@ -1,0 +1,95 @@
+@inherits StilComponentBase
+
+@* A post in a StilPostList: a picture, tags, the title (a link that covers the card), an excerpt
+   and who wrote it when. Featured spans the list, with the picture beside the text. *@
+<li @attributes="AdditionalAttributes" class="@Classes()">
+    <article class="@(Featured ? "stil-post-card stil-post-card-featured" : "stil-post-card")">
+        @if (!string.IsNullOrWhiteSpace(Image))
+        {
+            <img class="stil-post-card-image" src="@Image" alt="@ImageAlt" loading="lazy" />
+        }
+        <div class="stil-post-card-body">
+            @if (Tags?.Any() == true)
+            {
+                <ul class="stil-post-tags" aria-label="@Localize(TagsLabel, "Post.Tags")">
+                    @foreach (var tag in Tags)
+                    {
+                        <li>
+                            @if (string.IsNullOrWhiteSpace(tag.Href))
+                            {
+                                <span class="stil-post-tag">@tag.Text</span>
+                            }
+                            else
+                            {
+                                <a class="stil-post-tag" href="@tag.Href">@tag.Text</a>
+                            }
+                        </li>
+                    }
+                </ul>
+            }
+            <StilHeading Level="HeadingLevel" class="stil-post-card-title"><a href="@Href">@Title</a></StilHeading>
+            @if (!string.IsNullOrWhiteSpace(Excerpt))
+            {
+                <p class="stil-post-card-excerpt">@Excerpt</p>
+            }
+            @if (!string.IsNullOrWhiteSpace(Author) || Date is not null || !string.IsNullOrWhiteSpace(ReadingTime))
+            {
+                <StilPostMeta Author="@Author" Date="Date" DateFormat="@DateFormat" ReadingTime="@ReadingTime" />
+            }
+        </div>
+    </article>
+</li>
+
+@code {
+    /// <summary>The post's address.</summary>
+    [Parameter, EditorRequired]
+    public string? Href { get; set; }
+
+    /// <summary>The post's title.</summary>
+    [Parameter, EditorRequired]
+    public string? Title { get; set; }
+
+    /// <summary>A sentence or two from the post.</summary>
+    [Parameter]
+    public string? Excerpt { get; set; }
+
+    /// <summary>The post's picture.</summary>
+    [Parameter]
+    public string? Image { get; set; }
+
+    /// <summary>The picture's alt text. The default is empty: decorative, since the title follows.</summary>
+    [Parameter]
+    public string ImageAlt { get; set; } = "";
+
+    /// <summary>Tags, as links to their lists or as plain text.</summary>
+    [Parameter]
+    public IEnumerable<StilLinkItem>? Tags { get; set; }
+
+    /// <summary>The tag list's accessible name. The default is the localized "Tags".</summary>
+    [Parameter]
+    public string? TagsLabel { get; set; }
+
+    /// <summary>Who wrote it.</summary>
+    [Parameter]
+    public string? Author { get; set; }
+
+    /// <summary>When it was published.</summary>
+    [Parameter]
+    public DateTime? Date { get; set; }
+
+    /// <summary>The date's format. The default is "d MMMM yyyy".</summary>
+    [Parameter]
+    public string DateFormat { get; set; } = "d MMMM yyyy";
+
+    /// <summary>How long it takes to read, such as "5 min read".</summary>
+    [Parameter]
+    public string? ReadingTime { get; set; }
+
+    /// <summary>Spans the list, with the picture beside the text on a wide list.</summary>
+    [Parameter]
+    public bool Featured { get; set; }
+
+    /// <summary>The heading level of the title, 1 to 6. The default is 2.</summary>
+    [Parameter]
+    public int HeadingLevel { get; set; } = 2;
+}

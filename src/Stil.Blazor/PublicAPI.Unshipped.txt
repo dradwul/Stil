@@ -1,4 +1,44 @@
 #nullable enable
+Stil.Blazor.Blocks.StilArticle
+Stil.Blazor.Blocks.StilArticle.Author.get -> string?
+Stil.Blazor.Blocks.StilArticle.Author.set -> void
+Stil.Blazor.Blocks.StilArticle.AuthorPhoto.get -> string?
+Stil.Blazor.Blocks.StilArticle.AuthorPhoto.set -> void
+Stil.Blazor.Blocks.StilArticle.Caption.get -> string?
+Stil.Blazor.Blocks.StilArticle.Caption.set -> void
+Stil.Blazor.Blocks.StilArticle.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilArticle.ChildContent.set -> void
+Stil.Blazor.Blocks.StilArticle.Contents.get -> System.Collections.Generic.IEnumerable<Stil.Blazor.Components.StilLinkItem!>?
+Stil.Blazor.Blocks.StilArticle.Contents.set -> void
+Stil.Blazor.Blocks.StilArticle.ContentsTitle.get -> string?
+Stil.Blazor.Blocks.StilArticle.ContentsTitle.set -> void
+Stil.Blazor.Blocks.StilArticle.Date.get -> System.DateTime?
+Stil.Blazor.Blocks.StilArticle.Date.set -> void
+Stil.Blazor.Blocks.StilArticle.DateFormat.get -> string!
+Stil.Blazor.Blocks.StilArticle.DateFormat.set -> void
+Stil.Blazor.Blocks.StilArticle.Eyebrow.get -> string?
+Stil.Blazor.Blocks.StilArticle.Eyebrow.set -> void
+Stil.Blazor.Blocks.StilArticle.EyebrowHref.get -> string?
+Stil.Blazor.Blocks.StilArticle.EyebrowHref.set -> void
+Stil.Blazor.Blocks.StilArticle.Footer.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilArticle.Footer.set -> void
+Stil.Blazor.Blocks.StilArticle.HeadingLevel.get -> int
+Stil.Blazor.Blocks.StilArticle.HeadingLevel.set -> void
+Stil.Blazor.Blocks.StilArticle.Image.get -> string?
+Stil.Blazor.Blocks.StilArticle.Image.set -> void
+Stil.Blazor.Blocks.StilArticle.ImageAlt.get -> string!
+Stil.Blazor.Blocks.StilArticle.ImageAlt.set -> void
+Stil.Blazor.Blocks.StilArticle.Lead.get -> string?
+Stil.Blazor.Blocks.StilArticle.Lead.set -> void
+Stil.Blazor.Blocks.StilArticle.ReadingTime.get -> string?
+Stil.Blazor.Blocks.StilArticle.ReadingTime.set -> void
+Stil.Blazor.Blocks.StilArticle.StilArticle() -> void
+Stil.Blazor.Blocks.StilArticle.Tags.get -> System.Collections.Generic.IEnumerable<Stil.Blazor.Components.StilLinkItem!>?
+Stil.Blazor.Blocks.StilArticle.Tags.set -> void
+Stil.Blazor.Blocks.StilArticle.TagsLabel.get -> string?
+Stil.Blazor.Blocks.StilArticle.TagsLabel.set -> void
+Stil.Blazor.Blocks.StilArticle.Title.get -> string?
+Stil.Blazor.Blocks.StilArticle.Title.set -> void
 Stil.Blazor.Blocks.StilBlockTone
 Stil.Blazor.Blocks.StilBlockTone.Brand = 2 -> Stil.Blazor.Blocks.StilBlockTone
 Stil.Blazor.Blocks.StilBlockTone.Default = 0 -> Stil.Blazor.Blocks.StilBlockTone
@@ -211,6 +251,50 @@ Stil.Blazor.Blocks.StilPlan.YearlyPeriod.get -> string?
 Stil.Blazor.Blocks.StilPlan.YearlyPeriod.set -> void
 Stil.Blazor.Blocks.StilPlan.YearlyPrice.get -> string?
 Stil.Blazor.Blocks.StilPlan.YearlyPrice.set -> void
+Stil.Blazor.Blocks.StilPostCard
+Stil.Blazor.Blocks.StilPostCard.Author.get -> string?
+Stil.Blazor.Blocks.StilPostCard.Author.set -> void
+Stil.Blazor.Blocks.StilPostCard.Date.get -> System.DateTime?
+Stil.Blazor.Blocks.StilPostCard.Date.set -> void
+Stil.Blazor.Blocks.StilPostCard.DateFormat.get -> string!
+Stil.Blazor.Blocks.StilPostCard.DateFormat.set -> void
+Stil.Blazor.Blocks.StilPostCard.Excerpt.get -> string?
+Stil.Blazor.Blocks.StilPostCard.Excerpt.set -> void
+Stil.Blazor.Blocks.StilPostCard.Featured.get -> bool
+Stil.Blazor.Blocks.StilPostCard.Featured.set -> void
+Stil.Blazor.Blocks.StilPostCard.HeadingLevel.get -> int
+Stil.Blazor.Blocks.StilPostCard.HeadingLevel.set -> void
+Stil.Blazor.Blocks.StilPostCard.Href.get -> string?
+Stil.Blazor.Blocks.StilPostCard.Href.set -> void
+Stil.Blazor.Blocks.StilPostCard.Image.get -> string?
+Stil.Blazor.Blocks.StilPostCard.Image.set -> void
+Stil.Blazor.Blocks.StilPostCard.ImageAlt.get -> string!
+Stil.Blazor.Blocks.StilPostCard.ImageAlt.set -> void
+Stil.Blazor.Blocks.StilPostCard.ReadingTime.get -> string?
+Stil.Blazor.Blocks.StilPostCard.ReadingTime.set -> void
+Stil.Blazor.Blocks.StilPostCard.StilPostCard() -> void
+Stil.Blazor.Blocks.StilPostCard.Tags.get -> System.Collections.Generic.IEnumerable<Stil.Blazor.Components.StilLinkItem!>?
+Stil.Blazor.Blocks.StilPostCard.Tags.set -> void
+Stil.Blazor.Blocks.StilPostCard.TagsLabel.get -> string?
+Stil.Blazor.Blocks.StilPostCard.TagsLabel.set -> void
+Stil.Blazor.Blocks.StilPostCard.Title.get -> string?
+Stil.Blazor.Blocks.StilPostCard.Title.set -> void
+Stil.Blazor.Blocks.StilPostList
+Stil.Blazor.Blocks.StilPostList.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Blocks.StilPostList.ChildContent.set -> void
+Stil.Blazor.Blocks.StilPostList.StilPostList() -> void
+Stil.Blazor.Blocks.StilPostMeta
+Stil.Blazor.Blocks.StilPostMeta.Author.get -> string?
+Stil.Blazor.Blocks.StilPostMeta.Author.set -> void
+Stil.Blazor.Blocks.StilPostMeta.AuthorPhoto.get -> string?
+Stil.Blazor.Blocks.StilPostMeta.AuthorPhoto.set -> void
+Stil.Blazor.Blocks.StilPostMeta.Date.get -> System.DateTime?
+Stil.Blazor.Blocks.StilPostMeta.Date.set -> void
+Stil.Blazor.Blocks.StilPostMeta.DateFormat.get -> string!
+Stil.Blazor.Blocks.StilPostMeta.DateFormat.set -> void
+Stil.Blazor.Blocks.StilPostMeta.ReadingTime.get -> string?
+Stil.Blazor.Blocks.StilPostMeta.ReadingTime.set -> void
+Stil.Blazor.Blocks.StilPostMeta.StilPostMeta() -> void
 Stil.Blazor.Blocks.StilPricing
 Stil.Blazor.Blocks.StilPricing.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
 Stil.Blazor.Blocks.StilPricing.ChildContent.set -> void
@@ -298,6 +382,7 @@ Stil.Blazor.Components.StilHead.Blocks.set -> void
 const Stil.Blazor.Components.StilIcons.Mail = "mail" -> string!
 const Stil.Blazor.Components.StilIcons.MapPin = "map-pin" -> string!
 const Stil.Blazor.Components.StilIcons.Phone = "phone" -> string!
+~override Stil.Blazor.Blocks.StilArticle.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilCallToAction.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilContact.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilFaq.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
@@ -312,6 +397,9 @@ const Stil.Blazor.Components.StilIcons.Phone = "phone" -> string!
 ~override Stil.Blazor.Blocks.StilMegaMenuColumn.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilMegaMenuLink.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilPlan.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Blazor.Blocks.StilPostCard.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Blazor.Blocks.StilPostList.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Blazor.Blocks.StilPostMeta.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilPricing.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilSection.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilStatsBand.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void

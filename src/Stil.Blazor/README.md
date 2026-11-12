@@ -635,6 +635,8 @@ stylesheet is opt-in: `<StilHead Blocks />` adds it.
 | `StilTeam`, `StilTeamMember` | Per person `Name`, `Role`, `Text`, `Photo` (or initials), `Links` (`StilLinkItem`). |
 | `StilMegaMenu`, `StilMegaMenuColumn`, `StilMegaMenuLink` | In a `StilNav`: `Text`, `AlignEnd`, `Footer`; per column `Title`; per link `Href`, `Title`, `Text`, `Icon`. Opens in place inside a collapsed navbar. |
 | `StilFooter`, `StilFooterColumn` | `BrandText` (or `Brand`), `Text`, `Copyright`, `Legal`, `Label`; per column `Title` and `Links`. |
+| `StilPostList`, `StilPostCard`, `StilPostMeta` | Per post `Href`, `Title`, `Excerpt`, `Image` (decorative by default), `Tags`, `Author`, `Date` (`DateFormat`), `ReadingTime`, `Featured`. Page with `StilPagination` and `HrefTemplate`. |
+| `StilArticle` | `Eyebrow` (`EyebrowHref`), `Title`, `Lead`, `Author`, `AuthorPhoto`, `Date`, `ReadingTime`, `Image`, `ImageAlt`, `Caption`, `Contents` (the table of contents), `Tags`, `Footer`; the body goes in the child content, in `stil-prose`. |
 | `StilContact` | `Title`, `Lead`, `Email`, `Phone`, `Address` (one line each), `MapHref`, `Hours`, with translated labels; the form goes in the child content. |
 
 ## Stil CSS and the matching components

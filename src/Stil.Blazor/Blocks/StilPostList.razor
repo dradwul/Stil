@@ -1,0 +1,13 @@
+@inherits StilComponentBase
+
+@* A grid of StilPostCard posts, as many columns as fit. Page through them with a StilPagination
+   with an HrefTemplate under it. *@
+<ul @attributes="AdditionalAttributes" class="@Classes("stil-posts")">
+    @ChildContent
+</ul>
+
+@code {
+    /// <summary>The StilPostCard items.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

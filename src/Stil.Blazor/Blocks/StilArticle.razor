@@ -1,0 +1,162 @@
+@inherits StilComponentBase
+
+@* A blog post or article: the header (eyebrow, title, lead and who wrote it when), a picture, the
+   body in stil-prose with an optional table of contents beside it on a wide article, and a
+   footer. Put the body (or a StilMarkdown) in the child content. *@
+<article @attributes="AdditionalAttributes" class="@Classes("stil-article")">
+    <header class="stil-article-header">
+        @if (!string.IsNullOrWhiteSpace(Eyebrow))
+        {
+            <p class="stil-eyebrow">
+                @if (string.IsNullOrWhiteSpace(EyebrowHref))
+                {
+                    @Eyebrow
+                }
+                else
+                {
+                    <a href="@EyebrowHref">@Eyebrow</a>
+                }
+            </p>
+        }
+        <StilHeading Level="HeadingLevel" class="stil-article-title">@Title</StilHeading>
+        @if (!string.IsNullOrWhiteSpace(Lead))
+        {
+            <p class="stil-lead">@Lead</p>
+        }
+        @if (!string.IsNullOrWhiteSpace(Author) || Date is not null || !string.IsNullOrWhiteSpace(ReadingTime))
+        {
+            <StilPostMeta Author="@Author" AuthorPhoto="@AuthorPhoto" Date="Date" DateFormat="@DateFormat" ReadingTime="@ReadingTime" />
+        }
+    </header>
+    @if (!string.IsNullOrWhiteSpace(Image))
+    {
+        <figure class="stil-article-image">
+            <img src="@Image" alt="@ImageAlt" />
+            @if (!string.IsNullOrWhiteSpace(Caption))
+            {
+                <figcaption>@Caption</figcaption>
+            }
+        </figure>
+    }
+    <div class="stil-article-layout">
+        @if (Contents?.Any() == true)
+        {
+            <nav class="stil-toc" aria-labelledby="@_contentsId">
+                <p class="stil-toc-title" id="@_contentsId">@Localize(ContentsTitle, "Article.Contents")</p>
+                <ol class="stil-toc-list">
+                    @foreach (var item in Contents)
+                    {
+                        <li><a href="@item.Href">@item.Text</a></li>
+                    }
+                </ol>
+            </nav>
+        }
+        <div class="stil-article-body stil-prose">
+            @ChildContent
+        </div>
+    </div>
+    @if (Footer is not null || Tags?.Any() == true)
+    {
+        <footer class="stil-article-footer">
+            @if (Tags?.Any() == true)
+            {
+                <ul class="stil-post-tags" aria-label="@Localize(TagsLabel, "Post.Tags")">
+                    @foreach (var tag in Tags)
+                    {
+                        <li>
+                            @if (string.IsNullOrWhiteSpace(tag.Href))
+                            {
+                                <span class="stil-post-tag">@tag.Text</span>
+                            }
+                            else
+                            {
+                                <a class="stil-post-tag" href="@tag.Href">@tag.Text</a>
+                            }
+                        </li>
+                    }
+                </ul>
+            }
+            @Footer
+        </footer>
+    }
+</article>
+
+@code {
+    private readonly string _contentsId = StilIds.Next("article-contents");
+
+    /// <summary>A short line above the title, such as the blog's name.</summary>
+    [Parameter]
+    public string? Eyebrow { get; set; }
+
+    /// <summary>Makes the eyebrow a link, such as back to the blog.</summary>
+    [Parameter]
+    public string? EyebrowHref { get; set; }
+
+    /// <summary>The article's title.</summary>
+    [Parameter, EditorRequired]
+    public string? Title { get; set; }
+
+    /// <summary>A sentence or two under the title.</summary>
+    [Parameter]
+    public string? Lead { get; set; }
+
+    /// <summary>Who wrote it.</summary>
+    [Parameter]
+    public string? Author { get; set; }
+
+    /// <summary>A photo of the author, beside the name. It is decorative.</summary>
+    [Parameter]
+    public string? AuthorPhoto { get; set; }
+
+    /// <summary>When it was published.</summary>
+    [Parameter]
+    public DateTime? Date { get; set; }
+
+    /// <summary>The date's format. The default is "d MMMM yyyy".</summary>
+    [Parameter]
+    public string DateFormat { get; set; } = "d MMMM yyyy";
+
+    /// <summary>How long it takes to read, such as "5 min read".</summary>
+    [Parameter]
+    public string? ReadingTime { get; set; }
+
+    /// <summary>The article's picture, under the header.</summary>
+    [Parameter]
+    public string? Image { get; set; }
+
+    /// <summary>The picture's alt text.</summary>
+    [Parameter]
+    public string ImageAlt { get; set; } = "";
+
+    /// <summary>A caption under the picture.</summary>
+    [Parameter]
+    public string? Caption { get; set; }
+
+    /// <summary>The table of contents: the article's headings, with Href "#id" pointing to them.</summary>
+    [Parameter]
+    public IEnumerable<StilLinkItem>? Contents { get; set; }
+
+    /// <summary>The table of contents' title. The default is the localized "On this page".</summary>
+    [Parameter]
+    public string? ContentsTitle { get; set; }
+
+    /// <summary>Tags, in the footer.</summary>
+    [Parameter]
+    public IEnumerable<StilLinkItem>? Tags { get; set; }
+
+    /// <summary>The tag list's accessible name. The default is the localized "Tags".</summary>
+    [Parameter]
+    public string? TagsLabel { get; set; }
+
+    /// <summary>More content in the footer, such as a link back to the blog.</summary>
+    [Parameter]
+    public RenderFragment? Footer { get; set; }
+
+    /// <summary>The heading level of the title, 1 to 6. The default is 1.</summary>
+    [Parameter]
+    public int HeadingLevel { get; set; } = 1;
+
+    /// <summary>The article's body, in stil-prose.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

@@ -337,5 +337,11 @@
     "Address": "Osoite",
     "Hours": "Aukioloajat",
     "Map": "Näytä kartalla"
+  },
+  "Post": {
+    "Tags": "Tunnisteet"
+  },
+  "Article": {
+    "Contents": "Tällä sivulla"
   }
 }

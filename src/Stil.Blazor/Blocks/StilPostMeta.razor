@@ -1,0 +1,45 @@
+@using System.Globalization
+@inherits StilComponentBase
+
+@* Who wrote a post and when, and how long it takes to read: "Maja Lind · 3 November 2026 ·
+   5 min read". Used by StilPostCard and StilArticle, and on its own. *@
+<p @attributes="AdditionalAttributes" class="@Classes("stil-post-meta")">
+    @if (!string.IsNullOrWhiteSpace(AuthorPhoto))
+    {
+        <img class="stil-avatar stil-avatar-sm" src="@AuthorPhoto" alt="" />
+    }
+    @if (!string.IsNullOrWhiteSpace(Author))
+    {
+        <span>@Author</span>
+    }
+    @if (Date is { } date)
+    {
+        <time datetime="@date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)">@date.ToString(DateFormat, CultureInfo.CurrentCulture)</time>
+    }
+    @if (!string.IsNullOrWhiteSpace(ReadingTime))
+    {
+        <span>@ReadingTime</span>
+    }
+</p>
+
+@code {
+    /// <summary>Who wrote it.</summary>
+    [Parameter]
+    public string? Author { get; set; }
+
+    /// <summary>A photo of the author, beside the name. It is decorative.</summary>
+    [Parameter]
+    public string? AuthorPhoto { get; set; }
+
+    /// <summary>When it was published, shown in the current culture.</summary>
+    [Parameter]
+    public DateTime? Date { get; set; }
+
+    /// <summary>The date's format. The default is "d MMMM yyyy", such as "3 November 2026".</summary>
+    [Parameter]
+    public string DateFormat { get; set; } = "d MMMM yyyy";
+
+    /// <summary>How long it takes to read, such as "5 min read".</summary>
+    [Parameter]
+    public string? ReadingTime { get; set; }
+}

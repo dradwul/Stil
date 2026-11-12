@@ -337,5 +337,11 @@
     "Address": "Adresse",
     "Hours": "Åbningstider",
     "Map": "Vis på kort"
+  },
+  "Post": {
+    "Tags": "Tags"
+  },
+  "Article": {
+    "Contents": "På denne side"
   }
 }
