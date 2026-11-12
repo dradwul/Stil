@@ -1,0 +1,28 @@
+#nullable enable
+Stil.Markdown.StilMarkdown
+Stil.Markdown.StilMarkdown.StilMarkdown() -> void
+Stil.Markdown.StilMarkdown.Value.get -> string?
+Stil.Markdown.StilMarkdown.Value.set -> void
+Stil.Markdown.StilMarkdownEditor
+Stil.Markdown.StilMarkdownEditor.OnImageUpload.get -> System.Func<Microsoft.AspNetCore.Components.Forms.IBrowserFile!, System.Threading.Tasks.Task<string?>!>?
+Stil.Markdown.StilMarkdownEditor.OnImageUpload.set -> void
+Stil.Markdown.StilMarkdownEditor.Placeholder.get -> string?
+Stil.Markdown.StilMarkdownEditor.Placeholder.set -> void
+Stil.Markdown.StilMarkdownEditor.Preview.get -> Stil.Markdown.StilMarkdownPreview
+Stil.Markdown.StilMarkdownEditor.Preview.set -> void
+Stil.Markdown.StilMarkdownEditor.Rows.get -> int
+Stil.Markdown.StilMarkdownEditor.Rows.set -> void
+Stil.Markdown.StilMarkdownEditor.StilMarkdownEditor() -> void
+Stil.Markdown.StilMarkdownPreview
+Stil.Markdown.StilMarkdownPreview.None = 2 -> Stil.Markdown.StilMarkdownPreview
+Stil.Markdown.StilMarkdownPreview.Side = 1 -> Stil.Markdown.StilMarkdownPreview
+Stil.Markdown.StilMarkdownPreview.Tab = 0 -> Stil.Markdown.StilMarkdownPreview
+Stil.Markdown.StilMarkdownRenderer
+Stil.Markdown._Imports
+Stil.Markdown._Imports.Execute() -> void
+Stil.Markdown._Imports._Imports() -> void
+override Stil.Markdown.StilMarkdown.OnParametersSet() -> void
+static Stil.Markdown.StilMarkdownRenderer.IsSafeUrl(string? url, bool image = false) -> bool
+static Stil.Markdown.StilMarkdownRenderer.ToHtml(string? markdown) -> string!
+~override Stil.Markdown.StilMarkdown.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Markdown.StilMarkdownEditor.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void

@@ -1,0 +1,257 @@
+#nullable enable
+Stil.Charts.StilBarChart<TItem>
+Stil.Charts.StilBarChart<TItem>.Orientation.get -> Stil.Charts.StilChartOrientation
+Stil.Charts.StilBarChart<TItem>.Orientation.set -> void
+Stil.Charts.StilBarChart<TItem>.ShowValues.get -> bool
+Stil.Charts.StilBarChart<TItem>.ShowValues.set -> void
+Stil.Charts.StilBarChart<TItem>.Stacked.get -> bool
+Stil.Charts.StilBarChart<TItem>.Stacked.set -> void
+Stil.Charts.StilBarChart<TItem>.StilBarChart() -> void
+Stil.Charts.StilBarChart<TItem>.TotalText.get -> string?
+Stil.Charts.StilBarChart<TItem>.TotalText.set -> void
+Stil.Charts.StilCartesianChartBase<TItem>
+Stil.Charts.StilCartesianChartBase<TItem>.CategoryAxisTitle.get -> string?
+Stil.Charts.StilCartesianChartBase<TItem>.CategoryAxisTitle.set -> void
+Stil.Charts.StilCartesianChartBase<TItem>.Max.get -> double?
+Stil.Charts.StilCartesianChartBase<TItem>.Max.set -> void
+Stil.Charts.StilCartesianChartBase<TItem>.Min.get -> double?
+Stil.Charts.StilCartesianChartBase<TItem>.Min.set -> void
+Stil.Charts.StilCartesianChartBase<TItem>.SecondaryAxisTitle.get -> string?
+Stil.Charts.StilCartesianChartBase<TItem>.SecondaryAxisTitle.set -> void
+Stil.Charts.StilCartesianChartBase<TItem>.SecondaryMax.get -> double?
+Stil.Charts.StilCartesianChartBase<TItem>.SecondaryMax.set -> void
+Stil.Charts.StilCartesianChartBase<TItem>.SecondaryMin.get -> double?
+Stil.Charts.StilCartesianChartBase<TItem>.SecondaryMin.set -> void
+Stil.Charts.StilCartesianChartBase<TItem>.SecondaryTickFormat.get -> string?
+Stil.Charts.StilCartesianChartBase<TItem>.SecondaryTickFormat.set -> void
+Stil.Charts.StilCartesianChartBase<TItem>.ShowGridlines.get -> bool
+Stil.Charts.StilCartesianChartBase<TItem>.ShowGridlines.set -> void
+Stil.Charts.StilCartesianChartBase<TItem>.StilCartesianChartBase() -> void
+Stil.Charts.StilCartesianChartBase<TItem>.TickFormat.get -> string?
+Stil.Charts.StilCartesianChartBase<TItem>.TickFormat.set -> void
+Stil.Charts.StilCartesianChartBase<TItem>.ValueAxisTitle.get -> string?
+Stil.Charts.StilCartesianChartBase<TItem>.ValueAxisTitle.set -> void
+Stil.Charts.StilChartBase<TItem>
+Stil.Charts.StilChartBase<TItem>.Category.get -> System.Func<TItem, object?>?
+Stil.Charts.StilChartBase<TItem>.Category.set -> void
+Stil.Charts.StilChartBase<TItem>.CategoryFormat.get -> string?
+Stil.Charts.StilChartBase<TItem>.CategoryFormat.set -> void
+Stil.Charts.StilChartBase<TItem>.CategoryText.get -> string?
+Stil.Charts.StilChartBase<TItem>.CategoryText.set -> void
+Stil.Charts.StilChartBase<TItem>.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Charts.StilChartBase<TItem>.ChildContent.set -> void
+Stil.Charts.StilChartBase<TItem>.DataTable.get -> Stil.Charts.StilChartDataTable
+Stil.Charts.StilChartBase<TItem>.DataTable.set -> void
+Stil.Charts.StilChartBase<TItem>.Description.get -> string?
+Stil.Charts.StilChartBase<TItem>.Description.set -> void
+Stil.Charts.StilChartBase<TItem>.EmptyText.get -> string?
+Stil.Charts.StilChartBase<TItem>.EmptyText.set -> void
+Stil.Charts.StilChartBase<TItem>.Format.get -> string?
+Stil.Charts.StilChartBase<TItem>.Format.set -> void
+Stil.Charts.StilChartBase<TItem>.Height.get -> int?
+Stil.Charts.StilChartBase<TItem>.Height.set -> void
+Stil.Charts.StilChartBase<TItem>.Items.get -> System.Collections.Generic.IEnumerable<TItem>?
+Stil.Charts.StilChartBase<TItem>.Items.set -> void
+Stil.Charts.StilChartBase<TItem>.MissingText.get -> string!
+Stil.Charts.StilChartBase<TItem>.MissingText.set -> void
+Stil.Charts.StilChartBase<TItem>.ShowDataText.get -> string?
+Stil.Charts.StilChartBase<TItem>.ShowDataText.set -> void
+Stil.Charts.StilChartBase<TItem>.ShowLegend.get -> bool?
+Stil.Charts.StilChartBase<TItem>.ShowLegend.set -> void
+Stil.Charts.StilChartBase<TItem>.StilChartBase() -> void
+Stil.Charts.StilChartBase<TItem>.Summary.get -> string?
+Stil.Charts.StilChartBase<TItem>.Summary.set -> void
+Stil.Charts.StilChartBase<TItem>.Title.get -> string?
+Stil.Charts.StilChartBase<TItem>.Title.set -> void
+Stil.Charts.StilChartDataTable
+Stil.Charts.StilChartDataTable.Hidden = 1 -> Stil.Charts.StilChartDataTable
+Stil.Charts.StilChartDataTable.None = 2 -> Stil.Charts.StilChartDataTable
+Stil.Charts.StilChartDataTable.Toggle = 0 -> Stil.Charts.StilChartDataTable
+Stil.Charts.StilChartOrientation
+Stil.Charts.StilChartOrientation.Horizontal = 1 -> Stil.Charts.StilChartOrientation
+Stil.Charts.StilChartOrientation.Vertical = 0 -> Stil.Charts.StilChartOrientation
+Stil.Charts.StilChartSeries<TItem, TValue>
+Stil.Charts.StilChartSeries<TItem, TValue>.StilChartSeries() -> void
+Stil.Charts.StilChartSeries<TItem, TValue>.Value.get -> System.Func<TItem, TValue>!
+Stil.Charts.StilChartSeries<TItem, TValue>.Value.set -> void
+Stil.Charts.StilChartSeriesBase<TItem>
+Stil.Charts.StilChartSeriesBase<TItem>.Color.get -> string?
+Stil.Charts.StilChartSeriesBase<TItem>.Color.set -> void
+Stil.Charts.StilChartSeriesBase<TItem>.Dispose() -> void
+Stil.Charts.StilChartSeriesBase<TItem>.Format.get -> string?
+Stil.Charts.StilChartSeriesBase<TItem>.Format.set -> void
+Stil.Charts.StilChartSeriesBase<TItem>.Line.get -> bool
+Stil.Charts.StilChartSeriesBase<TItem>.Line.set -> void
+Stil.Charts.StilChartSeriesBase<TItem>.Name.get -> string?
+Stil.Charts.StilChartSeriesBase<TItem>.Name.set -> void
+Stil.Charts.StilChartSeriesBase<TItem>.SecondaryAxis.get -> bool
+Stil.Charts.StilChartSeriesBase<TItem>.SecondaryAxis.set -> void
+Stil.Charts.StilChartSeriesBase<TItem>.StilChartSeriesBase() -> void
+Stil.Charts.StilDonutChart<TItem>
+Stil.Charts.StilDonutChart<TItem>.Colors.get -> System.Collections.Generic.IReadOnlyList<string!>?
+Stil.Charts.StilDonutChart<TItem>.Colors.set -> void
+Stil.Charts.StilDonutChart<TItem>.MaxSlices.get -> int
+Stil.Charts.StilDonutChart<TItem>.MaxSlices.set -> void
+Stil.Charts.StilDonutChart<TItem>.OtherText.get -> string?
+Stil.Charts.StilDonutChart<TItem>.OtherText.set -> void
+Stil.Charts.StilDonutChart<TItem>.ShareText.get -> string?
+Stil.Charts.StilDonutChart<TItem>.ShareText.set -> void
+Stil.Charts.StilDonutChart<TItem>.ShowTotal.get -> bool
+Stil.Charts.StilDonutChart<TItem>.ShowTotal.set -> void
+Stil.Charts.StilDonutChart<TItem>.StilDonutChart() -> void
+Stil.Charts.StilDonutChart<TItem>.TotalText.get -> string?
+Stil.Charts.StilDonutChart<TItem>.TotalText.set -> void
+Stil.Charts.StilGauge
+Stil.Charts.StilGauge.Color.get -> string?
+Stil.Charts.StilGauge.Color.set -> void
+Stil.Charts.StilGauge.Description.get -> string?
+Stil.Charts.StilGauge.Description.set -> void
+Stil.Charts.StilGauge.Format.get -> string?
+Stil.Charts.StilGauge.Format.set -> void
+Stil.Charts.StilGauge.Max.get -> double
+Stil.Charts.StilGauge.Max.set -> void
+Stil.Charts.StilGauge.Min.get -> double
+Stil.Charts.StilGauge.Min.set -> void
+Stil.Charts.StilGauge.Ranges.get -> System.Collections.Generic.IReadOnlyList<Stil.Charts.StilGaugeRange!>?
+Stil.Charts.StilGauge.Ranges.set -> void
+Stil.Charts.StilGauge.Shape.get -> Stil.Charts.StilGaugeShape
+Stil.Charts.StilGauge.Shape.set -> void
+Stil.Charts.StilGauge.ShowScale.get -> bool
+Stil.Charts.StilGauge.ShowScale.set -> void
+Stil.Charts.StilGauge.Size.get -> int
+Stil.Charts.StilGauge.Size.set -> void
+Stil.Charts.StilGauge.StilGauge() -> void
+Stil.Charts.StilGauge.Target.get -> double?
+Stil.Charts.StilGauge.Target.set -> void
+Stil.Charts.StilGauge.TargetText.get -> string?
+Stil.Charts.StilGauge.TargetText.set -> void
+Stil.Charts.StilGauge.Title.get -> string?
+Stil.Charts.StilGauge.Title.set -> void
+Stil.Charts.StilGauge.Value.get -> double
+Stil.Charts.StilGauge.Value.set -> void
+Stil.Charts.StilGauge.ValueText.get -> string?
+Stil.Charts.StilGauge.ValueText.set -> void
+Stil.Charts.StilGaugeRange
+Stil.Charts.StilGaugeRange.<Clone>$() -> Stil.Charts.StilGaugeRange!
+Stil.Charts.StilGaugeRange.Color.get -> string!
+Stil.Charts.StilGaugeRange.Color.init -> void
+Stil.Charts.StilGaugeRange.Deconstruct(out double From, out double To, out string! Color, out string? Name) -> void
+Stil.Charts.StilGaugeRange.Equals(Stil.Charts.StilGaugeRange? other) -> bool
+Stil.Charts.StilGaugeRange.From.get -> double
+Stil.Charts.StilGaugeRange.From.init -> void
+Stil.Charts.StilGaugeRange.Name.get -> string?
+Stil.Charts.StilGaugeRange.Name.init -> void
+Stil.Charts.StilGaugeRange.StilGaugeRange(double From, double To, string! Color, string? Name = null) -> void
+Stil.Charts.StilGaugeRange.To.get -> double
+Stil.Charts.StilGaugeRange.To.init -> void
+Stil.Charts.StilGaugeShape
+Stil.Charts.StilGaugeShape.Arc = 0 -> Stil.Charts.StilGaugeShape
+Stil.Charts.StilGaugeShape.Bar = 1 -> Stil.Charts.StilGaugeShape
+Stil.Charts.StilHeatMap<TItem>
+Stil.Charts.StilHeatMap<TItem>.Color.get -> string?
+Stil.Charts.StilHeatMap<TItem>.Color.set -> void
+Stil.Charts.StilHeatMap<TItem>.Column.get -> System.Func<TItem, object?>!
+Stil.Charts.StilHeatMap<TItem>.Column.set -> void
+Stil.Charts.StilHeatMap<TItem>.ColumnFormat.get -> string?
+Stil.Charts.StilHeatMap<TItem>.ColumnFormat.set -> void
+Stil.Charts.StilHeatMap<TItem>.ColumnTitle.get -> string?
+Stil.Charts.StilHeatMap<TItem>.ColumnTitle.set -> void
+Stil.Charts.StilHeatMap<TItem>.Columns.get -> System.Collections.Generic.IEnumerable<object!>?
+Stil.Charts.StilHeatMap<TItem>.Columns.set -> void
+Stil.Charts.StilHeatMap<TItem>.Row.get -> System.Func<TItem, object?>!
+Stil.Charts.StilHeatMap<TItem>.Row.set -> void
+Stil.Charts.StilHeatMap<TItem>.RowFormat.get -> string?
+Stil.Charts.StilHeatMap<TItem>.RowFormat.set -> void
+Stil.Charts.StilHeatMap<TItem>.RowTitle.get -> string?
+Stil.Charts.StilHeatMap<TItem>.RowTitle.set -> void
+Stil.Charts.StilHeatMap<TItem>.Rows.get -> System.Collections.Generic.IEnumerable<object!>?
+Stil.Charts.StilHeatMap<TItem>.Rows.set -> void
+Stil.Charts.StilHeatMap<TItem>.ShowValues.get -> bool
+Stil.Charts.StilHeatMap<TItem>.ShowValues.set -> void
+Stil.Charts.StilHeatMap<TItem>.StilHeatMap() -> void
+Stil.Charts.StilHeatMap<TItem>.Value.get -> System.Func<TItem, object?>?
+Stil.Charts.StilHeatMap<TItem>.Value.set -> void
+Stil.Charts.StilLineChart<TItem>
+Stil.Charts.StilLineChart<TItem>.Area.get -> bool
+Stil.Charts.StilLineChart<TItem>.Area.set -> void
+Stil.Charts.StilLineChart<TItem>.BeginAtZero.get -> bool
+Stil.Charts.StilLineChart<TItem>.BeginAtZero.set -> void
+Stil.Charts.StilLineChart<TItem>.DirectLabels.get -> bool
+Stil.Charts.StilLineChart<TItem>.DirectLabels.set -> void
+Stil.Charts.StilLineChart<TItem>.ShowMarkers.get -> bool
+Stil.Charts.StilLineChart<TItem>.ShowMarkers.set -> void
+Stil.Charts.StilLineChart<TItem>.StilLineChart() -> void
+Stil.Charts.StilScatterChart<TItem>
+Stil.Charts.StilScatterChart<TItem>.BeginAtZero.get -> bool
+Stil.Charts.StilScatterChart<TItem>.BeginAtZero.set -> void
+Stil.Charts.StilScatterChart<TItem>.Colors.get -> System.Collections.Generic.IReadOnlyList<string!>?
+Stil.Charts.StilScatterChart<TItem>.Colors.set -> void
+Stil.Charts.StilScatterChart<TItem>.Group.get -> System.Func<TItem, object?>?
+Stil.Charts.StilScatterChart<TItem>.Group.set -> void
+Stil.Charts.StilScatterChart<TItem>.GroupText.get -> string?
+Stil.Charts.StilScatterChart<TItem>.GroupText.set -> void
+Stil.Charts.StilScatterChart<TItem>.MaxBubbleRadius.get -> double
+Stil.Charts.StilScatterChart<TItem>.MaxBubbleRadius.set -> void
+Stil.Charts.StilScatterChart<TItem>.ShowGridlines.get -> bool
+Stil.Charts.StilScatterChart<TItem>.ShowGridlines.set -> void
+Stil.Charts.StilScatterChart<TItem>.Size.get -> System.Func<TItem, object?>?
+Stil.Charts.StilScatterChart<TItem>.Size.set -> void
+Stil.Charts.StilScatterChart<TItem>.SizeFormat.get -> string?
+Stil.Charts.StilScatterChart<TItem>.SizeFormat.set -> void
+Stil.Charts.StilScatterChart<TItem>.SizeTitle.get -> string?
+Stil.Charts.StilScatterChart<TItem>.SizeTitle.set -> void
+Stil.Charts.StilScatterChart<TItem>.StilScatterChart() -> void
+Stil.Charts.StilScatterChart<TItem>.X.get -> System.Func<TItem, object?>!
+Stil.Charts.StilScatterChart<TItem>.X.set -> void
+Stil.Charts.StilScatterChart<TItem>.XAxisTitle.get -> string?
+Stil.Charts.StilScatterChart<TItem>.XAxisTitle.set -> void
+Stil.Charts.StilScatterChart<TItem>.XFormat.get -> string?
+Stil.Charts.StilScatterChart<TItem>.XFormat.set -> void
+Stil.Charts.StilScatterChart<TItem>.XMax.get -> double?
+Stil.Charts.StilScatterChart<TItem>.XMax.set -> void
+Stil.Charts.StilScatterChart<TItem>.XMin.get -> double?
+Stil.Charts.StilScatterChart<TItem>.XMin.set -> void
+Stil.Charts.StilScatterChart<TItem>.Y.get -> System.Func<TItem, object?>!
+Stil.Charts.StilScatterChart<TItem>.Y.set -> void
+Stil.Charts.StilScatterChart<TItem>.YAxisTitle.get -> string?
+Stil.Charts.StilScatterChart<TItem>.YAxisTitle.set -> void
+Stil.Charts.StilScatterChart<TItem>.YMax.get -> double?
+Stil.Charts.StilScatterChart<TItem>.YMax.set -> void
+Stil.Charts.StilScatterChart<TItem>.YMin.get -> double?
+Stil.Charts.StilScatterChart<TItem>.YMin.set -> void
+Stil.Charts.StilSparkline
+Stil.Charts.StilSparkline.Area.get -> bool
+Stil.Charts.StilSparkline.Area.set -> void
+Stil.Charts.StilSparkline.Color.get -> string?
+Stil.Charts.StilSparkline.Color.set -> void
+Stil.Charts.StilSparkline.Format.get -> string?
+Stil.Charts.StilSparkline.Format.set -> void
+Stil.Charts.StilSparkline.Height.get -> int
+Stil.Charts.StilSparkline.Height.set -> void
+Stil.Charts.StilSparkline.Label.get -> string?
+Stil.Charts.StilSparkline.Label.set -> void
+Stil.Charts.StilSparkline.ShowEndDot.get -> bool
+Stil.Charts.StilSparkline.ShowEndDot.set -> void
+Stil.Charts.StilSparkline.StilSparkline() -> void
+Stil.Charts.StilSparkline.Values.get -> System.Collections.Generic.IEnumerable<double>?
+Stil.Charts.StilSparkline.Values.set -> void
+Stil.Charts._Imports
+Stil.Charts._Imports.Execute() -> void
+Stil.Charts._Imports._Imports() -> void
+const Stil.Charts.StilChartBase<TItem>.PaletteSize = 6 -> int
+override Stil.Charts.StilChartSeriesBase<TItem>.OnInitialized() -> void
+override Stil.Charts.StilGaugeRange.Equals(object? obj) -> bool
+override Stil.Charts.StilGaugeRange.GetHashCode() -> int
+override Stil.Charts.StilGaugeRange.ToString() -> string!
+override Stil.Charts.StilSparkline.OnParametersSet() -> void
+static Stil.Charts.StilGaugeRange.operator !=(Stil.Charts.StilGaugeRange? left, Stil.Charts.StilGaugeRange? right) -> bool
+static Stil.Charts.StilGaugeRange.operator ==(Stil.Charts.StilGaugeRange? left, Stil.Charts.StilGaugeRange? right) -> bool
+~override Stil.Charts.StilBarChart<TItem>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Charts.StilCartesianChartBase<TItem>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Charts.StilChartBase<TItem>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Charts.StilDonutChart<TItem>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Charts.StilGauge.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Charts.StilHeatMap<TItem>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Charts.StilLineChart<TItem>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Charts.StilScatterChart<TItem>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Charts.StilSparkline.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void

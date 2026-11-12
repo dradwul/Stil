@@ -77,6 +77,9 @@ public sealed record StilMenuItem
     public bool IsHeader { get; init; }
     public bool IsDivider { get; init; }
 
+    // Two overloads with the same optional parameter, which the public API analyzer warns about
+    // (RS0026). They differ by the delegate type only, so a call is never ambiguous.
+#pragma warning disable RS0026
     /// <summary>An item that runs an action.</summary>
     public static StilMenuItem Action(string text, Func<Task> onClick, bool disabled = false) =>
         new() { Text = text, OnClick = onClick, Disabled = disabled };
@@ -84,6 +87,7 @@ public sealed record StilMenuItem
     /// <summary>An item that runs an action.</summary>
     public static StilMenuItem Action(string text, Action onClick, bool disabled = false) =>
         new() { Text = text, OnClick = () => { onClick(); return Task.CompletedTask; }, Disabled = disabled };
+#pragma warning restore RS0026
 
     /// <summary>An item that navigates to a link.</summary>
     public static StilMenuItem Link(string text, string href, bool disabled = false) =>
