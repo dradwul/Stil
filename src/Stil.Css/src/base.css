@@ -19,6 +19,10 @@
 .stil-scope h4 { font-size: var(--stil-font-size-sm); }
 .stil-scope :is(h5, h6) { font-size: var(--stil-font-size-xs); }
 
+/* A heading that a script focuses (Blazor's FocusOnNavigate gives the page's h1 tabindex="-1"
+   after a navigation, so screen readers start there) is not a control: it needs no ring. */
+.stil-scope :is(h1, h2, h3, h4, h5, h6)[tabindex="-1"]:focus { outline: none; }
+
 .stil-scope a {
     color: var(--_accent);
     text-decoration: underline;

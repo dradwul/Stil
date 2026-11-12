@@ -194,6 +194,10 @@
     font-size: var(--stil-font-size-xs);
   }
 
+  .stil-scope :is(h1, h2, h3, h4, h5, h6)[tabindex="-1"]:focus {
+    outline: none;
+  }
+
   .stil-scope a {
     color: var(--_accent);
     text-underline-offset: .2em;
