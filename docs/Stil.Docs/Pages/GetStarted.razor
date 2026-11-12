@@ -4,9 +4,9 @@
     <Lead>Add Stil for Blazor to a Blazor app, or use Stil CSS on its own.</Lead>
 </DocsHeader>
 
-<StilAlert Variant="StilVariant.Info" Subtle Title="Preview">
-    The packages are not on NuGet and npm yet. Until they are, reference <code>src/Stil.Blazor</code> as a project,
-    or copy <code>src/Stil.Css/dist/stil.css</code>.
+<StilAlert Variant="StilVariant.Info" Subtle Title="Coming from a 0.1 preview?">
+    A few names changed on the way to 1.0. The
+    <a href="https://github.com/dradwul/Stil/blob/main/MIGRATING-TO-1.0.md">migration notes</a> list them all.
 </StilAlert>
 
 <h2 id="blazor">Stil for Blazor</h2>
@@ -40,6 +40,11 @@
 <h2 id="css">Stil CSS on its own</h2>
 <CodeBlock Language="shell" Code="npm install stil-css" />
 <CodeBlock Language="html" Code="@CssSnippet" />
+<p>
+    Without npm, link the files of a release from jsDelivr, for example
+    <code>https://cdn.jsdelivr.net/npm/stil-css@@1/dist/stil.min.css</code>, or download them from the
+    <a href="https://github.com/dradwul/Stil/releases">GitHub releases</a>.
+</p>
 <p>
     Stil's base styles (headings, links, forms) apply inside <code>.stil-scope</code>; the <code>stil-*</code>
     classes work anywhere. Everything is in cascade layers, so your own CSS wins without fighting specificity.
