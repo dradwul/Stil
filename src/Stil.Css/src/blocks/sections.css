@@ -1,0 +1,340 @@
+/* Page blocks (stil-blocks.css): sections for websites, loaded after stil.css.
+   This file: sections and their header, the hero, the feature grid, the call to action, the
+   stats band and the logo cloud. */
+
+/* Section: a full-width band of a page, with a stil-container inside.
+   <section class="stil-section" aria-labelledby="features-title">
+     <div class="stil-container">
+       <header class="stil-section-header">
+         <p class="stil-eyebrow">Features</p>
+         <h2 class="stil-section-title" id="features-title">Everything in one place</h2>
+         <p class="stil-lead">…</p>
+       </header>
+       …
+     </div>
+   </section>
+   stil-section-muted gives it the muted surface; stil-section-brand the primary color, with
+   readable text, links, focus rings and buttons on it (see "On the brand color" below).
+   A section is a container: the blocks in it size their type and columns to its width (cqi),
+   not the window's, so they also fit a narrow column or a preview. */
+.stil-section {
+    container-type: inline-size;
+    padding-block: clamp(var(--stil-space-7), 8vw, 6rem);
+}
+
+.stil-section-muted { background-color: var(--stil-color-surface-muted); }
+
+/* Two sections in a row on the same background share one gap instead of two. */
+.stil-section:not(.stil-section-muted, .stil-section-brand) + .stil-section:not(.stil-section-muted, .stil-section-brand),
+.stil-section-muted + .stil-section-muted {
+    padding-block-start: 0;
+}
+
+.stil-section-header {
+    max-width: 44rem;
+    margin-block-end: var(--stil-space-7);
+}
+
+.stil-section-header-center {
+    margin-inline: auto;
+    text-align: center;
+}
+
+.stil-eyebrow {
+    margin: 0 0 var(--stil-space-2);
+    color: var(--_accent);
+    font-size: var(--stil-font-size-sm);
+    font-weight: var(--stil-font-weight-bold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.stil-section-title {
+    margin: 0 0 var(--stil-space-3);
+    font-size: clamp(1.75rem, 1.25rem + 2cqi, 2.5rem);
+    line-height: 1.2;
+    text-wrap: balance;
+}
+
+.stil-lead {
+    margin: 0;
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-lg);
+    text-wrap: pretty;
+}
+
+/* Hero: the first section of a page, with the page's h1.
+   <section class="stil-section stil-hero">
+     <div class="stil-container stil-hero-body">
+       <div class="stil-hero-content">
+         <p class="stil-eyebrow">New</p>
+         <h1 class="stil-hero-title">…</h1>
+         <p class="stil-lead">…</p>
+         <div class="stil-hero-actions"><a class="stil-btn stil-btn-lg" href="…">Start</a></div>
+       </div>
+       <div class="stil-hero-media"><img src="…" alt="…"></div>   (only with stil-hero-split)
+     </div>
+   </section>
+   Centered by default; stil-hero-split puts the picture beside the text when the hero is at
+   least 56rem wide. */
+.stil-hero { padding-block: clamp(var(--stil-space-7), 10vw, 8rem); }
+
+.stil-hero-content {
+    max-width: 44rem;
+    margin-inline: auto;
+    text-align: center;
+}
+
+.stil-hero-title {
+    margin: 0 0 var(--stil-space-4);
+    font-size: clamp(2.25rem, 1.5rem + 3cqi, 3.75rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+}
+
+.stil-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--stil-space-3);
+    margin-block-start: var(--stil-space-6);
+}
+
+.stil-hero-split .stil-hero-body {
+    display: grid;
+    align-items: center;
+    gap: var(--stil-space-7);
+}
+
+.stil-hero-split .stil-hero-content {
+    margin-inline: 0;
+    text-align: start;
+}
+
+.stil-hero-split .stil-hero-actions { justify-content: flex-start; }
+
+@container (min-width: 56rem) {
+    .stil-hero-split .stil-hero-body { grid-template-columns: 1fr 1fr; }
+}
+
+.stil-hero-media :is(img, svg, video) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--stil-radius-lg);
+}
+
+/* Feature grid: as many columns as fit, at least 16rem wide.
+   <ul class="stil-features">
+     <li class="stil-feature">
+       <span class="stil-feature-icon"><svg class="stil-icon" aria-hidden="true">…</svg></span>
+       <h3 class="stil-feature-title">Dark mode</h3>
+       <p>…</p>
+     </li>
+   </ul>
+   stil-features-cards puts each feature on a card. */
+.stil-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: var(--stil-space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stil-feature {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stil-space-2);
+}
+
+.stil-feature > p {
+    margin: 0;
+    color: var(--stil-color-text-muted);
+}
+
+.stil-feature-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-block-end: var(--stil-space-2);
+    border-radius: var(--stil-radius-lg);
+    background-color: color-mix(in srgb, var(--_accent) 14%, transparent);
+    color: var(--_accent);
+    font-size: 1.375rem;
+}
+
+.stil-feature-title {
+    margin: 0;
+    font-size: var(--stil-font-size-lg);
+}
+
+.stil-features-cards .stil-feature {
+    padding: var(--stil-space-5);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-lg);
+    background-color: var(--stil-color-surface);
+}
+
+/* Call to action: a banner with a title, a sentence and buttons.
+   <div class="stil-cta">
+     <div class="stil-cta-body"><h2 class="stil-cta-title">…</h2><p>…</p></div>
+     <div class="stil-cta-actions"><a class="stil-btn" href="…">…</a></div>
+   </div>
+   stil-cta-center stacks it, centered; stil-cta-brand gives it the primary color. */
+.stil-cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--stil-space-5);
+    padding: clamp(var(--stil-space-5), 5cqi, var(--stil-space-7));
+    border-radius: var(--stil-radius-lg);
+    background-color: var(--stil-color-surface-muted);
+}
+
+.stil-section-muted .stil-cta:not(.stil-cta-brand) { background-color: var(--stil-color-surface); }
+
+.stil-cta-body { flex: 1 1 24rem; }
+
+.stil-cta-body > p { margin: 0; }
+
+.stil-cta-title {
+    margin: 0 0 var(--stil-space-2);
+    font-size: var(--stil-font-size-xl);
+    line-height: 1.2;
+    text-wrap: balance;
+}
+
+.stil-cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--stil-space-3);
+}
+
+.stil-cta-center {
+    flex-direction: column;
+    text-align: center;
+}
+
+.stil-cta-center .stil-cta-body {
+    flex: none;
+    max-width: 40rem;
+}
+
+.stil-cta-center .stil-cta-actions { justify-content: center; }
+
+/* Stats band: large numbers with a label, in a description list, so a screen reader reads
+   "Customers, 12,000". The value is shown above its label.
+   <dl class="stil-stats">
+     <div class="stil-stats-item"><dt class="stil-stats-label">Customers</dt><dd class="stil-stats-value">12,000</dd></div>
+   </dl> */
+.stil-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: var(--stil-space-6);
+    margin: 0;
+    text-align: center;
+}
+
+.stil-stats-item {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--stil-space-1);
+}
+
+.stil-stats-label { color: var(--stil-color-text-muted); }
+
+.stil-stats-value {
+    margin: 0;
+    font-size: clamp(2rem, 1.5rem + 2cqi, 3rem);
+    font-weight: var(--stil-font-weight-bold);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Logo cloud: the logos of customers or partners.
+   <div class="stil-logos">
+     <p class="stil-logos-title">Trusted by teams at</p>
+     <ul class="stil-logos-list"><li><img src="…" alt="Northwind"></li></ul>
+   </div>
+   The logos are --stil-logos-height tall (2rem). stil-logos-muted shows them in gray. */
+.stil-logos { text-align: center; }
+
+.stil-logos-title {
+    margin: 0 0 var(--stil-space-5);
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+    font-weight: var(--stil-font-weight-bold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.stil-logos-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--stil-space-5) var(--stil-space-7);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--stil-font-size-lg);
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-logos-list :is(img, svg) {
+    display: block;
+    width: auto;
+    height: var(--stil-logos-height, 2rem);
+}
+
+.stil-logos-muted .stil-logos-list { color: var(--stil-color-text-muted); }
+
+.stil-logos-muted .stil-logos-list :is(img, svg) { filter: grayscale(1); }
+
+/* On the brand color (stil-section-brand, stil-cta-brand): the text takes the color that reads
+   on the primary color, and so do links, focus rings, eyebrows and muted text. A solid button
+   turns to the page's surface color so it stands out, and outline and ghost buttons take the
+   text color. --_on is that text color, worked out once on the brand box. */
+.stil-section-brand,
+.stil-cta-brand {
+    --_bg: var(--stil-color-primary);
+    --_on: var(--_fg);
+    --_on-bg: var(--_bg);
+    --stil-color-accent: var(--_on);
+    background-color: var(--_bg);
+    color: var(--_fg);
+}
+
+:is(.stil-section-brand, .stil-cta-brand) :is(.stil-lead, .stil-stats-label, .stil-logos-title, .stil-feature > p, .stil-text-muted) {
+    color: inherit;
+}
+
+:is(.stil-section-brand, .stil-cta-brand) a:not(.stil-btn) { color: inherit; }
+
+:is(.stil-section-brand, .stil-cta-brand) .stil-btn:not(.stil-btn-outline, .stil-btn-ghost) {
+    --_bg: var(--stil-color-surface);
+}
+
+:is(.stil-section-brand, .stil-cta-brand) :is(.stil-btn-outline, .stil-btn-ghost) {
+    --_ink: var(--_on);
+}
+
+:is(.stil-section-brand, .stil-cta-brand) .stil-btn-outline:hover {
+    border-color: var(--_on);
+    background-color: var(--_on);
+    color: var(--_on-bg);
+}
+
+:is(.stil-section-brand, .stil-cta-brand) .stil-feature-icon {
+    background-color: color-mix(in srgb, currentColor 14%, transparent);
+    color: inherit;
+}
+
+.stil-section-brand .stil-features-cards .stil-feature {
+    border-color: color-mix(in srgb, currentColor 25%, transparent);
+    background-color: transparent;
+}

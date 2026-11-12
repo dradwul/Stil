@@ -24,6 +24,8 @@
   "exports": {
     ".": "./dist/stil.css",
     "./min": "./dist/stil.min.css",
+    "./blocks": "./dist/stil-blocks.css",
+    "./blocks/min": "./dist/stil-blocks.min.css",
     "./dist/*": "./dist/*",
     "./js": "./dist/stil.js"
   },

@@ -168,6 +168,29 @@ To see every class with its markup, open
 full page built only with Stil, open
 [`samples/Stil.Html/admin.html`](../../samples/Stil.Html/admin.html).
 
+### Page blocks
+
+Sections for websites (product, marketing and content pages) are in a
+separate stylesheet, `dist/stil-blocks.css` (`stil-css/blocks` on npm), so
+an app that does not need them never loads them. Load it after `stil.css`;
+its rules join the `stil.components` layer, so the utilities still win.
+Each block is sized to its section (container queries), not the window.
+
+| Block | Classes |
+| --- | --- |
+| Section | `stil-section` (`stil-section-muted`, `stil-section-brand`) with a `stil-container` inside. A header: `stil-section-header` (`stil-section-header-center`) with `stil-eyebrow`, `stil-section-title` and `stil-lead`. Two sections in a row on the same background share one gap. |
+| Hero | `stil-section stil-hero` (`stil-hero-split` for a picture beside the text) > `stil-container stil-hero-body` > `stil-hero-content` (`stil-eyebrow`, `stil-hero-title`, `stil-lead`, `stil-hero-actions`) and `stil-hero-media`. |
+| Feature grid | `<ul class="stil-features">` (`stil-features-cards`) > `stil-feature` with `stil-feature-icon`, `stil-feature-title` and a `<p>`. |
+| Call to action | `stil-cta` (`stil-cta-center`, `stil-cta-brand`) > `stil-cta-body` (`stil-cta-title`, `<p>`) and `stil-cta-actions`. |
+| Stats band | `<dl class="stil-stats">` > `stil-stats-item` > `<dt class="stil-stats-label">` + `<dd class="stil-stats-value">`. |
+| Logo cloud | `stil-logos` (`stil-logos-muted`, `--stil-logos-height`) > `stil-logos-title` and `<ul class="stil-logos-list">`. |
+
+On `stil-section-brand` and `stil-cta-brand` the text, links, focus rings,
+eyebrows and outline buttons take the color that reads on the primary
+color, and a solid button turns to the surface color. For a product site
+built only from these, open
+[`samples/Stil.Html/site.html`](../../samples/Stil.Html/site.html).
+
 ## Optional JavaScript
 
 Stil works without JavaScript. The optional `dist/stil.js` module, 78 kB (22 kB gzipped) with

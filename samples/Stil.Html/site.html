@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" data-theme-target data-stil-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tidvy · Plan the week your team actually has</title>
+    <meta name="description" content="Tidvy plans your team's week from the work you already track: tasks, bookings and time off in one calendar.">
+    <!-- A product site built only from Stil CSS and the page blocks: no custom styles. -->
+    <link rel="stylesheet" href="../../src/Stil.Css/dist/stil.css">
+    <link rel="stylesheet" href="../../src/Stil.Css/dist/stil-blocks.css">
+
+    <!-- Stil's default font, Lexend (optional; without it Stil uses sans-serif) -->
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&amp;display=swap" rel="stylesheet">
+</head>
+<body class="stil-scope stil-m-0">
+    <a class="stil-visually-hidden-focusable stil-btn stil-m-2" href="#main">Skip to main content</a>
+
+    <header class="stil-navbar stil-navbar-expand-md">
+        <a class="stil-navbar-brand" href="#">Tidvy</a>
+        <button type="button" class="stil-navbar-toggle" aria-controls="site-menu" aria-expanded="false" data-stil-toggle>
+            <span class="stil-icon stil-icon-menu" aria-hidden="true"></span>
+            <span class="stil-visually-hidden">Menu</span>
+        </button>
+        <div class="stil-navbar-collapse" id="site-menu">
+            <nav class="stil-nav" aria-label="Main">
+                <a class="stil-nav-link" href="#features">Features</a>
+                <a class="stil-nav-link" href="#customers">Customers</a>
+                <a class="stil-nav-link" href="#pricing">Pricing</a>
+            </nav>
+            <div class="stil-navbar-end">
+                <div class="stil-cluster">
+                    <select class="stil-select stil-select-sm stil-w-auto" data-theme-mode aria-label="Color mode">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                        <option value="auto">Auto (OS)</option>
+                    </select>
+                    <select class="stil-select stil-select-sm stil-w-auto" data-theme-palette aria-label="Palette">
+                        <option value="teal">Teal (default)</option>
+                        <option value="purple">Purple</option>
+                        <option value="forest">Forest</option>
+                        <option value="sunset">Sunset</option>
+                    </select>
+                </div>
+                <a class="stil-btn stil-btn-sm" href="#start">Start free</a>
+            </div>
+        </div>
+    </header>
+
+    <main id="main">
+        <section class="stil-section stil-hero stil-hero-split" aria-labelledby="hero-title">
+            <div class="stil-container stil-hero-body">
+                <div class="stil-hero-content">
+                    <p class="stil-eyebrow">New: time off in the planner</p>
+                    <h1 class="stil-hero-title" id="hero-title">Plan the week your team actually has</h1>
+                    <p class="stil-lead">Tidvy puts tasks, room bookings and time off in one calendar, so Monday's plan still holds on Thursday.</p>
+                    <div class="stil-hero-actions">
+                        <a class="stil-btn stil-btn-lg" href="#start">Start free</a>
+                        <a class="stil-btn stil-btn-lg stil-btn-outline" href="#features">See how it works</a>
+                    </div>
+                </div>
+                <div class="stil-hero-media">
+                    <svg viewBox="0 0 480 320" role="img" aria-label="The Tidvy planner: a week with tasks spread over five days">
+                        <rect x="0.5" y="0.5" width="479" height="319" rx="12" style="fill: var(--stil-color-surface); stroke: var(--stil-color-border)" />
+                        <rect x="0.5" y="0.5" width="479" height="40" rx="12" style="fill: var(--stil-color-surface-muted)" />
+                        <circle cx="22" cy="21" r="5" style="fill: var(--stil-color-danger)" />
+                        <circle cx="40" cy="21" r="5" style="fill: var(--stil-color-warning)" />
+                        <circle cx="58" cy="21" r="5" style="fill: var(--stil-color-success)" />
+                        <g style="fill: var(--stil-color-surface-muted)">
+                            <rect x="20" y="60" width="80" height="240" rx="6" />
+                            <rect x="110" y="60" width="80" height="240" rx="6" />
+                            <rect x="200" y="60" width="80" height="240" rx="6" />
+                            <rect x="290" y="60" width="80" height="240" rx="6" />
+                            <rect x="380" y="60" width="80" height="240" rx="6" />
+                        </g>
+                        <g style="fill: var(--stil-color-primary)">
+                            <rect x="28" y="72" width="64" height="44" rx="4" />
+                            <rect x="118" y="132" width="64" height="70" rx="4" />
+                            <rect x="298" y="84" width="64" height="40" rx="4" />
+                            <rect x="388" y="190" width="64" height="56" rx="4" />
+                        </g>
+                        <g style="fill: var(--stil-color-secondary)">
+                            <rect x="28" y="160" width="64" height="60" rx="4" />
+                            <rect x="208" y="96" width="64" height="88" rx="4" />
+                            <rect x="298" y="200" width="64" height="44" rx="4" />
+                        </g>
+                        <rect x="208" y="230" width="64" height="50" rx="4" style="fill: var(--stil-color-warning)" />
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <section class="stil-section stil-section-muted" id="customers" aria-label="Customers">
+            <div class="stil-container">
+                <div class="stil-logos stil-logos-muted">
+                    <p class="stil-logos-title">Trusted by teams at</p>
+                    <ul class="stil-logos-list">
+                        <li>Nordvik Supply</li>
+                        <li>Kallio Design</li>
+                        <li>Østerby Marine</li>
+                        <li>Fjord Analytics</li>
+                        <li>Helsinki Bikes</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="stil-section" id="features" aria-labelledby="features-title">
+            <div class="stil-container">
+                <header class="stil-section-header stil-section-header-center">
+                    <p class="stil-eyebrow">Features</p>
+                    <h2 class="stil-section-title" id="features-title">Everything the week needs, in one view</h2>
+                    <p class="stil-lead">No more checking three tools to see who is free on Friday.</p>
+                </header>
+                <ul class="stil-features">
+                    <li class="stil-feature">
+                        <span class="stil-feature-icon"><span class="stil-icon stil-icon-folder" aria-hidden="true"></span></span>
+                        <h3 class="stil-feature-title">One calendar</h3>
+                        <p>Tasks, bookings and time off side by side, for the whole team.</p>
+                    </li>
+                    <li class="stil-feature">
+                        <span class="stil-feature-icon"><span class="stil-icon stil-icon-success" aria-hidden="true"></span></span>
+                        <h3 class="stil-feature-title">Plans that hold</h3>
+                        <p>Tidvy warns before a day is overbooked, not after.</p>
+                    </li>
+                    <li class="stil-feature">
+                        <span class="stil-feature-icon"><span class="stil-icon stil-icon-moon" aria-hidden="true"></span></span>
+                        <h3 class="stil-feature-title">Light and dark</h3>
+                        <p>Readable in both, with WCAG AA contrast everywhere.</p>
+                    </li>
+                    <li class="stil-feature">
+                        <span class="stil-feature-icon"><span class="stil-icon stil-icon-download" aria-hidden="true"></span></span>
+                        <h3 class="stil-feature-title">Your data, your way</h3>
+                        <p>Export to CSV or the calendar app you already use.</p>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="stil-section stil-section-brand" aria-labelledby="numbers-title">
+            <div class="stil-container">
+                <header class="stil-section-header stil-section-header-center">
+                    <h2 class="stil-section-title" id="numbers-title">Teams plan better with Tidvy</h2>
+                    <p class="stil-lead">Numbers from our customers in 2026.</p>
+                </header>
+                <dl class="stil-stats">
+                    <div class="stil-stats-item"><dt class="stil-stats-label">Teams planning their week</dt><dd class="stil-stats-value">4,800</dd></div>
+                    <div class="stil-stats-item"><dt class="stil-stats-label">Fewer double bookings</dt><dd class="stil-stats-value">87%</dd></div>
+                    <div class="stil-stats-item"><dt class="stil-stats-label">Hours saved a week</dt><dd class="stil-stats-value">3.5</dd></div>
+                </dl>
+            </div>
+        </section>
+
+        <section class="stil-section" id="pricing" aria-labelledby="pricing-title">
+            <div class="stil-container">
+                <header class="stil-section-header">
+                    <p class="stil-eyebrow">Built for teams</p>
+                    <h2 class="stil-section-title" id="pricing-title">Start small, grow when you need to</h2>
+                </header>
+                <ul class="stil-features stil-features-cards">
+                    <li class="stil-feature">
+                        <h3 class="stil-feature-title">Free for five</h3>
+                        <p>Every feature for teams of up to five people, for as long as you like.</p>
+                        <a href="#start">Start free</a>
+                    </li>
+                    <li class="stil-feature">
+                        <h3 class="stil-feature-title">Team, €6 a person</h3>
+                        <p>Unlimited people, rooms and calendars, with priority support.</p>
+                        <a href="#start">Try it for 30 days</a>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="stil-section" id="start" aria-label="Get started">
+            <div class="stil-container">
+                <div class="stil-cta stil-cta-brand">
+                    <div class="stil-cta-body">
+                        <h2 class="stil-cta-title">Plan next week in ten minutes</h2>
+                        <p>Free for teams of up to five. No card needed.</p>
+                    </div>
+                    <div class="stil-cta-actions">
+                        <a class="stil-btn stil-btn-lg" href="#">Start free</a>
+                        <a class="stil-btn stil-btn-lg stil-btn-outline" href="#">Book a demo</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="stil-section-muted stil-py-5">
+        <div class="stil-container stil-cluster stil-justify-content-between">
+            <p class="stil-m-0">Tidvy, a sample site built with Stil.</p>
+            <p class="stil-m-0 stil-text-muted">No custom CSS on this page.</p>
+        </div>
+    </footer>
+
+    <script type="module" src="../../src/Stil.Css/dist/stil.js"></script>
+    <script src="theme-picker.js"></script>
+</body>
+</html>

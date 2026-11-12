@@ -12,6 +12,8 @@ const budgets = [
     // [file, budget in KiB, gzipped]
     ['src/Stil.Css/dist/stil.min.css', 25],
     ['src/Stil.Css/dist/stil.js', 24],
+    // The page blocks, all of Phase V2.1.
+    ['src/Stil.Css/dist/stil-blocks.min.css', 8],
     ['src/Stil.Charts/wwwroot/stil-charts.css', 4.5],
 ];
 

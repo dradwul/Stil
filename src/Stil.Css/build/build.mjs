@@ -1,5 +1,6 @@
 // Builds dist/stil.css and dist/stil.min.css from the files in src/ and the generated parts,
-// and copies the optional behaviours module src/stil.js to dist/stil.js.
+// dist/stil-blocks.css and stil-blocks.min.css (the opt-in page blocks) from src/blocks/, and
+// copies the optional behaviours module src/stil.js to dist/stil.js.
 //   node build/build.mjs           build once
 //   node build/build.mjs --watch   rebuild when a source file changes
 //   node build/build.mjs --check   fail if dist/ is out of date (used by CI)
@@ -43,34 +44,49 @@ const layers = [
     ['stil.utilities', ['utilities.css', generateUtilities]],
 ];
 
+// The page blocks (website sections): a separate, opt-in stylesheet loaded after stil.css. Its
+// rules join the stil.components layer, so the utilities still win over them.
+const blocks = ['blocks/sections.css'];
+
 const banner = `/*! Stil CSS v${pkg.version} | MIT License | https://github.com/dradwul/Stil */\n`;
+const blocksBanner = `/*! Stil CSS blocks v${pkg.version} | MIT License | https://github.com/dradwul/Stil */\n`;
 const targets = browserslistToTargets(browserslist(pkg.browserslist));
+
+// Git may check the sources out with CRLF line endings on Windows, and the pretty output keeps a
+// line break inside a value as it is, so make them LF first.
+const read = source => readFileSync(join(src, source), 'utf8').replace(/\r\n/g, '\n');
 
 function bundle() {
     const parts = [`@layer ${layers.map(([name]) => name).join(', ')};`];
     for (const [layer, sources] of layers) {
         const body = sources
-            // Git may check the sources out with CRLF line endings on Windows, and the pretty
-            // output keeps a line break inside a value as it is, so make them LF first.
-            .map(source => (typeof source === 'function' ? source() : readFileSync(join(src, source), 'utf8').replace(/\r\n/g, '\n')))
+            .map(source => (typeof source === 'function' ? source() : read(source)))
             .join('\n\n');
         parts.push(`@layer ${layer} {\n${body}\n}`);
     }
     return parts.join('\n\n');
 }
 
-function compile() {
-    const code = Buffer.from(bundle());
-    const options = { filename: 'stil.css', code, targets, errorRecovery: false };
+// The pretty and the minified output of one stylesheet.
+function css(filename, source) {
+    const options = { filename, code: Buffer.from(source), targets, errorRecovery: false };
     const pretty = transform({ ...options, minify: false });
     const minified = transform({ ...options, minify: true });
     for (const warning of [...pretty.warnings, ...minified.warnings]) {
         console.warn(`warning: ${warning.message}`);
     }
+    return [pretty.code.toString(), minified.code.toString()];
+}
+
+function compile() {
+    const [stil, stilMin] = css('stil.css', bundle());
+    const [blocksCss, blocksMin] = css('stil-blocks.css', `@layer stil.components {\n${blocks.map(read).join('\n\n')}\n}`);
     return {
-        'stil.css': banner + pretty.code.toString(),
-        'stil.min.css': banner + minified.code.toString(),
-        'stil.js': banner + readFileSync(join(src, 'stil.js'), 'utf8').replace(/\r\n/g, '\n'),
+        'stil.css': banner + stil,
+        'stil.min.css': banner + stilMin,
+        'stil-blocks.css': blocksBanner + blocksCss,
+        'stil-blocks.min.css': blocksBanner + blocksMin,
+        'stil.js': banner + read('stil.js'),
     };
 }
 
