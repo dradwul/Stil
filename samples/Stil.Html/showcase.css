@@ -84,4 +84,4 @@ body {
 }
 
 /* Fixed elements (toasts) are shown in place inside examples. */
-.example .stil-toast-container { position: static; }
+.example .stil-toast-container { position: static; max-width: 100%; }

@@ -18,8 +18,10 @@ Every class starts with `stil-` and every token with `--stil-`, so Stil can
 run next to Bootstrap, Tailwind or your own CSS without clashing. If you are
 coming from Bootstrap, see the [migration guide](MIGRATING-FROM-BOOTSTRAP.md).
 
-> **Status:** early preview (`0.1.0`). Class and token names may still
-> change before `1.0`. See the [roadmap](../../ROADMAP.md).
+> **Status:** stable (`1.0`). Class names, token names and the `stil.js`
+> exports listed below change only in a major version
+> ([Semantic Versioning](https://semver.org/)). See the
+> [roadmap](../../ROADMAP.md).
 
 ## Install
 
@@ -32,7 +34,7 @@ Use one of these options:
 - **CDN:** jsDelivr serves the files from a release tag:
 
   ```html
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/dradwul/Stil@v0.1.0-preview.4/src/Stil.Css/dist/stil.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/dradwul/Stil@v1.0.0/src/Stil.Css/dist/stil.min.css" />
   ```
 
 - **npm:** the package is prepared as `stil-css` but not published yet.
@@ -234,6 +236,9 @@ no dependencies, adds a few behaviours:
   (collapse and restore), within its `aria-valuemin` and `aria-valuemax`. It
   sets `--stil-splitter-size` and fires a bubbling `stilsplit` event
   (`detail.size`).
+- A `stil-table-responsive` or `stil-splitter-pane` that scrolls, with
+  nothing focusable inside, gets `tabindex="0"` while it scrolls, so it also
+  scrolls with the keyboard.
 - A carousel's `stil-carousel-prev`, `stil-carousel-next` and dot buttons move
   between the slides, and the dot of the shown slide gets `aria-current`; a
   bubbling `stilslide` event (`detail.index`) reports it.

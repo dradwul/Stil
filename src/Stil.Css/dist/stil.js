@@ -105,6 +105,47 @@ export function init(root = document) {
     // Combobox lists open and close through their hidden attribute (set by Blazor or the page).
     new MutationObserver(onPopupMutations).observe(root, { subtree: true, childList: true, attributes: true, attributeFilter: ['hidden'] });
     for (const popup of root.querySelectorAll('.stil-combobox-popup:not([hidden])')) liftPanel(popup);
+    new MutationObserver(onScrollerMutations).observe(root, { subtree: true, childList: true });
+    watchScrollers(root);
+}
+
+// A box that scrolls must scroll with the keyboard too (WCAG 2.1.1). When a wide table or a
+// splitter pane scrolls and holds nothing focusable, it gets tabindex="0" (and a focus ring from
+// the CSS); it loses it again when it no longer scrolls or gets focusable content.
+const scrollerSelector = '.stil-table-responsive, .stil-splitter-pane';
+const focusableSelector = 'a[href], button, input, select, textarea, summary, iframe, [contenteditable], [tabindex]:not([tabindex="-1"])';
+let scrollerObserver;
+
+function updateScroller(box) {
+    const scrolls = box.scrollWidth > box.clientWidth + 1 || box.scrollHeight > box.clientHeight + 1;
+    const needsFocus = scrolls && !box.querySelector(focusableSelector);
+    if (needsFocus && !box.hasAttribute('tabindex')) {
+        box.tabIndex = 0;
+        box.dataset.stilScrollFocus = '';
+    } else if (!needsFocus && box.hasAttribute('data-stil-scroll-focus')) {
+        box.removeAttribute('tabindex');
+        box.removeAttribute('data-stil-scroll-focus');
+    }
+}
+
+function watchScrollers(root) {
+    if (typeof ResizeObserver === 'undefined') return;
+    scrollerObserver ??= new ResizeObserver(entries => entries.forEach(entry => updateScroller(entry.target)));
+    for (const box of root.querySelectorAll(scrollerSelector)) {
+        if (box.stilScroller) continue;
+        box.stilScroller = true;
+        scrollerObserver.observe(box);
+    }
+}
+
+function onScrollerMutations(mutations) {
+    let added = false;
+    for (const mutation of mutations) {
+        added ||= mutation.addedNodes.length > 0;
+        const box = mutation.target instanceof Element ? mutation.target.closest(scrollerSelector) : null;
+        if (box) updateScroller(box);
+    }
+    if (added) watchScrollers(document);
 }
 
 const openDropdowns = () => document.querySelectorAll('details.stil-dropdown[open]');

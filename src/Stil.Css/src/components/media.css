@@ -43,7 +43,8 @@
 
 /* Splitter: two panes with a draggable separator. --stil-splitter-size is the first pane's size
    in percent. stil.js makes the separator draggable and keyboard-resizable (the WAI-ARIA window
-   splitter pattern) and fires stilsplit (detail.size) when it changes.
+   splitter pattern) and fires stilsplit (detail.size) when it changes. A pane scrolls when its
+   content does not fit; stil.js then makes it focusable, so it scrolls with the keyboard too.
    <div class="stil-splitter" style="--stil-splitter-size: 35">
      <div class="stil-splitter-pane">…</div>
      <div class="stil-splitter-handle" role="separator" tabindex="0" aria-valuenow="35" aria-valuemin="15" aria-valuemax="85" aria-controls="…"></div>
@@ -62,6 +63,12 @@
     min-width: 0;
     min-height: 0;
     overflow: auto;
+}
+
+/* Inside the pane (focusable when it scrolls): the splitter clips what overflows it. */
+.stil-splitter-pane:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: calc(var(--stil-focus-ring-width) * -1);
 }
 
 .stil-splitter-pane:first-child { flex: 0 0 calc(var(--stil-splitter-size) * 1%); }
@@ -293,6 +300,14 @@
     height: var(--stil-pdf-height, 36rem);
     border: 0;
     background-color: var(--stil-color-surface-muted);
+}
+
+/* The ring goes on the box around the frame: the document in the frame would cover a ring on
+   the frame itself. :focus-within, since the viewer in the frame takes the focus, and the frame
+   then matches neither :focus nor :focus-visible. */
+.stil-pdf:has(> .stil-pdf-frame:focus-within) {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
 }
 
 .stil-pdf-fallback {

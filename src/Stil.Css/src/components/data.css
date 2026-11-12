@@ -562,6 +562,9 @@ th[data-stil-drop="after"]:dir(rtl) { box-shadow: inset 3px 0 0 var(--_accent); 
 .stil-chat-author { font-weight: var(--stil-font-weight-bold); }
 .stil-chat-time { opacity: 0.75; }
 
+/* On the primary color, the text color only just meets 4.5:1, so the time keeps it in full. */
+.stil-chat-message-mine .stil-chat-time { opacity: 1; }
+
 .stil-chat-text {
     white-space: pre-wrap;
     overflow-wrap: anywhere;

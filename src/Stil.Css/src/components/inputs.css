@@ -283,12 +283,20 @@
     letter-spacing: calc(var(--_cell) - 1ch);
 }
 
+/* The cells turn the accent color, and the field gets the same ring as other fields, so focus
+   does not rest on a color change alone. */
 .stil-pin:focus {
     outline: none;
     background-image:
         repeating-linear-gradient(to right,
             var(--_accent) 0 calc(var(--_cell) - var(--stil-space-2)),
             transparent calc(var(--_cell) - var(--stil-space-2)) var(--_cell));
+}
+
+.stil-pin:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+    border-radius: var(--stil-radius-sm);
 }
 
 .stil-pin[aria-invalid="true"] {

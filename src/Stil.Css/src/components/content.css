@@ -165,11 +165,17 @@
     background-color: color-mix(in srgb, var(--stil-color-text) 7%, transparent);
 }
 
-/* Wrap a wide table to let it scroll sideways on small screens. */
+/* Wrap a wide table to let it scroll sideways on small screens. When it scrolls and holds
+   nothing focusable, stil.js makes it focusable, so it scrolls with the keyboard too. */
 .stil-table-responsive {
     position: relative; /* contains absolutely positioned children such as stil-visually-hidden */
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+}
+
+.stil-table-responsive:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: calc(var(--stil-focus-ring-width) * -1);
 }
 
 .stil-table-responsive > .stil-table { margin-block-end: 0; }
