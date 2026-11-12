@@ -55,20 +55,20 @@ jobs:
 
       - name: Verify the package contents
         run: |
-          unzip -l "$(ls artifacts/Stil.0*.nupkg)" | tee stil.txt
+          unzip -l "$(ls artifacts/Stil.[0-9]*.nupkg)" | tee stil.txt
           grep -q 'staticwebassets/stil.css' stil.txt
           grep -q 'README.md' stil.txt
-          unzip -l "$(ls artifacts/Stil.Charts.0*.nupkg)" | tee charts.txt
+          unzip -l "$(ls artifacts/Stil.Charts.[0-9]*.nupkg)" | tee charts.txt
           grep -q 'staticwebassets/stil-charts.css' charts.txt
           grep -q 'Stil.Charts.xml' charts.txt
           grep -q 'README.md' charts.txt
-          unzip -l "$(ls artifacts/Stil.Markdown.0*.nupkg)" | tee markdown.txt
+          unzip -l "$(ls artifacts/Stil.Markdown.[0-9]*.nupkg)" | tee markdown.txt
           grep -q 'Stil.Markdown.xml' markdown.txt
           grep -q 'README.md' markdown.txt
-          unzip -l "$(ls artifacts/Stil.RichText.0*.nupkg)" | tee richtext.txt
+          unzip -l "$(ls artifacts/Stil.RichText.[0-9]*.nupkg)" | tee richtext.txt
           grep -q 'Stil.RichText.xml' richtext.txt
           grep -q 'README.md' richtext.txt
-          unzip -l "$(ls artifacts/Stil.Templates.0*.nupkg)" | tee templates.txt
+          unzip -l "$(ls artifacts/Stil.Templates.[0-9]*.nupkg)" | tee templates.txt
           grep -q 'content/StilApp/.template.config/template.json' templates.txt
           grep -q 'content/StilApp/.gitignore' templates.txt
 
@@ -122,7 +122,12 @@ jobs:
 
       # The axe checks only. The screenshot baselines are made on Windows (see
       # tests/Stil.Visual/README.md), so the visual tests run locally.
-      - name: Run the axe checks on the samples and the demo
+      # Playwright starts the demo and the docs site with dotnet run --no-build, so they
+      # do not build at the same time.
+      - name: Build the demo and the docs site
+        run: dotnet build Stil.sln
+
+      - name: Run the axe checks on the samples, the demo and the docs site
         working-directory: tests/Stil.Visual
         run: npx playwright test --grep @a11y
 

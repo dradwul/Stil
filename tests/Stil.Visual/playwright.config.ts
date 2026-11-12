@@ -1,10 +1,15 @@
 import { defineConfig } from '@playwright/test';
-import { DEMO_URL, STATIC_ORIGIN, STATIC_PORT } from './tests/helpers';
+import { DEMO_URL, DOCS_URL, STATIC_ORIGIN, STATIC_PORT } from './tests/helpers';
 
 const isCI = !!process.env.CI;
 
 // Locally the installed Microsoft Edge is used, so no browser download is needed. CI uses
 // Playwright's bundled Chromium (installed with `npx playwright install` in the workflow).
+// Playwright starts the servers in parallel, and two `dotnet run` builds of the same projects
+// collide. So the solution is built first (CI does it in a step before the tests), and the
+// servers start without building.
+const dotnetRun = 'dotnet run --no-build';
+
 const browser = isCI ? { browserName: 'chromium' as const } : { browserName: 'chromium' as const, channel: 'msedge' };
 
 export default defineConfig({
@@ -76,7 +81,7 @@ export default defineConfig({
             stderr: 'pipe',
         },
         {
-            command: 'dotnet run --project ../../samples/Stil.Demo --launch-profile http',
+            command: `${dotnetRun} --project ../../samples/Stil.Demo --launch-profile http`,
             url: DEMO_URL,
             reuseExistingServer: !isCI,
             // The first run restores and builds the solution.
@@ -86,6 +91,18 @@ export default defineConfig({
             env: {
                 // Same number and date formatting on every machine, whatever the OS culture.
                 DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: '1',
+                DOTNET_CLI_TELEMETRY_OPTOUT: '1',
+                DOTNET_NOLOGO: '1',
+            },
+        },
+        {
+            command: `${dotnetRun} --project ../../docs/Stil.Docs --launch-profile http`,
+            url: DOCS_URL,
+            reuseExistingServer: !isCI,
+            timeout: 300_000,
+            stdout: 'ignore',
+            stderr: 'pipe',
+            env: {
                 DOTNET_CLI_TELEMETRY_OPTOUT: '1',
                 DOTNET_NOLOGO: '1',
             },

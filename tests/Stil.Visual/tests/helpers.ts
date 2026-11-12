@@ -9,6 +9,8 @@ export const STATIC_PORT = Number(process.env.STIL_STATIC_PORT ?? 5181);
 export const STATIC_ORIGIN = `http://127.0.0.1:${STATIC_PORT}`;
 /** The Blazor demo's http launch profile (samples/Stil.Demo/Properties/launchSettings.json). */
 export const DEMO_URL = 'http://localhost:5100';
+/** The documentation site's http launch profile (docs/Stil.Docs/Properties/launchSettings.json). */
+export const DOCS_URL = 'http://localhost:5193';
 
 export type Mode = 'light' | 'dark';
 export const MODES: Mode[] = ['light', 'dark'];

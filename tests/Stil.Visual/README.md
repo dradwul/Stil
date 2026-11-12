@@ -1,14 +1,15 @@
 # Stil visual and accessibility tests
 
-Playwright tests for the plain-HTML samples (`samples/Stil.Html`) and the
-Blazor demo (`samples/Stil.Demo`):
+Playwright tests for the plain-HTML samples (`samples/Stil.Html`), the
+Blazor demo (`samples/Stil.Demo`) and the documentation site
+(`docs/Stil.Docs`):
 
 - **Visual regression** (`@visual`): a screenshot of every component section of
   the showcase and the demo gallery, the admin and orders pages, and open
   dialogs, menus and listboxes, in light and dark mode, on a desktop and a
   phone viewport. A few sections are also checked in other brand palettes.
 - **Accessibility** (`@a11y`): axe-core checks (WCAG 2.1 A and AA) of the same
-  pages in light and dark mode.
+  pages, and of every page of the documentation site, in light and dark mode.
 
 ## Run
 
@@ -24,8 +25,11 @@ npm run test:visual   # only the screenshots
 npm run report        # open the HTML report of the last run
 ```
 
-Playwright starts both servers itself: `static-server.mjs` for the HTML
-samples (port 5181) and `dotnet run` for the demo (port 5100). If one is
+Build the solution first (`dotnet build Stil.sln` in the repository root):
+Playwright starts the servers itself, all at once, and runs the .NET ones
+without building, since two builds of the same projects at the same time
+collide. The servers are `static-server.mjs` for the HTML samples (port
+5181), the demo (port 5100) and the documentation site (port 5193). If one is
 already running, it is reused. The demo runs with invariant globalization, so
 numbers and dates look the same on every machine.
 
