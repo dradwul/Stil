@@ -1,0 +1,106 @@
+@page "/blocks/pages-as-data"
+@using Stil.Docs.Examples.Blocks
+
+<DocsHeader Title="Pages as data" Eyebrow="Website">
+    <Lead>A page as JSON: a list of blocks with their settings, read from a database or a file and rendered with StilPage.</Lead>
+</DocsHeader>
+
+<p>
+    The <a href="blocks/sections">page blocks</a> can be written in Razor, or kept as data, so a page can change
+    without a new build: in a database, a file in the repository, or an editor of your own. The model is in the
+    Stil package (<code>Stil.Blazor.Blocks</code>) and has no server parts, so it works in static server rendering,
+    on the server and in WebAssembly.
+</p>
+
+<h2 id="example">A page from JSON</h2>
+<DocExample Type="typeof(PageFromJson)" ShowCode>
+    <p>
+        <code>StilPageJson.Deserialize</code> reads a page and <code>&lt;StilPage&gt;</code> renders its blocks with
+        the same components as in Razor, so the result is the same HTML. A page has a <code>path</code>, a
+        <code>title</code>, a <code>description</code> and a <code>language</code> for your routing and the page's
+        head, and its <code>blocks</code> in order. A block has a <code>type</code>, its <code>settings</code> and
+        its <code>items</code>, such as the features of a feature grid or the buttons of a hero.
+    </p>
+</DocExample>
+
+<h2 id="format">The format</h2>
+<p>
+    Names are in camelCase, a choice is in kebab case (<code>"tone": "muted"</code>), a date is
+    <code>yyyy-MM-dd</code>, a picture is <code>{ "src", "alt" }</code>, and long text separates paragraphs with a
+    blank line. Settings that are not set are left out. The file has a <code>version</code>: a page written by a
+    newer version of Stil is refused with a <code>JsonException</code> rather than read wrongly. Comments and
+    trailing commas are allowed, for files written by hand. The serialization is source-generated, so it also works
+    in a trimmed WebAssembly app.
+</p>
+<CodeBlock Language="csharp" Code="@Store" />
+
+<h2 id="types">Block types</h2>
+<p>
+    <code>StilBlockCatalog.Default</code> describes the built-in types: each setting's name, label, kind (text,
+    long text, yes/no, a choice, an icon, a picture, a link, a list or a date), whether it is required, and a line
+    of help. An editor can be built from that, and the next part of Stil does. Every section block has an anchor
+    (<code>id</code>), a background (<code>tone</code>), an eyebrow, a title, a lead and <code>centered</code>.
+</p>
+<div class="stil-table-responsive">
+    <table class="stil-table stil-table-compact">
+        <thead>
+            <tr><th scope="col">Type</th><th scope="col">Block</th><th scope="col">Items</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var definition in StilBlockCatalog.Default.All)
+            {
+                <tr>
+                    <td><code>@definition.Type</code></td>
+                    <td>@definition.Title: @definition.Description</td>
+                    <td>@(definition.Items is { } items ? $"{items.Title} ({items.Type})" : "")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<p>
+    The <code>contact</code> block shows a contact form when it has a <code>formAction</code>: a plain form that
+    posts <code>name</code>, <code>email</code> and <code>message</code>, with an antiforgery token, to an endpoint
+    of your site. A type that is not in the catalog renders nothing, so an old page still renders when a type is
+    removed.
+</p>
+
+<h2 id="your-own">Your own block types</h2>
+<p>
+    Add a type to a <code>StilBlockCatalog</code> with the component that renders it, and register the catalog as a
+    service. The component gets the block as its <code>Data</code> parameter.
+</p>
+<CodeBlock Language="csharp" Code="@Custom" />
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilPage)" />
+<ApiTable Type="typeof(StilBlockView)" />
+
+@code {
+    private const string Store = """
+        // Read a page, from wherever you keep it.
+        StilPageData page = StilPageJson.Deserialize(await File.ReadAllTextAsync("pages/home.json"));
+
+        // Or build one in code, and save it.
+        var home = new StilPageData { Path = "/", Title = "Plan the week" }
+            .Add(StilBlockData.Create("hero").Set("title", "Plan the week in ten minutes")
+                .Add(StilBlockData.Create("action").Set("text", "Start free").Set("href", "signup")));
+        await File.WriteAllTextAsync("pages/home.json", StilPageJson.Serialize(home));
+        """;
+
+    private const string Custom = """
+        // Program.cs
+        builder.Services.AddSingleton(new StilBlockCatalog()
+            .Add(new StilBlockDefinition("quote", "Quote", [new("text", "Quote", StilBlockSettingKind.LongText)])
+            {
+                Component = typeof(QuoteBlock),
+            }));
+
+        // QuoteBlock.razor
+        <blockquote>@Data.GetText("text")</blockquote>
+
+        @code {
+            [Parameter] public StilBlockData Data { get; set; } = new();
+        }
+        """;
+}

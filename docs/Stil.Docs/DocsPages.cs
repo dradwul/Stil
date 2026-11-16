@@ -67,6 +67,7 @@ public static class DocsPages
             new("Pricing, testimonials and FAQ", "blocks/selling"),
             new("Header, footer and contact", "blocks/frame"),
             new("Blog", "blocks/blog"),
+            new("Pages as data", "blocks/pages-as-data"),
         ]),
         new("Boards", StilIcons.Menu,
         [

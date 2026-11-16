@@ -1,0 +1,38 @@
+<StilPage Page="_page" />
+
+@code {
+    // In a site, this comes from a database or a file.
+    private const string Json = """
+        {
+          "version": 1,
+          "path": "/",
+          "title": "Plan the week",
+          "blocks": [
+            {
+              "type": "features",
+              "settings": { "title": "Everything in one plan", "centered": true, "cards": true },
+              "items": [
+                { "type": "feature", "settings": { "icon": "folder", "title": "Plans", "text": "Drag tasks onto the days." } },
+                { "type": "feature", "settings": { "icon": "bell", "title": "Teams", "text": "See who has time this week." } },
+                { "type": "feature", "settings": { "icon": "success", "title": "Reports", "text": "What got done, every Friday." } }
+              ]
+            },
+            {
+              "type": "stats",
+              "settings": { "tone": "muted", "title": "Teams plan better", "centered": true },
+              "items": [
+                { "type": "stat", "settings": { "value": "4,800", "label": "Teams planning their week" } },
+                { "type": "stat", "settings": { "value": "87%", "label": "Fewer double bookings" } }
+              ]
+            },
+            {
+              "type": "cta",
+              "settings": { "title": "Plan next week in ten minutes", "text": "Free for teams of up to five.", "brand": true },
+              "items": [ { "type": "action", "settings": { "text": "Start free", "href": "#start" } } ]
+            }
+          ]
+        }
+        """;
+
+    private readonly StilPageData _page = StilPageJson.Deserialize(Json);
+}
