@@ -336,7 +336,10 @@
     "Phone": "Telefon",
     "Address": "Adress",
     "Hours": "Öppettider",
-    "Map": "Visa på karta"
+    "Map": "Visa på karta",
+    "Name": "Namn",
+    "Message": "Meddelande",
+    "Send": "Skicka"
   },
   "Post": {
     "Tags": "Taggar"

@@ -39,10 +39,106 @@ Stil.Blazor.Blocks.StilArticle.TagsLabel.get -> string?
 Stil.Blazor.Blocks.StilArticle.TagsLabel.set -> void
 Stil.Blazor.Blocks.StilArticle.Title.get -> string?
 Stil.Blazor.Blocks.StilArticle.Title.set -> void
+Stil.Blazor.Blocks.StilBlockCatalog
+Stil.Blazor.Blocks.StilBlockCatalog.Add(Stil.Blazor.Blocks.StilBlockDefinition! definition) -> Stil.Blazor.Blocks.StilBlockCatalog!
+Stil.Blazor.Blocks.StilBlockCatalog.All.get -> System.Collections.Generic.IReadOnlyCollection<Stil.Blazor.Blocks.StilBlockDefinition!>!
+Stil.Blazor.Blocks.StilBlockCatalog.Find(string! type) -> Stil.Blazor.Blocks.StilBlockDefinition?
+Stil.Blazor.Blocks.StilBlockCatalog.StilBlockCatalog() -> void
+Stil.Blazor.Blocks.StilBlockData
+Stil.Blazor.Blocks.StilBlockData.Add(Stil.Blazor.Blocks.StilBlockData! item) -> Stil.Blazor.Blocks.StilBlockData!
+Stil.Blazor.Blocks.StilBlockData.GetBool(string! name) -> bool
+Stil.Blazor.Blocks.StilBlockData.GetChoice<TEnum>(string! name, TEnum fallback) -> TEnum
+Stil.Blazor.Blocks.StilBlockData.GetDate(string! name) -> System.DateTime?
+Stil.Blazor.Blocks.StilBlockData.GetImage(string! name) -> Stil.Blazor.Blocks.StilBlockImage?
+Stil.Blazor.Blocks.StilBlockData.GetList(string! name) -> System.Collections.Generic.IReadOnlyList<string!>!
+Stil.Blazor.Blocks.StilBlockData.GetNumber(string! name) -> double?
+Stil.Blazor.Blocks.StilBlockData.GetText(string! name) -> string?
+Stil.Blazor.Blocks.StilBlockData.Items.get -> System.Collections.Generic.List<Stil.Blazor.Blocks.StilBlockData!>!
+Stil.Blazor.Blocks.StilBlockData.Items.set -> void
+Stil.Blazor.Blocks.StilBlockData.Set(string! name, object? value) -> Stil.Blazor.Blocks.StilBlockData!
+Stil.Blazor.Blocks.StilBlockData.Settings.get -> System.Text.Json.Nodes.JsonObject!
+Stil.Blazor.Blocks.StilBlockData.Settings.set -> void
+Stil.Blazor.Blocks.StilBlockData.StilBlockData() -> void
+Stil.Blazor.Blocks.StilBlockData.Type.get -> string!
+Stil.Blazor.Blocks.StilBlockData.Type.set -> void
+Stil.Blazor.Blocks.StilBlockDefinition
+Stil.Blazor.Blocks.StilBlockDefinition.<Clone>$() -> Stil.Blazor.Blocks.StilBlockDefinition!
+Stil.Blazor.Blocks.StilBlockDefinition.Component.get -> System.Type?
+Stil.Blazor.Blocks.StilBlockDefinition.Component.init -> void
+Stil.Blazor.Blocks.StilBlockDefinition.Deconstruct(out string! Type, out string! Title, out System.Collections.Generic.IReadOnlyList<Stil.Blazor.Blocks.StilBlockSetting!>! Settings) -> void
+Stil.Blazor.Blocks.StilBlockDefinition.Description.get -> string?
+Stil.Blazor.Blocks.StilBlockDefinition.Description.init -> void
+Stil.Blazor.Blocks.StilBlockDefinition.Equals(Stil.Blazor.Blocks.StilBlockDefinition? other) -> bool
+Stil.Blazor.Blocks.StilBlockDefinition.Items.get -> Stil.Blazor.Blocks.StilBlockItemDefinition?
+Stil.Blazor.Blocks.StilBlockDefinition.Items.init -> void
+Stil.Blazor.Blocks.StilBlockDefinition.Setting(string! name) -> Stil.Blazor.Blocks.StilBlockSetting?
+Stil.Blazor.Blocks.StilBlockDefinition.Settings.get -> System.Collections.Generic.IReadOnlyList<Stil.Blazor.Blocks.StilBlockSetting!>!
+Stil.Blazor.Blocks.StilBlockDefinition.Settings.init -> void
+Stil.Blazor.Blocks.StilBlockDefinition.StilBlockDefinition(string! Type, string! Title, System.Collections.Generic.IReadOnlyList<Stil.Blazor.Blocks.StilBlockSetting!>! Settings) -> void
+Stil.Blazor.Blocks.StilBlockDefinition.Title.get -> string!
+Stil.Blazor.Blocks.StilBlockDefinition.Title.init -> void
+Stil.Blazor.Blocks.StilBlockDefinition.Type.get -> string!
+Stil.Blazor.Blocks.StilBlockDefinition.Type.init -> void
+Stil.Blazor.Blocks.StilBlockImage
+Stil.Blazor.Blocks.StilBlockImage.<Clone>$() -> Stil.Blazor.Blocks.StilBlockImage!
+Stil.Blazor.Blocks.StilBlockImage.Alt.get -> string!
+Stil.Blazor.Blocks.StilBlockImage.Alt.init -> void
+Stil.Blazor.Blocks.StilBlockImage.Deconstruct(out string! Src, out string! Alt) -> void
+Stil.Blazor.Blocks.StilBlockImage.Equals(Stil.Blazor.Blocks.StilBlockImage? other) -> bool
+Stil.Blazor.Blocks.StilBlockImage.Src.get -> string!
+Stil.Blazor.Blocks.StilBlockImage.Src.init -> void
+Stil.Blazor.Blocks.StilBlockImage.StilBlockImage(string! Src, string! Alt = "") -> void
+Stil.Blazor.Blocks.StilBlockItemDefinition
+Stil.Blazor.Blocks.StilBlockItemDefinition.<Clone>$() -> Stil.Blazor.Blocks.StilBlockItemDefinition!
+Stil.Blazor.Blocks.StilBlockItemDefinition.Deconstruct(out string! Type, out string! Title, out System.Collections.Generic.IReadOnlyList<Stil.Blazor.Blocks.StilBlockSetting!>! Settings) -> void
+Stil.Blazor.Blocks.StilBlockItemDefinition.Equals(Stil.Blazor.Blocks.StilBlockItemDefinition? other) -> bool
+Stil.Blazor.Blocks.StilBlockItemDefinition.Max.get -> int?
+Stil.Blazor.Blocks.StilBlockItemDefinition.Max.init -> void
+Stil.Blazor.Blocks.StilBlockItemDefinition.Settings.get -> System.Collections.Generic.IReadOnlyList<Stil.Blazor.Blocks.StilBlockSetting!>!
+Stil.Blazor.Blocks.StilBlockItemDefinition.Settings.init -> void
+Stil.Blazor.Blocks.StilBlockItemDefinition.StilBlockItemDefinition(string! Type, string! Title, System.Collections.Generic.IReadOnlyList<Stil.Blazor.Blocks.StilBlockSetting!>! Settings) -> void
+Stil.Blazor.Blocks.StilBlockItemDefinition.Title.get -> string!
+Stil.Blazor.Blocks.StilBlockItemDefinition.Title.init -> void
+Stil.Blazor.Blocks.StilBlockItemDefinition.Type.get -> string!
+Stil.Blazor.Blocks.StilBlockItemDefinition.Type.init -> void
+Stil.Blazor.Blocks.StilBlockSetting
+Stil.Blazor.Blocks.StilBlockSetting.<Clone>$() -> Stil.Blazor.Blocks.StilBlockSetting!
+Stil.Blazor.Blocks.StilBlockSetting.Choices.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Stil.Blazor.Blocks.StilBlockSetting.Choices.init -> void
+Stil.Blazor.Blocks.StilBlockSetting.Deconstruct(out string! Name, out string! Label, out Stil.Blazor.Blocks.StilBlockSettingKind Kind) -> void
+Stil.Blazor.Blocks.StilBlockSetting.Equals(Stil.Blazor.Blocks.StilBlockSetting? other) -> bool
+Stil.Blazor.Blocks.StilBlockSetting.Help.get -> string?
+Stil.Blazor.Blocks.StilBlockSetting.Help.init -> void
+Stil.Blazor.Blocks.StilBlockSetting.Kind.get -> Stil.Blazor.Blocks.StilBlockSettingKind
+Stil.Blazor.Blocks.StilBlockSetting.Kind.init -> void
+Stil.Blazor.Blocks.StilBlockSetting.Label.get -> string!
+Stil.Blazor.Blocks.StilBlockSetting.Label.init -> void
+Stil.Blazor.Blocks.StilBlockSetting.Name.get -> string!
+Stil.Blazor.Blocks.StilBlockSetting.Name.init -> void
+Stil.Blazor.Blocks.StilBlockSetting.Required.get -> bool
+Stil.Blazor.Blocks.StilBlockSetting.Required.init -> void
+Stil.Blazor.Blocks.StilBlockSetting.StilBlockSetting(string! Name, string! Label, Stil.Blazor.Blocks.StilBlockSettingKind Kind = Stil.Blazor.Blocks.StilBlockSettingKind.Text) -> void
+Stil.Blazor.Blocks.StilBlockSettingKind
+Stil.Blazor.Blocks.StilBlockSettingKind.Boolean = 2 -> Stil.Blazor.Blocks.StilBlockSettingKind
+Stil.Blazor.Blocks.StilBlockSettingKind.Choice = 4 -> Stil.Blazor.Blocks.StilBlockSettingKind
+Stil.Blazor.Blocks.StilBlockSettingKind.Date = 9 -> Stil.Blazor.Blocks.StilBlockSettingKind
+Stil.Blazor.Blocks.StilBlockSettingKind.Icon = 5 -> Stil.Blazor.Blocks.StilBlockSettingKind
+Stil.Blazor.Blocks.StilBlockSettingKind.Image = 6 -> Stil.Blazor.Blocks.StilBlockSettingKind
+Stil.Blazor.Blocks.StilBlockSettingKind.List = 8 -> Stil.Blazor.Blocks.StilBlockSettingKind
+Stil.Blazor.Blocks.StilBlockSettingKind.LongText = 1 -> Stil.Blazor.Blocks.StilBlockSettingKind
+Stil.Blazor.Blocks.StilBlockSettingKind.Number = 3 -> Stil.Blazor.Blocks.StilBlockSettingKind
+Stil.Blazor.Blocks.StilBlockSettingKind.Text = 0 -> Stil.Blazor.Blocks.StilBlockSettingKind
+Stil.Blazor.Blocks.StilBlockSettingKind.Url = 7 -> Stil.Blazor.Blocks.StilBlockSettingKind
 Stil.Blazor.Blocks.StilBlockTone
 Stil.Blazor.Blocks.StilBlockTone.Brand = 2 -> Stil.Blazor.Blocks.StilBlockTone
 Stil.Blazor.Blocks.StilBlockTone.Default = 0 -> Stil.Blazor.Blocks.StilBlockTone
 Stil.Blazor.Blocks.StilBlockTone.Muted = 1 -> Stil.Blazor.Blocks.StilBlockTone
+Stil.Blazor.Blocks.StilBlockView
+Stil.Blazor.Blocks.StilBlockView.Catalog.get -> Stil.Blazor.Blocks.StilBlockCatalog?
+Stil.Blazor.Blocks.StilBlockView.Catalog.set -> void
+Stil.Blazor.Blocks.StilBlockView.Data.get -> Stil.Blazor.Blocks.StilBlockData!
+Stil.Blazor.Blocks.StilBlockView.Data.set -> void
+Stil.Blazor.Blocks.StilBlockView.StilBlockView() -> void
 Stil.Blazor.Blocks.StilCallToAction
 Stil.Blazor.Blocks.StilCallToAction.Actions.get -> Microsoft.AspNetCore.Components.RenderFragment?
 Stil.Blazor.Blocks.StilCallToAction.Actions.set -> void
@@ -221,6 +317,28 @@ Stil.Blazor.Blocks.StilMegaMenuLink.Text.get -> string?
 Stil.Blazor.Blocks.StilMegaMenuLink.Text.set -> void
 Stil.Blazor.Blocks.StilMegaMenuLink.Title.get -> string?
 Stil.Blazor.Blocks.StilMegaMenuLink.Title.set -> void
+Stil.Blazor.Blocks.StilPage
+Stil.Blazor.Blocks.StilPage.Catalog.get -> Stil.Blazor.Blocks.StilBlockCatalog?
+Stil.Blazor.Blocks.StilPage.Catalog.set -> void
+Stil.Blazor.Blocks.StilPage.Page.get -> Stil.Blazor.Blocks.StilPageData!
+Stil.Blazor.Blocks.StilPage.Page.set -> void
+Stil.Blazor.Blocks.StilPage.StilPage() -> void
+Stil.Blazor.Blocks.StilPageData
+Stil.Blazor.Blocks.StilPageData.Add(Stil.Blazor.Blocks.StilBlockData! block) -> Stil.Blazor.Blocks.StilPageData!
+Stil.Blazor.Blocks.StilPageData.Blocks.get -> System.Collections.Generic.List<Stil.Blazor.Blocks.StilBlockData!>!
+Stil.Blazor.Blocks.StilPageData.Blocks.set -> void
+Stil.Blazor.Blocks.StilPageData.Description.get -> string?
+Stil.Blazor.Blocks.StilPageData.Description.set -> void
+Stil.Blazor.Blocks.StilPageData.Language.get -> string?
+Stil.Blazor.Blocks.StilPageData.Language.set -> void
+Stil.Blazor.Blocks.StilPageData.Path.get -> string!
+Stil.Blazor.Blocks.StilPageData.Path.set -> void
+Stil.Blazor.Blocks.StilPageData.StilPageData() -> void
+Stil.Blazor.Blocks.StilPageData.Title.get -> string?
+Stil.Blazor.Blocks.StilPageData.Title.set -> void
+Stil.Blazor.Blocks.StilPageData.Version.get -> int
+Stil.Blazor.Blocks.StilPageData.Version.set -> void
+Stil.Blazor.Blocks.StilPageJson
 Stil.Blazor.Blocks.StilPlan
 Stil.Blazor.Blocks.StilPlan.ActionHref.get -> string?
 Stil.Blazor.Blocks.StilPlan.ActionHref.set -> void
@@ -379,10 +497,39 @@ Stil.Blazor.Blocks.StilTestimonials.ChildContent.set -> void
 Stil.Blazor.Blocks.StilTestimonials.StilTestimonials() -> void
 Stil.Blazor.Components.StilHead.Blocks.get -> bool
 Stil.Blazor.Components.StilHead.Blocks.set -> void
+const Stil.Blazor.Blocks.StilPageJson.CurrentVersion = 1 -> int
 const Stil.Blazor.Components.StilIcons.Mail = "mail" -> string!
 const Stil.Blazor.Components.StilIcons.MapPin = "map-pin" -> string!
 const Stil.Blazor.Components.StilIcons.Phone = "phone" -> string!
+override Stil.Blazor.Blocks.StilBlockDefinition.Equals(object? obj) -> bool
+override Stil.Blazor.Blocks.StilBlockDefinition.GetHashCode() -> int
+override Stil.Blazor.Blocks.StilBlockDefinition.ToString() -> string!
+override Stil.Blazor.Blocks.StilBlockImage.Equals(object? obj) -> bool
+override Stil.Blazor.Blocks.StilBlockImage.GetHashCode() -> int
+override Stil.Blazor.Blocks.StilBlockImage.ToString() -> string!
+override Stil.Blazor.Blocks.StilBlockItemDefinition.Equals(object? obj) -> bool
+override Stil.Blazor.Blocks.StilBlockItemDefinition.GetHashCode() -> int
+override Stil.Blazor.Blocks.StilBlockItemDefinition.ToString() -> string!
+override Stil.Blazor.Blocks.StilBlockSetting.Equals(object? obj) -> bool
+override Stil.Blazor.Blocks.StilBlockSetting.GetHashCode() -> int
+override Stil.Blazor.Blocks.StilBlockSetting.ToString() -> string!
+override Stil.Blazor.Blocks.StilBlockView.OnParametersSet() -> void
+static Stil.Blazor.Blocks.StilBlockCatalog.BuiltIn.get -> System.Collections.Generic.IReadOnlyList<Stil.Blazor.Blocks.StilBlockDefinition!>!
+static Stil.Blazor.Blocks.StilBlockCatalog.Default.get -> Stil.Blazor.Blocks.StilBlockCatalog!
+static Stil.Blazor.Blocks.StilBlockData.ChoiceName(System.Enum! choice) -> string!
+static Stil.Blazor.Blocks.StilBlockData.Create(string! type) -> Stil.Blazor.Blocks.StilBlockData!
+static Stil.Blazor.Blocks.StilBlockDefinition.operator !=(Stil.Blazor.Blocks.StilBlockDefinition? left, Stil.Blazor.Blocks.StilBlockDefinition? right) -> bool
+static Stil.Blazor.Blocks.StilBlockDefinition.operator ==(Stil.Blazor.Blocks.StilBlockDefinition? left, Stil.Blazor.Blocks.StilBlockDefinition? right) -> bool
+static Stil.Blazor.Blocks.StilBlockImage.operator !=(Stil.Blazor.Blocks.StilBlockImage? left, Stil.Blazor.Blocks.StilBlockImage? right) -> bool
+static Stil.Blazor.Blocks.StilBlockImage.operator ==(Stil.Blazor.Blocks.StilBlockImage? left, Stil.Blazor.Blocks.StilBlockImage? right) -> bool
+static Stil.Blazor.Blocks.StilBlockItemDefinition.operator !=(Stil.Blazor.Blocks.StilBlockItemDefinition? left, Stil.Blazor.Blocks.StilBlockItemDefinition? right) -> bool
+static Stil.Blazor.Blocks.StilBlockItemDefinition.operator ==(Stil.Blazor.Blocks.StilBlockItemDefinition? left, Stil.Blazor.Blocks.StilBlockItemDefinition? right) -> bool
+static Stil.Blazor.Blocks.StilBlockSetting.operator !=(Stil.Blazor.Blocks.StilBlockSetting? left, Stil.Blazor.Blocks.StilBlockSetting? right) -> bool
+static Stil.Blazor.Blocks.StilBlockSetting.operator ==(Stil.Blazor.Blocks.StilBlockSetting? left, Stil.Blazor.Blocks.StilBlockSetting? right) -> bool
+static Stil.Blazor.Blocks.StilPageJson.Deserialize(string! json) -> Stil.Blazor.Blocks.StilPageData!
+static Stil.Blazor.Blocks.StilPageJson.Serialize(Stil.Blazor.Blocks.StilPageData! page, bool indented = true) -> string!
 ~override Stil.Blazor.Blocks.StilArticle.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Blazor.Blocks.StilBlockView.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilCallToAction.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilContact.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilFaq.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
@@ -396,6 +543,7 @@ const Stil.Blazor.Components.StilIcons.Phone = "phone" -> string!
 ~override Stil.Blazor.Blocks.StilMegaMenu.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilMegaMenuColumn.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilMegaMenuLink.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Blazor.Blocks.StilPage.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilPlan.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilPostCard.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilPostList.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void

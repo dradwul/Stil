@@ -1,0 +1,223 @@
+@inherits StilComponentBase
+@inject IServiceProvider Services
+
+@* One block of a page, rendered from its data: the built-in types with Stil's page blocks, your
+   own types with the component in their definition. An unknown type renders nothing. *@
+@switch (Data.Type)
+{
+    case "hero":
+        <StilHero id="@Anchor" Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")"
+                  Tone="ToneOf(Data)" Actions="@(Data.Items.Count > 0 ? ActionsOf(Data) : null)"
+                  Media="@(Data.GetImage("image") is { } image ? Picture(image) : null)" />
+        break;
+
+    case "features":
+        <StilSection id="@Anchor" Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")"
+                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)">
+            <StilFeatureGrid Cards="@Data.GetBool("cards")">
+                @foreach (var item in Data.Items)
+                {
+                    <StilFeature Icon="@item.GetText("icon")" Title="@item.GetText("title")" Text="@item.GetText("text")" />
+                }
+            </StilFeatureGrid>
+        </StilSection>
+        break;
+
+    case "logos":
+        <StilSection id="@Anchor" Tone="ToneOf(Data)" aria-label="@Data.GetText("title")">
+            <StilLogoCloud Title="@Data.GetText("title")" Muted="@Data.GetBool("muted")">
+                @foreach (var item in Data.Items)
+                {
+                    @if (item.GetImage("image") is { } logo)
+                    {
+                        <StilLogo Src="@logo.Src" Alt="@(string.IsNullOrEmpty(logo.Alt) ? item.GetText("name") : logo.Alt)" Href="@item.GetText("href")" />
+                    }
+                    else
+                    {
+                        <StilLogo Href="@item.GetText("href")">@item.GetText("name")</StilLogo>
+                    }
+                }
+            </StilLogoCloud>
+        </StilSection>
+        break;
+
+    case "stats":
+        <StilSection id="@Anchor" Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")"
+                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)">
+            <StilStatsBand>
+                @foreach (var item in Data.Items)
+                {
+                    <StilStatsItem Label="@item.GetText("label")" Value="@item.GetText("value")" />
+                }
+            </StilStatsBand>
+        </StilSection>
+        break;
+
+    case "testimonials":
+        <StilSection id="@Anchor" Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")"
+                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)">
+            @foreach (var item in Data.Items.Where(item => item.GetBool("featured")))
+            {
+                <StilTestimonial Featured Quote="@item.GetText("quote")" Name="@item.GetText("name")" Role="@item.GetText("role")"
+                                 Photo="@item.GetText("photo")" class="stil-mb-6" />
+            }
+            @if (Data.Items.Any(item => !item.GetBool("featured")))
+            {
+                <StilTestimonials>
+                    @foreach (var item in Data.Items.Where(item => !item.GetBool("featured")))
+                    {
+                        <StilTestimonial Quote="@item.GetText("quote")" Name="@item.GetText("name")" Role="@item.GetText("role")" Photo="@item.GetText("photo")" />
+                    }
+                </StilTestimonials>
+            }
+        </StilSection>
+        break;
+
+    case "pricing":
+        <StilSection id="@Anchor" Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")"
+                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)">
+            <StilPricing PeriodSwitch="@Data.GetBool("periodSwitch")" YearlyNote="@Data.GetText("yearlyNote")">
+                @foreach (var item in Data.Items)
+                {
+                    <StilPlan Name="@item.GetText("name")" Price="@item.GetText("price")" Period="@item.GetText("period")"
+                              YearlyPrice="@item.GetText("yearlyPrice")" YearlyPeriod="@item.GetText("yearlyPeriod")"
+                              Text="@item.GetText("text")" Features="@NullIfEmpty(item.GetList("features"))" Featured="@item.GetBool("featured")"
+                              Badge="@item.GetText("badge")" ActionText="@item.GetText("actionText")" ActionHref="@item.GetText("actionHref")" />
+                }
+            </StilPricing>
+        </StilSection>
+        break;
+
+    case "faq":
+        <StilSection id="@Anchor" Tone="ToneOf(Data)" aria-label="@Data.GetText("title")">
+            <StilFaq Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")">
+                @foreach (var item in Data.Items)
+                {
+                    <StilAccordionItem Title="@item.GetText("question")">@Paragraphs(item.GetText("answer"))</StilAccordionItem>
+                }
+            </StilFaq>
+        </StilSection>
+        break;
+
+    case "team":
+        <StilSection id="@Anchor" Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")"
+                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)">
+            <StilTeam>
+                @foreach (var item in Data.Items)
+                {
+                    <StilTeamMember Name="@item.GetText("name")" Role="@item.GetText("role")" Text="@item.GetText("text")" Photo="@item.GetText("photo")" />
+                }
+            </StilTeam>
+        </StilSection>
+        break;
+
+    case "cta":
+        <StilSection id="@Anchor" Tone="ToneOf(Data)" aria-label="@Data.GetText("title")">
+            <StilCallToAction Title="@Data.GetText("title")" Text="@Data.GetText("text")" Centered="@Data.GetBool("centered")"
+                              Tone="@(Data.GetBool("brand") ? StilBlockTone.Brand : StilBlockTone.Default)"
+                              Actions="@(Data.Items.Count > 0 ? ActionsOf(Data) : null)" />
+        </StilSection>
+        break;
+
+    case "text":
+        <StilSection id="@Anchor" Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")"
+                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)">
+            <div class="stil-article-body stil-prose">@Paragraphs(Data.GetText("text"))</div>
+        </StilSection>
+        break;
+
+    case "contact":
+        <StilSection id="@Anchor" Tone="ToneOf(Data)" aria-label="@Data.GetText("title")">
+            <StilContact Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")"
+                         Email="@Data.GetText("email")" Phone="@Data.GetText("phone")" Address="@Data.GetText("address")"
+                         MapHref="@Data.GetText("mapHref")" Hours="@Data.GetText("hours")">
+                @if (Data.GetText("formAction") is { Length: > 0 } action)
+                {
+                    @* A plain form post to the site's own endpoint, which handles the message. *@
+                    <form method="post" action="@action">
+                        <AntiforgeryToken />
+                        <div class="stil-field">
+                            <label class="stil-label" for="@($"{_id}-name")">@Localize(null, "Contact.Name")</label>
+                            <input class="stil-input" id="@($"{_id}-name")" name="name" autocomplete="name" required />
+                        </div>
+                        <div class="stil-field">
+                            <label class="stil-label" for="@($"{_id}-email")">@Localize(null, "Contact.Email")</label>
+                            <input class="stil-input" id="@($"{_id}-email")" name="email" type="email" autocomplete="email" required />
+                        </div>
+                        <div class="stil-field">
+                            <label class="stil-label" for="@($"{_id}-message")">@Localize(null, "Contact.Message")</label>
+                            <textarea class="stil-input" id="@($"{_id}-message")" name="message" rows="5" required></textarea>
+                        </div>
+                        <div><button type="submit" class="stil-btn">@Localize(null, "Contact.Send")</button></div>
+                    </form>
+                }
+            </StilContact>
+        </StilSection>
+        break;
+
+    case "posts":
+        <StilSection id="@Anchor" Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")"
+                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)">
+            <StilPostList>
+                @foreach (var item in Data.Items)
+                {
+                    var image = item.GetImage("image");
+                    <StilPostCard Href="@item.GetText("href")" Title="@item.GetText("title")" Excerpt="@item.GetText("excerpt")"
+                                  Image="@image?.Src" ImageAlt="@(image?.Alt ?? "")" Author="@item.GetText("author")" Date="@item.GetDate("date")"
+                                  ReadingTime="@item.GetText("readingTime")" Featured="@item.GetBool("featured")"
+                                  Tags="@NullIfEmpty(item.GetList("tags").Select(tag => new StilLinkItem(tag)).ToList())" />
+                }
+            </StilPostList>
+        </StilSection>
+        break;
+
+    default:
+        @if (_catalog.Find(Data.Type)?.Component is { } component)
+        {
+            <DynamicComponent Type="component" Parameters="@(new Dictionary<string, object?> { ["Data"] = Data })" />
+        }
+        break;
+}
+
+@code {
+    private readonly string _id = StilIds.Next("block");
+
+    /// <summary>The block to render.</summary>
+    [Parameter, EditorRequired]
+    public StilBlockData Data { get; set; } = new();
+
+    /// <summary>The block types, for your own. The default is the StilBlockCatalog service, or StilBlockCatalog.Default.</summary>
+    [Parameter]
+    public StilBlockCatalog? Catalog { get; set; }
+
+    private StilBlockCatalog _catalog = StilBlockCatalog.Default;
+
+    protected override void OnParametersSet() =>
+        _catalog = Catalog ?? Services.GetService(typeof(StilBlockCatalog)) as StilBlockCatalog ?? StilBlockCatalog.Default;
+
+    private string? Anchor => Data.GetText("id") is { Length: > 0 } id ? id : null;
+
+    private static StilBlockTone ToneOf(StilBlockData block) => block.GetChoice("tone", StilBlockTone.Default);
+
+    private static IEnumerable<T>? NullIfEmpty<T>(IReadOnlyCollection<T> items) => items.Count == 0 ? null : items;
+
+    // The buttons of a hero or call to action: the first solid, unless it says otherwise.
+    private static RenderFragment ActionsOf(StilBlockData block) => @<text>
+        @foreach (var (item, index) in block.Items.Select((item, index) => (item, index)))
+        {
+            var outline = item.GetText("style") is { } style ? style == "outline" : index > 0;
+            <StilButton Href="@item.GetText("href")" Size="StilSize.Large"
+                        Appearance="@(outline ? StilButtonAppearance.Outline : StilButtonAppearance.Solid)">@item.GetText("text")</StilButton>
+        }
+    </text>;
+
+    private static RenderFragment Picture(StilBlockImage image) => @<img src="@image.Src" alt="@image.Alt" />;
+
+    // Long text: blank lines separate paragraphs.
+    private static RenderFragment Paragraphs(string? text) => @<text>
+        @foreach (var paragraph in (text ?? "").Replace("\r\n", "\n").Split("\n\n", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            <p>@paragraph</p>
+        }
+    </text>;
+}

@@ -1,0 +1,18 @@
+@inherits StilComponentBase
+
+@* A page rendered from its data (StilPageData): its blocks, from the top. Read the data with
+   StilPageJson from a database or a file; add your own block types to a StilBlockCatalog. *@
+@foreach (var block in Page.Blocks)
+{
+    <StilBlockView Data="block" Catalog="Catalog" />
+}
+
+@code {
+    /// <summary>The page to render.</summary>
+    [Parameter, EditorRequired]
+    public StilPageData Page { get; set; } = new();
+
+    /// <summary>The block types, for your own. The default is the StilBlockCatalog service, or StilBlockCatalog.Default.</summary>
+    [Parameter]
+    public StilBlockCatalog? Catalog { get; set; }
+}

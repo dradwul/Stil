@@ -336,7 +336,10 @@
     "Phone": "Puhelin",
     "Address": "Osoite",
     "Hours": "Aukioloajat",
-    "Map": "Näytä kartalla"
+    "Map": "Näytä kartalla",
+    "Name": "Nimi",
+    "Message": "Viesti",
+    "Send": "Lähetä"
   },
   "Post": {
     "Tags": "Tunnisteet"

@@ -639,6 +639,37 @@ stylesheet is opt-in: `<StilHead Blocks />` adds it.
 | `StilArticle` | `Eyebrow` (`EyebrowHref`), `Title`, `Lead`, `Author`, `AuthorPhoto`, `Date`, `ReadingTime`, `Image`, `ImageAlt`, `Caption`, `Contents` (the table of contents), `Tags`, `Footer`; the body goes in the child content, in `stil-prose`. |
 | `StilContact` | `Title`, `Lead`, `Email`, `Phone`, `Address` (one line each), `MapHref`, `Hours`, with translated labels; the form goes in the child content. |
 
+### Pages as data
+
+A page can also be data: a list of blocks with their settings, kept as JSON in
+a database or a file, so it changes without a new build. `StilPageJson` reads
+and writes it (versioned, source-generated, so it works trimmed in
+WebAssembly), and `StilPage` renders it with the blocks above.
+
+```razor
+<StilPage Page="@StilPageJson.Deserialize(json)" />
+```
+
+```json
+{
+  "version": 1,
+  "path": "/",
+  "blocks": [
+    { "type": "hero", "settings": { "title": "Plan the week" },
+      "items": [{ "type": "action", "settings": { "text": "Start free", "href": "signup" } }] },
+    { "type": "stats", "settings": { "tone": "muted" },
+      "items": [{ "type": "stat", "settings": { "value": "4,800", "label": "Teams" } }] }
+  ]
+}
+```
+
+| Type | Notes |
+| --- | --- |
+| `StilPageData`, `StilBlockData` | A page: `Path`, `Title`, `Description`, `Language`, `Blocks`. A block: `Type`, `Settings`, `Items`; `Set` to build one in code, `GetText`, `GetBool`, `GetNumber`, `GetDate`, `GetList`, `GetImage`, `GetChoice` to read one. |
+| `StilPageJson` | `Serialize` and `Deserialize`; a newer `version` is refused with a `JsonException`. |
+| `StilBlockCatalog`, `StilBlockDefinition` | The block types and their settings (`StilBlockSetting`: name, label, `StilBlockSettingKind`, `Required`, `Help`, `Choices`) and items. `Default` has the built-in types: `hero`, `features`, `logos`, `stats`, `testimonials`, `pricing`, `faq`, `team`, `cta`, `text`, `contact` (with a form when it has a `formAction`) and `posts`. Add your own type with a `Component` that takes `[Parameter] StilBlockData Data`, and register the catalog as a service. |
+| `StilPage`, `StilBlockView` | Render a page, or one block; `Catalog` overrides the service. An unknown type renders nothing. |
+
 ## Stil CSS and the matching components
 
 | Stil CSS | Blazor component |
