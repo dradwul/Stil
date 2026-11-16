@@ -15,7 +15,8 @@
     --stil-color-border: light-dark(#d0d7de, #343a42);
     --stil-color-border-strong: light-dark(#818b98, #6e7781);
     --stil-color-backdrop: #00000080;
-    --stil-font-family: "Lexend", sans-serif;
+    --stil-font-family: "Geologica", "Lexend", sans-serif;
+    --stil-font-variation-settings: "SHRP" 100;
     --stil-font-family-mono: ui-monospace, "Cascadia Code", Consolas, monospace;
     --stil-font-size-xs: .75rem;
     --stil-font-size-sm: .875rem;
@@ -163,6 +164,7 @@
 @layer stil.base {
   .stil-scope {
     font-family: var(--stil-font-family);
+    font-variation-settings: var(--stil-font-variation-settings);
     line-height: var(--stil-line-height);
     color: var(--stil-color-text);
     -webkit-text-size-adjust: 100%;

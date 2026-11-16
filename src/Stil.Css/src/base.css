@@ -2,6 +2,7 @@
 
 .stil-scope {
     font-family: var(--stil-font-family);
+    font-variation-settings: var(--stil-font-variation-settings);
     line-height: var(--stil-line-height);
     color: var(--stil-color-text);
     -webkit-text-size-adjust: 100%;

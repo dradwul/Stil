@@ -410,7 +410,7 @@ same form when you override them, or the override applies to both modes:
 | Brand and semantic colors | `--stil-color-primary`, `-secondary`, `-success`, `-danger`, `-warning`, `-info` |
 | Optional overrides | `--stil-color-{variant}-contrast` (text on the color), `--stil-color-accent` (links, focus), `--stil-calendar-load` (the busy tint of calendar days) |
 | Neutrals | `--stil-color-body-bg`, `-surface`, `-surface-muted`, `-text`, `-text-muted`, `-border`, `-border-strong` |
-| Typography | `--stil-font-family`, `--stil-font-family-mono`, `--stil-font-size-xs` … `-xl`, `--stil-font-weight-normal`, `-bold`, `--stil-line-height`, `--stil-letter-spacing`, `--stil-heading-margin` |
+| Typography | `--stil-font-family`, `--stil-font-family-mono`, `--stil-font-variation-settings`, `--stil-font-size-xs` … `-xl`, `--stil-font-weight-normal`, `-bold`, `--stil-line-height`, `--stil-letter-spacing`, `--stil-heading-margin` |
 | Spacing | `--stil-space-1` (0.25rem) … `--stil-space-7` (3rem) |
 | Layout | `--stil-container-max`, `--stil-sidebar-width`, `--stil-calendar-hour` (the height of an hour in `stil-week`) |
 | Shape | `--stil-radius-sm`, `-md`, `-lg`, `-pill`, `--stil-shadow-sm`, `-md`, `-lg`, `--stil-color-backdrop` |
@@ -420,10 +420,12 @@ same form when you override them, or the override applies to both modes:
 
 The defaults are in [`src/tokens.css`](src/tokens.css).
 
-Stil uses **Lexend** if your page loads it, for example with
-`<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&display=swap" rel="stylesheet">`.
-Otherwise it falls back to `sans-serif`. Lexend is free for any use (SIL Open
-Font License). The stylesheet never
+Stil uses **Geologica** at its sharpest if your page loads it, for example with
+`<link href="https://fonts.googleapis.com/css2?family=Geologica:wght,SHRP@400..600,100&display=swap" rel="stylesheet">`,
+then Lexend (the default before 1.1), and otherwise `sans-serif`. Both are free
+for any use (SIL Open Font License). The sharpness is Geologica's `SHRP` axis,
+set by `--stil-font-variation-settings: "SHRP" 100`; set it to `normal` for the
+rounder form. The stylesheet never
 fetches fonts on its own. For another font, load it and set the token:
 
 ```html
@@ -432,8 +434,8 @@ fetches fonts on its own. For another font, load it and set the token:
 ```
 
 [`samples/Stil.Html/fonts.html`](../../samples/Stil.Html/fonts.html) shows the
-same card in Lexend and the other fonts in `StilFonts`, which come from
-cdnfonts.com. Check their license there before you use one in a product: some
+same card in Geologica, Lexend and the other fonts in `StilFonts`, which come
+from cdnfonts.com. Check their license there before you use one in a product: some
 are free for personal use only, and the BR fonts are commercial.
 
 ### Accessibility check

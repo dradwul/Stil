@@ -28,7 +28,9 @@
     --stil-color-backdrop: rgb(0 0 0 / 0.5);
 
     /* Typography */
-    --stil-font-family: 'Lexend', sans-serif;
+    /* Geologica at its sharpest (SHRP 100); Lexend, the default before 1.1, when only it is loaded. */
+    --stil-font-family: 'Geologica', 'Lexend', sans-serif;
+    --stil-font-variation-settings: "SHRP" 100;
     --stil-font-family-mono: ui-monospace, 'Cascadia Code', Consolas, monospace;
     --stil-font-size-xs: 0.75rem;
     --stil-font-size-sm: 0.875rem;
