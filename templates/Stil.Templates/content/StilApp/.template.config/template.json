@@ -208,10 +208,11 @@
     },
     "Font": {
       "type": "parameter",
-      "description": "The app's font. Lexend, the default, is free (SIL Open Font License) and comes from Google Fonts; the others come from cdnfonts.com (check their license there; the BR fonts are commercial). It is set with AddStil() in Program.cs. --GoogleFont takes any Google font instead.",
+      "description": "The app's font. Geologica, the default (at its sharpest), and Lexend are free (SIL Open Font License) and come from Google Fonts; the others come from cdnfonts.com (check their license there; the BR fonts are commercial). It is set with AddStil() in Program.cs. --GoogleFont takes any Google font instead.",
       "datatype": "choice",
       "choices": [
-        { "choice": "lexend", "description": "Lexend, Stil's default (free, from Google Fonts)" },
+        { "choice": "geologica", "description": "Geologica, Stil's default, at its sharpest (free, from Google Fonts)" },
+        { "choice": "lexend", "description": "Lexend, the default before 1.1 (free, from Google Fonts)" },
         { "choice": "br-shape", "description": "BR Shape (commercial)" },
         { "choice": "br-cobane", "description": "BR Cobane (commercial)" },
         { "choice": "br-segma", "description": "BR Segma (commercial)" },
@@ -221,18 +222,17 @@
         { "choice": "tasa-explorer", "description": "TASA Explorer" },
         { "choice": "halcom", "description": "Halcom" },
         { "choice": "utara", "description": "Utara" },
-        { "choice": "geologica", "description": "Geologica" },
         { "choice": "blowreph", "description": "BLOWREPH (display font)" },
         { "choice": "taster", "description": "Taster (display font)" },
         { "choice": "warm-stories", "description": "WARM STORIES (display font)" },
         { "choice": "system", "description": "The operating system's font; nothing is downloaded" }
       ],
-      "defaultValue": "lexend"
+      "defaultValue": "geologica"
     },
     "FontValue": {
       "type": "generated",
       "generator": "switch",
-      "replaces": "StilFonts.Lexend",
+      "replaces": "StilFonts.Geologica",
       "parameters": {
         "evaluator": "C++",
         "datatype": "string",
@@ -246,11 +246,11 @@
           { "condition": "(Font == \"tasa-explorer\")", "value": "StilFonts.TasaExplorer" },
           { "condition": "(Font == \"halcom\")", "value": "StilFonts.Halcom" },
           { "condition": "(Font == \"utara\")", "value": "StilFonts.Utara" },
-          { "condition": "(Font == \"geologica\")", "value": "StilFonts.Geologica" },
+          { "condition": "(Font == \"lexend\")", "value": "StilFonts.Lexend" },
           { "condition": "(Font == \"blowreph\")", "value": "StilFonts.Blowreph" },
           { "condition": "(Font == \"taster\")", "value": "StilFonts.Taster" },
           { "condition": "(Font == \"warm-stories\")", "value": "StilFonts.WarmStories" },
-          { "condition": "", "value": "StilFonts.Lexend" }
+          { "condition": "", "value": "StilFonts.Geologica" }
         ]
       }
     },

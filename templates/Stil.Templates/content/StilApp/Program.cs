@@ -38,15 +38,15 @@ builder.Services.AddStil(options =>
     options.Theme.Tokens["--stil-radius-lg"] = "STIL_RADIUS_LG";
 #endif
 #if (HasGoogleFont)
-    // Any Google font: StilFont.Google("…"). Or one from cdnfonts.com: StilFonts.Geologica, StilFont.CdnFonts("…").
+    // Any Google font: StilFont.Google("…"). Or one from cdnfonts.com: StilFont.CdnFonts("…").
     options.Font = StilFont.Google("STIL_GOOGLE_FONT");
 #elif (HasWebFont)
-    // Another font: StilFonts.Lexend (the default, free under the SIL Open Font License), StilFont.Google("…"),
-    // or StilFont.CdnFonts("…") from cdnfonts.com (check the license there).
-    options.Font = StilFonts.Lexend;
+    // Another font: one of StilFonts (Geologica, the default, and Lexend are free under the SIL Open Font
+    // License), StilFont.Google("…"), or StilFont.CdnFonts("…") from cdnfonts.com (check the license there).
+    options.Font = StilFonts.Geologica;
 #else
-    // A web font, for example StilFonts.Lexend (free), StilFont.Google("…") or StilFont.CdnFonts("…"):
-    // options.Font = StilFonts.Geologica;
+    // A web font, for example one of StilFonts, StilFont.Google("…") or StilFont.CdnFonts("…"):
+    // options.Font = StilFonts.Lexend;
 #endif
 });
 // The app's own texts from Locales/*.json, through IStringLocalizer<T>.

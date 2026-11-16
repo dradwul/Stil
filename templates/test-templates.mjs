@@ -42,7 +42,7 @@ const cases = [
         name: 'Contoso.Default',
         options: [],
         expect: {
-            'Program.cs': ['options.Font = StilFonts.Lexend;', 'AddInteractiveServerComponents', 'AddSingleton<IOrderService, InMemoryOrderService>()'],
+            'Program.cs': ['options.Font = StilFonts.Geologica;', 'AddInteractiveServerComponents', 'AddSingleton<IOrderService, InMemoryOrderService>()'],
             'Components/App.razor': ['<StilHead />', '<Routes @rendermode="InteractiveServer" />'],
             'Components/Layout/MainLayout.razor': ['StilThemeMode.Auto', '<StilDialogHost />', '<StilToastHost />', 'CollapseBelow'],
             'Components/Pages/Home.razor': ['<StilDataGrid', '<StilStatCard', 'Filterable'],
@@ -74,7 +74,7 @@ const cases = [
             'Components/Pages/NewOrder.razor': ['[SupplyParameterFromForm]', 'FormName="new-order"'],
         },
         forbidden: {
-            'Program.cs': ['Interactive', '= StilFonts.Lexend'],
+            'Program.cs': ['Interactive', '= StilFonts.Geologica'],
             'Components/App.razor': ['InteractiveServer'],
             'Components/Layout/MainLayout.razor': ['StilDialogHost', 'blazor-error-ui'],
             'wwwroot/app.css': ['blazor-error-ui'],
@@ -258,7 +258,7 @@ cases.push(
         name: 'Site.Default',
         options: [],
         expect: {
-            'Program.cs': ['AddRazorComponents();', 'options.Font = StilFonts.Lexend;', 'AddSingleton<IBlogService, SampleBlogService>()'],
+            'Program.cs': ['AddRazorComponents();', 'options.Font = StilFonts.Geologica;', 'AddSingleton<IBlogService, SampleBlogService>()'],
             'Components/App.razor': ['<StilHead Blocks />', '<Routes />'],
             'Components/Layout/MainLayout.razor': ['<StilMegaMenu', '<StilFooter', 'BrandText="Site.Default"', 'StilThemeMode.Auto'],
             'Components/Pages/Home.razor': ['<StilHero', '<StilFeatureGrid', '<StilStatsBand', '<StilTestimonials', '<StilCallToAction'],
@@ -277,9 +277,9 @@ cases.push(
     {
         template: 'stil-site',
         name: 'Site.Themed',
-        options: ['--Primary', '#e8590c', '--Radius', 'round', '--Font', 'geologica', '--ColorMode', 'light'],
+        options: ['--Primary', '#e8590c', '--Radius', 'round', '--Font', 'lexend', '--ColorMode', 'light'],
         expect: {
-            'Program.cs': ['Primary = "#e8590c", Radius = "1rem"', '"--stil-radius-lg"] = "2rem"', 'options.Font = StilFonts.Geologica;'],
+            'Program.cs': ['Primary = "#e8590c", Radius = "1rem"', '"--stil-radius-lg"] = "2rem"', 'options.Font = StilFonts.Lexend;'],
             'Components/Layout/MainLayout.razor': ['StilThemeMode.Light'],
         },
     },

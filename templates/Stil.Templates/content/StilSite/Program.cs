@@ -32,7 +32,7 @@ builder.Services.AddStil(options =>
     options.Font = StilFont.Google("STIL_GOOGLE_FONT");
 #elif (HasWebFont)
     // Another font: one of StilFonts, StilFont.Google("…") or StilFont.CdnFonts("…") (check its license).
-    options.Font = StilFonts.Lexend;
+    options.Font = StilFonts.Geologica;
 #else
     // A web font, for example StilFont.Google("Inter"):
     // options.Font = StilFont.Google("Inter");

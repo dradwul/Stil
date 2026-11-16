@@ -176,12 +176,16 @@
     },
     "Font": {
       "type": "parameter",
-      "description": "The site's font. Lexend, the default, is free (SIL Open Font License) and comes from Google Fonts; the others come from cdnfonts.com (check their license there; the BR fonts are commercial). It is set with AddStil() in Program.cs. --GoogleFont takes any Google font instead.",
+      "description": "The site's font. Geologica, the default (at its sharpest), and Lexend are free (SIL Open Font License) and come from Google Fonts; the others come from cdnfonts.com (check their license there; the BR fonts are commercial). It is set with AddStil() in Program.cs. --GoogleFont takes any Google font instead.",
       "datatype": "choice",
       "choices": [
         {
+          "choice": "geologica",
+          "description": "Geologica, Stil's default, at its sharpest (free, from Google Fonts)"
+        },
+        {
           "choice": "lexend",
-          "description": "Lexend, Stil's default (free, from Google Fonts)"
+          "description": "Lexend, the default before 1.1 (free, from Google Fonts)"
         },
         {
           "choice": "br-shape",
@@ -220,10 +224,6 @@
           "description": "Utara"
         },
         {
-          "choice": "geologica",
-          "description": "Geologica"
-        },
-        {
           "choice": "blowreph",
           "description": "BLOWREPH (display font)"
         },
@@ -240,12 +240,12 @@
           "description": "The operating system's font; nothing is downloaded"
         }
       ],
-      "defaultValue": "lexend"
+      "defaultValue": "geologica"
     },
     "FontValue": {
       "type": "generated",
       "generator": "switch",
-      "replaces": "StilFonts.Lexend",
+      "replaces": "StilFonts.Geologica",
       "parameters": {
         "evaluator": "C++",
         "datatype": "string",
@@ -287,8 +287,8 @@
             "value": "StilFonts.Utara"
           },
           {
-            "condition": "(Font == \"geologica\")",
-            "value": "StilFonts.Geologica"
+            "condition": "(Font == \"lexend\")",
+            "value": "StilFonts.Lexend"
           },
           {
             "condition": "(Font == \"blowreph\")",
@@ -304,7 +304,7 @@
           },
           {
             "condition": "",
-            "value": "StilFonts.Lexend"
+            "value": "StilFonts.Geologica"
           }
         ]
       }
