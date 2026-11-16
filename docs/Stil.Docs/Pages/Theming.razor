@@ -51,14 +51,16 @@
 
 <h2 id="fonts">Fonts</h2>
 <p>
-    Stil uses Lexend if your page loads it, for example from <code>https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&amp;display=swap</code>, and falls back to
-    <code>sans-serif</code>. The stylesheet never fetches fonts itself. Set <code>--stil-font-family</code>
+    Stil uses Geologica at its sharpest if your page loads it, for example from
+    <code>https://fonts.googleapis.com/css2?family=Geologica:wght,SHRP@400..600,100&amp;display=swap</code>, then Lexend (the
+    default before 1.1), and falls back to <code>sans-serif</code>. The sharpness is Geologica's <code>SHRP</code> axis, set by
+    <code>--stil-font-variation-settings</code> (<code>"SHRP" 100</code>; <code>normal</code> for its rounder form). The stylesheet never fetches fonts itself. Set <code>--stil-font-family</code>
     (or <code>StilTheme.FontFamily</code>) to use another font.
 </p>
 <p>
     In Blazor, <code>options.Font</code> picks a web font for the whole app: <code>&lt;StilHead /&gt;</code> links its
-    stylesheet and sets <code>--stil-font-family</code>. <code>StilFonts</code> has Lexend, the default, from Google Fonts and free for any
-    use (SIL Open Font License), and ready-made fonts from cdnfonts.com (BR Shape, BR Cobane, BR Segma, BR Sonoma, Averral, Sukplena, TASA Explorer, Halcom, Utara, Geologica, and the
+    stylesheet and sets <code>--stil-font-family</code>. <code>StilFonts</code> has Geologica, the default, and Lexend, both from Google Fonts and free for any
+    use (SIL Open Font License), and ready-made fonts from cdnfonts.com (BR Shape, BR Cobane, BR Segma, BR Sonoma, Averral, Sukplena, TASA Explorer, Halcom, Utara, and the
     display fonts BLOWREPH, Taster and WARM STORIES). <code>StilFont.CdnFonts</code> takes any other font there by its name, and <code>StilFont.Google</code> any
     Google font. The <a href="theme-builder">theme builder</a> previews them, and <code>dotnet new stil-app</code> takes
     <code>--Font</code> and <code>--GoogleFont</code>.
@@ -111,7 +113,7 @@
         ("Brand colors", "--stil-color-primary, -secondary, -success, -danger, -warning, -info"),
         ("Overrides", "--stil-color-{variant}-contrast, --stil-color-accent"),
         ("Neutrals", "--stil-color-body-bg, -surface, -surface-muted, -text, -text-muted, -border, -border-strong"),
-        ("Typography", "--stil-font-family, --stil-font-family-mono, --stil-font-size-xs … -2xl, --stil-font-weight-normal, -bold, --stil-line-height, --stil-letter-spacing"),
+        ("Typography", "--stil-font-family, --stil-font-family-mono, --stil-font-variation-settings, --stil-font-size-xs … -2xl, --stil-font-weight-normal, -bold, --stil-line-height, --stil-letter-spacing"),
         ("Spacing", "--stil-space-1 (0.25rem) … --stil-space-7 (3rem)"),
         ("Layout", "--stil-container-max, --stil-sidebar-width"),
         ("Shape", "--stil-radius-sm, -md, -lg, -pill, --stil-shadow-sm, -md, -lg, --stil-color-backdrop"),

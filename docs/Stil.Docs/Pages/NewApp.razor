@@ -211,7 +211,7 @@
     private static string FontName(string id)
     {
         var name = ProjectSetup.Fonts.First(f => f.Id == id).Name;
-        return id == "lexend" ? $"{name} (default, free)" : name;
+        return id == "geologica" ? $"{name} (default, free)" : name;
     }
 
     private static string ModeName(StilThemeMode mode) => mode switch

@@ -100,7 +100,7 @@ public sealed partial class ProjectSetup
 
     public string Primary { get; set; } = DefaultPrimary;
 
-    public string Font { get; set; } = "lexend";
+    public string Font { get; set; } = "geologica";
 
     public string Radius { get; set; } = "default";
 
@@ -229,7 +229,7 @@ public sealed partial class ProjectSetup
             command.Append(" --Primary \"").Append(Primary.ToLowerInvariant()).Append('"');
         }
 
-        if (Font != "lexend")
+        if (Font != "geologica")
         {
             command.Append(" --Font ").Append(Font);
         }
@@ -252,7 +252,7 @@ public sealed partial class ProjectSetup
         ["sample"] = Starter == "blank" && !SampleContent ? "false" : null,
         ["features"] = Features.Count == 0 ? null : string.Join(',', AllFeatures.Select(f => f.Id).Where(Features.Contains)),
         ["primary"] = IsValidPrimary && !IsDefaultPrimary ? Primary.TrimStart('#').ToLowerInvariant() : null,
-        ["font"] = Font == "lexend" ? null : Font,
+        ["font"] = Font == "geologica" ? null : Font,
         ["radius"] = Radius == "default" ? null : Radius,
         ["mode"] = ColorMode == StilThemeMode.Auto ? null : ColorMode.ToString().ToLowerInvariant(),
         ["name"] = Name == DefaultName ? null : Name,
