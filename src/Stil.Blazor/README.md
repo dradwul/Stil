@@ -740,10 +740,12 @@ builder.Services.AddStil(options => options.Font = StilFonts.Geologica);
 // options.Font = StilFont.Google("Open Sans");
 ```
 
-`StilFonts` has Lexend (the default, from Google Fonts and free for any use
-under the SIL Open Font License), and from cdnfonts.com BR Shape, BR Cobane,
-BR Segma, BR Sonoma, Averral, Sukplena, TASA Explorer, Halcom, Utara and
-Geologica, and the display fonts BLOWREPH, Taster and WARM STORIES. Check a
+`StilFonts` has Geologica (the default, at its sharpest) and Lexend, both from
+Google Fonts and free for any use under the SIL Open Font License, and from
+cdnfonts.com BR Shape, BR Cobane, BR Segma, BR Sonoma, Averral, Sukplena, TASA
+Explorer, Halcom and Utara, and the display fonts BLOWREPH, Taster and WARM
+STORIES. A font's `VariationSettings` sets `font-variation-settings`, such as
+Geologica's sharpness (`"SHRP" 100`). Check a
 cdnfonts.com font's license there before you use it in a product: some are free
 for personal use only, and the BR fonts are commercial. For a font you host yourself, use
 `new StilFont("My Font", "fonts/my-font.css")`.

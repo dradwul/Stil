@@ -497,6 +497,8 @@ Stil.Blazor.Blocks.StilTestimonials.ChildContent.set -> void
 Stil.Blazor.Blocks.StilTestimonials.StilTestimonials() -> void
 Stil.Blazor.Components.StilHead.Blocks.get -> bool
 Stil.Blazor.Components.StilHead.Blocks.set -> void
+Stil.Blazor.StilFont.VariationSettings.get -> string?
+Stil.Blazor.StilFont.VariationSettings.init -> void
 const Stil.Blazor.Blocks.StilPageJson.CurrentVersion = 1 -> int
 const Stil.Blazor.Components.StilIcons.Mail = "mail" -> string!
 const Stil.Blazor.Components.StilIcons.MapPin = "map-pin" -> string!

@@ -102,7 +102,7 @@ public class StilHeadTests
 
         var links = cut.FindAll("link");
         Assert.Equal("https://fonts.cdnfonts.com/css/br-cobane", links[1].GetAttribute("href"));
-        Assert.Equal(":root { --stil-font-family: 'BR Cobane', sans-serif; }", cut.Find("style").TextContent);
+        Assert.Equal(":root { --stil-font-family: 'BR Cobane', sans-serif; --stil-font-variation-settings: normal; }", cut.Find("style").TextContent);
     }
 
     [Fact]
@@ -118,7 +118,7 @@ public class StilHeadTests
         var cut = context.Render<StilHead>();
 
         Assert.Equal("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap", cut.FindAll("link")[1].GetAttribute("href"));
-        Assert.Equal(":root { --stil-font-family: 'Open Sans', sans-serif; --stil-font-family: system-ui; }", cut.Find("style").TextContent);
+        Assert.Equal(":root { --stil-font-family: 'Open Sans', sans-serif; --stil-font-variation-settings: normal; --stil-font-family: system-ui; }", cut.Find("style").TextContent);
     }
 
     [Theory]
@@ -139,10 +139,34 @@ public class StilHeadTests
     }
 
     [Fact]
-    public void TheDefaultFontIsLexendFromGoogleFontsInBothWeights()
+    public void RejectsVariationSettingsThatCouldBreakThePage()
     {
-        Assert.Same(StilFonts.Lexend, StilFonts.All[0]);
-        Assert.Equal("'Lexend', sans-serif", StilFonts.Lexend.FontFamily);
+        var services = new ServiceCollection();
+
+        Assert.Throws<InvalidOperationException>(() =>
+            services.AddStil(options => options.Font = StilFonts.Geologica with { VariationSettings = "\"SHRP\" 100; } body { color: red" }));
+    }
+
+    [Fact]
+    public void TheDefaultFontIsSharpGeologicaFromGoogleFonts()
+    {
+        Assert.Same(StilFonts.Geologica, StilFonts.All[0]);
+        Assert.Equal("'Geologica', sans-serif", StilFonts.Geologica.FontFamily);
+        Assert.Equal("https://fonts.googleapis.com/css2?family=Geologica:wght,SHRP@400..600,100&display=swap", StilFonts.Geologica.StylesheetUrl);
+        Assert.Equal("\"SHRP\" 100", StilFonts.Geologica.VariationSettings);
         Assert.Equal("https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&display=swap", StilFonts.Lexend.StylesheetUrl);
+        Assert.Null(StilFonts.Lexend.VariationSettings);
+    }
+
+    [Fact]
+    public void SetsTheFontsVariationSettings()
+    {
+        using var context = new BunitContext();
+        context.Services.AddStil(options => options.Font = StilFonts.Geologica);
+
+        var cut = context.Render<StilHead>();
+
+        Assert.Equal(StilFonts.Geologica.StylesheetUrl, cut.FindAll("link")[1].GetAttribute("href"));
+        Assert.Equal(":root { --stil-font-family: 'Geologica', sans-serif; --stil-font-variation-settings: \"SHRP\" 100; }", cut.Find("style").TextContent);
     }
 }

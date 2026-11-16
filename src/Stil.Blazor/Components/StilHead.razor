@@ -29,7 +29,7 @@
     // The font comes first, so a FontFamily in the theme wins.
     private string Declarations => string.Join(' ', new[]
     {
-        Options.Font is { } font ? $"--stil-font-family: {font.FontFamily};" : null,
+        Options.Font is { } font ? $"--stil-font-family: {font.FontFamily}; --stil-font-variation-settings: {font.VariationSettings ?? "normal"};" : null,
         Options.Theme.HasOverrides ? Options.Theme.ToCssDeclarations() : null,
     }.Where(d => d is not null));
 }

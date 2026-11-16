@@ -16,6 +16,12 @@ public sealed partial record StilFont(string Family, string? StylesheetUrl, stri
     [GeneratedRegex(@"^[\p{L}\p{N} ._-]+$")]
     private static partial Regex FamilyNameRegex();
 
+    /// <summary>
+    /// The font's <c>font-variation-settings</c>, for a variable font with axes of its own, for example
+    /// <c>"SHRP" 100</c> for Geologica's sharpness. Null for none.
+    /// </summary>
+    public string? VariationSettings { get; init; }
+
     /// <summary>The value for <c>--stil-font-family</c>, for example <c>'BR Cobane', sans-serif</c>.</summary>
     public string FontFamily => $"'{Family}', {Fallback}";
 
@@ -43,6 +49,11 @@ public sealed partial record StilFont(string Family, string? StylesheetUrl, stri
             throw new InvalidOperationException($"Font fallback '{Fallback}' is not valid.");
         }
 
+        if (VariationSettings?.IndexOfAny([';', '{', '}', '<', '>']) >= 0)
+        {
+            throw new InvalidOperationException($"Font variation settings '{VariationSettings}' are not valid.");
+        }
+
         if (StylesheetUrl is not null && !(Uri.TryCreate(StylesheetUrl, UriKind.RelativeOrAbsolute, out var url) && (!url.IsAbsoluteUri || url.Scheme == Uri.UriSchemeHttps)))
         {
             throw new InvalidOperationException($"Font stylesheet '{StylesheetUrl}' must be a relative or https URL.");
@@ -53,14 +64,22 @@ public sealed partial record StilFont(string Family, string? StylesheetUrl, stri
 }
 
 /// <summary>
-/// Ready-made fonts. <see cref="Lexend"/>, the default, comes from Google Fonts and is free under the
-/// SIL Open Font License; the others come from cdnfonts.com. Check each of those fonts' license before
+/// Ready-made fonts. <see cref="Geologica"/>, the default, and <see cref="Lexend"/> come from Google Fonts
+/// and are free under the SIL Open Font License; the others come from cdnfonts.com. Check each of those fonts' license before
 /// you use it in a product: some are free for personal use only, and the BR fonts are commercial.
 /// Add another with <see cref="StilFont.CdnFonts"/> or <see cref="StilFont.Google"/>.
 /// </summary>
 public static class StilFonts
 {
-    /// <summary>Lexend, Stil's default font, from Google Fonts. It is free for any use (SIL Open Font License).</summary>
+    /// <summary>
+    /// Geologica, Stil's default font, from Google Fonts, at its sharpest (the <c>SHRP</c> axis at 100):
+    /// crisp corners where the curves meet the stems. It is free for any use (SIL Open Font License). For
+    /// its rounder form, use <c>StilFonts.Geologica with { VariationSettings = null }</c>.
+    /// </summary>
+    public static StilFont Geologica { get; } =
+        new("Geologica", "https://fonts.googleapis.com/css2?family=Geologica:wght,SHRP@400..600,100&display=swap") { VariationSettings = "\"SHRP\" 100" };
+
+    /// <summary>Lexend, Stil's default font before 1.1, from Google Fonts. It is free for any use (SIL Open Font License).</summary>
     public static StilFont Lexend { get; } = StilFont.Google("Lexend");
 
     /// <summary>BR Shape, a commercial font. Check its license before you use it in a product.</summary>
@@ -84,7 +103,6 @@ public static class StilFonts
     public static StilFont TasaExplorer { get; } = StilFont.CdnFonts("TASA Explorer");
     public static StilFont Halcom { get; } = StilFont.CdnFonts("Halcom");
     public static StilFont Utara { get; } = StilFont.CdnFonts("Utara");
-    public static StilFont Geologica { get; } = StilFont.CdnFonts("Geologica");
 
     /// <summary>A display font, for headings and short texts more than for body text.</summary>
     public static StilFont Blowreph { get; } = StilFont.CdnFonts("BLOWREPH");
@@ -95,7 +113,7 @@ public static class StilFonts
     /// <summary>A display font, for headings and short texts more than for body text. It has no € sign.</summary>
     public static StilFont WarmStories { get; } = StilFont.CdnFonts("WARM STORIES");
 
-    /// <summary>Every font above, Lexend first.</summary>
+    /// <summary>Every font above, the default first.</summary>
     public static IReadOnlyList<StilFont> All { get; } =
-        [Lexend, BrShape, BrCobane, BrSegma, BrSonoma, Averral, Sukplena, TasaExplorer, Halcom, Utara, Geologica, Blowreph, Taster, WarmStories];
+        [Geologica, Lexend, BrShape, BrCobane, BrSegma, BrSonoma, Averral, Sukplena, TasaExplorer, Halcom, Utara, Blowreph, Taster, WarmStories];
 }
