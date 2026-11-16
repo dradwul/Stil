@@ -73,6 +73,21 @@ version could contain breaking changes; they are marked **Breaking**.
   (`StilIcons.Mail`, `Phone`, `MapPin`).
 - **Docs**: a Website section, with the pages Sections and heroes; Pricing,
   testimonials and FAQ; Header, footer and contact; and Blog.
+- **Stil for Blazor**: `StilFont.VariationSettings`, for a variable font's
+  own axes; `<StilHead />` sets it as `--stil-font-variation-settings`.
+
+### Changed
+
+- **Stil CSS, Stil for Blazor and Stil.Templates**: the default font is now
+  Geologica at its sharpest (its `SHRP` axis at 100), a crisper font than
+  Lexend. Both are free (SIL Open Font License) and come from Google Fonts.
+  The CSS token is `'Geologica', 'Lexend', sans-serif`, so a page that loads
+  only Lexend keeps it, and the new `--stil-font-variation-settings` token
+  (`"SHRP" 100`) gives the sharpness; set it to `normal` for Geologica's
+  rounder form. `StilFonts.Geologica` comes from Google Fonts instead of
+  cdnfonts.com and is first in `StilFonts.All`. `dotnet new stil-app` and
+  `stil-site` default to `--Font geologica`; `--Font lexend` keeps Lexend. An
+  app that sets `options.Font` keeps its font.
 
 ### Fixed
 
