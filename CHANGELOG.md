@@ -55,6 +55,16 @@ version could contain breaking changes; they are marked **Breaking**.
   CSS of its own.
 - **Docs**: the project wizard has a Website starter, which gives the
   `dotnet new stil-site` command with the chosen theme.
+- **Stil for Blazor**: pages as data (Phase V2.2.1). A page is a versioned
+  list of blocks with their settings and items (`StilPageData`,
+  `StilBlockData`), read and written as JSON with `StilPageJson`
+  (source-generated, so it works trimmed in WebAssembly; a newer version is
+  refused). `StilPage` renders a page and `StilBlockView` one block, with
+  the page blocks. `StilBlockCatalog` describes every built-in block type,
+  its settings and items, for editors, and takes your own types with the
+  component that renders them. The `contact` block can render a contact form
+  that posts to your endpoint; its labels are in all five languages.
+- **Docs**: Pages as data, with a page rendered from JSON and the block types.
 - **Stil CSS**: a heading that a script focuses (Blazor's `FocusOnNavigate`
   gives the page's `h1` `tabindex="-1"`) no longer shows a focus ring.
 - **Stil CSS**: in a collapsed navbar (on a phone), `stil.js` opens a

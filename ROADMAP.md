@@ -1509,6 +1509,49 @@ namespace `Stil.Blazor.Blocks`. V2.1 comes in five parts:
 **Done when:** the starter site's pages come from JSON in a database and
 score well in a Lighthouse SEO check.
 
+Like the blocks, the page model is in the `Stil` package (namespace
+`Stil.Blazor.Blocks`), with no server dependency, so it works in static SSR,
+interactive Server and WebAssembly alike. V2.2 comes in five parts:
+
+#### V2.2.1: Pages as data ✅ Done
+
+- [x] A JSON page format (`StilPageData`, a versioned list of `StilBlockData`
+  with each block's settings and items), read and written with
+  `StilPageJson`.
+- [x] A definition per block (`StilBlockDefinition`) that describes its
+  settings and items (text, long text, choice, icon, image, link, list…), for
+  every V2.1 block, in a `StilBlockCatalog` that apps add their own blocks
+  to.
+- [x] `StilPage` renders a page from its data, and `StilBlockView` one block.
+  Twelve built-in types (the V2.1 blocks, a text section, and a contact block
+  with an optional form post), your own types through `DynamicComponent`, and
+  an unknown type renders nothing. Verified with 16 bUnit tests (JSON round
+  trip, version refusal, every type rendered in order) and axe on the docs
+  page in light and dark mode.
+
+#### V2.2.2: Generated editors
+
+- [ ] `StilBlockEditor`: a form for one block's settings and items,
+  generated from its definition (add, remove and reorder items), the
+  ground the builder (V2.3) stands on.
+
+#### V2.2.3: SEO and sharing
+
+- [ ] `StilSeo` (title, description, canonical, Open Graph, robots) and
+  structured data for articles, FAQs and the organization; a sitemap and
+  robots.txt builder that a site maps to its endpoints.
+
+#### V2.2.4: Theme and languages
+
+- [ ] A site's theme stored with its pages (`StilTheme` as JSON) and applied
+  by `StilPage`; pages per language with `hreflang` alternates and the
+  localization of Phase 8.
+
+#### V2.2.5: The starter site from a database
+
+- [ ] `dotnet new stil-site` renders its pages from JSON in a database, with
+  the sitemap and robots endpoints, and passes a Lighthouse SEO check.
+
 ### Phase V2.3: The builder
 
 - [ ] A visual editor: a canvas with the page, blocks dragged
