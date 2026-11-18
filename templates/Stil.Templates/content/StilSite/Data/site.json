@@ -1,0 +1,137 @@
+{
+  // The site's first content: copied into the database (site.db) when it is created. Edit the
+  // pages in the database afterwards, or delete site.db to start over from this file.
+  "version": 1,
+  "name": "My Stil Site",
+  "language": "en",
+  "pages": [
+    {
+      "path": "",
+      "title": "Plan the week your team actually has",
+      "description": "Tasks, room bookings and time off in one calendar, so Monday's plan still holds on Thursday.",
+      "blocks": [
+        {
+          "type": "hero",
+          "settings": {
+            "eyebrow": "New: time off in the planner",
+            "title": "Plan the week your team actually has",
+            "lead": "Tasks, room bookings and time off in one calendar, so Monday's plan still holds on Thursday.",
+            "image": { "src": "images/hero-week.svg", "alt": "A week with tasks spread over five days" }
+          },
+          "items": [
+            { "type": "action", "settings": { "text": "Start free", "href": "contact" } },
+            { "type": "action", "settings": { "text": "See how it works", "href": "#features" } }
+          ]
+        },
+        {
+          "type": "logos",
+          "settings": { "tone": "muted", "title": "Trusted by teams at", "muted": true },
+          "items": [
+            { "type": "logo", "settings": { "name": "Nordvik Supply" } },
+            { "type": "logo", "settings": { "name": "Kallio Design" } },
+            { "type": "logo", "settings": { "name": "Østerby Marine" } },
+            { "type": "logo", "settings": { "name": "Fjord Analytics" } }
+          ]
+        },
+        {
+          "type": "features",
+          "settings": {
+            "id": "features",
+            "eyebrow": "Features",
+            "title": "Everything the week needs, in one view",
+            "lead": "No more checking three tools to see who is free on Friday.",
+            "centered": true
+          },
+          "items": [
+            { "type": "feature", "settings": { "icon": "folder", "title": "One calendar", "text": "Tasks, bookings and time off side by side, for the whole team." } },
+            { "type": "feature", "settings": { "icon": "success", "title": "Plans that hold", "text": "A warning before a day is overbooked, not after." } },
+            { "type": "feature", "settings": { "icon": "moon", "title": "Light and dark", "text": "Readable in both, with WCAG AA contrast everywhere." } },
+            { "type": "feature", "settings": { "icon": "download", "title": "Your data, your way", "text": "Export to CSV or the calendar app you already use." } }
+          ]
+        },
+        {
+          "type": "stats",
+          "settings": { "tone": "brand", "title": "Teams plan better with My Stil Site", "lead": "Numbers from our customers.", "centered": true },
+          "items": [
+            { "type": "stat", "settings": { "value": "4,800", "label": "Teams planning their week" } },
+            { "type": "stat", "settings": { "value": "87%", "label": "Fewer double bookings" } },
+            { "type": "stat", "settings": { "value": "3.5", "label": "Hours saved a week" } }
+          ]
+        },
+        {
+          "type": "testimonials",
+          "settings": { "eyebrow": "Customers", "title": "Calmer Mondays, in their words", "centered": true },
+          "items": [
+            { "type": "testimonial", "settings": { "quote": "We stopped double-booking the van the week we started.", "name": "Maja Lind", "role": "Head of operations, Nordvik Supply" } },
+            { "type": "testimonial", "settings": { "quote": "Time off and bookings in one view was the thing we did not know we needed.", "name": "Erik Holm", "role": "Studio lead, Kallio Design" } },
+            { "type": "testimonial", "settings": { "quote": "Set up in an afternoon. The crew plans the week on their phones now.", "name": "Lina Vik", "role": "Harbour master, Østerby Marine" } }
+          ]
+        },
+        {
+          "type": "cta",
+          "settings": { "title": "Plan next week in ten minutes", "text": "Free for teams of up to five. No card needed.", "brand": true },
+          "items": [
+            { "type": "action", "settings": { "text": "Start free", "href": "contact" } },
+            { "type": "action", "settings": { "text": "See pricing", "href": "pricing" } }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "pricing",
+      "title": "Pricing",
+      "description": "Free for teams of up to five. Pay for the people who plan.",
+      "blocks": [
+        {
+          "type": "pricing",
+          "settings": {
+            "eyebrow": "Pricing",
+            "title": "Start small, grow when you need to",
+            "lead": "Every plan has every feature. Pay for the people who plan.",
+            "centered": true,
+            "pageTitle": true,
+            "periodSwitch": true,
+            "yearlyNote": "2 months free"
+          },
+          "items": [
+            {
+              "type": "plan",
+              "settings": {
+                "name": "Free", "price": "€0", "period": "for up to five people", "text": "For small teams that plan together.",
+                "features": [ "Five people", "One calendar", "Export to CSV" ],
+                "actionText": "Start free", "actionHref": "contact"
+              }
+            },
+            {
+              "type": "plan",
+              "settings": {
+                "name": "Team", "price": "€6", "period": "a person a month", "yearlyPrice": "€60", "yearlyPeriod": "a person a year",
+                "text": "For teams that share rooms and people.", "featured": true, "badge": "Most popular",
+                "features": [ "Unlimited people", "Rooms and resources", "Time off and holidays", "Priority support" ],
+                "actionText": "Try it for 30 days", "actionHref": "contact"
+              }
+            },
+            {
+              "type": "plan",
+              "settings": {
+                "name": "Company", "price": "€9", "period": "a person a month", "yearlyPrice": "€90", "yearlyPeriod": "a person a year",
+                "text": "For several teams, with single sign-on.",
+                "features": [ "Everything in Team", "Single sign-on", "An audit log" ],
+                "actionText": "Talk to us", "actionHref": "contact"
+              }
+            }
+          ]
+        },
+        {
+          "type": "faq",
+          "settings": { "tone": "muted", "title": "Questions and answers", "lead": "Something else? Write to us; we answer within a working day." },
+          "items": [
+            { "type": "question", "settings": { "question": "Can I cancel any time?", "answer": "Yes. Cancel from the settings, and the plan runs to the end of the period you paid for." } },
+            { "type": "question", "settings": { "question": "Does it work with our calendar app?", "answer": "It shares a calendar link that Outlook, Google Calendar and Apple Calendar can subscribe to." } },
+            { "type": "question", "settings": { "question": "Where is our data stored?", "answer": "In the EU, and you can export all of it at any time." } }
+          ]
+        }
+      ]
+    }
+  ]
+}

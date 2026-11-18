@@ -1,0 +1,47 @@
+@page "/"
+@page "/{*Path}"
+@using System.Text.Json.Nodes
+@inject ISiteStore Sites
+@inject NavigationManager Navigation
+
+@* Every page that is data: the home page, pricing, and any page added to the database. Pages with
+   their own route (the blog and the contact form) come first; an unknown path is a 404. *@
+@if (_page is { } current)
+{
+    <StilSeo Title="@current.Title" SiteName="@SiteInfo.Name" Description="@current.Description"
+             Alternates="@_site.AlternatesOf(current)" StructuredData="@StructuredData(current)" />
+    <StilPage Page="current" />
+}
+
+@code {
+    private StilSiteData _site = new();
+    private StilPageData? _page;
+
+    [Parameter]
+    public string? Path { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _site = await Sites.GetSiteAsync();
+        _page = _site.Find(Path ?? "");
+        if (_page is null)
+        {
+            // Shows the not-found page, with status 404.
+            Navigation.NotFound();
+        }
+    }
+
+    // The home page names the organization and the site; a page with questions lists them.
+    private List<JsonObject> StructuredData(StilPageData page)
+    {
+        List<JsonObject> data = [];
+        if (page.Path.Trim('/').Length == 0)
+        {
+            data.Add(StilStructuredData.Organization(SiteInfo.Name, Navigation.BaseUri));
+            data.Add(StilStructuredData.WebSite(SiteInfo.Name, Navigation.BaseUri));
+        }
+
+        data.AddRange(page.Blocks.Where(block => block.Type == "faq").Select(StilStructuredData.FaqPage));
+        return data;
+    }
+}

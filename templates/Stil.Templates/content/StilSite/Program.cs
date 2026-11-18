@@ -1,6 +1,6 @@
 using Stil.Blazor;
-using StilSite.Components;
-using StilSite.Data;
+using StilWeb.Components;
+using StilWeb.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +43,12 @@ builder.Services.AddStil(options =>
 // pages only know IBlogService.
 builder.Services.AddSingleton<IBlogService, SampleBlogService>();
 
+// The pages as data, in a SQLite file: Data/site.json fills it on the first run. Page.razor renders
+// them, so the home page, pricing and any page you add change without a new build.
+var sites = new SqliteSiteStore(builder.Configuration.GetConnectionString("Site") ?? "Data Source=site.db");
+await sites.EnsureCreatedAsync(Path.Combine(builder.Environment.ContentRootPath, "Data", "site.json"));
+builder.Services.AddSingleton<ISiteStore>(sites);
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -65,4 +71,29 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapRazorComponents<App>();
 
+// For search engines: the site's addresses, and where they are. The pages with their own route are
+// listed by hand; the pages in the database and the posts come from their stores.
+app.MapGet("/sitemap.xml", async (HttpRequest request, ISiteStore store, IBlogService posts) =>
+{
+    var site = await store.GetSiteAsync();
+    var sitemap = new StilSitemap(SiteUrl(request));
+    foreach (var page in site.Pages)
+    {
+        sitemap.AddPage(page);
+    }
+
+    sitemap.Add("blog").Add("contact");
+    foreach (var post in posts.All())
+    {
+        sitemap.Add($"blog/{post.Slug}", post.Date);
+    }
+
+    return Results.Text(sitemap.ToXml(), "application/xml");
+});
+app.MapGet("/robots.txt", (HttpRequest request) =>
+    new StilRobots().Sitemap($"{SiteUrl(request)}sitemap.xml").ToString());
+
 app.Run();
+
+// The site's address, from the request: https://example.com/ in production.
+static string SiteUrl(HttpRequest request) => $"{request.Scheme}://{request.Host}{request.PathBase}/";

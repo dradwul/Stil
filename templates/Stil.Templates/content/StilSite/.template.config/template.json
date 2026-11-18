@@ -12,7 +12,7 @@
   "description": "A product website built from Stil's page blocks, rendered on the server without interactivity: a home page, pricing, a blog with articles, and a contact form.",
   "shortName": "stil-site",
   "defaultName": "StilSite",
-  "sourceName": "StilSite",
+  "sourceName": "StilWeb",
   "preferNameDirectory": true,
   "tags": {
     "language": "C#",
@@ -427,7 +427,7 @@
   },
   "primaryOutputs": [
     {
-      "path": "StilSite.csproj"
+      "path": "StilWeb.csproj"
     }
   ],
   "postActions": [

@@ -1,4 +1,4 @@
-namespace StilSite;
+namespace StilWeb;
 
 /// <summary>The site's name, for the browser's title, link previews and search engines (StilSeo).</summary>
 public static class SiteInfo

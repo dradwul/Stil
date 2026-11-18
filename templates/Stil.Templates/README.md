@@ -178,9 +178,14 @@ without it, and the contact form posts like any HTML form.
 
 - `Components/Layout/MainLayout.razor`: the header with a `StilMegaMenu` and
   the `StilFooter`.
-- `Components/Pages/Home.razor` (hero, logos, features, numbers, testimonials
-  and a call to action), `Pricing.razor` (plans with a monthly/yearly switch,
-  and questions and answers), `Blog.razor` (posts with paging,
+- `Data/site.json` and `Data/SiteStore.cs`: the home page (hero, logos,
+  features, numbers, testimonials and a call to action) and pricing (plans
+  with a monthly/yearly switch, and questions and answers) as page JSON. On
+  the first run they fill a SQLite database, `site.db`
+  (`ConnectionStrings:Site`), and `Components/Pages/Page.razor` renders every
+  page in it by its path, so pages change, and new ones appear, without a new
+  build. Delete `site.db` to start over from `site.json`.
+- `Components/Pages/Blog.razor` (posts with paging,
   `blog?page=2`), `Post.razor` (an article with a table of contents and
   related posts; an unknown post is a 404) and `Contact.razor` (the contact
   block with a form that is checked on the server).
@@ -191,6 +196,8 @@ without it, and the contact form posts like any HTML form.
   home page names the organization and the site in structured data, a post
   is an article with its date, author and picture, and the not-found page
   is kept out of search (`NoIndex`).
+- `Program.cs` serves `/sitemap.xml` (the pages, the blog and its posts)
+  and `/robots.txt` with `StilSitemap` and `StilRobots`.
 - `wwwroot/site.css` is empty: the pages need no CSS of their own.
 
 See the [Stil for Blazor README](https://github.com/dradwul/Stil/tree/main/src/Stil.Blazor#readme)

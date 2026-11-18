@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
     <ResourcePreloader />
-    @* Stil's stylesheet, the page blocks' stylesheet and the global theme from AddStil(). *@
-    <StilHead Blocks />
+    @* Stil's stylesheet, the page blocks' stylesheet, and the theme: AddStil()'s, then the site's
+       own from the database, if it has one. *@
+    <StilHead Blocks Theme="@_site?.Theme" Font="@_site?.Font" />
     <link rel="stylesheet" href="@Assets["site.css"]" />
     <ImportMap />
     <HeadOutlet />
@@ -21,3 +22,12 @@
 </body>
 
 </html>
+
+@code {
+    private StilSiteData? _site;
+
+    [Inject]
+    private ISiteStore Sites { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync() => _site = await Sites.GetSiteAsync();
+}

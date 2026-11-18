@@ -258,16 +258,19 @@ cases.push(
         name: 'Site.Default',
         options: [],
         expect: {
-            'Program.cs': ['AddRazorComponents();', 'options.Font = StilFonts.Geologica;', 'AddSingleton<IBlogService, SampleBlogService>()'],
-            'Components/App.razor': ['<StilHead Blocks />', '<Routes />'],
+            'Program.cs': ['AddRazorComponents();', 'options.Font = StilFonts.Geologica;', 'AddSingleton<IBlogService, SampleBlogService>()',
+                'new SqliteSiteStore(', 'MapGet("/sitemap.xml"', 'MapGet("/robots.txt"'],
+            'Components/App.razor': ['<StilHead Blocks Theme="@_site?.Theme" Font="@_site?.Font" />', '<Routes />'],
             'Components/Layout/MainLayout.razor': ['<StilMegaMenu', '<StilFooter', 'BrandText="Site.Default"', 'StilThemeMode.Auto'],
-            'Components/Pages/Home.razor': ['<StilHero', '<StilFeatureGrid', '<StilStatsBand', '<StilTestimonials', '<StilCallToAction'],
-            'Components/Pages/Pricing.razor': ['<StilPricing PeriodSwitch', '<StilFaq'],
+            'Components/Pages/Page.razor': ['@page "/{*Path}"', '<StilPage Page="current" />', 'Navigation.NotFound()'],
+            'Data/site.json': ['"type": "hero"', '"type": "pricing"', '"pageTitle": true', '"Teams plan better with Site.Default"'],
+            'Data/SiteStore.cs': ['namespace Site.Default.Data;', 'StilPageJson.Deserialize'],
             'Components/Pages/Blog.razor': ['<StilPostList', 'HrefTemplate="blog?page={0}"'],
             'Components/Pages/Post.razor': ['<StilArticle'],
             'Components/Pages/Contact.razor': ['<StilContact', 'FormName="contact"'],
             'Data/BlogService.cs': ['namespace Site.Default.Data;'],
-            'Site.Default.csproj': ['Include="Stil"'],
+            'Site.Default.csproj': ['Include="Stil"', 'Include="Microsoft.Data.Sqlite"'],
+            '.gitignore': ['*.db'],
         },
         forbidden: {
             'Program.cs': ['AddInteractiveServerComponents'],
@@ -286,7 +289,7 @@ cases.push(
 );
 
 // Text that must never be left in a generated app: template directives and placeholders.
-const leftovers = ['#if', '#endif', '##else', 'STIL_PRIMARY_COLOR', 'STIL_GOOGLE_FONT', 'STIL_PACKAGE_VERSION', 'STIL_RADIUS', 'localhost:5500', 'localhost:5501', 'localhost:5600', 'localhost:5601', 'StilApp', 'My Stil App', 'StilSite', 'My Stil Site'];
+const leftovers = ['#if', '#endif', '##else', 'STIL_PRIMARY_COLOR', 'STIL_GOOGLE_FONT', 'STIL_PACKAGE_VERSION', 'STIL_RADIUS', 'localhost:5500', 'localhost:5501', 'localhost:5600', 'localhost:5601', 'StilApp', 'My Stil App', 'StilWeb', 'My Stil Site'];
 
 function sleep(ms) {
     Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);

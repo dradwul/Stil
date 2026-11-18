@@ -1,4 +1,4 @@
-namespace StilSite.Data;
+namespace StilWeb.Data;
 
 /// <summary>A blog post: its address (Slug), the card's texts and the article's sections.</summary>
 public sealed record BlogPost(
