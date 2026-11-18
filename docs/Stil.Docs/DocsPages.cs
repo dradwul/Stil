@@ -69,6 +69,7 @@ public static class DocsPages
             new("Blog", "blocks/blog"),
             new("Pages as data", "blocks/pages-as-data"),
             new("Block editor", "blocks/block-editor"),
+            new("SEO and sharing", "blocks/seo"),
         ]),
         new("Boards", StilIcons.Menu,
         [

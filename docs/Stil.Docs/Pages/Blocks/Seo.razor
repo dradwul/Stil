@@ -1,0 +1,99 @@
+@page "/blocks/seo"
+
+<DocsHeader Title="SEO and sharing" Eyebrow="Website">
+    <Lead>What search engines and link previews read: the title, description, canonical address, Open Graph, structured data, a sitemap and robots.txt.</Lead>
+</DocsHeader>
+
+<p>
+    A website is found through search and shared as links. <code>StilSeo</code> writes the head of a page for
+    both, and two builders make the files a site serves at its root. They work in every render mode, and in static
+    server rendering they are in the HTML the crawler gets.
+</p>
+
+<h2 id="stil-seo">StilSeo</h2>
+<p>
+    Put one <code>StilSeo</code> on each page, with <code>&lt;HeadOutlet /&gt;</code> in <code>App.razor</code>. It
+    replaces <code>PageTitle</code> and <code>HeadContent</code>: use it instead of them, since a page shows only one
+    <code>HeadContent</code>.
+</p>
+<CodeBlock Language="razor" Code="@Page" />
+<ul>
+    <li><strong>Title</strong> and <strong>SiteName</strong>: the browser's title is "Pricing · My Site"
+        (<code>TitleSeparator</code>), a page without a title shows the name, and <code>og:title</code> is the title alone.</li>
+    <li><strong>Description</strong>: the meta description and <code>og:description</code>, for search results and previews.</li>
+    <li><strong>Canonical</strong>: the page's one address. By default it is the current address without its query and
+        fragment, so <code>?utm_source=</code> and the like do not make copies of a page; set it for a page whose query
+        matters, such as <code>blog?page=2</code>. It is also <code>og:url</code>.</li>
+    <li><strong>Image</strong> and <strong>ImageAlt</strong>: the picture of a link preview, made absolute, with the large
+        Twitter card. About 1200 × 630 pixels, in PNG or JPEG.</li>
+    <li><strong>Type</strong> <code>StilSeoType.Article</code>, with <strong>Published</strong>, <strong>Modified</strong>
+        and <strong>Author</strong>, for a post.</li>
+    <li><strong>Locale</strong>: <code>og:locale</code>, from the current UI culture by default (sv-SE is <code>sv_SE</code>).</li>
+    <li><strong>NoIndex</strong> and <strong>NoFollow</strong>: the robots meta tag, such as for a 404 page or a draft.</li>
+</ul>
+
+<h2 id="structured-data">Structured data</h2>
+<p>
+    <code>StilStructuredData</code> builds schema.org objects that search engines read as JSON-LD: the
+    <code>Organization</code> behind the site and the <code>WebSite</code> (on the home page), an <code>Article</code>,
+    and an <code>FaqPage</code> from questions and answers or from an <code>faq</code> block of a
+    <a href="blocks/pages-as-data">page as data</a>. Pass them to <code>StructuredData</code>; use absolute addresses.
+    The JSON is escaped, so a text with <code>&lt;/script&gt;</code> in it cannot end the script.
+</p>
+<CodeBlock Language="razor" Code="@Article" />
+
+<h2 id="sitemap">Sitemap and robots.txt</h2>
+<p>
+    <code>StilSitemap</code> builds <code>sitemap.xml</code> from the site's addresses, with when each page last
+    changed, and <code>StilRobots</code> builds <code>robots.txt</code>: the paths crawlers should stay out of, and
+    where the sitemap is. They are plain classes, so the site maps them to its own endpoints, from its own list of
+    pages, such as its posts in a database.
+</p>
+<CodeBlock Language="csharp" Code="@Endpoints" />
+<p>
+    A sitemap takes paths relative to the site's address, or absolute addresses, up to 50,000;
+    <code>AddPage</code> takes a page as data by its path. Without rules, robots.txt lets every crawler visit
+    everything. A value with a line break is refused, so it cannot add a rule.
+</p>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilSeo)" />
+
+@code {
+    private const string Page = """
+        @page "/pricing"
+
+        <StilSeo Title="Pricing" SiteName="My Site"
+                 Description="Free for teams of up to five. Pay for the people who plan."
+                 Image="images/share-pricing.png" ImageAlt="The plans side by side" />
+        """;
+
+    private const string Article = """
+        <StilSeo Title="@post.Title" SiteName="My Site" Description="@post.Excerpt"
+                 Type="StilSeoType.Article" Published="post.Date" Author="@post.Author"
+                 StructuredData="@([StilStructuredData.Article(post.Title, Navigation.ToAbsoluteUri($"blog/{post.Slug}").AbsoluteUri,
+                     published: post.Date, author: post.Author, publisher: "My Site")])" />
+        """;
+
+    private const string Endpoints = """
+        // Program.cs
+        app.MapGet("/sitemap.xml", (HttpRequest request, IBlogService posts) =>
+        {
+            var sitemap = new StilSitemap($"{request.Scheme}://{request.Host}{request.PathBase}/")
+                .Add("/", changeFrequency: StilSitemapFrequency.Weekly, priority: 1)
+                .Add("pricing")
+                .Add("blog");
+            foreach (var post in posts.All())
+            {
+                sitemap.Add($"blog/{post.Slug}", post.Date);
+            }
+
+            return Results.Text(sitemap.ToXml(), "application/xml");
+        });
+
+        app.MapGet("/robots.txt", (HttpRequest request) => new StilRobots()
+            .Disallow("/admin/")
+            .Sitemap($"{request.Scheme}://{request.Host}{request.PathBase}/sitemap.xml")
+            .ToString());
+        """;
+}
