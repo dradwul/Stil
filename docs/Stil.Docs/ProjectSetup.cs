@@ -35,7 +35,7 @@ public sealed partial class ProjectSetup
             "Overview, Transactions", []),
         new("planner", "Planner", "A week planner, a resource schedule, a kanban board and a Gantt plan.",
             "Overview, Planner, Bookings, Board, Project plan", ["calendar", "schedule", "kanban", "gantt", "commands"]),
-        new("website", "Website", "A product site built from the page blocks, rendered without interactivity: a mega menu, pricing, a blog and a contact form.",
+        new("website", "Website", "A product site built from the page blocks, its pages in a database, rendered without interactivity: a mega menu, pricing, a blog and a contact form.",
             "Home, Pricing, Blog, Article, Contact", []),
     ];
 
