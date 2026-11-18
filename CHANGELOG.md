@@ -74,6 +74,17 @@ version could contain breaking changes; they are marked **Breaking**.
   languages. `StilBlockDefinition.IsComplete` and `StilBlockSetting.HasValue`
   check the required settings. Its styles are in `stil-blocks.css`.
 - **Docs**: Block editor, with the form beside a live preview and the JSON.
+- **Stil for Blazor**: SEO and sharing (Phase V2.2.3). `StilSeo` writes the
+  title, description, canonical address, Open Graph (with articles' dates and
+  author), the Twitter card, robots and structured data of a page, in every
+  render mode. `StilStructuredData` builds schema.org JSON-LD for an
+  organization, a website, an article and an FAQ (also from an `faq` block).
+  `StilSitemap` and `StilRobots` build `sitemap.xml` and `robots.txt` for a
+  site to map to its endpoints.
+- **Stil.Templates**: `stil-site` uses `StilSeo` on every page, with
+  structured data for the organization, the site and each post, a canonical
+  address per blog page, and a not-found page kept out of search.
+- **Docs**: SEO and sharing.
 - **Stil CSS**: a heading that a script focuses (Blazor's `FocusOnNavigate`
   gives the page's `h1` `tabindex="-1"`) no longer shows a focus ring.
 - **Stil CSS**: in a collapsed navbar (on a phone), `stil.js` opens a

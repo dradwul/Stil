@@ -1539,11 +1539,16 @@ interactive Server and WebAssembly alike. V2.2 comes in five parts:
   built-in types in the docs page's live preview, the focus by keyboard
   (move, add, remove), and axe in light and dark mode.
 
-#### V2.2.3: SEO and sharing
+#### V2.2.3: SEO and sharing ✅ Done
 
-- [ ] `StilSeo` (title, description, canonical, Open Graph, robots) and
+- [x] `StilSeo` (title, description, canonical, Open Graph, robots) and
   structured data for articles, FAQs and the organization; a sitemap and
-  robots.txt builder that a site maps to its endpoints.
+  robots.txt builder that a site maps to its endpoints. `stil-site` uses
+  `StilSeo` on every page; its server-rendered HTML was checked as a
+  crawler gets it (title, canonical with `?page=`, article dates, JSON-LD,
+  `noindex` on the 404). Verified with 17 bUnit tests, among them JSON-LD
+  that cannot close its script and robots.txt values that cannot add a
+  rule.
 
 #### V2.2.4: Theme and languages
 
