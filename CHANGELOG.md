@@ -95,6 +95,16 @@ version could contain breaking changes; they are marked **Breaking**.
   and Stil's built-in texts in them follow it, and takes a `Theme` for its
   blocks. `StilTheme` and `StilFont` serialize to JSON.
 - **Docs**: Themes and languages, with a site in two languages.
+- **Stil for Blazor**: the section, FAQ, call-to-action and contact blocks
+  have a `pageTitle` setting that makes their title the page's `h1`, for a
+  page without a hero.
+- **Stil.Templates**: `stil-site` renders its home page and pricing from
+  page JSON in a SQLite database (Phase V2.2.5), filled from
+  `Data/site.json` on the first run (`ISiteStore`, `SqliteSiteStore`), and
+  any page added to the database gets its address. It serves
+  `/sitemap.xml` and `/robots.txt`, lists an FAQ block as structured data,
+  and takes the site's theme from the database. Lighthouse scores its pages
+  100 for SEO.
 - **Stil CSS**: a heading that a script focuses (Blazor's `FocusOnNavigate`
   gives the page's `h1` `tabindex="-1"`) no longer shows a focus ring.
 - **Stil CSS**: in a collapsed navbar (on a phone), `stil.js` opens a

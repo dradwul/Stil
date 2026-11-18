@@ -1495,15 +1495,15 @@ namespace `Stil.Blazor.Blocks`. V2.1 comes in five parts:
   FocusOnNavigate left on the `h1` is now hidden by Stil itself, for every
   app.
 
-### Phase V2.2: Page model
+### Phase V2.2: Page model ✅ Done
 
-- [ ] Pages as data: a list of blocks with their settings, stored as JSON.
+- [x] Pages as data: a list of blocks with their settings, stored as JSON.
   `StilPage` renders a page from it, and blocks describe their settings so
   editors can be generated.
-- [ ] SEO and sharing: title, description, Open Graph and canonical links
+- [x] SEO and sharing: title, description, Open Graph and canonical links
   (`StilSeo`), a sitemap and robots endpoint, and structured data for
   articles.
-- [ ] A theme per site (`StilTheme` stored with the pages), and pages per
+- [x] A theme per site (`StilTheme` stored with the pages), and pages per
   language with the localization from Phase 8.
 
 **Done when:** the starter site's pages come from JSON in a database and
@@ -1560,10 +1560,19 @@ interactive Server and WebAssembly alike. V2.2 comes in five parts:
   tests (round trip, refused CSS injection, alternates, culture) and the
   docs page's site in two languages, with axe in light and dark mode.
 
-#### V2.2.5: The starter site from a database
+#### V2.2.5: The starter site from a database ✅ Done
 
-- [ ] `dotnet new stil-site` renders its pages from JSON in a database, with
-  the sitemap and robots endpoints, and passes a Lighthouse SEO check.
+- [x] `dotnet new stil-site` renders its pages from JSON in a database, with
+  the sitemap and robots endpoints, and passes a Lighthouse SEO check. The
+  home page and pricing are page JSON in SQLite (Microsoft.Data.Sqlite),
+  filled from `Data/site.json` on the first run and rendered by a
+  catch-all `Page.razor`; the blog and the contact form keep their own
+  routes. Blocks got a "page title (h1)" setting for a page without a hero.
+  Generated and run: a page changed in the database changes on the site,
+  `/sitemap.xml` lists the pages and posts, `/robots.txt` names it, and
+  Lighthouse 13.6 scores 100 for SEO on the home page, pricing, the blog, a
+  post and contact. The template's internal source name is now `StilWeb`,
+  so it no longer rewrites Stil's own `StilSite…` names.
 
 ### Phase V2.3: The builder
 
