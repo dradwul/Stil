@@ -1529,11 +1529,15 @@ interactive Server and WebAssembly alike. V2.2 comes in five parts:
   trip, version refusal, every type rendered in order) and axe on the docs
   page in light and dark mode.
 
-#### V2.2.2: Generated editors
+#### V2.2.2: Generated editors ✅ Done
 
-- [ ] `StilBlockEditor`: a form for one block's settings and items,
+- [x] `StilBlockEditor`: a form for one block's settings and items,
   generated from its definition (add, remove and reorder items), the
-  ground the builder (V2.3) stands on.
+  ground the builder (V2.3) stands on. Every setting kind has its control;
+  required settings are marked once emptied or with `ShowValidation`, and
+  `IsComplete` checks a block. Verified with 12 bUnit tests, all twelve
+  built-in types in the docs page's live preview, the focus by keyboard
+  (move, add, remove), and axe in light and dark mode.
 
 #### V2.2.3: SEO and sharing
 

@@ -65,6 +65,15 @@ version could contain breaking changes; they are marked **Breaking**.
   component that renders them. The `contact` block can render a contact form
   that posts to your endpoint; its labels are in all five languages.
 - **Docs**: Pages as data, with a page rendered from JSON and the block types.
+- **Stil for Blazor**: `StilBlockEditor` (Phase V2.2.2), a form for one block
+  generated from its type's definition: a field per setting, with its label,
+  help and validation, and the block's items to add, move and remove. It
+  edits the block in place and raises `BlockChanged`, so a `StilBlockView`
+  beside it follows as you type. The focus follows a moved, added or removed
+  item, a status region announces it, and its texts are in all five
+  languages. `StilBlockDefinition.IsComplete` and `StilBlockSetting.HasValue`
+  check the required settings. Its styles are in `stil-blocks.css`.
+- **Docs**: Block editor, with the form beside a live preview and the JSON.
 - **Stil CSS**: a heading that a script focuses (Blazor's `FocusOnNavigate`
   gives the page's `h1` `tabindex="-1"`) no longer shows a focus ring.
 - **Stil CSS**: in a collapsed navbar (on a phone), `stil.js` opens a
