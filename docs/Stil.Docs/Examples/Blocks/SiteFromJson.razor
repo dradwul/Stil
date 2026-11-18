@@ -1,0 +1,53 @@
+@* A site with its theme and a page in two languages. Pick a language: the page's texts and
+   Stil's own (the form's labels) follow it, and the theme colors the blocks. *@
+<div class="stil-field stil-mb-4" style="max-width: 20rem">
+    <label class="stil-label" for="site-language">Language</label>
+    <select id="site-language" class="stil-select" @bind="_path">
+        @foreach (var translation in _site.TranslationsOf(_site.Find("")!))
+        {
+            <option value="@translation.Path">@StilCulture.DisplayName(translation.Language!)</option>
+        }
+    </select>
+</div>
+
+<div class="stil-border stil-rounded-lg stil-overflow-hidden" role="region" aria-label="Preview">
+    <StilPage Page="@(_site.Find(_path)!)" Theme="_site.Theme" />
+</div>
+
+<p class="stil-text-muted stil-mt-3">
+    hreflang: @string.Join(", ", _site.AlternatesOf(_site.Find(_path)!).Select(alternate => $"{alternate.Language} {alternate.Url}"))
+</p>
+
+@code {
+    // In a site, this comes from a database or a file.
+    private const string Json = """
+        {
+          "version": 1,
+          "name": "Nordvik",
+          "url": "https://example.com/",
+          "language": "en",
+          "theme": { "primary": "#6741d9", "radius": "1rem" },
+          "pages": [
+            {
+              "path": "", "key": "home", "language": "en", "title": "Talk to us",
+              "blocks": [
+                { "type": "cta", "settings": { "title": "Plan next week in ten minutes", "text": "Free for teams of up to five.", "brand": true },
+                  "items": [ { "type": "action", "settings": { "text": "Start free", "href": "#start" } } ] },
+                { "type": "contact", "settings": { "title": "Talk to us", "email": "hello@example.com", "formAction": "#contact" } }
+              ]
+            },
+            {
+              "path": "sv", "key": "home", "language": "sv", "title": "Prata med oss",
+              "blocks": [
+                { "type": "cta", "settings": { "title": "Planera nästa vecka på tio minuter", "text": "Gratis för team på upp till fem.", "brand": true },
+                  "items": [ { "type": "action", "settings": { "text": "Börja gratis", "href": "#start" } } ] },
+                { "type": "contact", "settings": { "title": "Prata med oss", "email": "hej@example.com", "formAction": "#contact" } }
+              ]
+            }
+          ]
+        }
+        """;
+
+    private readonly StilSiteData _site = StilPageJson.DeserializeSite(Json);
+    private string _path = "sv";
+}

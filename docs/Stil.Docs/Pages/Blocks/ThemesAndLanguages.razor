@@ -1,0 +1,118 @@
+@page "/blocks/themes-and-languages"
+@using Stil.Docs.Examples.Blocks
+
+<DocsHeader Title="Themes and languages" Eyebrow="Website">
+    <Lead>A site as data: its theme and font stored with its pages, and its pages in several languages, linked for search engines.</Lead>
+</DocsHeader>
+
+<p>
+    <code>StilSiteData</code> holds a website: its name and address, its <code>StilTheme</code> and
+    <code>StilFont</code>, the language of its main pages, and its <a href="blocks/pages-as-data">pages</a>.
+    <code>StilPageJson.SerializeSite</code> and <code>DeserializeSite</code> read and write it, so changing the
+    site's look is a change to its data, not a new build.
+</p>
+
+<h2 id="example">A site in two languages</h2>
+<DocExample Type="typeof(SiteFromJson)">
+    <p>
+        The page in each language is its own page with its own path; the same <code>key</code> makes them
+        translations. <code>StilPage</code> marks the blocks with the page's <code>language</code>, and Stil's own
+        texts in them, such as the contact form's labels, follow it. Here the theme is given to
+        <code>StilPage</code>, which scopes it to the blocks, as a preview in an admin would.
+    </p>
+</DocExample>
+
+<h2 id="theme">The site's theme</h2>
+<p>
+    For the whole document, header and footer included, give the site's theme and font to
+    <code>&lt;StilHead /&gt;</code>. They come after those of <code>AddStil</code>, so the site's values win.
+    <code>DeserializeSite</code> refuses a theme or font that could break out of the page's CSS (a value with
+    <code>;</code>, <code>{</code> or <code>&lt;</code>, a token not named <code>--stil-…</code>, or a font
+    stylesheet that is not https) with a <code>JsonException</code>, so a site from a database cannot inject CSS.
+</p>
+<CodeBlock Language="razor" Code="@Head" />
+
+<h2 id="languages">Languages</h2>
+<p>
+    A page's translations share its <code>key</code>, such as <code>pricing</code> for <code>pricing</code> and
+    <code>sv/priser</code>. <code>Find(path)</code> finds a page, <code>TranslationsOf(page)</code> lists the page
+    in each language (for a language picker), and <code>AlternatesOf(page)</code> gives the hreflang alternates
+    for <code>StilSeo</code>: each translation, and the one in the site's language as <code>x-default</code>,
+    with absolute addresses when the site has a <code>url</code>.
+</p>
+<CodeBlock Language="razor" Code="@Page" />
+<p>
+    The built-in texts follow the page's language even when the request's culture is another one. For dates and
+    numbers, and for <code>&lt;html lang&gt;</code>, set the request's culture from the path, so a Swedish page
+    is Swedish throughout:
+</p>
+<CodeBlock Language="csharp" Code="@Culture" />
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilPage)" />
+
+@code {
+    private const string Head = """
+        @* App.razor: the site's look, from its data. *@
+        @inject ISiteStore Sites
+
+        <head>
+            <StilHead Blocks Theme="@_site.Theme" Font="@_site.Font" />
+            <HeadOutlet />
+        </head>
+
+        @code {
+            private StilSiteData _site = default!;
+
+            protected override async Task OnInitializedAsync() => _site = await Sites.GetAsync();
+        }
+        """;
+
+    private const string Page = """
+        @page "/{*path}"
+        @inject ISiteStore Sites
+        @inject NavigationManager Navigation
+
+        @if (_page is { } page)
+        {
+            <StilSeo Title="@page.Title" SiteName="@_site.Name" Description="@page.Description"
+                     Alternates="@_site.AlternatesOf(page)" />
+            <StilPage Page="page" />
+        }
+
+        @code {
+            private StilSiteData _site = default!;
+            private StilPageData? _page;
+
+            [Parameter]
+            public string? Path { get; set; }
+
+            protected override async Task OnParametersSetAsync()
+            {
+                _site = await Sites.GetAsync();
+                _page = _site.Find(Path ?? "");
+                if (_page is null)
+                {
+                    Navigation.NotFound();
+                }
+            }
+        }
+        """;
+
+    private const string Culture = """
+        // Program.cs: the first segment of the path (/sv/priser) picks the culture; others are English.
+        string[] languages = ["en", "sv"];
+        var localization = new RequestLocalizationOptions()
+            .SetDefaultCulture("en")
+            .AddSupportedCultures(languages)
+            .AddSupportedUICultures(languages);
+        localization.RequestCultureProviders.Insert(0, new CustomRequestCultureProvider(context =>
+        {
+            var first = context.Request.Path.Value?.Split('/', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+            return Task.FromResult(first is not null && languages.Contains(first) ? new ProviderCultureResult(first) : null);
+        }));
+        app.UseRequestLocalization(localization);
+
+        // App.razor: <html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
+        """;
+}
