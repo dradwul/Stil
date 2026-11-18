@@ -17,8 +17,14 @@ public abstract class StilComponentBase : ComponentBase
     [Inject]
     private IServiceProvider StilServices { get; set; } = default!;
 
-    /// <summary>The culture of the built-in texts. The default is the current UI culture.</summary>
-    protected virtual CultureInfo TextCulture => CultureInfo.CurrentUICulture;
+    /// <summary>The name of the cascading value with the culture of a part of the page, such as a StilPage in another language.</summary>
+    internal const string TextCultureCascade = "StilTextCulture";
+
+    [CascadingParameter(Name = TextCultureCascade)]
+    private CultureInfo? CascadingTextCulture { get; set; }
+
+    /// <summary>The culture of the built-in texts: that of the surrounding <c>StilPage</c>'s language, or the current UI culture.</summary>
+    protected virtual CultureInfo TextCulture => CascadingTextCulture ?? CultureInfo.CurrentUICulture;
 
     /// <summary>The component's classes followed by the consumer's <c>class</c> attribute.</summary>
     protected string Classes(params string?[] componentClasses) =>

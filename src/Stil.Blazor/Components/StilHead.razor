@@ -6,7 +6,7 @@
 {
     <link rel="stylesheet" href="@Assets[Minified ? "_content/Stil/stil-blocks.min.css" : "_content/Stil/stil-blocks.css"]" />
 }
-@if (Options.Font?.StylesheetUrl is { } fontUrl)
+@if ((Font ?? Options.Font)?.StylesheetUrl is { } fontUrl)
 {
     <link rel="stylesheet" href="@fontUrl" />
 }
@@ -24,12 +24,21 @@
     [Parameter]
     public bool Blocks { get; set; }
 
-    protected override void OnParametersSet() => Options.Font?.Validate();
+    /// <summary>The font of this document, instead of the one in the options: such as a site's font stored with its pages.</summary>
+    [Parameter]
+    public StilFont? Font { get; set; }
 
-    // The font comes first, so a FontFamily in the theme wins.
+    /// <summary>Token overrides for this document, after those in the options: such as a site's theme stored with its pages.</summary>
+    [Parameter]
+    public StilTheme? Theme { get; set; }
+
+    protected override void OnParametersSet() => (Font ?? Options.Font)?.Validate();
+
+    // The font comes first, so a FontFamily in a theme wins; this document's theme comes last.
     private string Declarations => string.Join(' ', new[]
     {
-        Options.Font is { } font ? $"--stil-font-family: {font.FontFamily}; --stil-font-variation-settings: {font.VariationSettings ?? "normal"};" : null,
+        (Font ?? Options.Font) is { } font ? $"--stil-font-family: {font.FontFamily}; --stil-font-variation-settings: {font.VariationSettings ?? "normal"};" : null,
         Options.Theme.HasOverrides ? Options.Theme.ToCssDeclarations() : null,
+        Theme is { HasOverrides: true } theme ? theme.ToCssDeclarations() : null,
     }.Where(d => d is not null));
 }

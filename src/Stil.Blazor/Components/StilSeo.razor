@@ -24,6 +24,13 @@
         @* A page kept out of search has no canonical address. *@
         <link rel="canonical" href="@CanonicalUrl" />
     }
+    @if (Alternates is { } alternates)
+    {
+        @foreach (var alternate in alternates)
+        {
+            <link rel="alternate" hreflang="@alternate.Language" href="@Absolute(alternate.Url)" />
+        }
+    }
     <meta property="og:type" content="@(Type == StilSeoType.Article ? "article" : "website")" />
     <meta property="og:title" content="@(string.IsNullOrWhiteSpace(Title) ? SiteName : Title)" />
     @if (!string.IsNullOrWhiteSpace(Description))
@@ -135,6 +142,10 @@
     /// <summary>Asks search engines not to follow the page's links.</summary>
     [Parameter]
     public bool NoFollow { get; set; }
+
+    /// <summary>The page in other languages, for hreflang links, such as from <c>StilSiteData.AlternatesOf</c>. Include the page itself.</summary>
+    [Parameter]
+    public IEnumerable<StilAlternate>? Alternates { get; set; }
 
     /// <summary>Structured data (JSON-LD) for the page, such as from <see cref="StilStructuredData"/>.</summary>
     [Parameter]

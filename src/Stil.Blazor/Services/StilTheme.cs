@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 namespace Stil.Blazor;
@@ -32,9 +33,11 @@ public sealed partial class StilTheme
     public string? Radius { get; set; }
 
     /// <summary>Any other token, keyed by its full name, for example <c>--stil-space-4</c>.</summary>
+    [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
     public IDictionary<string, string> Tokens { get; } = new Dictionary<string, string>(StringComparer.Ordinal);
 
     /// <summary>True when the theme overrides at least one token.</summary>
+    [JsonIgnore]
     public bool HasOverrides => GetDeclarations().Any();
 
     /// <summary>The overrides as CSS declarations, for example <c>--stil-color-primary: #6741d9;</c>.</summary>

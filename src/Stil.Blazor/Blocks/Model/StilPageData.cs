@@ -19,8 +19,17 @@ public sealed class StilPageData
     /// <summary>A sentence about the page, for search results and shared links.</summary>
     public string? Description { get; set; }
 
-    /// <summary>The page's language, such as <c>en</c>.</summary>
+    /// <summary>
+    /// The page's language, such as <c>en</c> or <c>sv-SE</c>. <see cref="StilPage"/> marks its blocks with
+    /// it, and Stil's built-in texts in them follow it.
+    /// </summary>
     public string? Language { get; set; }
+
+    /// <summary>
+    /// The same key on pages in different languages makes them translations of each other, such as
+    /// <c>pricing</c> for <c>pricing</c> and <c>sv/priser</c>; see <see cref="StilSiteData.AlternatesOf"/>.
+    /// </summary>
+    public string? Key { get; set; }
 
     /// <summary>The blocks, from the top of the page.</summary>
     public List<StilBlockData> Blocks { get; set; } = [];

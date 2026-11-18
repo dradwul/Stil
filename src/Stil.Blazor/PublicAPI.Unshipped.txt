@@ -337,12 +337,16 @@ Stil.Blazor.Blocks.StilPage.Catalog.set -> void
 Stil.Blazor.Blocks.StilPage.Page.get -> Stil.Blazor.Blocks.StilPageData!
 Stil.Blazor.Blocks.StilPage.Page.set -> void
 Stil.Blazor.Blocks.StilPage.StilPage() -> void
+Stil.Blazor.Blocks.StilPage.Theme.get -> Stil.Blazor.StilTheme?
+Stil.Blazor.Blocks.StilPage.Theme.set -> void
 Stil.Blazor.Blocks.StilPageData
 Stil.Blazor.Blocks.StilPageData.Add(Stil.Blazor.Blocks.StilBlockData! block) -> Stil.Blazor.Blocks.StilPageData!
 Stil.Blazor.Blocks.StilPageData.Blocks.get -> System.Collections.Generic.List<Stil.Blazor.Blocks.StilBlockData!>!
 Stil.Blazor.Blocks.StilPageData.Blocks.set -> void
 Stil.Blazor.Blocks.StilPageData.Description.get -> string?
 Stil.Blazor.Blocks.StilPageData.Description.set -> void
+Stil.Blazor.Blocks.StilPageData.Key.get -> string?
+Stil.Blazor.Blocks.StilPageData.Key.set -> void
 Stil.Blazor.Blocks.StilPageData.Language.get -> string?
 Stil.Blazor.Blocks.StilPageData.Language.set -> void
 Stil.Blazor.Blocks.StilPageData.Path.get -> string!
@@ -459,6 +463,26 @@ Stil.Blazor.Blocks.StilSection.Title.get -> string?
 Stil.Blazor.Blocks.StilSection.Title.set -> void
 Stil.Blazor.Blocks.StilSection.Tone.get -> Stil.Blazor.Blocks.StilBlockTone
 Stil.Blazor.Blocks.StilSection.Tone.set -> void
+Stil.Blazor.Blocks.StilSiteData
+Stil.Blazor.Blocks.StilSiteData.Add(Stil.Blazor.Blocks.StilPageData! page) -> Stil.Blazor.Blocks.StilSiteData!
+Stil.Blazor.Blocks.StilSiteData.AlternatesOf(Stil.Blazor.Blocks.StilPageData! page) -> System.Collections.Generic.IReadOnlyList<Stil.Blazor.StilAlternate!>!
+Stil.Blazor.Blocks.StilSiteData.Find(string! path) -> Stil.Blazor.Blocks.StilPageData?
+Stil.Blazor.Blocks.StilSiteData.Font.get -> Stil.Blazor.StilFont?
+Stil.Blazor.Blocks.StilSiteData.Font.set -> void
+Stil.Blazor.Blocks.StilSiteData.Language.get -> string?
+Stil.Blazor.Blocks.StilSiteData.Language.set -> void
+Stil.Blazor.Blocks.StilSiteData.Name.get -> string!
+Stil.Blazor.Blocks.StilSiteData.Name.set -> void
+Stil.Blazor.Blocks.StilSiteData.Pages.get -> System.Collections.Generic.List<Stil.Blazor.Blocks.StilPageData!>!
+Stil.Blazor.Blocks.StilSiteData.Pages.set -> void
+Stil.Blazor.Blocks.StilSiteData.StilSiteData() -> void
+Stil.Blazor.Blocks.StilSiteData.Theme.get -> Stil.Blazor.StilTheme?
+Stil.Blazor.Blocks.StilSiteData.Theme.set -> void
+Stil.Blazor.Blocks.StilSiteData.TranslationsOf(Stil.Blazor.Blocks.StilPageData! page) -> System.Collections.Generic.IReadOnlyList<Stil.Blazor.Blocks.StilPageData!>!
+Stil.Blazor.Blocks.StilSiteData.Url.get -> string?
+Stil.Blazor.Blocks.StilSiteData.Url.set -> void
+Stil.Blazor.Blocks.StilSiteData.Version.get -> int
+Stil.Blazor.Blocks.StilSiteData.Version.set -> void
 Stil.Blazor.Blocks.StilStatsBand
 Stil.Blazor.Blocks.StilStatsBand.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
 Stil.Blazor.Blocks.StilStatsBand.ChildContent.set -> void
@@ -511,7 +535,13 @@ Stil.Blazor.Blocks.StilTestimonials.ChildContent.set -> void
 Stil.Blazor.Blocks.StilTestimonials.StilTestimonials() -> void
 Stil.Blazor.Components.StilHead.Blocks.get -> bool
 Stil.Blazor.Components.StilHead.Blocks.set -> void
+Stil.Blazor.Components.StilHead.Font.get -> Stil.Blazor.StilFont?
+Stil.Blazor.Components.StilHead.Font.set -> void
+Stil.Blazor.Components.StilHead.Theme.get -> Stil.Blazor.StilTheme?
+Stil.Blazor.Components.StilHead.Theme.set -> void
 Stil.Blazor.Components.StilSeo
+Stil.Blazor.Components.StilSeo.Alternates.get -> System.Collections.Generic.IEnumerable<Stil.Blazor.StilAlternate!>?
+Stil.Blazor.Components.StilSeo.Alternates.set -> void
 Stil.Blazor.Components.StilSeo.Author.get -> string?
 Stil.Blazor.Components.StilSeo.Author.set -> void
 Stil.Blazor.Components.StilSeo.Canonical.get -> string?
@@ -543,6 +573,15 @@ Stil.Blazor.Components.StilSeo.TitleSeparator.get -> string!
 Stil.Blazor.Components.StilSeo.TitleSeparator.set -> void
 Stil.Blazor.Components.StilSeo.Type.get -> Stil.Blazor.StilSeoType
 Stil.Blazor.Components.StilSeo.Type.set -> void
+Stil.Blazor.StilAlternate
+Stil.Blazor.StilAlternate.<Clone>$() -> Stil.Blazor.StilAlternate!
+Stil.Blazor.StilAlternate.Deconstruct(out string! Language, out string! Url) -> void
+Stil.Blazor.StilAlternate.Equals(Stil.Blazor.StilAlternate? other) -> bool
+Stil.Blazor.StilAlternate.Language.get -> string!
+Stil.Blazor.StilAlternate.Language.init -> void
+Stil.Blazor.StilAlternate.StilAlternate(string! Language, string! Url) -> void
+Stil.Blazor.StilAlternate.Url.get -> string!
+Stil.Blazor.StilAlternate.Url.init -> void
 Stil.Blazor.StilFont.VariationSettings.get -> string?
 Stil.Blazor.StilFont.VariationSettings.init -> void
 Stil.Blazor.StilRobots
@@ -601,6 +640,10 @@ override Stil.Blazor.Blocks.StilBlockSetting.Equals(object? obj) -> bool
 override Stil.Blazor.Blocks.StilBlockSetting.GetHashCode() -> int
 override Stil.Blazor.Blocks.StilBlockSetting.ToString() -> string!
 override Stil.Blazor.Blocks.StilBlockView.OnParametersSet() -> void
+override Stil.Blazor.Blocks.StilPage.OnParametersSet() -> void
+override Stil.Blazor.StilAlternate.Equals(object? obj) -> bool
+override Stil.Blazor.StilAlternate.GetHashCode() -> int
+override Stil.Blazor.StilAlternate.ToString() -> string!
 override Stil.Blazor.StilRobots.ToString() -> string!
 override Stil.Blazor.StilSitemapEntry.Equals(object? obj) -> bool
 override Stil.Blazor.StilSitemapEntry.GetHashCode() -> int
@@ -618,7 +661,11 @@ static Stil.Blazor.Blocks.StilBlockItemDefinition.operator ==(Stil.Blazor.Blocks
 static Stil.Blazor.Blocks.StilBlockSetting.operator !=(Stil.Blazor.Blocks.StilBlockSetting? left, Stil.Blazor.Blocks.StilBlockSetting? right) -> bool
 static Stil.Blazor.Blocks.StilBlockSetting.operator ==(Stil.Blazor.Blocks.StilBlockSetting? left, Stil.Blazor.Blocks.StilBlockSetting? right) -> bool
 static Stil.Blazor.Blocks.StilPageJson.Deserialize(string! json) -> Stil.Blazor.Blocks.StilPageData!
+static Stil.Blazor.Blocks.StilPageJson.DeserializeSite(string! json) -> Stil.Blazor.Blocks.StilSiteData!
 static Stil.Blazor.Blocks.StilPageJson.Serialize(Stil.Blazor.Blocks.StilPageData! page, bool indented = true) -> string!
+static Stil.Blazor.Blocks.StilPageJson.SerializeSite(Stil.Blazor.Blocks.StilSiteData! site, bool indented = true) -> string!
+static Stil.Blazor.StilAlternate.operator !=(Stil.Blazor.StilAlternate? left, Stil.Blazor.StilAlternate? right) -> bool
+static Stil.Blazor.StilAlternate.operator ==(Stil.Blazor.StilAlternate? left, Stil.Blazor.StilAlternate? right) -> bool
 static Stil.Blazor.StilSitemapEntry.operator !=(Stil.Blazor.StilSitemapEntry? left, Stil.Blazor.StilSitemapEntry? right) -> bool
 static Stil.Blazor.StilSitemapEntry.operator ==(Stil.Blazor.StilSitemapEntry? left, Stil.Blazor.StilSitemapEntry? right) -> bool
 static Stil.Blazor.StilStructuredData.Article(string! headline, string! url, System.DateTimeOffset? published = null, System.DateTimeOffset? modified = null, string? author = null, string? image = null, string? description = null, string? publisher = null) -> System.Text.Json.Nodes.JsonObject!

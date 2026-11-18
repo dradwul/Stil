@@ -23,6 +23,7 @@ public sealed partial record StilFont(string Family, string? StylesheetUrl, stri
     public string? VariationSettings { get; init; }
 
     /// <summary>The value for <c>--stil-font-family</c>, for example <c>'BR Cobane', sans-serif</c>.</summary>
+    [System.Text.Json.Serialization.JsonIgnore]
     public string FontFamily => $"'{Family}', {Fallback}";
 
     /// <summary>A font from cdnfonts.com. The slug is the font's address there; it defaults to the family name in lowercase with hyphens.</summary>

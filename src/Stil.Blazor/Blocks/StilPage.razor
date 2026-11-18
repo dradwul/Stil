@@ -1,13 +1,21 @@
+@using System.Globalization
 @inherits StilComponentBase
 
-@* A page rendered from its data (StilPageData): its blocks, from the top. Read the data with
-   StilPageJson from a database or a file; add your own block types to a StilBlockCatalog. *@
-@foreach (var block in Page.Blocks)
-{
-    <StilBlockView Data="block" Catalog="Catalog" />
-}
+@* A page rendered from its data (StilPageData): its blocks, from the top, in a wrapper marked with
+   the page's language, so Stil's built-in texts follow it, and with a theme when one is given.
+   Read the data with StilPageJson; add your own block types to a StilBlockCatalog. *@
+<div @attributes="AdditionalAttributes" class="@Classes("stil-page")" lang="@Page.Language" style="@Style">
+    <CascadingValue Name="@TextCultureCascade" Value="_culture" IsFixed="false">
+        @foreach (var block in Page.Blocks)
+        {
+            <StilBlockView Data="block" Catalog="Catalog" />
+        }
+    </CascadingValue>
+</div>
 
 @code {
+    private CultureInfo? _culture;
+
     /// <summary>The page to render.</summary>
     [Parameter, EditorRequired]
     public StilPageData Page { get; set; } = new();
@@ -15,4 +23,43 @@
     /// <summary>The block types, for your own. The default is the StilBlockCatalog service, or StilBlockCatalog.Default.</summary>
     [Parameter]
     public StilBlockCatalog? Catalog { get; set; }
+
+    /// <summary>
+    /// A theme for the page's blocks only, such as a site's theme in a preview inside an admin. For a
+    /// whole site, give the theme to <c>&lt;StilHead Theme="…" /&gt;</c> instead, so the header and footer follow it.
+    /// </summary>
+    [Parameter]
+    public StilTheme? Theme { get; set; }
+
+    protected override void OnParametersSet() => _culture = CultureOf(Page.Language);
+
+    // The theme's declarations come first; a style attribute from the consumer is appended.
+    private string? Style
+    {
+        get
+        {
+            var declarations = Theme is { HasOverrides: true } theme ? theme.ToCssDeclarations() : null;
+            var custom = AdditionalAttributes?.TryGetValue("style", out var value) == true ? value?.ToString() : null;
+            var style = string.Join(' ', new[] { declarations, custom }.Where(s => !string.IsNullOrWhiteSpace(s)));
+            return style.Length == 0 ? null : style;
+        }
+    }
+
+    // The page's language as a culture, or null for none or an unknown one.
+    private static CultureInfo? CultureOf(string? language)
+    {
+        if (string.IsNullOrWhiteSpace(language))
+        {
+            return null;
+        }
+
+        try
+        {
+            return CultureInfo.GetCultureInfo(language);
+        }
+        catch (CultureNotFoundException)
+        {
+            return null;
+        }
+    }
 }

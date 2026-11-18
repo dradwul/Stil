@@ -160,7 +160,7 @@
 
     private DateOnly Today => Now ?? DateOnly.FromDateTime(DateTime.Now);
 
-    protected override CultureInfo TextCulture => Culture ?? CultureInfo.CurrentUICulture;
+    protected override CultureInfo TextCulture => Culture ?? base.TextCulture;
 
     private CultureInfo CurrentCulture => Culture ?? CultureInfo.CurrentCulture;
 

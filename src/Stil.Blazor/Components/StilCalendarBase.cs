@@ -126,7 +126,7 @@ public abstract class StilCalendarBase<TItem> : StilComponentBase
     internal CultureInfo CurrentCulture => Culture ?? CultureInfo.CurrentCulture;
 
     /// <inheritdoc />
-    protected override CultureInfo TextCulture => Culture ?? CultureInfo.CurrentUICulture;
+    protected override CultureInfo TextCulture => Culture ?? base.TextCulture;
 
     internal DateTime CurrentNow => Now ?? DateTime.Now;
 
