@@ -346,5 +346,22 @@
   },
   "Article": {
     "Contents": "Tällä sivulla"
+  },
+  "BlockEditor": {
+    "AddFormat": "Lisää {0}",
+    "MoveUp": "Siirrä ylös",
+    "MoveDown": "Siirrä alas",
+    "Remove": "Poista",
+    "Required": "Pakollinen.",
+    "ListHint": "Yksi riville.",
+    "ImageAddress": "Osoite",
+    "ImageAlt": "Vaihtoehtoinen teksti",
+    "ImageAltHint": "Kuvaa kuvan niille, jotka eivät näe sitä; jätä tyhjäksi, jos kuva on koriste.",
+    "NoIcon": "Ei mitään",
+    "MaxFormat": "Enintään {0}.",
+    "AddedFormat": "{0} lisätty.",
+    "RemovedFormat": "{0} poistettu.",
+    "MovedUpFormat": "{0} siirretty ylös.",
+    "MovedDownFormat": "{0} siirretty alas."
   }
 }

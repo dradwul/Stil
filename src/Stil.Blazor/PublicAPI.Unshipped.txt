@@ -69,6 +69,7 @@ Stil.Blazor.Blocks.StilBlockDefinition.Deconstruct(out string! Type, out string!
 Stil.Blazor.Blocks.StilBlockDefinition.Description.get -> string?
 Stil.Blazor.Blocks.StilBlockDefinition.Description.init -> void
 Stil.Blazor.Blocks.StilBlockDefinition.Equals(Stil.Blazor.Blocks.StilBlockDefinition? other) -> bool
+Stil.Blazor.Blocks.StilBlockDefinition.IsComplete(Stil.Blazor.Blocks.StilBlockData! block) -> bool
 Stil.Blazor.Blocks.StilBlockDefinition.Items.get -> Stil.Blazor.Blocks.StilBlockItemDefinition?
 Stil.Blazor.Blocks.StilBlockDefinition.Items.init -> void
 Stil.Blazor.Blocks.StilBlockDefinition.Setting(string! name) -> Stil.Blazor.Blocks.StilBlockSetting?
@@ -79,6 +80,18 @@ Stil.Blazor.Blocks.StilBlockDefinition.Title.get -> string!
 Stil.Blazor.Blocks.StilBlockDefinition.Title.init -> void
 Stil.Blazor.Blocks.StilBlockDefinition.Type.get -> string!
 Stil.Blazor.Blocks.StilBlockDefinition.Type.init -> void
+Stil.Blazor.Blocks.StilBlockEditor
+Stil.Blazor.Blocks.StilBlockEditor.Block.get -> Stil.Blazor.Blocks.StilBlockData!
+Stil.Blazor.Blocks.StilBlockEditor.Block.set -> void
+Stil.Blazor.Blocks.StilBlockEditor.BlockChanged.get -> Microsoft.AspNetCore.Components.EventCallback<Stil.Blazor.Blocks.StilBlockData!>
+Stil.Blazor.Blocks.StilBlockEditor.BlockChanged.set -> void
+Stil.Blazor.Blocks.StilBlockEditor.Catalog.get -> Stil.Blazor.Blocks.StilBlockCatalog?
+Stil.Blazor.Blocks.StilBlockEditor.Catalog.set -> void
+Stil.Blazor.Blocks.StilBlockEditor.Definition.get -> Stil.Blazor.Blocks.StilBlockDefinition?
+Stil.Blazor.Blocks.StilBlockEditor.Definition.set -> void
+Stil.Blazor.Blocks.StilBlockEditor.ShowValidation.get -> bool
+Stil.Blazor.Blocks.StilBlockEditor.ShowValidation.set -> void
+Stil.Blazor.Blocks.StilBlockEditor.StilBlockEditor() -> void
 Stil.Blazor.Blocks.StilBlockImage
 Stil.Blazor.Blocks.StilBlockImage.<Clone>$() -> Stil.Blazor.Blocks.StilBlockImage!
 Stil.Blazor.Blocks.StilBlockImage.Alt.get -> string!
@@ -107,6 +120,7 @@ Stil.Blazor.Blocks.StilBlockSetting.Choices.get -> System.Collections.Generic.IR
 Stil.Blazor.Blocks.StilBlockSetting.Choices.init -> void
 Stil.Blazor.Blocks.StilBlockSetting.Deconstruct(out string! Name, out string! Label, out Stil.Blazor.Blocks.StilBlockSettingKind Kind) -> void
 Stil.Blazor.Blocks.StilBlockSetting.Equals(Stil.Blazor.Blocks.StilBlockSetting? other) -> bool
+Stil.Blazor.Blocks.StilBlockSetting.HasValue(Stil.Blazor.Blocks.StilBlockData! block) -> bool
 Stil.Blazor.Blocks.StilBlockSetting.Help.get -> string?
 Stil.Blazor.Blocks.StilBlockSetting.Help.init -> void
 Stil.Blazor.Blocks.StilBlockSetting.Kind.get -> Stil.Blazor.Blocks.StilBlockSettingKind
@@ -506,6 +520,8 @@ const Stil.Blazor.Components.StilIcons.Phone = "phone" -> string!
 override Stil.Blazor.Blocks.StilBlockDefinition.Equals(object? obj) -> bool
 override Stil.Blazor.Blocks.StilBlockDefinition.GetHashCode() -> int
 override Stil.Blazor.Blocks.StilBlockDefinition.ToString() -> string!
+override Stil.Blazor.Blocks.StilBlockEditor.OnAfterRenderAsync(bool firstRender) -> System.Threading.Tasks.Task!
+override Stil.Blazor.Blocks.StilBlockEditor.OnParametersSet() -> void
 override Stil.Blazor.Blocks.StilBlockImage.Equals(object? obj) -> bool
 override Stil.Blazor.Blocks.StilBlockImage.GetHashCode() -> int
 override Stil.Blazor.Blocks.StilBlockImage.ToString() -> string!
@@ -531,6 +547,7 @@ static Stil.Blazor.Blocks.StilBlockSetting.operator ==(Stil.Blazor.Blocks.StilBl
 static Stil.Blazor.Blocks.StilPageJson.Deserialize(string! json) -> Stil.Blazor.Blocks.StilPageData!
 static Stil.Blazor.Blocks.StilPageJson.Serialize(Stil.Blazor.Blocks.StilPageData! page, bool indented = true) -> string!
 ~override Stil.Blazor.Blocks.StilArticle.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Stil.Blazor.Blocks.StilBlockEditor.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilBlockView.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilCallToAction.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override Stil.Blazor.Blocks.StilContact.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void

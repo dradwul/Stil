@@ -48,6 +48,16 @@ public sealed record StilBlockSetting(string Name, string Label, StilBlockSettin
 
     /// <summary>For <see cref="StilBlockSettingKind.Choice"/>: the values, in kebab case; the first is the default.</summary>
     public IReadOnlyList<string> Choices { get; init; } = [];
+
+    /// <summary>The block has a value for this setting: text that is not empty, a picture with an address, a list with an item.</summary>
+    public bool HasValue(StilBlockData block) => Kind switch
+    {
+        StilBlockSettingKind.Boolean => true,
+        StilBlockSettingKind.Number => block.GetNumber(Name) is not null,
+        StilBlockSettingKind.Image => block.GetImage(Name) is not null,
+        StilBlockSettingKind.List => block.GetList(Name).Count > 0,
+        _ => !string.IsNullOrWhiteSpace(block.GetText(Name)),
+    };
 }
 
 /// <summary>The items a block type has, such as the features of a feature grid: their type, a title and their settings.</summary>
@@ -81,4 +91,9 @@ public sealed record StilBlockDefinition(string Type, string Title, IReadOnlyLis
 
     /// <summary>The setting with the given name, or null.</summary>
     public StilBlockSetting? Setting(string name) => Settings.FirstOrDefault(setting => setting.Name == name);
+
+    /// <summary>The block has every required setting, and so has each of its items.</summary>
+    public bool IsComplete(StilBlockData block) =>
+        Settings.All(setting => !setting.Required || setting.HasValue(block))
+        && (Items is not { } items || block.Items.All(item => items.Settings.All(setting => !setting.Required || setting.HasValue(item))));
 }

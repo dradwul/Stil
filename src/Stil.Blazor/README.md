@@ -669,6 +669,7 @@ WebAssembly), and `StilPage` renders it with the blocks above.
 | `StilPageJson` | `Serialize` and `Deserialize`; a newer `version` is refused with a `JsonException`. |
 | `StilBlockCatalog`, `StilBlockDefinition` | The block types and their settings (`StilBlockSetting`: name, label, `StilBlockSettingKind`, `Required`, `Help`, `Choices`) and items. `Default` has the built-in types: `hero`, `features`, `logos`, `stats`, `testimonials`, `pricing`, `faq`, `team`, `cta`, `text`, `contact` (with a form when it has a `formAction`) and `posts`. Add your own type with a `Component` that takes `[Parameter] StilBlockData Data`, and register the catalog as a service. |
 | `StilPage`, `StilBlockView` | Render a page, or one block; `Catalog` overrides the service. An unknown type renders nothing. |
+| `StilBlockEditor` | A form for one block, generated from its definition: a field per setting (text, long text, switch, choice, icon, picture with alt text, list, number, date), and its items to add, move up or down and remove, up to the type's `Max`. `@bind-Block` (it edits the block in place and raises `BlockChanged` after each change), `ShowValidation` (mark every empty required field), `Definition` or `Catalog`. The focus follows a moved, added or removed item, a status region announces it, and its texts are translated. Needs an interactive render mode. `StilBlockDefinition.IsComplete(block)` checks the required settings. |
 
 ## Stil CSS and the matching components
 

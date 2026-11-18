@@ -346,5 +346,22 @@
   },
   "Article": {
     "Contents": "On this page"
+  },
+  "BlockEditor": {
+    "AddFormat": "Add {0}",
+    "MoveUp": "Move up",
+    "MoveDown": "Move down",
+    "Remove": "Remove",
+    "Required": "Required.",
+    "ListHint": "One per line.",
+    "ImageAddress": "Address",
+    "ImageAlt": "Alt text",
+    "ImageAltHint": "Describes the picture to people who cannot see it; leave it empty for a decorative picture.",
+    "NoIcon": "None",
+    "MaxFormat": "Up to {0}.",
+    "AddedFormat": "{0} added.",
+    "RemovedFormat": "{0} removed.",
+    "MovedUpFormat": "{0} moved up.",
+    "MovedDownFormat": "{0} moved down."
   }
 }

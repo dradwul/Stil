@@ -346,5 +346,22 @@
   },
   "Article": {
     "Contents": "På den här sidan"
+  },
+  "BlockEditor": {
+    "AddFormat": "Lägg till {0}",
+    "MoveUp": "Flytta upp",
+    "MoveDown": "Flytta ned",
+    "Remove": "Ta bort",
+    "Required": "Måste fyllas i.",
+    "ListHint": "En per rad.",
+    "ImageAddress": "Adress",
+    "ImageAlt": "Alt-text",
+    "ImageAltHint": "Beskriver bilden för den som inte ser den; lämna tom för en dekorativ bild.",
+    "NoIcon": "Ingen",
+    "MaxFormat": "Högst {0}.",
+    "AddedFormat": "{0} tillagd.",
+    "RemovedFormat": "{0} borttagen.",
+    "MovedUpFormat": "{0} flyttad upp.",
+    "MovedDownFormat": "{0} flyttad ned."
   }
 }

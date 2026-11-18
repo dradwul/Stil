@@ -1,0 +1,333 @@
+@using System.Globalization
+@using System.Text.Json.Nodes
+@inherits StilComponentBase
+@inject IServiceProvider Services
+
+@* A form for one block of a page: its settings and its items, generated from the block type's
+   definition (StilBlockDefinition). It edits the block in place and raises BlockChanged after each
+   change, so a StilBlockView beside it shows the change at once. It needs an interactive render mode. *@
+@if (_definition is { } definition)
+{
+    <div @attributes="AdditionalAttributes" class="@Classes("stil-block-editor")">
+        <fieldset class="stil-block-editor-settings">
+            <legend>@definition.Title</legend>
+            @if (!string.IsNullOrEmpty(definition.Description))
+            {
+                <p class="stil-field-hint">@definition.Description</p>
+            }
+            @foreach (var setting in definition.Settings)
+            {
+                @Field(Block, setting, $"{_id}-{setting.Name}")
+            }
+        </fieldset>
+
+        @if (definition.Items is { } items)
+        {
+            <div class="stil-block-editor-items">
+                @for (var i = 0; i < Block.Items.Count; i++)
+                {
+                    var index = i;
+                    var item = Block.Items[i];
+                    var refs = RefsOf(item);
+                    <fieldset @key="item" @ref="refs.Group" class="stil-block-editor-item" tabindex="-1">
+                        <legend>@ItemName(items, index)</legend>
+                        <div class="stil-block-editor-actions">
+                            <button @ref="refs.Up" type="button" class="@MoveClass" disabled="@(index == 0)" @onclick="() => MoveAsync(items, index, -1)">
+                                <StilIcon Name="@StilIcons.ChevronUp" />@Localize(null, "BlockEditor.MoveUp")
+                            </button>
+                            <button @ref="refs.Down" type="button" class="@MoveClass" disabled="@(index == Block.Items.Count - 1)" @onclick="() => MoveAsync(items, index, 1)">
+                                <StilIcon Name="@StilIcons.ChevronDown" />@Localize(null, "BlockEditor.MoveDown")
+                            </button>
+                            <button @ref="refs.Remove" type="button" class="@RemoveClass" @onclick="() => RemoveAsync(items, index)">
+                                <StilIcon Name="@StilIcons.Close" />@Localize(null, "BlockEditor.Remove")
+                            </button>
+                        </div>
+                        @foreach (var setting in items.Settings)
+                        {
+                            @Field(item, setting, $"{_id}-{index}-{setting.Name}")
+                        }
+                    </fieldset>
+                }
+                @if (items.Max is { } max && Block.Items.Count >= max)
+                {
+                    <p class="stil-field-hint">@string.Format(TextCulture, Localize(null, "BlockEditor.MaxFormat"), max)</p>
+                }
+                else
+                {
+                    <div>
+                        <button @ref="_add" type="button" class="@AddClass" @onclick="() => AddAsync(items)">
+                            <StilIcon Name="@StilIcons.Plus" />@string.Format(TextCulture, Localize(null, "BlockEditor.AddFormat"), items.Title)
+                        </button>
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="stil-visually-hidden" role="status">@_status</div>
+    </div>
+}
+
+@code {
+    private static readonly string MoveClass = StilCssClasses.Button(StilVariant.Secondary, StilButtonAppearance.Outline, StilSize.Small);
+    private static readonly string RemoveClass = StilCssClasses.Button(StilVariant.Danger, StilButtonAppearance.Outline, StilSize.Small);
+    private static readonly string AddClass = StilCssClasses.Button(StilVariant.Primary, StilButtonAppearance.Outline, StilSize.Small);
+    private static readonly string[] IconNames = [.. StilIcons.BuiltIn.Keys.Order(StringComparer.Ordinal)];
+
+    private readonly string _id = StilIds.Next("block-editor");
+    private readonly Dictionary<StilBlockData, ItemRefs> _refs = new(ReferenceEqualityComparer.Instance);
+    private readonly HashSet<(StilBlockData Block, string Setting)> _touched = [];
+    private StilBlockDefinition? _definition;
+    private ElementReference _add;
+    private Func<ElementReference>? _focus;
+    private string? _status;
+
+    /// <summary>The block to edit. The editor changes it in place.</summary>
+    [Parameter, EditorRequired]
+    public StilBlockData Block { get; set; } = new();
+
+    /// <summary>Raised after each change, with the block. With <c>@bind-Block</c>, the page re-renders, so a preview follows.</summary>
+    [Parameter]
+    public EventCallback<StilBlockData> BlockChanged { get; set; }
+
+    /// <summary>The block's type, when it is not in the catalog. The default is the catalog's definition of <c>Block.Type</c>.</summary>
+    [Parameter]
+    public StilBlockDefinition? Definition { get; set; }
+
+    /// <summary>The block types. The default is the StilBlockCatalog service, or StilBlockCatalog.Default.</summary>
+    [Parameter]
+    public StilBlockCatalog? Catalog { get; set; }
+
+    /// <summary>Marks every required field that is empty, such as when the user saves. Without it, a field is marked once it has been changed.</summary>
+    [Parameter]
+    public bool ShowValidation { get; set; }
+
+    protected override void OnParametersSet() =>
+        _definition = Definition
+            ?? (Catalog ?? Services.GetService(typeof(StilBlockCatalog)) as StilBlockCatalog ?? StilBlockCatalog.Default).Find(Block.Type);
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_focus is { } focus)
+        {
+            _focus = null;
+            try
+            {
+                await focus().FocusAsync();
+            }
+            catch (InvalidOperationException)
+            {
+                // Not rendered (yet); the focus stays where it was.
+            }
+        }
+    }
+
+    private RenderFragment Field(StilBlockData data, StilBlockSetting setting, string id)
+    {
+        var invalid = setting.Required && !setting.HasValue(data) && (ShowValidation || _touched.Contains((data, setting.Name)));
+        IReadOnlyList<string>? messages = invalid ? [Localize(null, "BlockEditor.Required")] : null;
+        var hint = setting.Kind == StilBlockSettingKind.List
+            ? string.Join(' ', new[] { setting.Help, Localize(null, "BlockEditor.ListHint") }.Where(text => !string.IsNullOrEmpty(text)))
+            : setting.Help;
+        var describedBy = DescribedBy(id, hint, invalid);
+        var name = setting.Name;
+
+        return @<text>
+            @switch (setting.Kind)
+            {
+                case StilBlockSettingKind.Boolean:
+                    <StilField Hint="@hint" InputId="@id">
+                        <label class="stil-check">
+                            <input id="@id" type="checkbox" role="switch" class="stil-switch" checked="@data.GetBool(name)"
+                                   aria-describedby="@describedBy" @onchange="e => SetAsync(data, setting, e.Value is true ? true : null)" />
+                            @setting.Label
+                        </label>
+                    </StilField>
+                    break;
+
+                case StilBlockSettingKind.Choice:
+                    <StilField Label="@setting.Label" Hint="@hint" InputId="@id">
+                        <select id="@id" class="stil-select" aria-describedby="@describedBy"
+                                @onchange="e => SetAsync(data, setting, e.Value as string is { } value && value != setting.Choices.FirstOrDefault() ? value : null)">
+                            @foreach (var choice in setting.Choices)
+                            {
+                                <option value="@choice" selected="@(choice == (data.GetText(name) ?? setting.Choices[0]))">@ChoiceLabel(choice)</option>
+                            }
+                        </select>
+                    </StilField>
+                    break;
+
+                case StilBlockSettingKind.Icon:
+                    <StilField Label="@setting.Label" Hint="@hint" InputId="@id" Messages="@messages">
+                        <div class="stil-block-editor-icon">
+                            <select id="@id" class="stil-select" aria-describedby="@describedBy" aria-invalid="@(invalid ? "true" : null)"
+                                    @onchange="e => SetAsync(data, setting, e.Value as string is { Length: > 0 } value ? value : null)">
+                                <option value="" selected="@(data.GetText(name) is null)">@Localize(null, "BlockEditor.NoIcon")</option>
+                                @foreach (var icon in IconNames)
+                                {
+                                    <option value="@icon" selected="@(icon == data.GetText(name))">@icon</option>
+                                }
+                            </select>
+                            @if (data.GetText(name) is { Length: > 0 } chosen)
+                            {
+                                <StilIcon Name="@chosen" />
+                            }
+                        </div>
+                    </StilField>
+                    break;
+
+                case StilBlockSettingKind.Image:
+                    var (src, alt) = ImageOf(data, name);
+                    <fieldset class="stil-block-editor-image">
+                        <legend class="stil-label">@setting.Label</legend>
+                        @if (!string.IsNullOrEmpty(setting.Help))
+                        {
+                            <p class="stil-field-hint">@setting.Help</p>
+                        }
+                        <StilField Label="@Localize(null, "BlockEditor.ImageAddress")" InputId="@($"{id}-src")" Messages="@messages">
+                            <input id="@($"{id}-src")" class="stil-input" type="text" inputmode="url" spellcheck="false" value="@src"
+                                   required="@setting.Required" aria-invalid="@(invalid ? "true" : null)"
+                                   aria-describedby="@(invalid ? $"{id}-src-error" : null)"
+                                   @oninput="e => SetImageAsync(data, setting, e.Value as string ?? string.Empty, null)" />
+                        </StilField>
+                        <StilField Label="@Localize(null, "BlockEditor.ImageAlt")" Hint="@Localize(null, "BlockEditor.ImageAltHint")" InputId="@($"{id}-alt")">
+                            <input id="@($"{id}-alt")" class="stil-input" type="text" value="@alt" aria-describedby="@($"{id}-alt-hint")"
+                                   @oninput="e => SetImageAsync(data, setting, null, e.Value as string ?? string.Empty)" />
+                        </StilField>
+                    </fieldset>
+                    break;
+
+                case StilBlockSettingKind.LongText:
+                case StilBlockSettingKind.List:
+                    var list = setting.Kind == StilBlockSettingKind.List;
+                    <StilField Label="@setting.Label" Hint="@hint" InputId="@id" Messages="@messages">
+                        @if (list)
+                        {
+                            @* Saved on change, not on each key, so the lines it trims do not move the caret. *@
+                            <textarea id="@id" class="stil-input" rows="4" required="@setting.Required" aria-describedby="@describedBy"
+                                      aria-invalid="@(invalid ? "true" : null)" value="@string.Join('\n', data.GetList(name))"
+                                      @onchange="e => SetAsync(data, setting, ListOf(e.Value as string))"></textarea>
+                        }
+                        else
+                        {
+                            <textarea id="@id" class="stil-input" rows="3" required="@setting.Required" aria-describedby="@describedBy"
+                                      aria-invalid="@(invalid ? "true" : null)" value="@data.GetText(name)"
+                                      @oninput="e => SetAsync(data, setting, e.Value as string is { Length: > 0 } value ? value : null)"></textarea>
+                        }
+                    </StilField>
+                    break;
+
+                case StilBlockSettingKind.Number:
+                    <StilField Label="@setting.Label" Hint="@hint" InputId="@id" Messages="@messages">
+                        <input id="@id" class="stil-input" type="number" step="any" required="@setting.Required" aria-describedby="@describedBy"
+                               aria-invalid="@(invalid ? "true" : null)" value="@data.GetNumber(name)?.ToString(CultureInfo.InvariantCulture)"
+                               @onchange="e => SetAsync(data, setting, double.TryParse(e.Value as string, NumberStyles.Float, CultureInfo.InvariantCulture, out var number) ? number : null)" />
+                    </StilField>
+                    break;
+
+                case StilBlockSettingKind.Date:
+                    <StilField Label="@setting.Label" Hint="@hint" InputId="@id" Messages="@messages">
+                        <input id="@id" class="stil-input" type="date" required="@setting.Required" aria-describedby="@describedBy"
+                               aria-invalid="@(invalid ? "true" : null)" value="@data.GetText(name)"
+                               @onchange="e => SetAsync(data, setting, e.Value as string is { Length: > 0 } value ? value : null)" />
+                    </StilField>
+                    break;
+
+                default:
+                    var url = setting.Kind == StilBlockSettingKind.Url;
+                    <StilField Label="@setting.Label" Hint="@hint" InputId="@id" Messages="@messages">
+                        <input id="@id" class="stil-input" type="text" inputmode="@(url ? "url" : null)" spellcheck="@(url ? "false" : null)"
+                               required="@setting.Required" aria-describedby="@describedBy" aria-invalid="@(invalid ? "true" : null)"
+                               value="@data.GetText(name)"
+                               @oninput="e => SetAsync(data, setting, e.Value as string is { Length: > 0 } value ? value : null)" />
+                    </StilField>
+                    break;
+            }
+        </text>;
+    }
+
+    private async Task SetAsync(StilBlockData data, StilBlockSetting setting, object? value)
+    {
+        data.Set(setting.Name, value);
+        _touched.Add((data, setting.Name));
+        await BlockChanged.InvokeAsync(Block);
+    }
+
+    // A picture keeps its address and alt text together; both empty removes it.
+    private Task SetImageAsync(StilBlockData data, StilBlockSetting setting, string? src, string? alt)
+    {
+        var (oldSrc, oldAlt) = ImageOf(data, setting.Name);
+        var image = new StilBlockImage(src ?? oldSrc, alt ?? oldAlt);
+        return SetAsync(data, setting, image is { Src: "", Alt: "" } ? null : image);
+    }
+
+    private async Task AddAsync(StilBlockItemDefinition items)
+    {
+        var item = StilBlockData.Create(items.Type);
+        Block.Items.Add(item);
+        Announce("BlockEditor.AddedFormat", ItemName(items, Block.Items.Count - 1));
+        _focus = () => RefsOf(item).Group;
+        await BlockChanged.InvokeAsync(Block);
+    }
+
+    private async Task RemoveAsync(StilBlockItemDefinition items, int index)
+    {
+        var name = ItemName(items, index);
+        var item = Block.Items[index];
+        Block.Items.RemoveAt(index);
+        _refs.Remove(item);
+        _touched.RemoveWhere(touched => ReferenceEquals(touched.Block, item));
+        Announce("BlockEditor.RemovedFormat", name);
+        _focus = Block.Items.Count > 0 ? () => RefsOf(Block.Items[Math.Min(index, Block.Items.Count - 1)]).Remove : () => _add;
+        await BlockChanged.InvokeAsync(Block);
+    }
+
+    // Moves an item one step; the focus follows it, to the other button when it reaches an end.
+    private async Task MoveAsync(StilBlockItemDefinition items, int index, int step)
+    {
+        var target = index + step;
+        if (target < 0 || target >= Block.Items.Count)
+        {
+            return;
+        }
+
+        var item = Block.Items[index];
+        Block.Items.RemoveAt(index);
+        Block.Items.Insert(target, item);
+        Announce(step < 0 ? "BlockEditor.MovedUpFormat" : "BlockEditor.MovedDownFormat", ItemName(items, target));
+        var atEnd = step < 0 ? target == 0 : target == Block.Items.Count - 1;
+        _focus = () => (step < 0) != atEnd ? RefsOf(item).Up : RefsOf(item).Down;
+        await BlockChanged.InvokeAsync(Block);
+    }
+
+    private void Announce(string key, string name) => _status = string.Format(TextCulture, Localize(null, key), name);
+
+    private ItemRefs RefsOf(StilBlockData item) =>
+        _refs.TryGetValue(item, out var refs) ? refs : _refs[item] = new ItemRefs();
+
+    private static string ItemName(StilBlockItemDefinition items, int index) => $"{items.Title} {index + 1}";
+
+    private static string? DescribedBy(string id, string? hint, bool invalid) =>
+        string.Join(' ', new[] { string.IsNullOrEmpty(hint) ? null : $"{id}-hint", invalid ? $"{id}-error" : null }.Where(part => part is not null)) is { Length: > 0 } ids
+            ? ids
+            : null;
+
+    // "extra-large" shows as "Extra large".
+    private static string ChoiceLabel(string choice) =>
+        choice.Length == 0 ? choice : char.ToUpperInvariant(choice[0]) + choice[1..].Replace('-', ' ');
+
+    private static (string Src, string Alt) ImageOf(StilBlockData data, string name) =>
+        data.Settings[name] is JsonObject image
+            ? (StilBlockData.TextOf(image["src"]) ?? "", StilBlockData.TextOf(image["alt"]) ?? "")
+            : ("", "");
+
+    private static List<string>? ListOf(string? text) =>
+        (text ?? "").Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) is { Length: > 0 } lines ? [.. lines] : null;
+
+    private sealed class ItemRefs
+    {
+        public ElementReference Group;
+        public ElementReference Up;
+        public ElementReference Down;
+        public ElementReference Remove;
+    }
+}

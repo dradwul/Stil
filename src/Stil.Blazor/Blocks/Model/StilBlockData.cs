@@ -82,11 +82,15 @@ public sealed class StilBlockData
             ? [.. array.OfType<JsonValue>().Where(item => item.GetValueKind() == JsonValueKind.String).Select(item => item.GetValue<string>())]
             : [];
 
-    /// <summary>An image setting (its address and alt text), or null.</summary>
+    /// <summary>An image setting (its address and alt text), or null when it has no address.</summary>
     public StilBlockImage? GetImage(string name) =>
-        Settings[name] is JsonObject image && image["src"] is JsonValue src && src.GetValueKind() == JsonValueKind.String
-            ? new StilBlockImage(src.GetValue<string>(), image["alt"] is JsonValue alt && alt.GetValueKind() == JsonValueKind.String ? alt.GetValue<string>() : "")
+        Settings[name] is JsonObject image && TextOf(image["src"]) is { Length: > 0 } src
+            ? new StilBlockImage(src, TextOf(image["alt"]) ?? "")
             : null;
+
+    // A JSON string's text, or null.
+    internal static string? TextOf(JsonNode? node) =>
+        node is JsonValue value && value.GetValueKind() == JsonValueKind.String ? value.GetValue<string>() : null;
 
     /// <summary>A choice setting as an enum value, or <paramref name="fallback"/>. Choices are stored in kebab case, such as <c>muted</c>.</summary>
     public TEnum GetChoice<TEnum>(string name, TEnum fallback) where TEnum : struct, Enum =>

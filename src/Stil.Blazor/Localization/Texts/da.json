@@ -346,5 +346,22 @@
   },
   "Article": {
     "Contents": "På denne side"
+  },
+  "BlockEditor": {
+    "AddFormat": "Tilføj {0}",
+    "MoveUp": "Flyt op",
+    "MoveDown": "Flyt ned",
+    "Remove": "Fjern",
+    "Required": "Skal udfyldes.",
+    "ListHint": "Én pr. linje.",
+    "ImageAddress": "Adresse",
+    "ImageAlt": "Alt-tekst",
+    "ImageAltHint": "Beskriver billedet for dem, der ikke kan se det; lad den være tom for et dekorativt billede.",
+    "NoIcon": "Ingen",
+    "MaxFormat": "Højst {0}.",
+    "AddedFormat": "{0} tilføjet.",
+    "RemovedFormat": "{0} fjernet.",
+    "MovedUpFormat": "{0} flyttet op.",
+    "MovedDownFormat": "{0} flyttet ned."
   }
 }
