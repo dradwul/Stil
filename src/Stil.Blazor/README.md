@@ -671,6 +671,27 @@ WebAssembly), and `StilPage` renders it with the blocks above.
 | `StilPage`, `StilBlockView` | Render a page, or one block; `Catalog` overrides the service. An unknown type renders nothing. |
 | `StilBlockEditor` | A form for one block, generated from its definition: a field per setting (text, long text, switch, choice, icon, picture with alt text, list, number, date), and its items to add, move up or down and remove, up to the type's `Max`. `@bind-Block` (it edits the block in place and raises `BlockChanged` after each change), `ShowValidation` (mark every empty required field), `Definition` or `Catalog`. The focus follows a moved, added or removed item, a status region announces it, and its texts are translated. Needs an interactive render mode. `StilBlockDefinition.IsComplete(block)` checks the required settings. |
 
+### SEO and sharing
+
+`StilSeo` writes a page's head for search engines and link previews; it
+replaces `PageTitle` and `HeadContent` (a page shows only one
+`HeadContent`). It works in every render mode.
+
+```razor
+<StilSeo Title="Pricing" SiteName="My Site" Description="Plans for every team."
+         Image="images/share.png" ImageAlt="The plans side by side" />
+```
+
+| Type | Notes |
+| --- | --- |
+| `StilSeo` | `Title` and `SiteName` ("Pricing · My Site", `TitleSeparator`), `Description`, `Canonical` (by default the current address without query and fragment), `Image` and `ImageAlt` (Open Graph, made absolute, and the large Twitter card), `Type` (`StilSeoType.Website` or `Article` with `Published`, `Modified`, `Author`), `Locale` (og:locale, from the UI culture when it has a region), `NoIndex` and `NoFollow` (no canonical address then), `StructuredData`. |
+| `StilStructuredData` | schema.org objects for JSON-LD: `Organization`, `WebSite`, `Article` and `FaqPage` (from questions and answers, or an `faq` block). The JSON is escaped so it cannot end its script. |
+| `StilSitemap` | `sitemap.xml`: `new StilSitemap("https://example.com/")`, `Add(path, lastModified, changeFrequency, priority)`, `AddPage(page)`, `ToXml()`; up to 50,000 addresses. |
+| `StilRobots` | `robots.txt`: `Allow`, `Disallow` (per user agent, `*` by default), `Sitemap(url)`, `ToString()`. Without rules it allows everything. |
+
+Map the builders to endpoints in `Program.cs`, such as
+`app.MapGet("/sitemap.xml", () => Results.Text(sitemap.ToXml(), "application/xml"))`.
+
 ## Stil CSS and the matching components
 
 | Stil CSS | Blazor component |

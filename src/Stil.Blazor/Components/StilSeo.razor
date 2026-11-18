@@ -1,0 +1,169 @@
+@using System.Globalization
+@using System.Text.Json
+@using System.Text.Encodings.Web
+@using System.Text.Json.Nodes
+@using System.Text.Unicode
+@inherits StilComponentBase
+@inject NavigationManager Navigation
+
+@* The page's title and what search engines and link previews read: the description, the canonical
+   address, Open Graph, robots and structured data (JSON-LD). Put one on each page; it fills the
+   HeadOutlet, so it works in every render mode, also in static server rendering. *@
+<PageTitle>@FullTitle</PageTitle>
+<HeadContent>
+    @if (!string.IsNullOrWhiteSpace(Description))
+    {
+        <meta name="description" content="@Description" />
+    }
+    @if (RobotsContent is { } robots)
+    {
+        <meta name="robots" content="@robots" />
+    }
+    @if (!NoIndex)
+    {
+        @* A page kept out of search has no canonical address. *@
+        <link rel="canonical" href="@CanonicalUrl" />
+    }
+    <meta property="og:type" content="@(Type == StilSeoType.Article ? "article" : "website")" />
+    <meta property="og:title" content="@(string.IsNullOrWhiteSpace(Title) ? SiteName : Title)" />
+    @if (!string.IsNullOrWhiteSpace(Description))
+    {
+        <meta property="og:description" content="@Description" />
+    }
+    @if (!NoIndex)
+    {
+        <meta property="og:url" content="@CanonicalUrl" />
+    }
+    @if (!string.IsNullOrWhiteSpace(SiteName))
+    {
+        <meta property="og:site_name" content="@SiteName" />
+    }
+    @if (OpenGraphLocale is { } locale)
+    {
+        <meta property="og:locale" content="@locale" />
+    }
+    @if (!string.IsNullOrWhiteSpace(Image))
+    {
+        <meta property="og:image" content="@Absolute(Image)" />
+        @if (!string.IsNullOrWhiteSpace(ImageAlt))
+        {
+            <meta property="og:image:alt" content="@ImageAlt" />
+        }
+    }
+    @if (Type == StilSeoType.Article)
+    {
+        @if (Published is { } published)
+        {
+            <meta property="article:published_time" content="@IsoDate(published)" />
+        }
+        @if (Modified is { } modified)
+        {
+            <meta property="article:modified_time" content="@IsoDate(modified)" />
+        }
+        @if (!string.IsNullOrWhiteSpace(Author))
+        {
+            <meta property="article:author" content="@Author" />
+        }
+    }
+    <meta name="twitter:card" content="@(string.IsNullOrWhiteSpace(Image) ? "summary" : "summary_large_image")" />
+    @if (StructuredData is { } data)
+    {
+        @foreach (var item in data)
+        {
+            @* JSON-LD. The encoder escapes <, > and &, so the text cannot close the script. *@
+            @((MarkupString)$"<script type=\"application/ld+json\">{item.ToJsonString(JsonOptions)}</script>")
+        }
+    }
+</HeadContent>
+
+@code {
+    // Letters stay readable (å, ä, ö); HTML-sensitive characters are always escaped.
+    private static readonly JsonSerializerOptions JsonOptions = new() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) };
+
+    /// <summary>The page's title, such as "Pricing". The site's name follows it in the browser's title.</summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>The site's name, after the title ("Pricing · My Site") and as og:site_name. A page without a title shows only the name.</summary>
+    [Parameter]
+    public string? SiteName { get; set; }
+
+    /// <summary>Between the title and the site's name. The default is " · ".</summary>
+    [Parameter]
+    public string TitleSeparator { get; set; } = " · ";
+
+    /// <summary>A sentence or two about the page, for search results and link previews.</summary>
+    [Parameter]
+    public string? Description { get; set; }
+
+    /// <summary>The page's one address, absolute or relative to the site. The default is the current address without its query and fragment.</summary>
+    [Parameter]
+    public string? Canonical { get; set; }
+
+    /// <summary>A picture for link previews (og:image), absolute or relative to the site; about 1200 × 630 pixels.</summary>
+    [Parameter]
+    public string? Image { get; set; }
+
+    /// <summary>The picture's alt text (og:image:alt).</summary>
+    [Parameter]
+    public string? ImageAlt { get; set; }
+
+    /// <summary>Website (the default) or Article, for a post with its dates and author.</summary>
+    [Parameter]
+    public StilSeoType Type { get; set; }
+
+    /// <summary>For an article: when it was published.</summary>
+    [Parameter]
+    public DateTimeOffset? Published { get; set; }
+
+    /// <summary>For an article: when it was last changed.</summary>
+    [Parameter]
+    public DateTimeOffset? Modified { get; set; }
+
+    /// <summary>For an article: who wrote it.</summary>
+    [Parameter]
+    public string? Author { get; set; }
+
+    /// <summary>The page's language and region for og:locale, such as sv-SE. The default is the current UI culture, when it has a region.</summary>
+    [Parameter]
+    public string? Locale { get; set; }
+
+    /// <summary>Asks search engines to leave the page out of their results, such as for a 404 page or a draft. The page then has no canonical address.</summary>
+    [Parameter]
+    public bool NoIndex { get; set; }
+
+    /// <summary>Asks search engines not to follow the page's links.</summary>
+    [Parameter]
+    public bool NoFollow { get; set; }
+
+    /// <summary>Structured data (JSON-LD) for the page, such as from <see cref="StilStructuredData"/>.</summary>
+    [Parameter]
+    public IEnumerable<JsonObject>? StructuredData { get; set; }
+
+    private string? FullTitle =>
+        string.IsNullOrWhiteSpace(Title) ? SiteName
+        : string.IsNullOrWhiteSpace(SiteName) || Title == SiteName ? Title
+        : $"{Title}{TitleSeparator}{SiteName}";
+
+    private string? RobotsContent =>
+        (NoIndex, NoFollow) switch
+        {
+            (true, true) => "noindex, nofollow",
+            (true, false) => "noindex",
+            (false, true) => "nofollow",
+            _ => null,
+        };
+
+    private string CanonicalUrl =>
+        Canonical is { Length: > 0 } canonical
+            ? Absolute(canonical)
+            : new UriBuilder(Navigation.Uri) { Query = "", Fragment = "" }.Uri.AbsoluteUri;
+
+    // og:locale is a language and a region, such as sv_SE; a culture without a region gives none.
+    private string? OpenGraphLocale =>
+        (Locale ?? CultureInfo.CurrentUICulture.Name).Split('-') is [{ Length: > 0 } language, { Length: 2 } region] ? $"{language}_{region}" : null;
+
+    private string Absolute(string url) => Navigation.ToAbsoluteUri(url).AbsoluteUri;
+
+    private static string IsoDate(DateTimeOffset date) => date.ToString("yyyy-MM-dd'T'HH:mm:sszzz", CultureInfo.InvariantCulture);
+}
