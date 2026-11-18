@@ -1,0 +1,81 @@
+/* Block editor (StilBlockEditor): a block's settings and items as a form, for a site's admin.
+   <div class="stil-block-editor">
+     <fieldset class="stil-block-editor-settings"><legend>Hero</legend> …fields… </fieldset>
+     <div class="stil-block-editor-items">
+       <fieldset class="stil-block-editor-item"><legend>Button 1</legend>
+         <div class="stil-block-editor-actions">…move and remove buttons…</div> …fields…
+       </fieldset>
+     </div>
+   </div> */
+
+.stil-block-editor,
+.stil-block-editor-items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stil-space-4);
+}
+
+.stil-block-editor-settings,
+.stil-block-editor-item,
+.stil-block-editor-image {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stil-space-3);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.stil-block-editor-settings > legend {
+    margin-block-end: var(--stil-space-3);
+    font-size: var(--stil-font-size-lg);
+    font-weight: var(--stil-font-weight-bold);
+}
+
+.stil-block-editor-settings > .stil-field-hint {
+    margin: calc(-1 * var(--stil-space-2)) 0 0;
+}
+
+.stil-block-editor-item {
+    padding: var(--stil-space-3) var(--stil-space-4) var(--stil-space-4);
+    border: 1px solid var(--stil-color-border);
+    border-radius: var(--stil-radius-lg);
+}
+
+.stil-block-editor-item > legend {
+    margin: 0;
+    padding-inline: var(--stil-space-1);
+    font-weight: var(--stil-font-weight-bold);
+}
+
+/* The item takes the focus when it is added; the outline shows where it is. */
+.stil-block-editor-item:focus { outline: none; }
+
+.stil-block-editor-item:focus-visible {
+    outline: var(--stil-focus-ring-width) solid var(--_accent);
+    outline-offset: var(--stil-focus-ring-offset);
+}
+
+.stil-block-editor-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--stil-space-2);
+}
+
+.stil-block-editor-image > legend {
+    margin-block-end: calc(-1 * var(--stil-space-2));
+}
+
+.stil-block-editor-image > .stil-field-hint { margin: 0; }
+
+.stil-block-editor-icon {
+    display: flex;
+    align-items: center;
+    gap: var(--stil-space-3);
+}
+
+.stil-block-editor-icon > .stil-icon {
+    flex: none;
+    font-size: 1.5rem;
+}
