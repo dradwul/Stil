@@ -55,7 +55,11 @@ public sealed class StilBlockCatalog
     private static readonly StilBlockSetting Title = new("title", "Title", Text);
     private static readonly StilBlockSetting Lead = new("lead", "Lead", LongText) { Help = "A sentence or two under the title." };
     private static readonly StilBlockSetting Centered = new("centered", "Centered header", YesNo);
-    private static readonly StilBlockSetting[] SectionHeader = [Anchor, Tone, Eyebrow, Title, Lead, Centered];
+    private static readonly StilBlockSetting PageTitle = new("pageTitle", "Page title (h1)", YesNo)
+    {
+        Help = "Makes the title the page's main heading. Use it on one block, on a page without a hero.",
+    };
+    private static readonly StilBlockSetting[] SectionHeader = [Anchor, Tone, Eyebrow, Title, Lead, Centered, PageTitle];
 
     private static readonly StilBlockItemDefinition Actions = new("action", "Button",
     [
@@ -133,7 +137,7 @@ public sealed class StilBlockCatalog
                 new("actionHref", "Button link", Url),
             ]),
         },
-        new("faq", "FAQ", [Anchor, Tone, Eyebrow, Title, Lead])
+        new("faq", "FAQ", [Anchor, Tone, Eyebrow, Title, Lead, PageTitle])
         {
             Description = "Questions and answers that open and close.",
             Items = new("question", "Question",
@@ -154,7 +158,7 @@ public sealed class StilBlockCatalog
             ]),
         },
         new("cta", "Call to action", [Anchor, Tone, Title with { Required = true }, new("text", "Text", LongText),
-            new("brand", "On the brand color", YesNo), Centered with { Label = "Centered" }])
+            new("brand", "On the brand color", YesNo), Centered with { Label = "Centered" }, PageTitle])
         {
             Description = "A banner that asks for one thing.",
             Items = Actions,
@@ -167,7 +171,7 @@ public sealed class StilBlockCatalog
             new("email", "E-mail", Text), new("phone", "Phone", Text),
             new("address", "Address", LongText) { Help = "One line each." },
             new("mapHref", "Map link", Url), new("hours", "Opening hours", Text),
-            new("formAction", "Form address", Url) { Help = "Where the contact form posts its name, email and message. Without it, there is no form." }])
+            new("formAction", "Form address", Url) { Help = "Where the contact form posts its name, email and message. Without it, there is no form." }, PageTitle])
         {
             Description = "How to reach you, beside a contact form.",
         },

@@ -171,6 +171,25 @@ public class StilPageModelTests
         Assert.Contains("stil-btn-outline", buttons[1].ClassList);
     }
 
+    [Theory]
+    [InlineData("pricing")]
+    [InlineData("faq")]
+    [InlineData("cta")]
+    [InlineData("contact")]
+    public void ABlockMarkedAsThePageTitleHasTheH1(string type)
+    {
+        using var context = new BunitContext();
+
+        var plain = context.Render<StilBlockView>(parameters => parameters.Add(c => c.Data, StilBlockData.Create(type).Set("title", "Prices")));
+        var title = context.Render<StilBlockView>(parameters => parameters.Add(c => c.Data,
+            StilBlockData.Create(type).Set("title", "Prices").Set("pageTitle", true)));
+
+        Assert.Equal("Prices", plain.Find("h2").TextContent);
+        Assert.Empty(plain.FindAll("h1"));
+        Assert.Equal("Prices", title.Find("h1").TextContent);
+        Assert.NotNull(StilBlockCatalog.Default.Find(type)!.Setting("pageTitle"));
+    }
+
     [Fact]
     public void ToneAndAnchorComeFromTheSettings()
     {

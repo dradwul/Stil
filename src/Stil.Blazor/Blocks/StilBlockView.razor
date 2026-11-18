@@ -13,7 +13,7 @@
 
     case "features":
         <StilSection id="@Anchor" Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")"
-                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)">
+                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)" HeadingLevel="@Level">
             <StilFeatureGrid Cards="@Data.GetBool("cards")">
                 @foreach (var item in Data.Items)
                 {
@@ -43,7 +43,7 @@
 
     case "stats":
         <StilSection id="@Anchor" Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")"
-                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)">
+                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)" HeadingLevel="@Level">
             <StilStatsBand>
                 @foreach (var item in Data.Items)
                 {
@@ -55,7 +55,7 @@
 
     case "testimonials":
         <StilSection id="@Anchor" Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")"
-                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)">
+                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)" HeadingLevel="@Level">
             @foreach (var item in Data.Items.Where(item => item.GetBool("featured")))
             {
                 <StilTestimonial Featured Quote="@item.GetText("quote")" Name="@item.GetText("name")" Role="@item.GetText("role")"
@@ -75,7 +75,7 @@
 
     case "pricing":
         <StilSection id="@Anchor" Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")"
-                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)">
+                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)" HeadingLevel="@Level">
             <StilPricing PeriodSwitch="@Data.GetBool("periodSwitch")" YearlyNote="@Data.GetText("yearlyNote")">
                 @foreach (var item in Data.Items)
                 {
@@ -90,7 +90,7 @@
 
     case "faq":
         <StilSection id="@Anchor" Tone="ToneOf(Data)" aria-label="@Data.GetText("title")">
-            <StilFaq Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")">
+            <StilFaq Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")" HeadingLevel="@Level">
                 @foreach (var item in Data.Items)
                 {
                     <StilAccordionItem Title="@item.GetText("question")">@Paragraphs(item.GetText("answer"))</StilAccordionItem>
@@ -101,7 +101,7 @@
 
     case "team":
         <StilSection id="@Anchor" Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")"
-                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)">
+                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)" HeadingLevel="@Level">
             <StilTeam>
                 @foreach (var item in Data.Items)
                 {
@@ -113,7 +113,7 @@
 
     case "cta":
         <StilSection id="@Anchor" Tone="ToneOf(Data)" aria-label="@Data.GetText("title")">
-            <StilCallToAction Title="@Data.GetText("title")" Text="@Data.GetText("text")" Centered="@Data.GetBool("centered")"
+            <StilCallToAction Title="@Data.GetText("title")" Text="@Data.GetText("text")" Centered="@Data.GetBool("centered")" HeadingLevel="@Level"
                               Tone="@(Data.GetBool("brand") ? StilBlockTone.Brand : StilBlockTone.Default)"
                               Actions="@(Data.Items.Count > 0 ? ActionsOf(Data) : null)" />
         </StilSection>
@@ -121,7 +121,7 @@
 
     case "text":
         <StilSection id="@Anchor" Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")"
-                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)">
+                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)" HeadingLevel="@Level">
             <div class="stil-article-body stil-prose">@Paragraphs(Data.GetText("text"))</div>
         </StilSection>
         break;
@@ -130,7 +130,7 @@
         <StilSection id="@Anchor" Tone="ToneOf(Data)" aria-label="@Data.GetText("title")">
             <StilContact Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")"
                          Email="@Data.GetText("email")" Phone="@Data.GetText("phone")" Address="@Data.GetText("address")"
-                         MapHref="@Data.GetText("mapHref")" Hours="@Data.GetText("hours")">
+                         MapHref="@Data.GetText("mapHref")" Hours="@Data.GetText("hours")" HeadingLevel="@Level">
                 @if (Data.GetText("formAction") is { Length: > 0 } action)
                 {
                     @* A plain form post to the site's own endpoint, which handles the message. *@
@@ -157,7 +157,7 @@
 
     case "posts":
         <StilSection id="@Anchor" Eyebrow="@Data.GetText("eyebrow")" Title="@Data.GetText("title")" Lead="@Data.GetText("lead")"
-                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)">
+                     Centered="@Data.GetBool("centered")" Tone="ToneOf(Data)" HeadingLevel="@Level">
             <StilPostList>
                 @foreach (var item in Data.Items)
                 {
@@ -196,6 +196,9 @@
         _catalog = Catalog ?? Services.GetService(typeof(StilBlockCatalog)) as StilBlockCatalog ?? StilBlockCatalog.Default;
 
     private string? Anchor => Data.GetText("id") is { Length: > 0 } id ? id : null;
+
+    // A block marked as the page's title has the page's h1; a hero always has.
+    private int Level => Data.GetBool("pageTitle") ? 1 : 2;
 
     private static StilBlockTone ToneOf(StilBlockData block) => block.GetChoice("tone", StilBlockTone.Default);
 
