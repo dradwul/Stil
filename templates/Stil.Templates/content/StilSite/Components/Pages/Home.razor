@@ -1,9 +1,10 @@
 @page "/"
+@inject NavigationManager Navigation
 
-<PageTitle>My Stil Site · Plan the week your team actually has</PageTitle>
-<HeadContent>
-    <meta name="description" content="Tasks, room bookings and time off in one calendar, so Monday's plan still holds on Thursday." />
-</HeadContent>
+@* The title, description and link preview of the page, and who is behind the site, for search engines. *@
+<StilSeo Title="Plan the week your team actually has" SiteName="@SiteInfo.Name"
+         Description="Tasks, room bookings and time off in one calendar, so Monday's plan still holds on Thursday."
+         StructuredData="@([StilStructuredData.Organization(SiteInfo.Name, Navigation.BaseUri), StilStructuredData.WebSite(SiteInfo.Name, Navigation.BaseUri)])" />
 
 @* The home page, built only from Stil's page blocks: no CSS of its own. Replace the texts with
    your product's. *@

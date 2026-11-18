@@ -1,10 +1,9 @@
 @page "/blog"
 @inject IBlogService Posts
 
-<PageTitle>Blog · My Stil Site</PageTitle>
-<HeadContent>
-    <meta name="description" content="Notes on planning the week." />
-</HeadContent>
+@* Each page of the list is its own address, so the canonical one keeps ?page=. *@
+<StilSeo Title="@(CurrentPage > 1 ? $"Blog, page {CurrentPage}" : "Blog")" SiteName="@SiteInfo.Name"
+         Description="Notes on planning the week." Canonical="@(CurrentPage > 1 ? $"blog?page={CurrentPage}" : "blog")" />
 
 <StilSection Eyebrow="Blog" Title="Notes on planning the week" HeadingLevel="1"
              Lead="What we learn from the teams that plan with us.">

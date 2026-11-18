@@ -186,6 +186,11 @@ without it, and the contact form posts like any HTML form.
   block with a form that is checked on the server).
 - `Data/BlogService.cs`: `IBlogService` with sample posts; replace it with
   your own source (a database, files or a CMS).
+- `SiteInfo.cs`: the site's name. Each page has a `StilSeo` with its title,
+  description and canonical address (`blog?page=2` keeps its page), the
+  home page names the organization and the site in structured data, a post
+  is an article with its date, author and picture, and the not-found page
+  is kept out of search (`NoIndex`).
 - `wwwroot/site.css` is empty: the pages need no CSS of their own.
 
 See the [Stil for Blazor README](https://github.com/dradwul/Stil/tree/main/src/Stil.Blazor#readme)

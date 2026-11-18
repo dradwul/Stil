@@ -4,10 +4,12 @@
 
 @if (_post is { } post)
 {
-    <PageTitle>@post.Title · My Stil Site</PageTitle>
-    <HeadContent>
-        <meta name="description" content="@post.Excerpt" />
-    </HeadContent>
+    @* An article for link previews and search engines: its dates, author and picture. *@
+    <StilSeo Title="@post.Title" SiteName="@SiteInfo.Name" Description="@post.Excerpt" Type="StilSeoType.Article"
+             Published="post.Date" Author="@post.Author" Image="@post.Image" ImageAlt="@post.Title"
+             StructuredData="@([StilStructuredData.Article(post.Title, Navigation.ToAbsoluteUri($"blog/{post.Slug}").AbsoluteUri,
+                 published: post.Date, author: post.Author, description: post.Excerpt, publisher: SiteInfo.Name,
+                 image: post.Image is null ? null : Navigation.ToAbsoluteUri(post.Image).AbsoluteUri)])" />
 
     <StilSection>
         <StilArticle Eyebrow="Blog" EyebrowHref="blog" Title="@post.Title" Lead="@post.Excerpt"
