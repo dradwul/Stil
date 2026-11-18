@@ -1,0 +1,82 @@
+@page "/blocks/block-editor"
+@using Stil.Docs.Examples.Blocks
+
+<DocsHeader Title="Block editor" Eyebrow="Website">
+    <Lead>A form for one block of a page, generated from its type: its settings, and items to add, move and remove.</Lead>
+</DocsHeader>
+
+<p>
+    <code>StilBlockEditor</code> edits a block of <a href="blocks/pages-as-data">a page as data</a>. It reads what
+    the block's type has from its definition in the <code>StilBlockCatalog</code>, so the built-in types and your
+    own get a form without one being written. It changes the block in place and raises <code>BlockChanged</code>
+    after each change; with <code>@@bind-Block</code>, a <code>StilBlockView</code> beside it follows as you type.
+    It needs an interactive render mode, and its styles are in the blocks stylesheet
+    (<code>&lt;StilHead Blocks /&gt;</code>).
+</p>
+
+<h2 id="example">Edit a block</h2>
+<DocExample Type="typeof(BlockEditing)">
+    <p>
+        Pick a type, change the form, and watch the preview and the JSON. This is the ground a site builder stands
+        on: a list of the page's blocks, this form for the one you pick, and the page saved with
+        <code>StilPageJson</code>.
+    </p>
+</DocExample>
+
+<h2 id="fields">The fields</h2>
+<p>Each kind of setting (<code>StilBlockSettingKind</code>) has its own control, with the setting's label and help:</p>
+<ul>
+    <li><strong>Text</strong>, <strong>Url</strong>: a text field, set as you type.</li>
+    <li><strong>LongText</strong>: a text area; blank lines separate paragraphs.</li>
+    <li><strong>Boolean</strong>: a switch.</li>
+    <li><strong>Choice</strong>: a select of the choices; the first is the default and is not stored.</li>
+    <li><strong>Icon</strong>: a select of the built-in icons, with the chosen one beside it.</li>
+    <li><strong>Image</strong>: the picture's address and its alt text, kept together.</li>
+    <li><strong>List</strong>: a text area with one item per line, saved when you leave it.</li>
+    <li><strong>Number</strong>, <strong>Date</strong>: a number field and a date picker.</li>
+</ul>
+<p>
+    An empty setting is removed from the block, so the JSON holds only what is set. The items of a block (the
+    features of a feature grid, the buttons of a hero) each have their own group, with buttons to move them up or
+    down and to remove them, and an add button under them until the type's <code>Max</code> is reached.
+</p>
+
+<h2 id="validation">Required settings</h2>
+<p>
+    A required setting has a <code>required</code> field. Once it has been emptied, it is marked invalid with a
+    message; <code>ShowValidation</code> marks every empty one, such as when the user saves.
+    <code>StilBlockDefinition.IsComplete(block)</code> tells whether a block and its items have all they need.
+</p>
+<CodeBlock Language="razor" Code="@Save" />
+
+<h2 id="accessibility">Accessibility</h2>
+<p>
+    Every field has a label, its help and its error message are linked with <code>aria-describedby</code>, and each
+    item is a group named by its legend, such as "Button 2". The focus follows an item that moves, to the other
+    button when it reaches the top or the bottom, goes to the new item when one is added, and to the next item's
+    remove button when one is removed. A status region announces each of these. The button texts are translated.
+</p>
+
+<h2 id="api">API</h2>
+<ApiTable Type="typeof(StilBlockEditor)" />
+
+@code {
+    private const string Save = """
+        <StilBlockEditor @bind-Block="block" ShowValidation="showValidation" />
+        <StilButton OnClick="Save">Save</StilButton>
+
+        @code {
+            private StilBlockData block = StilBlockData.Create("hero");
+            private bool showValidation;
+
+            private void Save()
+            {
+                showValidation = true;
+                if (StilBlockCatalog.Default.Find(block.Type)!.IsComplete(block))
+                {
+                    // Save the page the block is in, such as StilPageJson.Serialize(page) to your database.
+                }
+            }
+        }
+        """;
+}

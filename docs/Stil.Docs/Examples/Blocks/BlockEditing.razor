@@ -1,0 +1,66 @@
+@* The block's form beside its preview: each change shows at once. *@
+<div class="stil-field stil-mb-4" style="max-width: 20rem">
+    <label class="stil-label" for="block-type">Block type</label>
+    <select id="block-type" class="stil-select" @onchange="Pick">
+        @foreach (var definition in StilBlockCatalog.Default.All)
+        {
+            <option value="@definition.Type" selected="@(definition.Type == _block.Type)">@definition.Title</option>
+        }
+    </select>
+</div>
+
+<div class="stil-grid">
+    <div class="stil-col-12 stil-col-lg-5">
+        <StilBlockEditor @key="_block" @bind-Block="_block" />
+    </div>
+    <div class="stil-col-12 stil-col-lg-7">
+        <div class="stil-border stil-rounded-lg stil-overflow-hidden" role="region" aria-label="Preview">
+            <StilBlockView Data="_block" />
+        </div>
+        <details class="stil-mt-4">
+            <summary>The block as JSON</summary>
+            <pre tabindex="0"><code>@Json</code></pre>
+        </details>
+    </div>
+</div>
+
+@code {
+    private StilBlockData _block = Sample(StilBlockCatalog.Default.Find("features")!);
+
+    // The block on its own, in the page format.
+    private string Json => StilPageJson.Serialize(new StilPageData().Add(_block));
+
+    private void Pick(ChangeEventArgs e)
+    {
+        if (StilBlockCatalog.Default.Find(e.Value as string ?? "") is { } definition)
+        {
+            _block = Sample(definition);
+        }
+    }
+
+    // A block to start from: its title and three items with their required settings.
+    private static StilBlockData Sample(StilBlockDefinition definition)
+    {
+        var block = StilBlockData.Create(definition.Type);
+        if (definition.Setting("title") is not null)
+        {
+            block.Set("title", definition.Title);
+        }
+
+        if (definition.Items is { } items)
+        {
+            for (var number = 1; number <= Math.Min(items.Max ?? 3, 3); number++)
+            {
+                var item = StilBlockData.Create(items.Type);
+                foreach (var setting in items.Settings.Where(setting => setting.Required))
+                {
+                    item.Set(setting.Name, setting.Kind == StilBlockSettingKind.Url ? "#" : $"{setting.Label} {number}");
+                }
+
+                block.Add(item);
+            }
+        }
+
+        return block;
+    }
+}
