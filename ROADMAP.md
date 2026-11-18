@@ -1550,11 +1550,15 @@ interactive Server and WebAssembly alike. V2.2 comes in five parts:
   that cannot close its script and robots.txt values that cannot add a
   rule.
 
-#### V2.2.4: Theme and languages
+#### V2.2.4: Theme and languages ✅ Done
 
-- [ ] A site's theme stored with its pages (`StilTheme` as JSON) and applied
+- [x] A site's theme stored with its pages (`StilTheme` as JSON) and applied
   by `StilPage`; pages per language with `hreflang` alternates and the
-  localization of Phase 8.
+  localization of Phase 8. `StilSiteData` with its theme, font and pages;
+  `<StilHead Theme Font />` for the document; a page's built-in texts
+  follow its language through a cascading culture. Verified with 8 bUnit
+  tests (round trip, refused CSS injection, alternates, culture) and the
+  docs page's site in two languages, with axe in light and dark mode.
 
 #### V2.2.5: The starter site from a database
 

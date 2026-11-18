@@ -85,6 +85,16 @@ version could contain breaking changes; they are marked **Breaking**.
   structured data for the organization, the site and each post, a canonical
   address per blog page, and a not-found page kept out of search.
 - **Docs**: SEO and sharing.
+- **Stil for Blazor**: themes and languages for a site as data (Phase V2.2.4).
+  `StilSiteData` holds a site's theme, font, language and pages, read and
+  written with `StilPageJson.SerializeSite` and `DeserializeSite`, which
+  refuses a theme or font that could break out of the page's CSS. A page's
+  `Key` links its translations; `AlternatesOf` gives the hreflang links for
+  `StilSeo`'s new `Alternates`. `<StilHead />` takes a `Theme` and a `Font`
+  for the document. `StilPage` marks its blocks with the page's language,
+  and Stil's built-in texts in them follow it, and takes a `Theme` for its
+  blocks. `StilTheme` and `StilFont` serialize to JSON.
+- **Docs**: Themes and languages, with a site in two languages.
 - **Stil CSS**: a heading that a script focuses (Blazor's `FocusOnNavigate`
   gives the page's `h1` `tabindex="-1"`) no longer shows a focus ring.
 - **Stil CSS**: in a collapsed navbar (on a phone), `stil.js` opens a
