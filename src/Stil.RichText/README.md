@@ -16,7 +16,7 @@ Rich text for [Stil for Blazor](https://github.com/dradwul/Stil/tree/main/src/St
   on `Stil.Markdown` for Markdown. It is a package of its own, so the core
   `Stil` package stays free of dependencies.
 
-> **Status:** stable (`1.0`). Requires .NET 10 and the `Stil` package. The
+> **Status:** stable (`1.1`). Requires .NET 10 and the `Stil` package. The
 > API changes only in a major version ([Semantic Versioning](https://semver.org/)).
 
 ## Get started

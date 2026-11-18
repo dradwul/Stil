@@ -11,6 +11,14 @@ version could contain breaking changes; they are marked **Breaking**.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-18
+
+Websites: page blocks for a product site and a blog (`stil-blocks.css` and
+`Stil.Blazor.Blocks`), pages as data with a generated editor, SEO and
+sharing, a site's theme and languages, and `dotnet new stil-site`, a website
+whose pages come from a database. The default font is now Geologica. Nothing
+is renamed or removed: `1.0` apps update without changes.
+
 ### Added
 
 - **Stil CSS**: page blocks for websites, in a separate, opt-in stylesheet:
@@ -555,7 +563,8 @@ Tagged but not published: the release failed. These changes ship in
 - A documentation site with live examples, API tables and a theme builder.
 - A guide for migrating from Bootstrap.
 
-[Unreleased]: https://github.com/dradwul/Stil/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/dradwul/Stil/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/dradwul/Stil/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/dradwul/Stil/compare/v0.1.0-preview.4...v1.0.0
 [0.1.0-preview.4]: https://github.com/dradwul/Stil/compare/v0.1.0-preview.3...v0.1.0-preview.4
 [0.1.0-preview.3]: https://github.com/dradwul/Stil/compare/v0.1.0-preview.2...v0.1.0-preview.3

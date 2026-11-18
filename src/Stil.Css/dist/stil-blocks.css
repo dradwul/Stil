@@ -1,4 +1,4 @@
-/*! Stil CSS blocks v1.0.0 | MIT License | https://github.com/dradwul/Stil */
+/*! Stil CSS blocks v1.1.0 | MIT License | https://github.com/dradwul/Stil */
 @layer stil.components {
   .stil-section {
     padding-block: clamp(var(--stil-space-7), 8vw, 6rem);

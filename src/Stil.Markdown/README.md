@@ -12,7 +12,7 @@ writes it with a toolbar, keyboard shortcuts and a preview.
 - CommonMark with tables, task lists, autolinks and strikethrough. The text
   uses `stil-prose` from Stil CSS, so it follows your theme and dark mode.
 
-> **Status:** stable (`1.0`). Requires .NET 10 and the `Stil` package. The
+> **Status:** stable (`1.1`). Requires .NET 10 and the `Stil` package. The
 > API changes only in a major version ([Semantic Versioning](https://semver.org/)).
 
 ## Get started

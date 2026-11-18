@@ -30,7 +30,7 @@ CSS without clashing. You change the look by overriding a small set of CSS
 custom properties (design tokens). You do not need to rebuild or fork the
 library.
 
-> **Status:** stable (`1.0`). Class names, token names and component APIs
+> **Status:** stable (`1.1`). Class names, token names and component APIs
 > change only in a major version ([Semantic Versioning](https://semver.org/));
 > CI checks the public .NET API against a baseline. Coming from a `0.1`
 > preview? The [migration notes](MIGRATING-TO-1.0.md) list every rename. See

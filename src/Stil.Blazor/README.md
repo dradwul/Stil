@@ -16,7 +16,7 @@ alerts, navigation, tabs, dropdowns, accordions, dialogs, drawers and toasts. Ev
 `stil-*` classes. You can mix the components with hand-written Stil markup,
 and theme both with the same `--stil-*` tokens.
 
-> **Status:** stable (`1.0`). Requires .NET 10. The API changes only in a
+> **Status:** stable (`1.1`). Requires .NET 10. The API changes only in a
 > major version ([Semantic Versioning](https://semver.org/)), except the
 > components marked *experimental* below. Coming from a `0.1` preview? See the
 > [migration notes](https://github.com/dradwul/Stil/blob/main/MIGRATING-TO-1.0.md).

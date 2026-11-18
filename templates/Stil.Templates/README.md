@@ -56,7 +56,7 @@ The app references the `Stil` version the templates were released with
 | `--Radius` | `sharp`, `small`, `default`, `large`, `round` | `default` | How round the corners are, of buttons, fields, cards and dialogs. It is set with `AddStil()` in `Program.cs`. |
 | `--ColorMode` | `light`, `dark`, `auto` | `auto` | The color mode the app starts in. `auto` follows the operating system. Users can change it with the switch in the navbar. |
 | `--Culture` | `en`, `sv`, `nb`, `da`, `fi` | `en` | The default language, for visitors whose browser asks for none of the offered ones. Users can change it with the language selector in the navbar. Stil's components have built-in texts in all five; the app's own texts are in `Locales/*.json` (English and Swedish to start with) and are read with `IStringLocalizer<T>`. |
-| `--StilVersion` | a version | `1.0.0` | The version of the `Stil` packages to reference (`Stil`, and `Stil.Charts`, `Stil.Markdown` and `Stil.RichText` when a feature adds them). |
+| `--StilVersion` | a version | `1.1.0` | The version of the `Stil` packages to reference (`Stil`, and `Stil.Charts`, `Stil.Markdown` and `Stil.RichText` when a feature adds them). |
 | `-f`, `--framework` | `net10.0` | `net10.0` | The target framework. |
 | `--no-restore` | | | Skips the restore after creating the app. |
 
