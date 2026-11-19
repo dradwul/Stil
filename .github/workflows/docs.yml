@@ -1,7 +1,8 @@
 name: Docs
 
-# Builds the documentation site (docs/Stil.Docs, Blazor WebAssembly) on every push and pull
-# request, and deploys it to GitHub Pages from main: https://dradwul.github.io/Stil/
+# Builds the documentation site (docs/Stil.Docs.Host, which renders the pages of docs/Stil.Docs on
+# the server and then runs them with WebAssembly) on every push and pull request, and deploys it
+# to GitHub Pages from main as static files: https://dradwul.github.io/Stil/
 #
 # One-time setup (owner): Settings > Pages > Build and deployment > Source: GitHub Actions.
 # Until then the deploy job fails with a message that Pages is not enabled; the build still
@@ -32,18 +33,15 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Publish the docs site
-        run: dotnet publish docs/Stil.Docs --configuration Release --output site
+        run: dotnet publish docs/Stil.Docs.Host --configuration Release --output site
 
-      # Pages serves the site from /<repository>/, so the app's base path must say so. A deep
-      # link (/Stil/components/buttons) is not a file: Pages answers with 404.html, which is the
-      # app itself, and the app's router shows the page.
-      - name: Prepare the site for GitHub Pages
-        env:
-          BASE: /${{ github.event.repository.name }}/
-        run: |
-          sed -i "s|<base href=\"/\" />|<base href=\"$BASE\" />|" site/wwwroot/index.html
-          grep -q "<base href=\"$BASE\" />" site/wwwroot/index.html
-          cp site/wwwroot/index.html site/wwwroot/404.html
+      # Pages has no server, so the site runs here once: tools/export-docs.mjs saves its rendered
+      # home page with the base path Pages serves it from (/<repository>/), and the files the server
+      # only answers as endpoints. A deep link (/Stil/components/buttons) is not a file yet: Pages
+      # answers with 404.html, a copy of the home page, and the router shows the page once
+      # WebAssembly starts.
+      - name: Export the site as static files
+        run: node tools/export-docs.mjs site "/${{ github.event.repository.name }}/"
 
       - uses: actions/upload-pages-artifact@v4
         if: github.event_name != 'pull_request'
