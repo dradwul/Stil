@@ -26,7 +26,7 @@ something usable.
 | 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | Done |
 | 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | ✅ Done (`1.0.0` released 2026-11-12) |
 | V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | V2.1 and V2.2 done, in `1.1.0`; V2.3 and V2.4 are the hosted product, outside this repository |
-| 17 | Reach and polish: a docs site that search engines can read, and the CSS backlog | In progress (17.1–17.3 done) |
+| 17 | Reach and polish: a docs site that search engines can read, and the CSS backlog | In progress (17.1–17.4 done; the `1.2.0` release is next) |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -1697,18 +1697,27 @@ renamed).
   first), and a data grid's resize handles took focus before they had a
   value (fixed in Stil: they take focus once `stil.js` has measured them).
 
-### Phase 17.4: The CSS backlog
+### Phase 17.4: The CSS backlog ✅ Done
 
-- [ ] A neutral "on-color" button variant for buttons on colored bars and
+- [x] A neutral "on-color" button variant for buttons on colored bars and
   brand sections, in Stil CSS and as a `StilButton` option, with AA contrast
   on every palette.
-- [ ] A max-width scale (`stil-mw-*`: text, form, card and page widths) and
+- [x] A max-width scale (`stil-mw-*`: text, form, card and page widths) and
   a token for the offset of sticky elements under a sticky navbar.
-- [ ] Striped and animated progress bars (`stil-progress-striped`, still when
+- [x] Striped and animated progress bars (`stil-progress-striped`, still when
   the user prefers reduced motion), and the same as `StilProgress` options.
-- [ ] Left in the backlog: tooltips on elements that already use `::after`
+- [x] Left in the backlog: tooltips on elements that already use `::after`
   (they wait for anchor positioning in every target browser) and a 50–900
   scale per brand color (only if the utilities need one).
+  The on-color button reads the surface's colors from `--_on` and
+  `--_on-bg`, which `stil-bg-{variant}` now hands down like the brand
+  sections, so its contrast is the surface's own in every palette (checked in
+  the screenshots of the purple and sunset palettes too). A sticky navbar
+  stays at the top while `stil-sticky-top` elements stop
+  `--stil-sticky-offset` below it. The stripes are left out under a shown
+  value, which needs the plain color. Verified with bUnit tests, axe on the
+  showcase and the docs pages, and the updated button and progress
+  screenshots.
 
 ---
 
@@ -1765,11 +1774,7 @@ These need the repository or package owner.
 Small CSS improvements found while building the samples. They are picked up
 when a phase needs them.
 
-- [ ] A fixed width/max-width scale, and sticky offsets below a sticky navbar.
 - [ ] Tooltips on elements that already use `::after` (dropdown summary, busy
   button). Move to a popover-based tooltip once anchor positioning is in
   every target browser.
-- [ ] A neutral or "on-color" button variant. Meanwhile,
-  `stil-btn-ghost stil-text-inherit` works on colored bars.
-- [ ] Striped or animated progress bars.
 - [ ] A 50–900 scale per brand color, if the utilities need one.

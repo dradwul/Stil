@@ -13,6 +13,20 @@ version could contain breaking changes; they are marked **Breaking**.
 
 ### Added
 
+- **Stil CSS and Stil for Blazor**: an on-color button
+  (`stil-btn-on-color`, `StilButtonAppearance.OnColor`) for a button on a
+  colored surface: it takes the surface's text color for its text and border,
+  swapped on hover, so it has the surface's own contrast in every palette.
+  `stil-bg-{variant}`, like brand sections, now hands its colors down as
+  `--_on` and `--_on-bg`.
+- **Stil CSS**: a max-width scale (`stil-mw-text`, `-form`, `-card`, `-page`,
+  `-none`, with the tokens `--stil-width-text`, `-form` and `-card`), and
+  `--stil-sticky-offset`, where `stil-sticky-top` and an article's table of
+  contents stop, so they stay below a sticky navbar.
+- **Stil CSS and Stil for Blazor**: striped and moving progress bars
+  (`stil-progress-striped`, `stil-progress-animated`; `StilProgress`'s
+  `Striped` and `Animated`). The stripes stand still when the user prefers
+  reduced motion and are left out under the shown value.
 - **Stil for Blazor**: `StilSeo` takes child content: other elements for the
   page's head, such as a stylesheet, since a page shows only one
   `HeadContent`.
