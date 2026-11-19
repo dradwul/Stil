@@ -11,14 +11,34 @@ version could contain breaking changes; they are marked **Breaking**.
 
 ## [Unreleased]
 
+### Added
+
+- **Stil for Blazor**: `StilSeo` takes child content: other elements for the
+  page's head, such as a stylesheet, since a page shows only one
+  `HeadContent`.
+
+### Fixed
+
+- **Stil for Blazor and Stil CSS**: a data grid's column resize handles take
+  focus only once `stil.js` has given them their column's width
+  (`aria-valuenow`), and `stil.js` measures the grids already on the page
+  when it loads. A grid rendered without interactivity no longer had
+  focusable separators without a value (axe `aria-required-attr`).
+
 ### Changed
 
 - **Docs**: the docs site renders each page on the server first
   (`docs/Stil.Docs.Host`, a Blazor Web App) and then runs it with
-  WebAssembly as before, so its HTML has the page's content and a language
-  picked in the navbar is already in the first render. `docs.yml` exports it
-  as static files for GitHub Pages with `tools/export-docs.mjs`. The docs
-  site references the patched ASP.NET Core WebAssembly packages (`10.0.15`).
+  WebAssembly, so its HTML has the page's content and a language picked in
+  the navbar is already in the first render. `docs.yml` exports every page
+  as a static file for GitHub Pages with `tools/export-docs.mjs`, so each
+  address answers with status 200, with a real not-found page, and a
+  `sitemap.xml` and `robots.txt` built with `StilSitemap` and `StilRobots`.
+  Every page has a `StilSeo` with its title, description and canonical
+  address. WebAssembly starts on the visitor's first scroll, pointer move,
+  key, touch or focus, so a page shows at once: Lighthouse scores 100 for
+  SEO and 94–100 for performance. The docs site references the patched
+  ASP.NET Core WebAssembly packages (`10.0.15`).
 
 ## [1.1.0] - 2026-11-18
 

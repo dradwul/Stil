@@ -26,7 +26,7 @@ something usable.
 | 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | Done |
 | 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | ✅ Done (`1.0.0` released 2026-11-12) |
 | V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | V2.1 and V2.2 done, in `1.1.0`; V2.3 and V2.4 are the hosted product, outside this repository |
-| 17 | Reach and polish: a docs site that search engines can read, and the CSS backlog | In progress (17.1 and 17.2 done) |
+| 17 | Reach and polish: a docs site that search engines can read, and the CSS backlog | In progress (17.1–17.3 done) |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -1668,18 +1668,34 @@ renamed).
   Pages serves it was checked: a deep link starts the site and its example
   works.
 
-### Phase 17.3: A static export for GitHub Pages
+### Phase 17.3: A static export for GitHub Pages ✅ Done
 
-- [ ] `docs.yml` runs the site, fetches every route in `DocsPages` and writes
+- [x] `docs.yml` runs the site, fetches every route in `DocsPages` and writes
   each one as `path/index.html` under the `/Stil/` base, beside the
   WebAssembly files, so every page is a real file with status 200. `404.html`
   becomes a real not-found page, for unknown addresses only.
-- [ ] Every docs page gets a `StilSeo` (its title, its lead as the
+- [x] Every docs page gets a `StilSeo` (its title, its lead as the
   description, and its canonical address), and the export writes
   `sitemap.xml` and `robots.txt` with `StilSitemap` and `StilRobots`: Stil
   documents itself with its own SEO tools.
-- [ ] The exported site, served locally as Pages serves it, passes the docs
+- [x] The exported site, served locally as Pages serves it, passes the docs
   axe test and Lighthouse (SEO 100, performance at least 90).
+  Every page is written as `<path>.html` (Pages serves `/Stil/components/buttons`
+  from it); the pages to export come from the sitemap the host builds from
+  its routes. Rendering every page in WebAssembly at once scored 34–43 for
+  performance, since WebAssembly drew the page again, so the runtime now
+  starts on the visitor's first scroll, pointer move, key, touch or focus;
+  the font shows only if it arrives in time (`display=optional`), which
+  ended a layout shift. Measured on the home page, buttons, the data grid
+  and the block editor: SEO 100, performance 94–98 on a phone and 100 on a
+  desktop, no layout shift; axe passes on all 46 pages in light and dark
+  mode, and no longer flakes while WebAssembly redraws. A page's lead is its
+  `DocsHeader`'s `Description`, and `StilSeo` takes child content for the
+  head elements a page adds. The static pages showed three faults that the
+  redraw had hidden: the navbar brand was a link inside a link (fixed in the
+  docs layout), `stil.js` loaded only with WebAssembly (the docs now load it
+  first), and a data grid's resize handles took focus before they had a
+  value (fixed in Stil: they take focus once `stil.js` has measured them).
 
 ### Phase 17.4: The CSS backlog
 
