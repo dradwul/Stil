@@ -26,6 +26,7 @@ something usable.
 | 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | Done |
 | 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | Done (`1.0.0` is ready; the tag is an owner task) |
 | V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | In progress (V2.1 and V2.2 done, in `1.1.0`; V2.3 and V2.4 are the hosted product) |
+| 17 | Reach and polish: a docs site that search engines can read, and the CSS backlog | Planned |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -1599,6 +1600,71 @@ site's home page in the builder.
 
 **Done when:** the starter site has a blog and a contact form that are run
 entirely from the builder.
+
+---
+
+## Phase 17: Reach and polish
+
+Goal: Stil can be found, and its docs load fast. Today the docs site is a
+WebAssembly app: a search engine sees an empty page, every address except
+the home page answers with HTTP 404 (GitHub Pages serves `404.html`, which
+is the app), and a first visit downloads the .NET runtime before it shows any
+text. The fix keeps everything free: GitHub Pages and GitHub Actions, no
+server. The phase also takes the small CSS items that have waited in the
+backlog.
+
+**Done when (all parts):** every docs page is static HTML with its content,
+served with status 200 from GitHub Pages, and its live examples still work;
+Lighthouse scores 100 for SEO and at least 90 for performance on the docs
+home page and a component page; axe passes on every docs page in light and
+dark mode; and the CSS items of 17.4 are in Stil CSS and Stil for Blazor with
+tests and docs. Released as `1.2.0` (new classes and parameters, nothing
+renamed).
+
+### Phase 17.1: Roadmap housekeeping
+
+- [ ] The items of Phase V2.1 checked (the phase is done), `1.1.0` among the
+  owner tasks, and "Where we are" brought up to `1.1.0` (the packages and
+  `stil-css` are published, the docs site is hosted).
+- [ ] The CSS backlog's item "Carousel and popover" removed: Phases 9 and 10
+  built both.
+
+### Phase 17.2: Docs rendered on the server
+
+- [ ] The docs site as a Blazor Web App: each page is rendered to HTML on the
+  server first, and the live examples become interactive with WebAssembly, as
+  they are today. `dotnet run` still starts it locally.
+- [ ] JavaScript only after the first render (the theme, the language, the
+  copy buttons, the examples that use `stil.js`), so rendering on the server
+  never calls it. The language picked in the navbar still applies once
+  WebAssembly starts; the HTML itself is English.
+- [ ] The Playwright docs test and its axe check run against it, as before.
+
+### Phase 17.3: A static export for GitHub Pages
+
+- [ ] `docs.yml` runs the site, fetches every route in `DocsPages` and writes
+  each one as `path/index.html` under the `/Stil/` base, beside the
+  WebAssembly files, so every page is a real file with status 200. `404.html`
+  becomes a real not-found page, for unknown addresses only.
+- [ ] Every docs page gets a `StilSeo` (its title, its lead as the
+  description, and its canonical address), and the export writes
+  `sitemap.xml` and `robots.txt` with `StilSitemap` and `StilRobots`: Stil
+  documents itself with its own SEO tools.
+- [ ] The exported site, served locally as Pages serves it, passes the docs
+  axe test and Lighthouse (SEO 100, performance at least 90).
+
+### Phase 17.4: The CSS backlog
+
+- [ ] A neutral "on-color" button variant for buttons on colored bars and
+  brand sections, in Stil CSS and as a `StilButton` option, with AA contrast
+  on every palette.
+- [ ] A max-width scale (`stil-mw-*`: text, form, card and page widths) and
+  a token for the offset of sticky elements under a sticky navbar.
+- [ ] Striped and animated progress bars (`stil-progress-striped`, still when
+  the user prefers reduced motion), and the same as `StilProgress` options.
+- [ ] Left in the backlog: tooltips on elements that already use `::after`
+  (they wait for anchor positioning in every target browser) and a 50–900
+  scale per brand color (only if the utilities need one).
 
 ---
 
