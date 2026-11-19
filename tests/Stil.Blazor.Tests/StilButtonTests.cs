@@ -42,6 +42,7 @@ public class StilButtonTests
     [InlineData(StilButtonAppearance.Solid, null)]
     [InlineData(StilButtonAppearance.Outline, "stil-btn-outline")]
     [InlineData(StilButtonAppearance.Ghost, "stil-btn-ghost")]
+    [InlineData(StilButtonAppearance.OnColor, "stil-btn-on-color")]
     public void RendersAppearanceClass(StilButtonAppearance appearance, string? expectedClass)
     {
         using var context = new BunitContext();

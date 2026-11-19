@@ -42,7 +42,9 @@ const utilities = [
     // Sizing
     { prefix: 'w', property: 'width', values: { 25: '25%', 50: '50%', 75: '75%', 100: '100%', auto: 'auto' } },
     { prefix: 'h', property: 'height', values: { 25: '25%', 50: '50%', 75: '75%', 100: '100%', auto: 'auto' } },
-    { prefix: 'mw', property: 'max-width', values: { 100: '100%' } },
+    { prefix: 'mw', property: 'max-width', values: {
+        100: '100%', text: 'var(--stil-width-text)', form: 'var(--stil-width-form)', card: 'var(--stil-width-card)',
+        page: 'var(--stil-container-max)', none: 'none' } },
     { prefix: 'min-vh', property: 'min-height', values: { 100: '100vh' } },
 
     // Text
@@ -128,7 +130,7 @@ export function generateUtilities() {
     }
 
     const variantUtilities = variants.flatMap(variant => [
-        `.stil-bg-${variant} {\n${variantDeclarations(variant)}\n    background-color: var(--_bg);\n    color: var(--_fg);\n}`,
+        `.stil-bg-${variant} {\n${variantDeclarations(variant)}\n    --_on: var(--_fg);\n    --_on-bg: var(--_bg);\n    background-color: var(--_bg);\n    color: var(--_fg);\n}`,
         `.stil-text-${variant} {\n${variantDeclarations(variant)}\n    color: var(--_ink);\n}`,
         `.stil-border-${variant} {\n${variantDeclarations(variant)}\n    border-color: var(--_ink);\n}`,
     ]);

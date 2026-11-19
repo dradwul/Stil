@@ -18,7 +18,13 @@ public enum StilButtonAppearance
     Outline,
 
     /// <summary>Text in the variant color only (stil-btn-ghost).</summary>
-    Ghost
+    Ghost,
+
+    /// <summary>
+    /// For a button on a colored surface, such as a stil-bg-primary bar or a brand section: the
+    /// surface's text color for its text and border, swapped on hover (stil-btn-on-color).
+    /// </summary>
+    OnColor,
 }
 
 /// <summary>Color mode for <c>data-stil-theme</c>.</summary>

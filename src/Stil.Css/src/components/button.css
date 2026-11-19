@@ -72,6 +72,17 @@
 .stil-btn-ghost:hover { background-color: color-mix(in srgb, currentColor 12%, transparent); }
 .stil-btn-ghost:active { background-color: color-mix(in srgb, currentColor 20%, transparent); }
 
+/* On color: for a button on a colored surface (stil-bg-{variant}, a brand section or call to
+   action), whatever its variant. It takes the surface's colors, which that surface hands down
+   as --_on (its text color) and --_on-bg (its color): the text color for its text and border,
+   and the two swapped on hover. So it reads like the surface itself, in every palette. On
+   another colored box, it uses the text color around it. */
+.stil-btn-on-color {
+    border-color: var(--_on, currentColor);
+    background-color: transparent;
+    color: var(--_on, currentColor);
+}
+
 /* Toggle buttons: aria-pressed="true" shows the "on" state. */
 .stil-btn[aria-pressed="true"] {
     background-color: color-mix(in oklab, var(--_bg), var(--_fg) 25%);
@@ -84,6 +95,15 @@
     color: var(--_fg);
     box-shadow: none;
 }
+
+.stil-btn-on-color:is(:hover, :active, [aria-pressed="true"]) {
+    border-color: var(--_on, currentColor);
+    background-color: var(--_on, currentColor);
+    color: var(--_on-bg, Canvas);
+    box-shadow: none;
+}
+
+.stil-btn-on-color:focus-visible { outline-color: var(--_on, currentColor); }
 
 .stil-btn:is(:disabled, [aria-disabled="true"]) {
     opacity: 0.55;
@@ -113,6 +133,11 @@
 
 .stil-btn:is(.stil-btn-outline, .stil-btn-ghost)[aria-busy="true"]::after {
     border-color: var(--_ink);
+    border-right-color: transparent;
+}
+
+.stil-btn-on-color[aria-busy="true"]::after {
+    border-color: var(--_on, currentColor);
     border-right-color: transparent;
 }
 

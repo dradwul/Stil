@@ -46,6 +46,7 @@ internal static class StilCssClasses
             {
                 StilButtonAppearance.Outline => "stil-btn-outline",
                 StilButtonAppearance.Ghost => "stil-btn-ghost",
+                StilButtonAppearance.OnColor => "stil-btn-on-color",
                 _ => null
             },
             Size("stil-btn", size),
