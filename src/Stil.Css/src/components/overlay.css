@@ -272,6 +272,28 @@
     transition: width var(--stil-duration-md) var(--stil-easing);
 }
 
+/* Striped (stil-progress-striped on the track) and moving stripes (add stil-progress-animated),
+   such as for work whose end is near or not known. The stripes are the bar's text color, faint;
+   under a label they are left out, since the label needs the plain color for its contrast. The
+   stripes stand still when the user prefers reduced motion. */
+.stil-progress-striped .stil-progress-bar:not(:has(.stil-progress-label)) {
+    background-image: linear-gradient(45deg,
+        color-mix(in srgb, var(--_fg) 22%, transparent) 25%, transparent 25% 50%,
+        color-mix(in srgb, var(--_fg) 22%, transparent) 50% 75%, transparent 75%);
+    background-size: 1rem 1rem;
+}
+
+.stil-progress-animated .stil-progress-bar { animation: stil-progress-stripes 1s linear infinite; }
+
+@keyframes stil-progress-stripes {
+    from { background-position: 1rem 0; }
+    to { background-position: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stil-progress-animated .stil-progress-bar { animation: none; }
+}
+
 /* The bar is not positioned, so the label spans the track and is not clipped by the bar. */
 .stil-progress-label {
     position: absolute;

@@ -35,11 +35,20 @@
     [Parameter]
     public StilSize Size { get; set; }
 
+    /// <summary>Stripes on the bar (stil-progress-striped). Under the value, when ShowValue is on, they are left out.</summary>
+    [Parameter]
+    public bool Striped { get; set; }
+
+    /// <summary>Moving stripes, such as for work whose end is near (stil-progress-animated); still when the user prefers reduced motion.</summary>
+    [Parameter]
+    public bool Animated { get; set; }
+
     private double Clamped => Max <= 0 ? 0 : Math.Clamp(Value, 0, Max);
 
     private double Percent => Max <= 0 ? 0 : Clamped / Max * 100;
 
-    private string CssClass => Classes("stil-progress", Size == StilSize.Large ? "stil-progress-lg" : null);
+    private string CssClass => Classes("stil-progress", Size == StilSize.Large ? "stil-progress-lg" : null,
+        Striped || Animated ? "stil-progress-striped" : null, Animated ? "stil-progress-animated" : null);
 
     private string BarClass => Variant is { } variant
         ? $"stil-progress-bar {StilCssClasses.Variant("stil-bg", variant)}"

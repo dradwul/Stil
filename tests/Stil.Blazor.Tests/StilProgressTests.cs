@@ -5,6 +5,22 @@ namespace Stil.Blazor.Tests;
 
 public class StilProgressTests
 {
+    [Theory]
+    [InlineData(false, false, new[] { "stil-progress" })]
+    [InlineData(true, false, new[] { "stil-progress", "stil-progress-striped" })]
+    [InlineData(false, true, new[] { "stil-progress", "stil-progress-striped", "stil-progress-animated" })]
+    public void StripesAndMovingStripes(bool striped, bool animated, string[] expected)
+    {
+        using var context = new BunitContext();
+
+        var cut = context.Render<StilProgress>(parameters => parameters
+            .Add(component => component.Value, 60)
+            .Add(component => component.Striped, striped)
+            .Add(component => component.Animated, animated));
+
+        Assert.Equal(expected, cut.Find(".stil-progress").ClassList);
+    }
+
     [Fact]
     public void RendersProgressbarWithAriaValues()
     {
