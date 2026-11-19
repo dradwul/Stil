@@ -3,17 +3,20 @@
 @inject IJSRuntime JS
 @inject IStilToastService Toasts
 
-<DocsHeader Title="New app" Eyebrow="Get started">
+<DocsHeader Title="New app" Eyebrow="Get started"
+            Description="Choose a starter, the features you need and a theme, and get the dotnet new command that makes the app. The command line gives the same app; this page only fills in the options.">
     <Lead>
         Choose a starter, the features you need and a theme, and get the <code>dotnet new</code> command that makes the app.
         The command line gives the same app; this page only fills in the options.
     </Lead>
+    <Head>
+        @* The chosen font, for the preview. *@
+        @if (_setup.WebFont?.StylesheetUrl is { } fontUrl)
+        {
+            <link rel="stylesheet" href="@fontUrl" />
+        }
+    </Head>
 </DocsHeader>
-
-@if (_setup.WebFont?.StylesheetUrl is { } fontUrl)
-{
-    <HeadContent><link rel="stylesheet" href="@fontUrl" /></HeadContent>
-}
 
 <StilWizard @bind-Step="_step" OnFinish="CopyCommandsAsync" FinishText="Copy the commands">
     <StilWizardStep Title="Starter" Description="What the app starts as">

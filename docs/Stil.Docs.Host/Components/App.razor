@@ -4,11 +4,14 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Stil: a themeable CSS library and a Blazor component library built on it." />
-    @* docs.yml changes this to the site's path on GitHub Pages, /Stil/. *@
+    @* tools/export-docs.mjs changes this to the site's path on GitHub Pages, /Stil/. *@
     <base href="/" />
     <link rel="icon" type="image/svg+xml" href="stil-logo.svg" />
-    <link href="https://fonts.googleapis.com/css2?family=Geologica:wght,SHRP@400..600,100&amp;display=swap" rel="stylesheet" />
+    @* The font: connected to early, and shown only if it arrives in time, so the text never jumps
+       when it loads; a later visit has it from the cache. *@
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geologica:wght,SHRP@400..600,100&amp;display=optional" rel="stylesheet" />
     @* Plain addresses, not fingerprinted ones, so the exported static files are found as they are. *@
     <link rel="stylesheet" href="_content/Stil/stil.css" />
     <link rel="stylesheet" href="_content/Stil/stil-blocks.css" />
@@ -32,7 +35,23 @@
         <a href="." class="reload">Reload</a>
         <button type="button" class="dismiss stil-close" aria-label="Dismiss"></button>
     </div>
-    <script src="_framework/blazor.web.js"></script>
+    @* Stil's script for the page as it is: menus, dropdowns, scrolling boxes and data grid
+       handles work before WebAssembly starts. Blazor later imports the same module. *@
+    <script type="module" src="_content/Stil/stil.js"></script>
+    <script src="_framework/blazor.web.js" autostart="false"></script>
+    <script>
+        // The page is already readable, so WebAssembly waits for the visitor: it starts on the
+        // first scroll, pointer move, key, touch or focus, and the examples come alive. Until
+        // then, links load the next page's HTML like any static site.
+        (() => {
+            const events = ['pointermove', 'pointerdown', 'keydown', 'touchstart', 'wheel', 'scroll', 'focusin'];
+            const start = () => {
+                events.forEach(name => removeEventListener(name, start, true));
+                Blazor.start();
+            };
+            events.forEach(name => addEventListener(name, start, { capture: true, passive: true }));
+        })();
+    </script>
 </body>
 
 </html>

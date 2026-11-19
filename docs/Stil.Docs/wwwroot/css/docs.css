@@ -1,15 +1,6 @@
 /* The docs site's own layout. Everything else comes from Stil. Docs rules are unlayered, so they
    win over Stil's layered rules without !important. */
 
-.docs-loading {
-    display: grid;
-    place-items: center;
-    gap: 1rem;
-    min-height: 100vh;
-    color: #59636e;
-    font-family: system-ui, sans-serif;
-}
-
 #blazor-error-ui {
     position: fixed;
     inset: auto 1rem 1rem;
@@ -23,15 +14,6 @@
 .docs-shell { min-height: 100vh; }
 
 .docs-skip { position: absolute; inset-inline-start: 1rem; top: 0.5rem; z-index: 2000; }
-
-.docs-brand {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--stil-space-2);
-    color: inherit;
-    font-size: var(--stil-font-size-lg);
-    text-decoration: none;
-}
 
 .docs-body {
     display: grid;

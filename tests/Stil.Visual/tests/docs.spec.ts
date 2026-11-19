@@ -22,8 +22,8 @@ for (const route of docsRoutes()) {
         test(`axe: docs ${route}, ${mode}`, { tag: '@a11y' }, async ({ page }, testInfo) => {
             // The docs site follows the system color mode until a mode is picked.
             await page.emulateMedia({ colorScheme: mode });
+            // The page is rendered on the server, so its content is there before WebAssembly starts.
             await page.goto(`${DOCS_URL}${route}`);
-            await expect(page.locator('.docs-loading')).toHaveCount(0, { timeout: 45_000 });
             await expect(page.locator('main h1').first()).toBeVisible();
             await settle(page);
 

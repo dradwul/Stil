@@ -6,14 +6,16 @@
 @inject IJSRuntime JS
 @inject IStilToastService Toasts
 
-<DocsHeader Title="Theme builder" Eyebrow="Get started">
-    <Lead>Pick your colors, font and corners, see them on real components in light and dark mode, then copy the CSS or C#.</Lead>
+<DocsHeader Title="Theme builder" Eyebrow="Get started"
+            Description="Pick your colors, font and corners, see them on real components in light and dark mode, then copy the CSS or C#.">
+    <Head>
+        @* The chosen font, for the preview. *@
+        @if (WebFont?.StylesheetUrl is { } fontUrl)
+        {
+            <link rel="stylesheet" href="@fontUrl" />
+        }
+    </Head>
 </DocsHeader>
-
-@if (WebFont?.StylesheetUrl is { } fontUrl)
-{
-    <HeadContent><link rel="stylesheet" href="@fontUrl" /></HeadContent>
-}
 
 <div class="docs-theme-builder">
     <div class="docs-theme-controls stil-stack">

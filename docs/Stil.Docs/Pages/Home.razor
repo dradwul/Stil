@@ -1,6 +1,9 @@
 @page "/"
+@inject NavigationManager Navigation
 
-<PageTitle>Stil · Themeable CSS and Blazor components</PageTitle>
+<StilSeo Title="Stil: themeable CSS and Blazor components"
+         Description="A themeable CSS library and a Blazor component library built on it: light and dark mode, WCAG AA contrast, and your brand in a few tokens. Free and open source (MIT)."
+         StructuredData="@([StilStructuredData.WebSite("Stil", Navigation.BaseUri)])" />
 
 <section class="docs-hero">
     <p class="docs-eyebrow">Stil 1.1</p>

@@ -1,8 +1,7 @@
 @page "/blocks/seo"
 
-<DocsHeader Title="SEO and sharing" Eyebrow="Website">
-    <Lead>What search engines and link previews read: the title, description, canonical address, Open Graph, structured data, a sitemap and robots.txt.</Lead>
-</DocsHeader>
+<DocsHeader Title="SEO and sharing" Eyebrow="Website"
+            Description="What search engines and link previews read: the title, description, canonical address, Open Graph, structured data, a sitemap and robots.txt." />
 
 <p>
     A website is found through search and shared as links. <code>StilSeo</code> writes the head of a page for
@@ -14,7 +13,7 @@
 <p>
     Put one <code>StilSeo</code> on each page, with <code>&lt;HeadOutlet /&gt;</code> in <code>App.razor</code>. It
     replaces <code>PageTitle</code> and <code>HeadContent</code>: use it instead of them, since a page shows only one
-    <code>HeadContent</code>.
+    <code>HeadContent</code>. Other elements for the head, such as a stylesheet, go inside it.
 </p>
 <CodeBlock Language="razor" Code="@Page" />
 <ul>

@@ -1,5 +1,6 @@
-@* The title, browser tab title and lead paragraph of a docs page. *@
-<PageTitle>@(Title == "Stil" ? "Stil" : $"{Title} · Stil")</PageTitle>
+@* The title, lead and head of a docs page: StilSeo writes its browser title, description and
+   canonical address, so search engines and link previews get them. *@
+<StilSeo Title="@Title" SiteName="Stil" Description="@Description" NoIndex="@NoIndex">@Head</StilSeo>
 <header class="docs-header">
     @if (!string.IsNullOrWhiteSpace(Eyebrow))
     {
@@ -9,6 +10,10 @@
     @if (Lead is not null)
     {
         <p class="docs-lead">@Lead</p>
+    }
+    else if (!string.IsNullOrWhiteSpace(Description))
+    {
+        <p class="docs-lead">@Description</p>
     }
 </header>
 
@@ -20,6 +25,19 @@
     [Parameter]
     public string? Eyebrow { get; set; }
 
+    /// <summary>The page in a sentence or two: the lead under the title and the description for search results.</summary>
+    [Parameter]
+    public string? Description { get; set; }
+
+    /// <summary>A lead with markup, such as code, instead of the description's text.</summary>
     [Parameter]
     public RenderFragment? Lead { get; set; }
+
+    /// <summary>Other elements for the page's head, such as a font the page previews.</summary>
+    [Parameter]
+    public RenderFragment? Head { get; set; }
+
+    /// <summary>Keeps the page out of search results, such as the not-found page.</summary>
+    [Parameter]
+    public bool NoIndex { get; set; }
 }
