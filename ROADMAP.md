@@ -24,19 +24,25 @@ something usable.
 | 13 | Boards and workspace: kanban, command palette, notifications, recurring events, resources, Gantt | Done |
 | 14 | Markdown, rich text and charts 2: Markdown editor and view, rich text editor, scatter, gauge, heat map, combined | ✅ Done |
 | 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | Done |
-| 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | Done (`1.0.0` is ready; the tag is an owner task) |
-| V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | In progress (V2.1 and V2.2 done, in `1.1.0`; V2.3 and V2.4 are the hosted product) |
-| 17 | Reach and polish: a docs site that search engines can read, and the CSS backlog | Planned |
+| 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | ✅ Done (`1.0.0` released 2026-11-12) |
+| V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | V2.1 and V2.2 done, in `1.1.0`; V2.3 and V2.4 are the hosted product, outside this repository |
+| 17 | Reach and polish: a docs site that search engines can read, and the CSS backlog | In progress (17.1 done) |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
 end, so they never keep a phase open.
 
-## Where we are (0.1.0-preview.4, Phases 0–15 done)
+## Where we are (1.1.0, Phases 0–16, V2.1 and V2.2 done)
 
-- **Stil CSS:** an npm package (`stil-css`, not yet published). It is built
-  with Lightning CSS from partials into `dist/stil.css` and `stil.min.css`
-  (about 23 kB gzipped), plus the optional `stil.js` (22 kB gzipped). It has:
+Every package is published: `Stil`, `Stil.Charts`, `Stil.Markdown`,
+`Stil.RichText` and `Stil.Templates` on nuget.org, and `stil-css` on npm,
+at `1.1.0`. The docs site is hosted at <https://dradwul.github.io/Stil/>.
+
+- **Stil CSS:** an npm package (`stil-css`). It is built with Lightning CSS
+  from partials into `dist/stil.css` and `stil.min.css` (about 24 kB
+  gzipped), plus the optional `stil.js` (22 kB gzipped) and the opt-in
+  `stil-blocks.css` for websites (4 kB gzipped). The default font is
+  Geologica (free, from Google Fonts). It has:
   - cascade layers;
   - a full `--stil-*` token set;
   - light and dark mode;
@@ -47,7 +53,7 @@ end, so they never keep a phase open.
   - about 900 utility classes;
   - a [Bootstrap migration guide](src/Stil.Css/MIGRATING-FROM-BOOTSTRAP.md).
 - **Stil for Blazor:**
-  - About 90 components, with a Blazor counterpart for every Stil CSS
+  - About 95 components, with a Blazor counterpart for every Stil CSS
     component:
     - Buttons, icons and badges.
     - Lists, tables, cards, alerts and accordions.
@@ -72,26 +78,38 @@ end, so they never keep a phase open.
     comments.
   - Boards and workspace: kanban board, command palette, notification
     center, recurring events, resource schedule and Gantt chart.
-  - 830 bUnit tests.
+  - Websites (`Stil.Blazor.Blocks`): page blocks (hero, sections, features,
+    logos, stats, pricing, testimonials, FAQ, team, call to action, mega menu,
+    footer, contact, post list and article); pages and sites as data
+    (`StilPageJson`, `StilPage`, a generated `StilBlockEditor`, a site's
+    theme and languages); and SEO (`StilSeo`, structured data, a sitemap and
+    robots.txt).
+  - 921 bUnit tests, and a public API baseline that the build guards.
 - **Stil.Charts:** SVG line, area, bar (also with a line and a second value
   axis), donut, scatter, bubble and sparkline charts, heat maps and gauges
   that follow the theme, with 84 bUnit tests.
-- **Stil.Markdown:** a Markdown view and editor on Markdig, with 11 bUnit
+- **Stil.Markdown:** a Markdown view and editor on Markdig, with 12 bUnit
   tests.
 - **Stil.RichText:** a rich text editor and view that store sanitized HTML or
   Markdown, on AngleSharp, with 22 bUnit tests.
-- **Stil.Templates:** `dotnet new stil-app`.
+- **Stil.Templates:** `dotnet new stil-app` (features, starters and a theme),
+  and `dotnet new stil-site`, a website whose pages are JSON in a SQLite
+  database, with a sitemap and robots.txt.
 - **Docs:** `docs/Stil.Docs`, a documentation site with live examples, API
   tables and a theme builder.
 - **Samples:**
   - `samples/Stil.Html/index.html` shows every CSS class.
   - `samples/Stil.Html/admin.html` is a dashboard built only with Stil CSS.
+  - `samples/Stil.Html/site.html`, `blog.html` and `article.html` are a
+    product site and a blog built only from the page blocks.
   - `samples/Stil.Demo` is an interactive Blazor app with a component
     gallery and an orders CRUD page built on `StilDataGrid`.
 - **Groundwork:** [CONTRIBUTING.md](CONTRIBUTING.md) holds the conventions.
   CI checks the CSS build and contrast, then builds, tests and packs. It also
-  tests the template and runs the axe checks. Playwright screenshot tests run
+  tests the templates and runs the axe checks. Playwright screenshot tests run
   locally. [CHANGELOG.md](CHANGELOG.md) lists the changes in every package.
+  A version tag publishes the NuGet packages, `stil-css` and a GitHub
+  release; every push to `main` deploys the docs site.
 
 ### Known issues found in the first review
 
@@ -1301,7 +1319,7 @@ a phone.
 **Later, not in this phase:** downloading the app as a zip from the wizard. It
 needs the template run outside the browser, so it waits for a server.
 
-## Phase 16: Stil 1.0
+## Phase 16: Stil 1.0 ✅ Done
 
 Goal: a `1.0.0` that apps can build on without surprises. Phase 6 prepared
 the release flow, but the packages are still `0.1` previews, and before `1.0`
@@ -1410,13 +1428,13 @@ page model must support. Nothing released under MIT moves behind it.
 
 ### Phase V2.1: Section blocks ✅ Done
 
-- [ ] Ready-made page sections in CSS and Blazor: hero, feature grid, pricing
+- [x] Ready-made page sections in CSS and Blazor: hero, feature grid, pricing
   table, testimonials, logo cloud, call to action, FAQ (on the accordion),
   stats band, team, contact, footer, a header with a mega menu, a blog list
   and an article layout.
-- [ ] Each block follows the theme and dark mode, works in static SSR, loads
+- [x] Each block follows the theme and dark mode, works in static SSR, loads
   fast (no JavaScript where none is needed), and meets WCAG AA.
-- [ ] A starter template (`dotnet new stil-site`) for a product site, also
+- [x] A starter template (`dotnet new stil-site`) for a product site, also
   offered as a "website" starter in the project wizard (Phase 15).
 
 **Done when:** a product site with a home, pricing, blog and contact page can
@@ -1621,12 +1639,12 @@ dark mode; and the CSS items of 17.4 are in Stil CSS and Stil for Blazor with
 tests and docs. Released as `1.2.0` (new classes and parameters, nothing
 renamed).
 
-### Phase 17.1: Roadmap housekeeping
+### Phase 17.1: Roadmap housekeeping ✅ Done
 
-- [ ] The items of Phase V2.1 checked (the phase is done), `1.1.0` among the
+- [x] The items of Phase V2.1 checked (the phase is done), `1.1.0` among the
   owner tasks, and "Where we are" brought up to `1.1.0` (the packages and
   `stil-css` are published, the docs site is hosted).
-- [ ] The CSS backlog's item "Carousel and popover" removed: Phases 9 and 10
+- [x] The CSS backlog's item "Carousel and popover" removed: Phases 9 and 10
   built both.
 
 ### Phase 17.2: Docs rendered on the server
@@ -1713,6 +1731,8 @@ These need the repository or package owner.
   later tags publish by themselves.
 - [x] Host the docs site: `docs.yml` deploys it to
   <https://dradwul.github.io/Stil/> from `main`.
+- [x] Push the `v1.1.0` tag (2026-11-19): `release.yml` published the five
+  NuGet packages and `npm.yml` published `stil-css` `1.1.0`.
 
 ## CSS backlog (no phase yet)
 
@@ -1727,4 +1747,3 @@ when a phase needs them.
   `stil-btn-ghost stil-text-inherit` works on colored bars.
 - [ ] Striped or animated progress bars.
 - [ ] A 50–900 scale per brand color, if the utilities need one.
-- [ ] Carousel and popover: planned in Phases 10 and 9.
