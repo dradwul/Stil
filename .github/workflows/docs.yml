@@ -35,13 +35,12 @@ jobs:
       - name: Publish the docs site
         run: dotnet publish docs/Stil.Docs.Host --configuration Release --output site
 
-      # Pages has no server, so the site runs here once: tools/export-docs.mjs saves its rendered
-      # home page with the base path Pages serves it from (/<repository>/), and the files the server
-      # only answers as endpoints. A deep link (/Stil/components/buttons) is not a file yet: Pages
-      # answers with 404.html, a copy of the home page, and the router shows the page once
-      # WebAssembly starts.
+      # Pages has no server, so the site runs here once: tools/export-docs.mjs saves every page in
+      # its sitemap as <path>.html (Pages serves /Stil/components/buttons from it, with status 200),
+      # a real 404.html, sitemap.xml and robots.txt, with the public address and base path, and the
+      # files the server only answers as endpoints. The pages then start WebAssembly as usual.
       - name: Export the site as static files
-        run: node tools/export-docs.mjs site "/${{ github.event.repository.name }}/"
+        run: node tools/export-docs.mjs site "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
 
       - uses: actions/upload-pages-artifact@v4
         if: github.event_name != 'pull_request'
