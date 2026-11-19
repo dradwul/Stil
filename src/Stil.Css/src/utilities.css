@@ -34,6 +34,9 @@
 
 .stil-sticky-top {
     position: sticky;
-    top: 0;
+    top: var(--stil-sticky-offset);
     z-index: var(--stil-z-sticky);
 }
+
+/* A sticky navbar is what the offset is measured from, so it stays at the top. */
+.stil-navbar.stil-sticky-top { top: 0; }

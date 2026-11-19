@@ -55,6 +55,14 @@
 
     /* Layout */
     --stil-container-max: 1200px;
+    /* Max widths (stil-mw-text, -form, -card; stil-mw-page is the container's): a line of
+       running text, a form and a card. */
+    --stil-width-text: 65ch;
+    --stil-width-form: 32rem;
+    --stil-width-card: 24rem;
+    /* How far below the top a sticky element stops (stil-sticky-top, an article's table of
+       contents): set it to a sticky navbar's height, so they stay below it. */
+    --stil-sticky-offset: 0px;
     --stil-sidebar-width: 16rem;
     --stil-calendar-hour: 3rem;
 

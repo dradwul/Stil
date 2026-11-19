@@ -227,7 +227,7 @@ a.stil-post-tag:focus-visible {
 
     .stil-article-layout > .stil-toc {
         position: sticky;
-        top: var(--stil-space-5);
+        top: calc(var(--stil-sticky-offset) + var(--stil-space-5));
         order: 1;
     }
 }
