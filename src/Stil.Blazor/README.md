@@ -685,7 +685,7 @@ replaces `PageTitle` and `HeadContent` (a page shows only one
 
 | Type | Notes |
 | --- | --- |
-| `StilSeo` | `Title` and `SiteName` ("Pricing · My Site", `TitleSeparator`), `Description`, `Canonical` (by default the current address without query and fragment), `Image` and `ImageAlt` (Open Graph, made absolute, and the large Twitter card), `Type` (`StilSeoType.Website` or `Article` with `Published`, `Modified`, `Author`), `Locale` (og:locale, from the UI culture when it has a region), `NoIndex` and `NoFollow` (no canonical address then), `StructuredData`. |
+| `StilSeo` | `Title` and `SiteName` ("Pricing · My Site", `TitleSeparator`), `Description`, `Canonical` (by default the current address without query and fragment), `Image` and `ImageAlt` (Open Graph, made absolute, and the large Twitter card), `Type` (`StilSeoType.Website` or `Article` with `Published`, `Modified`, `Author`), `Locale` (og:locale, from the UI culture when it has a region), `NoIndex` and `NoFollow` (no canonical address then), `StructuredData`, and child content for other head elements. |
 | `StilStructuredData` | schema.org objects for JSON-LD: `Organization`, `WebSite`, `Article` and `FaqPage` (from questions and answers, or an `faq` block). The JSON is escaped so it cannot end its script. |
 | `StilSitemap` | `sitemap.xml`: `new StilSitemap("https://example.com/")`, `Add(path, lastModified, changeFrequency, priority)`, `AddPage(page)`, `ToXml()`; up to 50,000 addresses. |
 | `StilRobots` | `robots.txt`: `Allow`, `Disallow` (per user agent, `*` by default), `Sitemap(url)`, `ToString()`. Without rules it allows everything. |

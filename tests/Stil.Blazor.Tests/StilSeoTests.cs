@@ -120,6 +120,32 @@ public class StilSeoTests
     }
 
     [Fact]
+    public void ChildContentGoesInTheSameHead()
+    {
+        using var context = new BunitContext();
+        context.JSInterop.Mode = JSRuntimeMode.Loose;
+
+        var cut = context.Render(builder =>
+        {
+            builder.OpenComponent<HeadOutlet>(0);
+            builder.CloseComponent();
+            builder.OpenComponent<StilSeo>(1);
+            builder.AddAttribute(2, nameof(StilSeo.Title), "Fonts");
+            builder.AddAttribute(3, nameof(StilSeo.ChildContent), (RenderFragment)(head =>
+            {
+                head.OpenElement(0, "link");
+                head.AddAttribute(1, "rel", "stylesheet");
+                head.AddAttribute(2, "href", "fonts.css");
+                head.CloseElement();
+            }));
+            builder.CloseComponent();
+        });
+
+        Assert.Equal("fonts.css", cut.Find("link[rel=stylesheet]").GetAttribute("href"));
+        Assert.NotNull(cut.Find("link[rel=canonical]"));
+    }
+
+    [Fact]
     public void LocaleFollowsTheCultureOrIsSet()
     {
         var previous = CultureInfo.CurrentUICulture;

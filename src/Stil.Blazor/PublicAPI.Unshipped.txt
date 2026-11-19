@@ -1,1 +1,3 @@
 #nullable enable
+Stil.Blazor.Components.StilSeo.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Components.StilSeo.ChildContent.set -> void

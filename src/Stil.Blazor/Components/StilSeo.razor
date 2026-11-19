@@ -81,6 +81,7 @@
             @((MarkupString)$"<script type=\"application/ld+json\">{item.ToJsonString(JsonOptions)}</script>")
         }
     }
+    @ChildContent
 </HeadContent>
 
 @code {
@@ -146,6 +147,10 @@
     /// <summary>The page in other languages, for hreflang links, such as from <c>StilSiteData.AlternatesOf</c>. Include the page itself.</summary>
     [Parameter]
     public IEnumerable<StilAlternate>? Alternates { get; set; }
+
+    /// <summary>Other elements for the page's head, such as a stylesheet: a page shows only one HeadContent, and this is it.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
 
     /// <summary>Structured data (JSON-LD) for the page, such as from <see cref="StilStructuredData"/>.</summary>
     [Parameter]
