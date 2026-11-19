@@ -107,6 +107,11 @@ export function init(root = document) {
     for (const popup of root.querySelectorAll('.stil-combobox-popup:not([hidden])')) liftPanel(popup);
     new MutationObserver(onScrollerMutations).observe(root, { subtree: true, childList: true });
     watchScrollers(root);
+    // Data grids already on the page, such as one rendered on the server: their resize handles
+    // take focus once they have their column's width.
+    for (const table of new Set([...root.querySelectorAll('.stil-data-grid-resize')].map(handle => handle.closest('table')))) {
+        freezeColumns(table);
+    }
 }
 
 // A box that scrolls must scroll with the keyboard too (WCAG 2.1.1). When a wide table or a
@@ -1661,13 +1666,15 @@ export function freezeColumns(table) {
     }
 }
 
-// Gives each resize handle its column's width and limits, as a separator that takes focus needs.
+// Gives each resize handle its column's width and limits, as a separator that takes focus needs,
+// and then the focus: the markup leaves it out, since without this script the handle does nothing.
 function measureColumns(table) {
     for (const handle of table.querySelectorAll('.stil-data-grid-resize')) {
         const th = handle.closest('th');
         handle.setAttribute('aria-valuenow', String(Math.round(th.getBoundingClientRect().width)));
         handle.setAttribute('aria-valuemin', th.dataset.stilMin ?? '40');
         handle.setAttribute('aria-valuemax', th.dataset.stilMax ?? '2000');
+        handle.tabIndex = 0;
     }
 }
 

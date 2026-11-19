@@ -125,7 +125,8 @@
                             }
                             @if (IsResizable(column))
                             {
-                                <span class="stil-data-grid-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="@ResizeLabel(column)"></span>
+                                @* stil.js makes it focusable once it has the column's width (aria-valuenow). *@
+                                <span class="stil-data-grid-resize" role="separator" aria-orientation="vertical" aria-label="@ResizeLabel(column)"></span>
                             }
                         </th>
                     }

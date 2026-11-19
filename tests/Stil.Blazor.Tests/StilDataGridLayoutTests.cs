@@ -40,6 +40,8 @@ public class StilDataGridLayoutTests
         Assert.Equal("120", customer.GetAttribute("data-stil-min"));
         Assert.Equal("400", customer.GetAttribute("data-stil-max"));
         Assert.Equal("Resize Customer", customer.QuerySelector(".stil-data-grid-resize")!.GetAttribute("aria-label"));
+        // Focusable only once stil.js has given it the column's width.
+        Assert.False(customer.QuerySelector(".stil-data-grid-resize")!.HasAttribute("tabindex"));
         Assert.Null(cut.Find("th[data-stil-column=Id]").GetAttribute("data-stil-reorder"));
         Assert.Null(cut.Find("th[data-stil-column=Amount]").QuerySelector(".stil-data-grid-resize"));
     }
