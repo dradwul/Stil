@@ -143,7 +143,7 @@ markup inside `<StilIcon>…</StilIcon>`.
 
 | Component | Parameters |
 | --- | --- |
-| `StilButton` | `Variant`, `Appearance` (Solid, Outline, Ghost), `Size`, `Type` (default "button"), `Disabled`, `Loading` (spinner, ignores clicks), `Pressed` (toggle, aria-pressed), `IconOnly`, `Href`/`Target` (renders a link), `OnClick` |
+| `StilButton` | `Variant`, `Appearance` (Solid, Outline, Ghost, OnColor for a colored surface), `Size`, `Type` (default "button"), `Disabled`, `Loading` (spinner, ignores clicks), `Pressed` (toggle, aria-pressed), `IconOnly`, `Href`/`Target` (renders a link), `OnClick` |
 | `StilBadge` | `Variant`, `Subtle` |
 | `StilButtonGroup` | `Label`. Joins its buttons into one control (`role="group"`). |
 | `StilCloseButton` | `Label` (default "Close"), `OnClick` |
@@ -541,7 +541,7 @@ Recurring events and time zones are up to the app.
 
 | Component | Parameters |
 | --- | --- |
-| `StilProgress` | `Value`, `Max` (default 100), `Label`, `ShowValue`, `Variant`, `Size` (Medium, Large) |
+| `StilProgress` | `Value`, `Max` (default 100), `Label`, `ShowValue`, `Variant`, `Size` (Medium, Large), `Striped`, `Animated` (moving stripes, still with reduced motion) |
 | `StilQrCode` | `Value`, `ErrorCorrection` (Low, Medium, Quartile, High), `Size` (default 10rem), `Label`. An SVG drawn in C#, also in static SSR. |
 | `StilBarcode` | `Value`, `Format` (Code128, Ean13, Ean8), `ShowText`, `Width` (default 16rem), `Label`. `StilCodes` has the encoders for PDFs and label printers. |
 | `StilScanner` | *Experimental.* `OnScan` (`StilScanResult`: `Value`, `Format`, `Source`), `Formats`, `Sound`, `Cooldown`, `FrontCamera`, `ManualEntry`. Reads codes with the camera through the browser's `BarcodeDetector`, or a decoder the app registers with stil.js's `registerScanDecoder`; switches cameras and has a flashlight button. |

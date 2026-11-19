@@ -287,6 +287,23 @@
                 </div>
             </div>
 
+            <h2>On a colored surface</h2>
+            <p><code>stil-btn-on-color</code> takes the colors of the surface it is on (<code>stil-bg-{variant}</code>, a brand
+                section or call to action): its text color for the text and border, swapped on hover.</p>
+            <div class="example">
+                <div class="stil-stack">
+                    <div class="stil-bg-primary stil-p-3 stil-rounded stil-cluster">
+                        <span>3 items selected</span>
+                        <button type="button" class="stil-btn stil-btn-sm stil-btn-on-color">Archive</button>
+                        <button type="button" class="stil-btn stil-btn-sm stil-btn-on-color">Delete</button>
+                    </div>
+                    <div class="stil-bg-danger stil-p-3 stil-rounded stil-cluster">
+                        <span>The connection was lost.</span>
+                        <button type="button" class="stil-btn stil-btn-sm stil-btn-on-color">Try again</button>
+                    </div>
+                </div>
+            </div>
+
             <h2>Sizes and icon buttons</h2>
             <p><code>stil-btn-icon</code> makes a square button for a single glyph. Give it an <code>aria-label</code>.</p>
             <div class="example">
@@ -1625,6 +1642,18 @@
                     </div>
                     <div class="stil-progress" role="progressbar" aria-label="Tasks done" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">
                         <div class="stil-progress-bar stil-bg-success" style="width: 90%"></div>
+                    </div>
+                </div>
+            </div>
+            <p>Add <code>stil-progress-striped</code> for stripes, and <code>stil-progress-animated</code> to move them; they
+                stand still when the user prefers reduced motion.</p>
+            <div class="example">
+                <div class="stil-stack">
+                    <div class="stil-progress stil-progress-striped" role="progressbar" aria-label="Import" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100">
+                        <div class="stil-progress-bar" style="width: 55%"></div>
+                    </div>
+                    <div class="stil-progress stil-progress-striped stil-progress-animated" role="progressbar" aria-label="Syncing" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
+                        <div class="stil-progress-bar stil-bg-info" style="width: 80%"></div>
                     </div>
                 </div>
             </div>

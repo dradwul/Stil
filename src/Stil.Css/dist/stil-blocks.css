@@ -1012,7 +1012,7 @@
     }
 
     .stil-article-layout > .stil-toc {
-      top: var(--stil-space-5);
+      top: calc(var(--stil-sticky-offset) + var(--stil-space-5));
       order: 1;
       position: sticky;
     }

@@ -37,6 +37,10 @@
     --stil-space-6: 2rem;
     --stil-space-7: 3rem;
     --stil-container-max: 1200px;
+    --stil-width-text: 65ch;
+    --stil-width-form: 32rem;
+    --stil-width-card: 24rem;
+    --stil-sticky-offset: 0px;
     --stil-sidebar-width: 16rem;
     --stil-calendar-hour: 3rem;
     --stil-radius-sm: .125rem;
@@ -638,6 +642,12 @@
     background-color: color-mix(in srgb, currentColor 20%, transparent);
   }
 
+  .stil-btn-on-color {
+    border-color: var(--_on, currentColor);
+    color: var(--_on, currentColor);
+    background-color: #0000;
+  }
+
   .stil-btn[aria-pressed="true"] {
     background-color: color-mix(in oklab, var(--_bg), var(--_fg) 25%);
     box-shadow: inset 0 2px 4px #0003;
@@ -648,6 +658,17 @@
     background-color: var(--_bg);
     color: var(--_fg);
     box-shadow: none;
+  }
+
+  .stil-btn-on-color:is(:hover, :active, [aria-pressed="true"]) {
+    border-color: var(--_on, currentColor);
+    background-color: var(--_on, currentColor);
+    color: var(--_on-bg, Canvas);
+    box-shadow: none;
+  }
+
+  .stil-btn-on-color:focus-visible {
+    outline-color: var(--_on, currentColor);
   }
 
   .stil-btn:is(:disabled, [aria-disabled="true"]) {
@@ -677,6 +698,11 @@
 
   .stil-btn:is(.stil-btn-outline, .stil-btn-ghost)[aria-busy="true"]:after {
     border-color: var(--_ink);
+    border-right-color: #0000;
+  }
+
+  .stil-btn-on-color[aria-busy="true"]:after {
+    border-color: var(--_on, currentColor);
     border-right-color: #0000;
   }
 
@@ -2213,6 +2239,33 @@
     align-items: center;
     display: flex;
     overflow: hidden;
+  }
+
+  .stil-progress-striped .stil-progress-bar:not(:has(.stil-progress-label)) {
+    background-image: linear-gradient(45deg,
+        color-mix(in srgb, var(--_fg) 22%, transparent) 25%, transparent 25% 50%,
+        color-mix(in srgb, var(--_fg) 22%, transparent) 50% 75%, transparent 75%);
+    background-size: 1rem 1rem;
+  }
+
+  .stil-progress-animated .stil-progress-bar {
+    animation: 1s linear infinite stil-progress-stripes;
+  }
+
+  @keyframes stil-progress-stripes {
+    from {
+      background-position: 1rem 0;
+    }
+
+    to {
+      background-position: 0 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stil-progress-animated .stil-progress-bar {
+      animation: none;
+    }
   }
 
   .stil-progress-label {
@@ -6072,8 +6125,12 @@
   }
 
   .stil-sticky-top {
+    top: var(--stil-sticky-offset);
     z-index: var(--stil-z-sticky);
     position: sticky;
+  }
+
+  .stil-navbar.stil-sticky-top {
     top: 0;
   }
 
@@ -6773,6 +6830,26 @@
     max-width: 100%;
   }
 
+  .stil-mw-text {
+    max-width: var(--stil-width-text);
+  }
+
+  .stil-mw-form {
+    max-width: var(--stil-width-form);
+  }
+
+  .stil-mw-card {
+    max-width: var(--stil-width-card);
+  }
+
+  .stil-mw-page {
+    max-width: var(--stil-container-max);
+  }
+
+  .stil-mw-none {
+    max-width: none;
+  }
+
   .stil-min-vh-100 {
     min-height: 100vh;
   }
@@ -7056,6 +7133,8 @@
   .stil-bg-primary {
     --_bg: var(--stil-color-primary);
     --_contrast: var(--stil-color-primary-contrast);
+    --_on: var(--_fg);
+    --_on-bg: var(--_bg);
     background-color: var(--_bg);
     color: var(--_fg);
   }
@@ -7075,6 +7154,8 @@
   .stil-bg-secondary {
     --_bg: var(--stil-color-secondary);
     --_contrast: var(--stil-color-secondary-contrast);
+    --_on: var(--_fg);
+    --_on-bg: var(--_bg);
     background-color: var(--_bg);
     color: var(--_fg);
   }
@@ -7094,6 +7175,8 @@
   .stil-bg-success {
     --_bg: var(--stil-color-success);
     --_contrast: var(--stil-color-success-contrast);
+    --_on: var(--_fg);
+    --_on-bg: var(--_bg);
     background-color: var(--_bg);
     color: var(--_fg);
   }
@@ -7113,6 +7196,8 @@
   .stil-bg-danger {
     --_bg: var(--stil-color-danger);
     --_contrast: var(--stil-color-danger-contrast);
+    --_on: var(--_fg);
+    --_on-bg: var(--_bg);
     background-color: var(--_bg);
     color: var(--_fg);
   }
@@ -7132,6 +7217,8 @@
   .stil-bg-warning {
     --_bg: var(--stil-color-warning);
     --_contrast: var(--stil-color-warning-contrast);
+    --_on: var(--_fg);
+    --_on-bg: var(--_bg);
     background-color: var(--_bg);
     color: var(--_fg);
   }
@@ -7151,6 +7238,8 @@
   .stil-bg-info {
     --_bg: var(--stil-color-info);
     --_contrast: var(--stil-color-info-contrast);
+    --_on: var(--_fg);
+    --_on-bg: var(--_bg);
     background-color: var(--_bg);
     color: var(--_fg);
   }

@@ -111,7 +111,7 @@ classes: `aria-current="page"`, `aria-selected="true"`,
 
 | Component | Classes |
 | --- | --- |
-| Button | `stil-btn` + `stil-btn-{variant}`. Styles: `stil-btn-outline`, `stil-btn-ghost`. Sizes: `stil-btn-sm`, `stil-btn-lg`, `stil-btn-icon`. `aria-busy="true"` shows a spinner, and `aria-pressed="true"` shows a toggle as on. Group buttons with `stil-btn-group`. Close button: `stil-close`. |
+| Button | `stil-btn` + `stil-btn-{variant}`. Styles: `stil-btn-outline`, `stil-btn-ghost`, and `stil-btn-on-color` for a button on a colored surface (`stil-bg-{variant}`, a brand section), in its colors. Sizes: `stil-btn-sm`, `stil-btn-lg`, `stil-btn-icon`. `aria-busy="true"` shows a spinner, and `aria-pressed="true"` shows a toggle as on. Group buttons with `stil-btn-group`. Close button: `stil-close`. |
 | Form | `stil-form` > `stil-field` > `stil-label` + control + `stil-field-hint` / `stil-field-error` |
 | Text input, select | `stil-input` (input, textarea), `stil-select`. Sizes: `stil-input-sm`, `stil-input-lg`, `stil-select-sm`, `stil-select-lg`. |
 | Checkbox, radio, switch | `<label class="stil-check"><input class="stil-check-input">`. For a switch, use `stil-switch` on a checkbox with `role="switch"`. |
@@ -151,7 +151,7 @@ classes: `aria-current="page"`, `aria-selected="true"`,
 | Accordion | `stil-accordion` (`-flush`) > `<details class="stil-accordion-item">` > `<summary class="stil-accordion-header">` + `stil-accordion-body`. Items that share a `name` attribute open one at a time. |
 | Icons | `<span class="stil-icon stil-icon-{name}" aria-hidden="true"></span>`: about 30 built-in icons (chevrons, arrows, close, menu, check, plus, minus, search, more, info, success, warning, danger, external, filter, home, sun, moon, file, folder, upload, bell). They use the current text color and are 1em in size. The set is in [`src/icons.json`](src/icons.json). |
 | Tooltip | `data-stil-tooltip="Text"` on any element. Add `stil-tooltip-bottom` to show it below. |
-| Progress | `stil-progress` (`stil-progress-lg`) > `stil-progress-bar` with a width |
+| Progress | `stil-progress` (`stil-progress-lg`, `stil-progress-striped`, `stil-progress-animated`: moving stripes, still with reduced motion) > `stil-progress-bar` with a width |
 | QR code, barcode | `stil-qr-code` and `stil-barcode` around an `<svg>` of the code (`role="img"` and `aria-label` on the wrapper). Dark on light in both modes: `--stil-barcode-color`, `--stil-barcode-bg`. `stil-code-invalid` for a value that does not fit. |
 | Scanner | `stil-scanner` > `stil-scanner-view` (a `stil-scanner-preview` video and a `stil-scanner-frame` to aim at) and a `stil-scanner-status` line. stil.js's `startScanner` reads the codes. |
 | Signature | `stil-signature` > `stil-signature-pad` (a `stil-signature-canvas`, a `stil-signature-line` and a `stil-signature-placeholder`; `--stil-signature-height`, 10rem), or `stil-signature-typed` for a typed name. `data-stil-invalid` on `stil-signature` marks it red. stil.js's `initSignaturePad` draws. |
@@ -322,11 +322,11 @@ For example, `stil-d-none stil-d-md-block` hides an element below `md`.
 | Alignment | `stil-justify-content-{start,end,center,between,around,evenly}`, `stil-align-items-*`, `stil-align-self-*` | justify, align-items |
 | Gap | `stil-gap-{0-7}` | yes |
 | Spacing | `stil-{m,p}{,t,b,s,e,x,y}-{0-7}` and `stil-m*-auto`. `s` and `e` are the logical start and end. | yes |
-| Sizing | `stil-w-{25,50,75,100,auto}`, `stil-h-*`, `stil-mw-100`, `stil-min-vh-100` | |
+| Sizing | `stil-w-{25,50,75,100,auto}`, `stil-h-*`, `stil-mw-{100,text,form,card,page,none}`, `stil-min-vh-100` | `stil-mw-text` keeps a line readable (65ch), `-form` and `-card` are `--stil-width-form` and `-card`, and `-page` the container's width. |
 | Text | `stil-text-{start,center,end}`, `stil-text-{nowrap,wrap,truncate}`, `stil-text-{uppercase,lowercase,capitalize}`, `stil-text-{body,muted,inherit}`, `stil-fs-{xs,sm,md,lg,xl,2xl}`, `stil-fw-{normal,bold}`, `stil-font-mono`, `stil-align-{baseline,top,middle,bottom,text-top,text-bottom}` | text-align |
 | Color | `stil-bg-{variant}` (with readable text), `stil-text-{variant}`, `stil-border-{variant}`, `stil-bg-{body,surface,muted,transparent}` | |
 | Borders | `stil-border`, `stil-border-{top,bottom,start,end,0}`, `stil-rounded`, `stil-rounded-{0,sm,lg,pill,circle}`, `stil-shadow`, `stil-shadow-{sm,lg,none}` | |
-| Position | `stil-position-*`, `stil-{top,bottom,start,end}-{0,50,100}`, `stil-translate-middle`, `stil-sticky-top`, `stil-overflow-*` | |
+| Position | `stil-position-*`, `stil-{top,bottom,start,end}-{0,50,100}`, `stil-translate-middle`, `stil-sticky-top`, `stil-overflow-*` | `stil-sticky-top` stops `--stil-sticky-offset` below the top (0 by default): set it to a sticky navbar's height, so sticky elements stay below it. The navbar itself stays at the top. |
 | Lists | `stil-list-unstyled` | |
 | Visibility | `stil-visually-hidden`, `stil-visually-hidden-focusable`, `stil-visible`, `stil-invisible` | |
 
@@ -413,7 +413,7 @@ same form when you override them, or the override applies to both modes:
 | Neutrals | `--stil-color-body-bg`, `-surface`, `-surface-muted`, `-text`, `-text-muted`, `-border`, `-border-strong` |
 | Typography | `--stil-font-family`, `--stil-font-family-mono`, `--stil-font-variation-settings`, `--stil-font-size-xs` … `-xl`, `--stil-font-weight-normal`, `-bold`, `--stil-line-height`, `--stil-letter-spacing`, `--stil-heading-margin` |
 | Spacing | `--stil-space-1` (0.25rem) … `--stil-space-7` (3rem) |
-| Layout | `--stil-container-max`, `--stil-sidebar-width`, `--stil-calendar-hour` (the height of an hour in `stil-week`) |
+| Layout | `--stil-container-max`, `--stil-width-text`, `--stil-width-form`, `--stil-width-card`, `--stil-sticky-offset`, `--stil-sidebar-width`, `--stil-calendar-hour` (the height of an hour in `stil-week`) |
 | Shape | `--stil-radius-sm`, `-md`, `-lg`, `-pill`, `--stil-shadow-sm`, `-md`, `-lg`, `--stil-color-backdrop` |
 | Focus | `--stil-focus-ring-width`, `--stil-focus-ring-offset` |
 | Layering | `--stil-z-dropdown`, `-sticky`, `-overlay`, `-modal`, `-popover`, `-toast` |
