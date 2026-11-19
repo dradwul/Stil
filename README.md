@@ -21,7 +21,7 @@ project template that can add features such as charts, editors and planners
 (`--Features`), and `dotnet new stil-site`, a product website from the page
 blocks ([`templates/Stil.Templates`](templates/Stil.Templates/README.md));
 and a documentation site with live examples, a theme builder and a project wizard
-(<https://dradwul.github.io/Stil/>, source in [`docs/Stil.Docs`](docs/Stil.Docs)).
+(<https://dradwul.github.io/Stil/>, source in [`docs/Stil.Docs`](docs/Stil.Docs), served by [`docs/Stil.Docs.Host`](docs/Stil.Docs.Host)).
 
 The Blazor components render ordinary HTML with Stil CSS classes, so a page
 can mix components and hand-written markup. Every class starts with `stil-`
@@ -112,7 +112,8 @@ src/Stil.Charts/     SVG charts for Blazor, packed as NuGet "Stil.Charts"
 src/Stil.Markdown/   Markdown view and editor (on Markdig), packed as NuGet "Stil.Markdown"
 src/Stil.RichText/   Rich text editor and view (on AngleSharp), packed as NuGet "Stil.RichText"
 templates/           dotnet new stil-app (Stil.Templates) and its test script
-docs/Stil.Docs/      Documentation site (Blazor WebAssembly) with a theme builder
+docs/Stil.Docs/      Documentation site: its pages, examples and theme builder (WebAssembly)
+docs/Stil.Docs.Host/ The docs site's server: renders each page first, exported to GitHub Pages
 samples/Stil.Html/   Plain-HTML showcase of every CSS class, an admin page and a product site built with Stil
 samples/Stil.Demo/   Blazor web app: gallery, orders with a dashboard, budget, check-in, task board, rooms and a project plan
 tests/               bUnit tests (Stil.Blazor.Tests, Stil.Charts.Tests, Stil.Markdown.Tests, Stil.RichText.Tests) and Playwright tests (Stil.Visual)
@@ -167,7 +168,7 @@ a product site built from the page blocks (`stil-blocks.css`), with a blog
 Run the documentation site and open <http://localhost:5193>:
 
 ```shell
-dotnet run --project docs/Stil.Docs --launch-profile http
+dotnet run --project docs/Stil.Docs.Host --launch-profile http
 ```
 
 Test the `dotnet new stil-app` template. The script installs it into a

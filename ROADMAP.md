@@ -26,7 +26,7 @@ something usable.
 | 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | Done |
 | 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | ✅ Done (`1.0.0` released 2026-11-12) |
 | V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | V2.1 and V2.2 done, in `1.1.0`; V2.3 and V2.4 are the hosted product, outside this repository |
-| 17 | Reach and polish: a docs site that search engines can read, and the CSS backlog | In progress (17.1 done) |
+| 17 | Reach and polish: a docs site that search engines can read, and the CSS backlog | In progress (17.1 and 17.2 done) |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -1647,16 +1647,26 @@ renamed).
 - [x] The CSS backlog's item "Carousel and popover" removed: Phases 9 and 10
   built both.
 
-### Phase 17.2: Docs rendered on the server
+### Phase 17.2: Docs rendered on the server ✅ Done
 
-- [ ] The docs site as a Blazor Web App: each page is rendered to HTML on the
+- [x] The docs site as a Blazor Web App: each page is rendered to HTML on the
   server first, and the live examples become interactive with WebAssembly, as
   they are today. `dotnet run` still starts it locally.
-- [ ] JavaScript only after the first render (the theme, the language, the
+- [x] JavaScript only after the first render (the theme, the language, the
   copy buttons, the examples that use `stil.js`), so rendering on the server
   never calls it. The language picked in the navbar still applies once
   WebAssembly starts; the HTML itself is English.
-- [ ] The Playwright docs test and its axe check run against it, as before.
+- [x] The Playwright docs test and its axe check run against it, as before.
+  `docs/Stil.Docs.Host` renders the pages of `docs/Stil.Docs` (now its
+  WebAssembly half) with the global render mode `InteractiveWebAssembly`.
+  All 45 routes render on the server with status 200 and their `h1`, an
+  unknown address answers 404, the language cookie picks the first render's
+  language, and axe passes on all of them in light and dark mode. Until
+  17.3, `docs.yml` exports only the home page (`tools/export-docs.mjs`,
+  which also writes the files the server answers only as endpoints, such as
+  the resource collection WebAssembly starts from); a static copy served as
+  Pages serves it was checked: a deep link starts the site and its example
+  works.
 
 ### Phase 17.3: A static export for GitHub Pages
 

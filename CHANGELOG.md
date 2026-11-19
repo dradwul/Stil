@@ -11,6 +11,15 @@ version could contain breaking changes; they are marked **Breaking**.
 
 ## [Unreleased]
 
+### Changed
+
+- **Docs**: the docs site renders each page on the server first
+  (`docs/Stil.Docs.Host`, a Blazor Web App) and then runs it with
+  WebAssembly as before, so its HTML has the page's content and a language
+  picked in the navbar is already in the first render. `docs.yml` exports it
+  as static files for GitHub Pages with `tools/export-docs.mjs`. The docs
+  site references the patched ASP.NET Core WebAssembly packages (`10.0.15`).
+
 ## [1.1.0] - 2026-11-18
 
 Websites: page blocks for a product site and a blog (`stil-blocks.css` and
