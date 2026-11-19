@@ -96,7 +96,7 @@ export default defineConfig({
             },
         },
         {
-            command: `${dotnetRun} --project ../../docs/Stil.Docs --launch-profile http`,
+            command: `${dotnetRun} --project ../../docs/Stil.Docs.Host --launch-profile http`,
             url: DOCS_URL,
             reuseExistingServer: !isCI,
             timeout: 300_000,

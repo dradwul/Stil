@@ -1,11 +1,8 @@
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Stil.Blazor;
-using Stil.Docs;
 
+// The docs in the browser: Stil.Docs.Host renders each page first, then it runs here.
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.RootComponents.Add<App>("#app");
-builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddStil();
 

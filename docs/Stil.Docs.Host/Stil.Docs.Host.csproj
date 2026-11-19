@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!-- The docs site's server: it renders each page to HTML first, so a search engine and a
+       first visit get the content, then the pages in Stil.Docs become interactive with
+       WebAssembly. docs.yml exports the rendered pages as static files for GitHub Pages. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Stil.Docs.Host</RootNamespace>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.15" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Stil.Docs\Stil.Docs.csproj" />
+  </ItemGroup>
+
+</Project>

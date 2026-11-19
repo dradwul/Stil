@@ -3,7 +3,8 @@
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
 
-<StilThemeProvider Mode="_mode" class="docs-shell">
+@* The color mode is on <html>: App.razor's script sets it from storage before the page shows. *@
+<StilThemeProvider class="docs-shell">
     <a class="stil-visually-hidden-focusable docs-skip" href="#main">Skip to content</a>
     <StilNavbar Sticky CollapseBelow="StilBreakpoint.Large">
         <Brand>
@@ -50,15 +51,23 @@
 
     private StilThemeMode _mode = StilThemeMode.Auto;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized() => Navigation.LocationChanged += OnLocationChanged;
+
+    // The saved mode, for the select: storage is in the browser, so it is read after the first render.
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Navigation.LocationChanged += OnLocationChanged;
+        if (!firstRender)
+        {
+            return;
+        }
+
         try
         {
             var saved = await JS.InvokeAsync<string?>("localStorage.getItem", ModeKey);
-            if (Enum.TryParse<StilThemeMode>(saved, ignoreCase: true, out var mode))
+            if (Enum.TryParse<StilThemeMode>(saved, ignoreCase: true, out var mode) && mode != _mode)
             {
                 _mode = mode;
+                StateHasChanged();
             }
         }
         catch (JSException)

@@ -16,7 +16,7 @@
     {
       "name": "stil-docs",
       "runtimeExecutable": "dotnet",
-      "runtimeArgs": ["run", "--project", "docs/Stil.Docs", "--launch-profile", "http"],
+      "runtimeArgs": ["run", "--project", "docs/Stil.Docs.Host", "--launch-profile", "http"],
       "port": 5193
     }
   ]

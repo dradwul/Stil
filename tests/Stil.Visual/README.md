@@ -2,7 +2,7 @@
 
 Playwright tests for the plain-HTML samples (`samples/Stil.Html`), the
 Blazor demo (`samples/Stil.Demo`) and the documentation site
-(`docs/Stil.Docs`):
+(`docs/Stil.Docs.Host`, which renders the pages of `docs/Stil.Docs`):
 
 - **Visual regression** (`@visual`): a screenshot of every component section of
   the showcase and the demo gallery, the admin and orders pages, and open
