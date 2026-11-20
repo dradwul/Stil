@@ -735,6 +735,7 @@ Stil.Blazor.Components.StilButton.Variant.get -> Stil.Blazor.Components.StilVari
 Stil.Blazor.Components.StilButton.Variant.set -> void
 Stil.Blazor.Components.StilButtonAppearance
 Stil.Blazor.Components.StilButtonAppearance.Ghost = 2 -> Stil.Blazor.Components.StilButtonAppearance
+Stil.Blazor.Components.StilButtonAppearance.OnColor = 3 -> Stil.Blazor.Components.StilButtonAppearance
 Stil.Blazor.Components.StilButtonAppearance.Outline = 1 -> Stil.Blazor.Components.StilButtonAppearance
 Stil.Blazor.Components.StilButtonAppearance.Solid = 0 -> Stil.Blazor.Components.StilButtonAppearance
 Stil.Blazor.Components.StilButtonGroup
@@ -2051,6 +2052,8 @@ Stil.Blazor.Components.StilPopover.Toggle.set -> void
 Stil.Blazor.Components.StilPopover.Variant.get -> Stil.Blazor.Components.StilVariant
 Stil.Blazor.Components.StilPopover.Variant.set -> void
 Stil.Blazor.Components.StilProgress
+Stil.Blazor.Components.StilProgress.Animated.get -> bool
+Stil.Blazor.Components.StilProgress.Animated.set -> void
 Stil.Blazor.Components.StilProgress.Label.get -> string?
 Stil.Blazor.Components.StilProgress.Label.set -> void
 Stil.Blazor.Components.StilProgress.Max.get -> double
@@ -2060,6 +2063,8 @@ Stil.Blazor.Components.StilProgress.ShowValue.set -> void
 Stil.Blazor.Components.StilProgress.Size.get -> Stil.Blazor.Components.StilSize
 Stil.Blazor.Components.StilProgress.Size.set -> void
 Stil.Blazor.Components.StilProgress.StilProgress() -> void
+Stil.Blazor.Components.StilProgress.Striped.get -> bool
+Stil.Blazor.Components.StilProgress.Striped.set -> void
 Stil.Blazor.Components.StilProgress.Value.get -> double
 Stil.Blazor.Components.StilProgress.Value.set -> void
 Stil.Blazor.Components.StilProgress.Variant.get -> Stil.Blazor.Components.StilVariant?
@@ -2251,6 +2256,8 @@ Stil.Blazor.Components.StilSeo.Author.get -> string?
 Stil.Blazor.Components.StilSeo.Author.set -> void
 Stil.Blazor.Components.StilSeo.Canonical.get -> string?
 Stil.Blazor.Components.StilSeo.Canonical.set -> void
+Stil.Blazor.Components.StilSeo.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Stil.Blazor.Components.StilSeo.ChildContent.set -> void
 Stil.Blazor.Components.StilSeo.Description.get -> string?
 Stil.Blazor.Components.StilSeo.Description.set -> void
 Stil.Blazor.Components.StilSeo.Image.get -> string?

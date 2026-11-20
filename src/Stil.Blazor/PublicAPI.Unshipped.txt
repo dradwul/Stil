@@ -1,8 +1,1 @@
 #nullable enable
-Stil.Blazor.Components.StilButtonAppearance.OnColor = 3 -> Stil.Blazor.Components.StilButtonAppearance
-Stil.Blazor.Components.StilProgress.Animated.get -> bool
-Stil.Blazor.Components.StilProgress.Animated.set -> void
-Stil.Blazor.Components.StilProgress.Striped.get -> bool
-Stil.Blazor.Components.StilProgress.Striped.set -> void
-Stil.Blazor.Components.StilSeo.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
-Stil.Blazor.Components.StilSeo.ChildContent.set -> void

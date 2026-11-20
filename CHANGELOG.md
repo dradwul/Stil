@@ -11,6 +11,15 @@ version could contain breaking changes; they are marked **Breaking**.
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-20
+
+Reach and polish: the docs site is now static pages that search engines read
+and that show at once, built with Stil's own SEO tools, and the CSS backlog
+brings an on-color button, a max-width scale and striped progress bars. A data
+grid rendered without interactivity no longer has focusable resize handles
+without a value. Nothing is renamed or removed: `1.1` apps update without
+changes.
+
 ### Added
 
 - **Stil CSS and Stil for Blazor**: an on-color button
@@ -606,7 +615,8 @@ Tagged but not published: the release failed. These changes ship in
 - A documentation site with live examples, API tables and a theme builder.
 - A guide for migrating from Bootstrap.
 
-[Unreleased]: https://github.com/dradwul/Stil/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/dradwul/Stil/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/dradwul/Stil/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/dradwul/Stil/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/dradwul/Stil/compare/v0.1.0-preview.4...v1.0.0
 [0.1.0-preview.4]: https://github.com/dradwul/Stil/compare/v0.1.0-preview.3...v0.1.0-preview.4

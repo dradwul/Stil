@@ -26,17 +26,18 @@ something usable.
 | 15 | Project wizard: features and starters in `dotnet new stil-app`, and a wizard on the docs site | Done |
 | 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | ✅ Done (`1.0.0` released 2026-11-12) |
 | V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | V2.1 and V2.2 done, in `1.1.0`; V2.3 and V2.4 are the hosted product, outside this repository |
-| 17 | Reach and polish: a docs site that search engines can read, and the CSS backlog | In progress (17.1–17.4 done; the `1.2.0` release is next) |
+| 17 | Reach and polish: a docs site that search engines can read, and the CSS backlog | ✅ Done (released in `1.2.0`) |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
 end, so they never keep a phase open.
 
-## Where we are (1.1.0, Phases 0–16, V2.1 and V2.2 done)
+## Where we are (1.2.0, Phases 0–17, V2.1 and V2.2 done)
 
 Every package is published: `Stil`, `Stil.Charts`, `Stil.Markdown`,
 `Stil.RichText` and `Stil.Templates` on nuget.org, and `stil-css` on npm,
-at `1.1.0`. The docs site is hosted at <https://dradwul.github.io/Stil/>.
+at `1.2.0`. The docs site is hosted at <https://dradwul.github.io/Stil/> as
+static pages rendered by `docs/Stil.Docs.Host`, with a sitemap.
 
 - **Stil CSS:** an npm package (`stil-css`). It is built with Lightning CSS
   from partials into `dist/stil.css` and `stil.min.css` (about 24 kB
@@ -84,7 +85,7 @@ at `1.1.0`. The docs site is hosted at <https://dradwul.github.io/Stil/>.
     (`StilPageJson`, `StilPage`, a generated `StilBlockEditor`, a site's
     theme and languages); and SEO (`StilSeo`, structured data, a sitemap and
     robots.txt).
-  - 921 bUnit tests, and a public API baseline that the build guards.
+  - 926 bUnit tests, and a public API baseline that the build guards.
 - **Stil.Charts:** SVG line, area, bar (also with a line and a second value
   axis), donut, scatter, bubble and sparkline charts, heat maps and gauges
   that follow the theme, with 84 bUnit tests.
@@ -1621,7 +1622,7 @@ entirely from the builder.
 
 ---
 
-## Phase 17: Reach and polish
+## Phase 17: Reach and polish ✅ Done
 
 Goal: Stil can be found, and its docs load fast. Today the docs site is a
 WebAssembly app: a search engine sees an empty page, every address except
