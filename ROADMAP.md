@@ -27,6 +27,7 @@ something usable.
 | 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | ✅ Done (`1.0.0` released 2026-11-12) |
 | V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | V2.1 and V2.2 done, in `1.1.0`; V2.3 and V2.4 are the hosted product, outside this repository |
 | 17 | Reach and polish: a docs site that search engines can read, and the CSS backlog | ✅ Done (released in `1.2.0`) |
+| 18 | AI assistants: `llms.txt` on the docs site and `Stil.Mcp`, an MCP server that knows Stil's components, classes and tokens | Planned |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -1719,6 +1720,90 @@ renamed).
   value, which needs the plain color. Verified with bUnit tests, axe on the
   showcase and the docs pages, and the updated button and progress
   screenshots.
+
+## Phase 18: AI assistants
+
+Goal: an AI assistant writes correct Stil code. Stil is new, so the models
+behind assistants such as Claude Code, GitHub Copilot and Cursor do not know
+it: they invent parameter names and CSS classes, or fall back to Bootstrap.
+Two free fixes, with no server and no hosting:
+
+- `llms.txt`, a plain-text summary of the docs that many assistants and
+  crawlers already read, written by the docs export to GitHub Pages.
+- `Stil.Mcp`, an MCP (Model Context Protocol) server. An assistant starts it
+  on the developer's machine and asks it about Stil's components, classes,
+  tokens and examples. It is a NuGet package like the others: a .NET tool of
+  the package type `McpServer`, with a `.mcp/server.json`, started with
+  `dnx Stil.Mcp` from the .NET 10 SDK and spoken to over stdio. It is built
+  on the official C# SDK (`ModelContextProtocol`, 2.x; the version is checked
+  when 18.2 starts).
+
+The answers come from the same sources as the docs, so they cannot drift from
+the code: the API tables' reflection and XML documentation (`ApiDocs`), the
+embedded examples, the wizard's options (`ProjectSetup`) and the built
+`stil.css`.
+
+**Done when (all parts):** the docs site serves `llms.txt` and
+`llms-full.txt`; `Stil.Mcp` is packed and tested with the other packages, and
+answers in a real MCP client; the docs show how to add it to Claude Code, VS
+Code and Visual Studio; and an assistant with the server builds a page in a
+new `stil-app` that compiles and uses only parameters and classes that exist.
+Released as `1.3.0` (a new package and new files, nothing renamed).
+
+### Phase 18.1: `llms.txt`
+
+- [ ] The `v1.2.0` tag among the owner tasks.
+- [ ] `tools/export-docs.mjs` writes `llms.txt` in the format of
+  [llmstxt.org](https://llmstxt.org/): Stil in a few sentences, how to install
+  it, and a link to every docs page with its description, grouped as in
+  `DocsPages`.
+- [ ] It also writes `llms-full.txt`: every page's text as Markdown, with its
+  code examples and its API tables, in reading order, so one file holds the
+  whole docs.
+- [ ] The links point at the hosted pages, the export checks that each one
+  was exported, and the two files are listed in `robots.txt`. Their size is
+  measured and noted.
+
+### Phase 18.2: The MCP server
+
+- [ ] `src/Stil.Mcp`: a console app on `ModelContextProtocol`, packed as a
+  .NET tool of the package type `McpServer` with `.mcp/server.json`, so
+  `dnx Stil.Mcp --yes` starts it and nuget.org shows how to add it. It
+  references the four libraries, embeds their XML documentation, the docs
+  examples and the built `stil.css`, and shares `ApiDocs` and `ProjectSetup`
+  with the docs site (linked files, so they stay one).
+- [ ] Tools, each with a description that tells the assistant when to use it:
+  - `list_components`: every component with its package, namespace and a one-line summary.
+  - `get_component`: a component's parameters (type, default, required, description), its docs page and its examples.
+  - `search`: components, CSS classes, tokens and docs pages that match a word.
+  - `list_css_classes`: the classes of Stil CSS, filtered by a prefix (`stil-btn`, `stil-mw-`).
+  - `list_tokens`: the `--stil-*` tokens with their default values.
+  - `get_example`: the source of a docs example.
+  - `new_project`: the `dotnet new stil-app` or `stil-site` command for a starter and features, and what to add to `Program.cs` and `App.razor` in an existing app.
+- [ ] An instruction text the server sends when an assistant connects: use
+  Stil components and `stil-*` classes, not Bootstrap or inline styles, and
+  look a component up before using it.
+- [ ] `tests/Stil.Mcp.Tests`: every tool is called through the SDK's client
+  against the server over stdio, and the answers are checked (a known
+  component's parameters, an unknown name, a class prefix, a starter's
+  command).
+- [ ] CI builds, tests and packs it, and `release.yml` publishes it with the
+  other packages.
+
+### Phase 18.3: Docs and a real trial
+
+- [ ] A docs page, "AI assistants": what the server and `llms.txt` do, and how
+  to add the server to Claude Code (`claude mcp add`), VS Code
+  (`.vscode/mcp.json`) and Visual Studio, with nothing to install but the
+  .NET 10 SDK.
+- [ ] `stil-app` and `stil-site` get an `AGENTS.md` and a `.vscode/mcp.json`:
+  the conventions of the app in a few lines, and the server already set up.
+  The template tests check both.
+- [ ] A trial in a real client: an assistant with the server builds a page in
+  a new `stil-app` (a form and a data grid) and in a new `stil-site` (a page
+  of blocks). The result compiles and uses only parameters and classes that
+  exist; what went wrong is fixed in the tool descriptions and noted here.
+- [ ] README, the package README of `Stil.Mcp`, CHANGELOG and "Where we are".
 
 ---
 
