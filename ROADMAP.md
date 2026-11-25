@@ -27,7 +27,7 @@ something usable.
 | 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | ✅ Done (`1.0.0` released 2026-11-12) |
 | V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | V2.1 and V2.2 done, in `1.1.0`; V2.3 and V2.4 are the hosted product, outside this repository |
 | 17 | Reach and polish: a docs site that search engines can read, and the CSS backlog | ✅ Done (released in `1.2.0`) |
-| 18 | AI assistants: `llms.txt` on the docs site and `Stil.Mcp`, an MCP server that knows Stil's components, classes and tokens | Planned |
+| 18 | AI assistants: `llms.txt` on the docs site and `Stil.Mcp`, an MCP server that knows Stil's components, classes and tokens | In progress (18.1 done) |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -38,7 +38,8 @@ end, so they never keep a phase open.
 Every package is published: `Stil`, `Stil.Charts`, `Stil.Markdown`,
 `Stil.RichText` and `Stil.Templates` on nuget.org, and `stil-css` on npm,
 at `1.2.0`. The docs site is hosted at <https://dradwul.github.io/Stil/> as
-static pages rendered by `docs/Stil.Docs.Host`, with a sitemap.
+static pages rendered by `docs/Stil.Docs.Host`, with a sitemap, and as
+Markdown for AI assistants (`llms.txt`).
 
 - **Stil CSS:** an npm package (`stil-css`). It is built with Lightning CSS
   from partials into `dist/stil.css` and `stil.min.css` (about 24 kB
@@ -1750,19 +1751,32 @@ Code and Visual Studio; and an assistant with the server builds a page in a
 new `stil-app` that compiles and uses only parameters and classes that exist.
 Released as `1.3.0` (a new package and new files, nothing renamed).
 
-### Phase 18.1: `llms.txt`
+### Phase 18.1: `llms.txt` ✅ Done
 
-- [ ] The `v1.2.0` tag among the owner tasks.
-- [ ] `tools/export-docs.mjs` writes `llms.txt` in the format of
+- [x] The `v1.2.0` tag among the owner tasks.
+- [x] `tools/export-docs.mjs` writes `llms.txt` in the format of
   [llmstxt.org](https://llmstxt.org/): Stil in a few sentences, how to install
   it, and a link to every docs page with its description, grouped as in
   `DocsPages`.
-- [ ] It also writes `llms-full.txt`: every page's text as Markdown, with its
+- [x] It also writes `llms-full.txt`: every page's text as Markdown, with its
   code examples and its API tables, in reading order, so one file holds the
   whole docs.
-- [ ] The links point at the hosted pages, the export checks that each one
-  was exported, and the two files are listed in `robots.txt`. Their size is
-  measured and noted.
+- [x] The links point at the hosted pages, the export checks that each one
+  was exported, and the two files' sizes are measured and noted.
+  As llmstxt.org suggests, every page is also written as Markdown beside its
+  HTML (`components/buttons.md`, `index.html.md` for the home page), and
+  `llms.txt` links to those. `tools/html-to-markdown.mjs` turns a rendered
+  page's `<main>` into Markdown without a package: the live previews are left
+  out and their source kept, API tables become Markdown tables, and every
+  tab's panel is kept under its tab's name. The sidebar gives the groups and
+  the page names, each page's `StilSeo` its description. `llms.txt` is 9 kB
+  and `llms-full.txt` 435 kB (about 110,000 tokens, more than most
+  assistants read at once, which is what `Stil.Mcp` is for). They are not
+  listed in `robots.txt`, which has no field for them; the README links to
+  both, and 18.3's docs page will. The project wizard's later steps render
+  only once WebAssembly runs, so its Markdown has the starters but not every
+  option; `Stil.Mcp`'s `new_project` will cover them. The home page's numbers
+  were out of date (16 kB and 60 components): now 24 kB and about 95.
 
 ### Phase 18.2: The MCP server
 
@@ -1854,6 +1868,8 @@ These need the repository or package owner.
   <https://dradwul.github.io/Stil/> from `main`.
 - [x] Push the `v1.1.0` tag (2026-11-19): `release.yml` published the five
   NuGet packages and `npm.yml` published `stil-css` `1.1.0`.
+- [x] Push the `v1.2.0` tag (2026-11-20): `release.yml` published the five
+  NuGet packages and `npm.yml` published `stil-css` `1.2.0`.
 
 ## CSS backlog (no phase yet)
 

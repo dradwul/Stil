@@ -22,6 +22,9 @@ project template that can add features such as charts, editors and planners
 blocks ([`templates/Stil.Templates`](templates/Stil.Templates/README.md));
 and a documentation site with live examples, a theme builder and a project wizard
 (<https://dradwul.github.io/Stil/>, source in [`docs/Stil.Docs`](docs/Stil.Docs), served by [`docs/Stil.Docs.Host`](docs/Stil.Docs.Host)).
+For AI assistants, the docs are also Markdown: [`llms.txt`](https://dradwul.github.io/Stil/llms.txt)
+lists every page, and [`llms-full.txt`](https://dradwul.github.io/Stil/llms-full.txt) holds them all
+in one file.
 
 The Blazor components render ordinary HTML with Stil CSS classes, so a page
 can mix components and hand-written markup. Every class starts with `stil-`

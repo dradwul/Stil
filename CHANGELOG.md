@@ -11,6 +11,21 @@ version could contain breaking changes; they are marked **Breaking**.
 
 ## [Unreleased]
 
+### Added
+
+- **Docs**: the docs site for AI assistants, in the format of
+  [llmstxt.org](https://llmstxt.org/): every page as Markdown beside its HTML
+  (`components/buttons.md`, `index.html.md` for the home page), with its code
+  examples and API tables; `llms.txt`, which links to them in the order of the
+  sidebar with their descriptions; and `llms-full.txt`, every page in one file.
+  `tools/export-docs.mjs` writes them from the rendered pages and stops if a
+  link points at a page that was not exported.
+
+### Fixed
+
+- **Docs**: the home page said about 16 kB and 60 components; it is about
+  24 kB gzipped and about 95 components.
+
 ## [1.2.0] - 2026-11-20
 
 Reach and polish: the docs site is now static pages that search engines read
