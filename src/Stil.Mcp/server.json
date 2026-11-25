@@ -1,0 +1,22 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "name": "io.github.dradwul/stil",
+  "description": "Stil's Blazor components, CSS classes, tokens and examples, for AI assistants that write Stil code.",
+  "version": "$version$",
+  "packages": [
+    {
+      "registryType": "nuget",
+      "identifier": "Stil.Mcp",
+      "version": "$version$",
+      "transport": {
+        "type": "stdio"
+      },
+      "packageArguments": [],
+      "environmentVariables": []
+    }
+  ],
+  "repository": {
+    "url": "https://github.com/dradwul/Stil",
+    "source": "github"
+  }
+}

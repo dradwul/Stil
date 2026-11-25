@@ -8,14 +8,15 @@
     next version adds), next to the project file. A public API that is not listed (RS0016), or a
     listed one that is gone (RS0017), fails the build, so a change to the public API is always
     a change to these files too, and shows in the pull request. See CONTRIBUTING.md.
+    Stil.Mcp is a tool, not a library: it has no public API to guard.
   -->
-  <ItemGroup>
+  <ItemGroup Condition="'$(MSBuildProjectName)' != 'Stil.Mcp'">
     <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.6.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
     <AdditionalFiles Include="PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
   </ItemGroup>
 
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(MSBuildProjectName)' != 'Stil.Mcp'">
     <WarningsAsErrors>$(WarningsAsErrors);RS0016;RS0017</WarningsAsErrors>
     <!-- The BuildRenderTree that Razor generates for a component is not annotated for nullability. -->
     <NoWarn>$(NoWarn);RS0041</NoWarn>

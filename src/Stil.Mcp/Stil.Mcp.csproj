@@ -1,0 +1,73 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>Stil.Mcp</AssemblyName>
+    <RootNamespace>Stil.Mcp</RootNamespace>
+    <PackageId>Stil.Mcp</PackageId>
+    <Description>An MCP server for Stil: it gives AI assistants (Claude Code, GitHub Copilot, Cursor and others) Stil's components and their parameters, CSS classes, tokens, examples and the dotnet new command for a new app, so the code they write uses Stil as it is. It runs locally over stdio: dnx Stil.Mcp.</Description>
+    <PackageTags>mcp;ai;blazor;css;stil</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- A .NET tool of the type McpServer, so `dnx Stil.Mcp` runs it and nuget.org shows how to
+         add it to a client. It needs only the .NET 10 runtime, so it is one package for every OS. -->
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>stil-mcp</ToolCommandName>
+    <PackageType>McpServer</PackageType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Stil.Mcp.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.15" />
+    <PackageReference Include="ModelContextProtocol" Version="2.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Stil.Blazor\Stil.Blazor.csproj" />
+    <ProjectReference Include="..\Stil.Charts\Stil.Charts.csproj" />
+    <ProjectReference Include="..\Stil.Markdown\Stil.Markdown.csproj" />
+    <ProjectReference Include="..\Stil.RichText\Stil.RichText.csproj" />
+  </ItemGroup>
+
+  <!-- The same sources as the docs site, so the answers never drift from the docs: the API tables'
+       reflection and the project wizard's options, linked; the examples and the pages, embedded as
+       text; and the built CSS, for its classes and tokens. -->
+  <ItemGroup>
+    <Compile Include="..\..\docs\Stil.Docs\ApiDocs.cs" Link="Docs\ApiDocs.cs" />
+    <Compile Include="..\..\docs\Stil.Docs\ProjectSetup.cs" Link="Docs\ProjectSetup.cs" />
+    <Compile Include="..\..\docs\Stil.Docs\DocsPages.cs" Link="Docs\DocsPages.cs" />
+    <EmbeddedResource Include="..\..\docs\Stil.Docs\Examples\**\*.razor" LogicalName="Examples/%(RecursiveDir)%(Filename)%(Extension)" Link="Docs\Examples\%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\..\docs\Stil.Docs\Pages\**\*.razor" LogicalName="Pages/%(RecursiveDir)%(Filename)%(Extension)" Link="Docs\Pages\%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\Stil.Css\dist\stil.css" LogicalName="Css/stil.css" Link="Css\stil.css" />
+    <EmbeddedResource Include="..\Stil.Css\dist\stil-blocks.css" LogicalName="Css/stil-blocks.css" Link="Css\stil-blocks.css" />
+  </ItemGroup>
+
+  <!-- The XML documentation of the libraries, embedded so the parameters have their descriptions
+       (ApiDocs reads them from Docs/). -->
+  <Target Name="EmbedLibraryXmlDocs" AfterTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <EmbeddedResource Include="@(ReferenceCopyLocalPaths)" Condition="'%(Extension)' == '.xml' and $([System.String]::Copy('%(Filename)').StartsWith('Stil.'))" LogicalName="Docs/%(Filename)%(Extension)" />
+    </ItemGroup>
+  </Target>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <!-- .mcp/server.json, which nuget.org reads to show how to add the server, with this version. -->
+  <Target Name="PackServerJson" BeforeTargets="_GetPackageFiles">
+    <PropertyGroup>
+      <_ServerJson>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)/server.json').Replace('$version$', '$(PackageVersion)'))</_ServerJson>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(IntermediateOutputPath)server.json" Lines="$(_ServerJson)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+    <ItemGroup>
+      <None Include="$(IntermediateOutputPath)server.json" Pack="true" PackagePath=".mcp/server.json" />
+    </ItemGroup>
+  </Target>
+
+</Project>
