@@ -51,6 +51,7 @@ jobs:
           dotnet pack src/Stil.Charts --configuration Release --no-build --output artifacts
           dotnet pack src/Stil.Markdown --configuration Release --no-build --output artifacts
           dotnet pack src/Stil.RichText --configuration Release --no-build --output artifacts
+          dotnet pack src/Stil.Mcp --configuration Release --no-build --output artifacts
           dotnet pack templates/Stil.Templates --configuration Release --no-build --output artifacts
 
       - name: Verify the package contents
@@ -69,6 +70,10 @@ jobs:
           unzip -l "$(ls artifacts/Stil.RichText.[0-9]*.nupkg)" | tee richtext.txt
           grep -q 'Stil.RichText.xml' richtext.txt
           grep -q 'README.md' richtext.txt
+          unzip -l "$(ls artifacts/Stil.Mcp.[0-9]*.nupkg)" | tee mcp.txt
+          grep -q '.mcp/server.json' mcp.txt
+          grep -q 'tools/net10.0/any/Stil.Mcp.dll' mcp.txt
+          grep -q 'README.md' mcp.txt
           unzip -l "$(ls artifacts/Stil.Templates.[0-9]*.nupkg)" | tee templates.txt
           grep -q 'content/StilApp/.template.config/template.json' templates.txt
           grep -q 'content/StilApp/.gitignore' templates.txt
