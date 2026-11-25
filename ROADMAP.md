@@ -27,7 +27,7 @@ something usable.
 | 16 | Stil 1.0: API review, a public API baseline, migration notes and the 1.0.0 release | ✅ Done (`1.0.0` released 2026-11-12) |
 | V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | V2.1 and V2.2 done, in `1.1.0`; V2.3 and V2.4 are the hosted product, outside this repository |
 | 17 | Reach and polish: a docs site that search engines can read, and the CSS backlog | ✅ Done (released in `1.2.0`) |
-| 18 | AI assistants: `llms.txt` on the docs site and `Stil.Mcp`, an MCP server that knows Stil's components, classes and tokens | In progress (18.1 done) |
+| 18 | AI assistants: `llms.txt` on the docs site and `Stil.Mcp`, an MCP server that knows Stil's components, classes and tokens | In progress (18.1 and 18.2 done) |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -1778,15 +1778,15 @@ Released as `1.3.0` (a new package and new files, nothing renamed).
   option; `Stil.Mcp`'s `new_project` will cover them. The home page's numbers
   were out of date (16 kB and 60 components): now 24 kB and about 95.
 
-### Phase 18.2: The MCP server
+### Phase 18.2: The MCP server ✅ Done
 
-- [ ] `src/Stil.Mcp`: a console app on `ModelContextProtocol`, packed as a
+- [x] `src/Stil.Mcp`: a console app on `ModelContextProtocol`, packed as a
   .NET tool of the package type `McpServer` with `.mcp/server.json`, so
   `dnx Stil.Mcp --yes` starts it and nuget.org shows how to add it. It
   references the four libraries, embeds their XML documentation, the docs
   examples and the built `stil.css`, and shares `ApiDocs` and `ProjectSetup`
   with the docs site (linked files, so they stay one).
-- [ ] Tools, each with a description that tells the assistant when to use it:
+- [x] Tools, each with a description that tells the assistant when to use it:
   - `list_components`: every component with its package, namespace and a one-line summary.
   - `get_component`: a component's parameters (type, default, required, description), its docs page and its examples.
   - `search`: components, CSS classes, tokens and docs pages that match a word.
@@ -1794,15 +1794,31 @@ Released as `1.3.0` (a new package and new files, nothing renamed).
   - `list_tokens`: the `--stil-*` tokens with their default values.
   - `get_example`: the source of a docs example.
   - `new_project`: the `dotnet new stil-app` or `stil-site` command for a starter and features, and what to add to `Program.cs` and `App.razor` in an existing app.
-- [ ] An instruction text the server sends when an assistant connects: use
+- [x] An instruction text the server sends when an assistant connects: use
   Stil components and `stil-*` classes, not Bootstrap or inline styles, and
   look a component up before using it.
-- [ ] `tests/Stil.Mcp.Tests`: every tool is called through the SDK's client
+- [x] `tests/Stil.Mcp.Tests`: every tool is called through the SDK's client
   against the server over stdio, and the answers are checked (a known
   component's parameters, an unknown name, a class prefix, a starter's
   command).
-- [ ] CI builds, tests and packs it, and `release.yml` publishes it with the
+- [x] CI builds, tests and packs it, and `release.yml` publishes it with the
   other packages.
+  The server is built on `ModelContextProtocol` 2.4.0 and needs only the .NET
+  10 runtime, so it is one package (3.6 MB) for every OS rather than one per
+  platform. It shares `DocsPages` with the docs site too, and reads each docs
+  page's title, description, API tables and examples from its `.razor`
+  source. Razor components have no type summary in the XML docs, so a
+  component's summary is its docs page's description, and `list_components`
+  groups them by page. Two tools were added: `get_type`, for the enums,
+  options and services that components take (`StilVariant`, `StilTheme`,
+  `IStilToastService`), and `add_to_existing_app`, the setup of an existing
+  app, which reads the Installation page's snippets. `get_component` also
+  lists the values of the enums a component takes, and suggests names for an
+  unknown one. The answers are Markdown. 15 tests start the server and call
+  every tool; the packed server was started with `dnx` from a local source
+  and answered. Two fixes in `ApiDocs` show in the docs' API tables too: the
+  names that `<paramref>` and `<see langword>` stand for are no longer left
+  out of a description, and a `void` return is written as such.
 
 ### Phase 18.3: Docs and a real trial
 

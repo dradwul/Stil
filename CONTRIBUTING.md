@@ -190,6 +190,7 @@ first.
 | NuGet (charts) | `Stil.Charts` | Packed by `src/Stil.Charts`, published with `Stil`. |
 | NuGet (Markdown) | `Stil.Markdown` | Packed by `src/Stil.Markdown`, published with `Stil`. It depends on Markdig, so the core package does not. |
 | NuGet (rich text) | `Stil.RichText` | Packed by `src/Stil.RichText`, published with `Stil`. It depends on AngleSharp and `Stil.Markdown`. |
+| NuGet (MCP server) | `Stil.Mcp` | Packed by `src/Stil.Mcp` as a .NET tool of the type `McpServer` (`dnx Stil.Mcp`), published with `Stil`. It has no public API to guard. |
 | NuGet (`dotnet new` templates) | `Stil.Templates` | Packed by `templates/Stil.Templates`, published with `Stil`. |
 
 All packages share the version in `Directory.Build.props` and are listed in
@@ -210,7 +211,10 @@ All packages share the version in `Directory.Build.props` and are listed in
    and a section on its page in the docs site. A docs example is a component
    in `docs/Stil.Docs/Examples/{Page}/`, shown with
    `<DocExample Type="typeof(…)">`, so the code on the page is the code that
-   runs. A new page goes in `DocsPages.cs`.
+   runs. A new page goes in `DocsPages.cs`. `Stil.Mcp` reads the same pages,
+   examples and XML docs, so a component documented this way is also known to
+   AI assistants; its tests (`tests/Stil.Mcp.Tests`) start the server and call
+   its tools.
 4. Run `npm run check` (in `src/Stil.Css`), `dotnet build Stil.sln` and
    `dotnet test Stil.sln` before pushing. CI (`.github/workflows/ci.yml`)
    runs the same checks plus pack on every push to `main` and on every pull
@@ -274,7 +278,7 @@ its budget in that script in the same change.
 ## Releases
 
 `.github/workflows/release.yml` publishes `Stil`, `Stil.Charts`,
-`Stil.Markdown`, `Stil.RichText` and `Stil.Templates` to nuget.org when the owner pushes a version tag. Nothing
+`Stil.Markdown`, `Stil.RichText`, `Stil.Mcp` and `Stil.Templates` to nuget.org when the owner pushes a version tag. Nothing
 else publishes.
 
 1. For a release without a suffix (not a preview), move the lines of each

@@ -24,7 +24,8 @@ and a documentation site with live examples, a theme builder and a project wizar
 (<https://dradwul.github.io/Stil/>, source in [`docs/Stil.Docs`](docs/Stil.Docs), served by [`docs/Stil.Docs.Host`](docs/Stil.Docs.Host)).
 For AI assistants, the docs are also Markdown: [`llms.txt`](https://dradwul.github.io/Stil/llms.txt)
 lists every page, and [`llms-full.txt`](https://dradwul.github.io/Stil/llms-full.txt) holds them all
-in one file.
+in one file. `Stil.Mcp` is an MCP server that gives assistants Stil's components, parameters, classes, tokens and
+examples ([`src/Stil.Mcp`](src/Stil.Mcp/README.md)).
 
 The Blazor components render ordinary HTML with Stil CSS classes, so a page
 can mix components and hand-written markup. Every class starts with `stil-`
@@ -48,6 +49,7 @@ library.
 | Charts | `dotnet add package Stil.Charts` ([charts](src/Stil.Charts/README.md)) |
 | Markdown | `dotnet add package Stil.Markdown` ([Markdown](src/Stil.Markdown/README.md)) |
 | Rich text | `dotnet add package Stil.RichText` ([rich text](src/Stil.RichText/README.md)) |
+| An AI assistant that writes correct Stil code | `claude mcp add stil -- dnx Stil.Mcp --yes`, or the same server in VS Code, Visual Studio or Cursor ([MCP server](src/Stil.Mcp/README.md)) |
 | Only the CSS | Download `stil.min.css` from a [release](https://github.com/dradwul/Stil/releases), or link it from jsDelivr ([Stil CSS](src/Stil.Css/README.md#install)) |
 
 All packages require .NET 10. The latest version is on
@@ -114,12 +116,13 @@ src/Stil.Blazor/     Stil for Blazor: Razor class library, packed as NuGet "Stil
 src/Stil.Charts/     SVG charts for Blazor, packed as NuGet "Stil.Charts"
 src/Stil.Markdown/   Markdown view and editor (on Markdig), packed as NuGet "Stil.Markdown"
 src/Stil.RichText/   Rich text editor and view (on AngleSharp), packed as NuGet "Stil.RichText"
+src/Stil.Mcp/        MCP server for AI assistants (components, classes, tokens, examples), packed as NuGet "Stil.Mcp"
 templates/           dotnet new stil-app (Stil.Templates) and its test script
 docs/Stil.Docs/      Documentation site: its pages, examples and theme builder (WebAssembly)
 docs/Stil.Docs.Host/ The docs site's server: renders each page first, exported to GitHub Pages
 samples/Stil.Html/   Plain-HTML showcase of every CSS class, an admin page and a product site built with Stil
 samples/Stil.Demo/   Blazor web app: gallery, orders with a dashboard, budget, check-in, task board, rooms and a project plan
-tests/               bUnit tests (Stil.Blazor.Tests, Stil.Charts.Tests, Stil.Markdown.Tests, Stil.RichText.Tests) and Playwright tests (Stil.Visual)
+tests/               bUnit tests (Stil.Blazor.Tests, Stil.Charts.Tests, Stil.Markdown.Tests, Stil.RichText.Tests), MCP tests (Stil.Mcp.Tests) and Playwright tests (Stil.Visual)
 tools/               CI checks (WCAG contrast, size budget) and update-public-api.mjs
 CHANGELOG.md         Changes in every package
 CONTRIBUTING.md      Naming rules, scope model, browser support, workflow, the public API
@@ -198,6 +201,7 @@ dotnet pack src/Stil.Blazor -o artifacts
 dotnet pack src/Stil.Charts -o artifacts
 dotnet pack src/Stil.Markdown -o artifacts
 dotnet pack src/Stil.RichText -o artifacts
+dotnet pack src/Stil.Mcp -o artifacts
 dotnet pack templates/Stil.Templates -o artifacts
 ```
 

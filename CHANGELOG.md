@@ -20,6 +20,21 @@ version could contain breaking changes; they are marked **Breaking**.
   sidebar with their descriptions; and `llms-full.txt`, every page in one file.
   `tools/export-docs.mjs` writes them from the rendered pages and stops if a
   link points at a page that was not exported.
+- **Stil.Mcp**: a new package, an MCP server for AI assistants (Claude Code,
+  GitHub Copilot, Cursor and others): `dnx Stil.Mcp --yes`. Its tools list the
+  components and give a component's parameters, enum values, docs page and
+  examples (`list_components`, `get_component`), another type's values or
+  members (`get_type`), search everything (`search`), list the CSS classes and
+  tokens (`list_css_classes`, `list_tokens`), give a docs example
+  (`get_example`), the `dotnet new` command for a new app (`new_project`) and
+  the setup of an existing one (`add_to_existing_app`). It reads the same
+  sources as the docs site, runs locally over stdio and changes nothing.
+
+### Changed
+
+- **Docs**: the API tables show the parameter and keyword names that
+  `<paramref>` and `<see langword>` stand for in a description, which were
+  left out.
 
 ### Fixed
 
