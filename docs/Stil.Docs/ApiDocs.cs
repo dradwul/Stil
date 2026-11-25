@@ -24,6 +24,13 @@ public static partial class ApiDocs
 
     public static IReadOnlyList<ApiParameter> Parameters(Type component) => Cache.GetOrAdd(component, Read);
 
+    /// <summary>The summary of a member by its documentation id, such as <c>F:Stil.Blazor.StilVariant.Primary</c>.</summary>
+    public static string? MemberSummary(string id) => Summaries.Value.TryGetValue(id, out var text) ? text : null;
+
+    /// <summary>The summary of a type, if it has one.</summary>
+    public static string? TypeSummary(Type type) =>
+        MemberSummary($"T:{(type.IsGenericType ? type.GetGenericTypeDefinition() : type).FullName?.Replace('+', '.')}");
+
     private static IReadOnlyList<ApiParameter> Read(Type component)
     {
         var instance = TryCreate(component);
@@ -125,7 +132,9 @@ public static partial class ApiDocs
             text.Append(node switch
             {
                 XText t => t.Value,
-                XElement { Name.LocalName: "see" } see => see.Attribute("cref")?.Value.Split('.', ':').Last() ?? see.Value,
+                XElement { Name.LocalName: "see" } see => see.Attribute("cref")?.Value.Split('.', ':').Last()
+                    ?? see.Attribute("langword")?.Value ?? see.Value,
+                XElement { Name.LocalName: "paramref" or "typeparamref" } reference => reference.Attribute("name")?.Value ?? "",
                 XElement e => e.Value,
                 _ => "",
             });
@@ -153,6 +162,7 @@ public static partial class ApiDocs
             _ when type == typeof(double) => "double",
             _ when type == typeof(decimal) => "decimal",
             _ when type == typeof(object) => "object",
+            _ when type == typeof(void) => "void",
             _ when type.IsGenericParameter => type.Name,
             _ when type.IsArray => FriendlyName(type.GetElementType()!) + "[]",
             _ when type.IsGenericType => $"{type.Name[..type.Name.IndexOf('`')]}<{string.Join(", ", type.GetGenericArguments().Select(t => FriendlyName(t)))}>",
