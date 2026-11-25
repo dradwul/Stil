@@ -38,7 +38,8 @@ jobs:
       # Pages has no server, so the site runs here once: tools/export-docs.mjs saves every page in
       # its sitemap as <path>.html (Pages serves /Stil/components/buttons from it, with status 200),
       # a real 404.html, sitemap.xml and robots.txt, with the public address and base path, and the
-      # files the server only answers as endpoints. The pages then start WebAssembly as usual.
+      # files the server only answers as endpoints. The pages then start WebAssembly as usual. For AI
+      # assistants it also writes every page as Markdown, llms.txt and llms-full.txt.
       - name: Export the site as static files
         run: node tools/export-docs.mjs site "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
 

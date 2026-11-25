@@ -5,7 +5,10 @@
 //   - 404.html, the not-found page, for any other address;
 //   - sitemap.xml and robots.txt, which the site builds with StilSitemap and StilRobots;
 //   - the files the server only answers as endpoints (fingerprinted aliases, and the resource
-//     collection WebAssembly starts from), so the static copy starts like the real one.
+//     collection WebAssembly starts from), so the static copy starts like the real one;
+//   - for AI assistants (https://llmstxt.org/): every page as Markdown beside its HTML
+//     (components/buttons.md, and index.html.md for the home page), llms.txt, which links to them
+//     in the order of the sidebar with their descriptions, and llms-full.txt, every page in one file.
 // The pages are rendered at http://localhost, so their addresses (canonical, og:url) are rewritten
 // to the site's public address, and <base href> to its path.
 //
@@ -15,6 +18,7 @@
 import { spawn } from 'node:child_process';
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
+import { parse, pageToMarkdown } from './html-to-markdown.mjs';
 
 const [site = 'site', address = 'http://localhost/'] = process.argv.slice(2);
 const siteUrl = address.endsWith('/') ? address : `${address}/`;
@@ -51,6 +55,8 @@ try {
         write(join(wwwroot, route === '' ? 'index.html' : `${route}.html`), html);
     }
 
+    const llms = writeLlmsFiles(routes, pages);
+
     const notFound = await fetch(`${origin}/this-address-has-no-page`);
     if (notFound.status !== 404) {
         throw new Error(`An unknown address answered ${notFound.status}, not 404.`);
@@ -60,6 +66,7 @@ try {
     const aliases = writeAliases();
     const collections = await writeResourceCollections(pages);
     console.log(`Exported ${pages.length} pages, 404.html, sitemap.xml, robots.txt, ${aliases} alias files and ${collections} resource collection(s) for ${siteUrl}.`);
+    console.log(`For AI assistants: ${pages.length} Markdown pages, llms.txt (${kilobytes(llms.index)}) and llms-full.txt (${kilobytes(llms.full)}).`);
 } finally {
     server.kill();
 }
@@ -142,6 +149,121 @@ async function writeResourceCollections(htmls) {
     }
 
     return addresses.size;
+}
+
+// The Markdown copies of the pages, and llms.txt and llms-full.txt, which list them in the order of
+// the sidebar (the pages outside it come last).
+function writeLlmsFiles(routes, htmls) {
+    const pages = routes.map((route, index) => {
+        const html = htmls[index];
+        const markdownPath = route === '' ? 'index.html.md' : `${route}.md`;
+        const markdown = pageToMarkdown(html, siteUrl + route);
+        write(join(wwwroot, markdownPath), markdown);
+        return {
+            route,
+            markdown,
+            url: siteUrl + markdownPath,
+            title: /^# (.*)$/m.exec(markdown)?.[1] ?? route,
+            description: decodeAttribute(/<meta name="description" content="([^"]*)"/.exec(html)?.[1] ?? ''),
+        };
+    });
+
+    const byRoute = new Map(pages.map(page => [page.route, page]));
+    for (const page of pages) {
+        for (const [, target] of page.markdown.matchAll(/\]\(([^)#\s]+)/g)) {
+            if (target.startsWith(siteUrl) && !byRoute.has(target.slice(siteUrl.length))) {
+                throw new Error(`${page.route || 'The home page'} links to ${target}, which was not exported.`);
+            }
+        }
+    }
+
+    const sections = navSections(htmls[routes.indexOf('')]).map(section => ({
+        title: section.title,
+        // The sidebar's name for a page, such as "Introduction" for the home page.
+        pages: section.links.map(({ route, title }) => {
+            if (!byRoute.has(route)) {
+                throw new Error(`The sidebar links to ${route}, which was not exported.`);
+            }
+
+            return { ...byRoute.get(route), title };
+        }),
+    }));
+    const listed = new Set(sections.flatMap(section => section.pages.map(page => page.route)));
+    const others = pages.filter(page => !listed.has(page.route));
+    if (others.length) {
+        sections.push({ title: 'Other pages', pages: others });
+    }
+
+    const intro = [
+        '# Stil',
+        '',
+        '> Stil is a themeable CSS library (`stil-css` on npm) and a component library for Blazor (`Stil` on NuGet)',
+        '> built on it, with charts (`Stil.Charts`), Markdown (`Stil.Markdown`), rich text (`Stil.RichText`) and',
+        '> project templates (`Stil.Templates`). It is free and open source (MIT), for .NET 10.',
+        '',
+        'Use Stil components (`StilButton`, `StilDataGrid<TItem>`, `StilTextBox` and so on) and `stil-*` CSS classes,',
+        'not Bootstrap classes or inline styles. Colors are `StilVariant` values (Primary, Secondary, Success, Danger,',
+        'Warning, Info), and a theme is a set of `--stil-*` CSS tokens. Start a new app with',
+        '`dotnet new install Stil.Templates` and `dotnet new stil-app`, or add `Stil` to an existing app as the',
+        'Installation page shows.',
+    ].join('\n');
+
+    const index = [
+        intro,
+        ...sections.map(section => [
+            `## ${section.title}`,
+            '',
+            ...section.pages.map(page => `- [${page.title}](${page.url})${page.description ? `: ${page.description}` : ''}`),
+        ].join('\n')),
+        ['## Optional', '', `- [All the docs in one file](${siteUrl}llms-full.txt): every page above, in this order.`].join('\n'),
+    ].join('\n\n') + '\n';
+
+    const full = [
+        intro,
+        ...sections.flatMap(section => section.pages).map(page =>
+            page.markdown.replace(/^(# .*)\n/, `$1\n\nSource: ${siteUrl}${page.route}\n`).trimEnd()),
+    ].join('\n\n---\n\n') + '\n';
+
+    write(join(wwwroot, 'llms.txt'), index);
+    write(join(wwwroot, 'llms-full.txt'), full);
+    return { index, full };
+}
+
+// The sidebar's groups and the routes they link to, read from a rendered page.
+function navSections(html) {
+    const all = (node, test, found = []) => {
+        if (test(node)) {
+            found.push(node);
+        }
+
+        for (const child of node.children ?? []) {
+            all(child, test, found);
+        }
+
+        return found;
+    };
+    const classes = node => (node.attrs?.class ?? '').split(/\s+/);
+    const textOf = node => node.text ?? (node.children ?? []).map(textOf).join('');
+    const nav = all(parse(html), node => node.tag === 'nav' && classes(node).includes('docs-nav'))[0];
+    if (!nav) {
+        throw new Error('The home page has no sidebar (nav.docs-nav).');
+    }
+
+    return all(nav, node => classes(node).includes('stil-nav-group')).map(group => ({
+        title: textOf(all(group, node => classes(node).includes('stil-nav-group-title'))[0]).trim(),
+        links: all(group, node => node.tag === 'a' && node.attrs.href !== undefined).map(link => ({
+            route: new URL(link.attrs.href, siteUrl).href.slice(siteUrl.length),
+            title: textOf(link).trim(),
+        })),
+    }));
+}
+
+function decodeAttribute(value) {
+    return parse(value).children.map(node => node.text ?? '').join('');
+}
+
+function kilobytes(content) {
+    return `${Math.round(Buffer.byteLength(content) / 1024)} kB`;
 }
 
 function write(file, content) {
