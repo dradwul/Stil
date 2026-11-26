@@ -4,15 +4,17 @@ namespace Stil.Mcp.Tests;
 [Collection("Server")]
 public sealed class StilToolsTests(StilServerFixture server)
 {
-    [Fact]
-    public async Task The_server_says_who_it_is_and_how_to_use_Stil()
+    [ServerFact]
+    public void The_server_says_who_it_is_and_how_to_use_Stil()
     {
-        Assert.Equal("Stil", server.Client.ServerInfo.Name);
+        var info = server.Client.ServerInfo;
+        Assert.NotNull(info);
+        Assert.Equal("Stil", info.Name);
         Assert.Contains("get_component", server.Client.ServerInstructions);
         Assert.Contains("Bootstrap", server.Client.ServerInstructions);
     }
 
-    [Fact]
+    [ServerFact]
     public async Task It_lists_its_tools_as_read_only()
     {
         var tools = await server.Client.ListToolsAsync();
@@ -27,7 +29,7 @@ public sealed class StilToolsTests(StilServerFixture server)
         });
     }
 
-    [Fact]
+    [ServerFact]
     public async Task List_components_groups_them_by_docs_page()
     {
         var text = await server.CallAsync("list_components");
@@ -39,7 +41,7 @@ public sealed class StilToolsTests(StilServerFixture server)
         Assert.DoesNotContain("## Other components\n\n", text);
     }
 
-    [Fact]
+    [ServerFact]
     public async Task List_components_filters_by_package()
     {
         var text = await server.CallAsync("list_components", new() { ["package"] = "Stil.Charts" });
@@ -49,7 +51,7 @@ public sealed class StilToolsTests(StilServerFixture server)
         Assert.Contains("The packages are", await server.CallAsync("list_components", new() { ["package"] = "Nope" }));
     }
 
-    [Fact]
+    [ServerFact]
     public async Task Get_component_gives_its_parameters_enums_docs_and_examples()
     {
         var text = await server.CallAsync("get_component", new() { ["name"] = "button" });
@@ -66,7 +68,7 @@ public sealed class StilToolsTests(StilServerFixture server)
         Assert.Contains("<StilButton", text);
     }
 
-    [Fact]
+    [ServerFact]
     public async Task Get_component_marks_required_parameters_and_type_parameters()
     {
         var text = await server.CallAsync("get_component", new() { ["name"] = "StilDataGrid<TItem>", ["examples"] = 0 });
@@ -78,7 +80,7 @@ public sealed class StilToolsTests(StilServerFixture server)
         Assert.Contains("More examples with get_example: ", text);
     }
 
-    [Fact]
+    [ServerFact]
     public async Task Get_component_suggests_names_for_an_unknown_one()
     {
         var text = await server.CallAsync("get_component", new() { ["name"] = "StilDate" });
@@ -88,7 +90,7 @@ public sealed class StilToolsTests(StilServerFixture server)
         Assert.Contains("StilDateRangePicker", text);
     }
 
-    [Fact]
+    [ServerFact]
     public async Task Get_type_gives_enum_values_and_service_members()
     {
         var variant = await server.CallAsync("get_type", new() { ["name"] = "StilVariant" });
@@ -100,7 +102,7 @@ public sealed class StilToolsTests(StilServerFixture server)
         Assert.Contains("Success(", toasts);
     }
 
-    [Fact]
+    [ServerFact]
     public async Task Search_finds_components_pages_classes_and_tokens()
     {
         var toast = await server.CallAsync("search", new() { ["query"] = "toast" });
@@ -114,7 +116,7 @@ public sealed class StilToolsTests(StilServerFixture server)
         Assert.StartsWith("Nothing in Stil matches", await server.CallAsync("search", new() { ["query"] = "qwertyuiop" }));
     }
 
-    [Fact]
+    [ServerFact]
     public async Task List_css_classes_gives_families_or_the_classes_of_a_prefix()
     {
         var families = await server.CallAsync("list_css_classes");
@@ -130,7 +132,7 @@ public sealed class StilToolsTests(StilServerFixture server)
         Assert.StartsWith("No Stil class starts with stil-nope", await server.CallAsync("list_css_classes", new() { ["prefix"] = "stil-nope" }));
     }
 
-    [Fact]
+    [ServerFact]
     public async Task List_tokens_gives_names_and_defaults()
     {
         var text = await server.CallAsync("list_tokens", new() { ["prefix"] = "radius" });
@@ -140,7 +142,7 @@ public sealed class StilToolsTests(StilServerFixture server)
         Assert.DoesNotContain("--stil-space", text);
     }
 
-    [Fact]
+    [ServerFact]
     public async Task Get_example_gives_a_source_or_lists_examples()
     {
         var source = await server.CallAsync("get_example", new() { ["name"] = "Buttons/Variants" });
@@ -153,7 +155,7 @@ public sealed class StilToolsTests(StilServerFixture server)
         Assert.Contains("- Buttons: ", await server.CallAsync("get_example"));
     }
 
-    [Fact]
+    [ServerFact]
     public async Task New_project_gives_the_wizards_command()
     {
         var text = await server.CallAsync("new_project", new()
@@ -171,7 +173,7 @@ public sealed class StilToolsTests(StilServerFixture server)
         Assert.DoesNotContain("## Options", text);
     }
 
-    [Fact]
+    [ServerFact]
     public async Task New_project_lists_the_options_and_reports_what_it_could_not_use()
     {
         var plain = await server.CallAsync("new_project");
@@ -184,7 +186,7 @@ public sealed class StilToolsTests(StilServerFixture server)
         Assert.Contains("There is no font \"comic\"", site);
     }
 
-    [Fact]
+    [ServerFact]
     public async Task Add_to_existing_app_shows_the_installation_page_snippets()
     {
         var text = await server.CallAsync("add_to_existing_app");
