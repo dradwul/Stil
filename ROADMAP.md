@@ -1818,7 +1818,11 @@ Released as `1.3.0` (a new package and new files, nothing renamed).
   every tool; the packed server was started with `dnx` from a local source
   and answered. Two fixes in `ApiDocs` show in the docs' API tables too: the
   names that `<paramref>` and `<see langword>` stand for are no longer left
-  out of a description, and a `void` return is written as such.
+  out of a description, and a `void` return is written as such. Running the
+  server locally set off the security software on the owner's work computer,
+  so the MCP tests now run only on GitHub Actions and are skipped elsewhere
+  (`[ServerFact]`), and 18.3's trial in a real client needs a computer where
+  that is allowed.
 
 ### Phase 18.3: Docs and a real trial
 

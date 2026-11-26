@@ -214,7 +214,9 @@ All packages share the version in `Directory.Build.props` and are listed in
    runs. A new page goes in `DocsPages.cs`. `Stil.Mcp` reads the same pages,
    examples and XML docs, so a component documented this way is also known to
    AI assistants; its tests (`tests/Stil.Mcp.Tests`) start the server and call
-   its tools.
+   its tools. They run only on GitHub Actions (`GITHUB_ACTIONS=true`) and are
+   skipped elsewhere, since security software on a managed computer may take a
+   new program spoken to over stdio for a threat.
 4. Run `npm run check` (in `src/Stil.Css`), `dotnet build Stil.sln` and
    `dotnet test Stil.sln` before pushing. CI (`.github/workflows/ci.yml`)
    runs the same checks plus pack on every push to `main` and on every pull
