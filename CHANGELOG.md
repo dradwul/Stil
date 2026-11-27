@@ -29,6 +29,10 @@ version could contain breaking changes; they are marked **Breaking**.
   (`get_example`), the `dotnet new` command for a new app (`new_project`) and
   the setup of an existing one (`add_to_existing_app`). It reads the same
   sources as the docs site, runs locally over stdio and changes nothing.
+- **Docs**: an "AI assistants" page under Get started: how to add `Stil.Mcp`
+  to Claude Code, VS Code, Visual Studio and Cursor, what its tools answer,
+  where `llms.txt` and the Markdown pages are, and tips for working with an
+  assistant.
 
 ### Changed
 

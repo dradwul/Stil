@@ -25,7 +25,8 @@ and a documentation site with live examples, a theme builder and a project wizar
 For AI assistants, the docs are also Markdown: [`llms.txt`](https://dradwul.github.io/Stil/llms.txt)
 lists every page, and [`llms-full.txt`](https://dradwul.github.io/Stil/llms-full.txt) holds them all
 in one file. `Stil.Mcp` is an MCP server that gives assistants Stil's components, parameters, classes, tokens and
-examples ([`src/Stil.Mcp`](src/Stil.Mcp/README.md)).
+examples ([`src/Stil.Mcp`](src/Stil.Mcp/README.md)). The docs page
+[AI assistants](https://dradwul.github.io/Stil/ai-assistants) shows how to use both.
 
 The Blazor components render ordinary HTML with Stil CSS classes, so a page
 can mix components and hand-written markup. Every class starts with `stil-`
@@ -49,7 +50,7 @@ library.
 | Charts | `dotnet add package Stil.Charts` ([charts](src/Stil.Charts/README.md)) |
 | Markdown | `dotnet add package Stil.Markdown` ([Markdown](src/Stil.Markdown/README.md)) |
 | Rich text | `dotnet add package Stil.RichText` ([rich text](src/Stil.RichText/README.md)) |
-| An AI assistant that writes correct Stil code | `claude mcp add stil -- dnx Stil.Mcp --yes`, or the same server in VS Code, Visual Studio or Cursor ([MCP server](src/Stil.Mcp/README.md)) |
+| An AI assistant that writes correct Stil code | `claude mcp add stil -- dnx Stil.Mcp --yes`, or the same server in VS Code, Visual Studio or Cursor ([MCP server](src/Stil.Mcp/README.md), [AI assistants](https://dradwul.github.io/Stil/ai-assistants)) |
 | Only the CSS | Download `stil.min.css` from a [release](https://github.com/dradwul/Stil/releases), or link it from jsDelivr ([Stil CSS](src/Stil.Css/README.md#install)) |
 
 All packages require .NET 10. The latest version is on

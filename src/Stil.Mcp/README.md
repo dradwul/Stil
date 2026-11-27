@@ -23,7 +23,12 @@ components, parameters and classes instead of guesses or Bootstrap.
 ## Add it to your assistant
 
 The server is started with `dnx Stil.Mcp --yes`, which fetches the package from
-nuget.org the first time. Add `@1.3.0` to the package ID to pin a version.
+nuget.org the first time. Add `@1.3.0` to the package ID to pin a version. The
+docs page [AI assistants](https://dradwul.github.io/Stil/ai-assistants) has the
+same setup, and tips.
+
+On a managed work computer, check with your IT department first: the assistant
+starts the server as a new program, and security software may not allow that.
 
 **Claude Code**
 
