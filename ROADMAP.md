@@ -28,6 +28,7 @@ something usable.
 | V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | V2.1 and V2.2 done, in `1.1.0`; V2.3 and V2.4 are the hosted product, outside this repository |
 | 17 | Reach and polish: a docs site that search engines can read, and the CSS backlog | ✅ Done (released in `1.2.0`) |
 | 18 | AI assistants: `llms.txt` on the docs site and `Stil.Mcp`, an MCP server that knows Stil's components, classes and tokens | In progress (18.1, 18.2 and the docs of 18.3 done, released in `1.3.0`; the templates and the trial are on hold) |
+| 19 | Two ways in: a home page and docs that separate Stil CSS from Stil for Blazor, with every example as Razor or HTML | Planned |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -1847,6 +1848,88 @@ On hold: the templates part and the trial are not done on the owner's work
 computer. The template tests build the generated apps in the Temp folder, and
 the trial starts the server, and either may set off its security software.
 Both wait for a computer where that is allowed.
+
+---
+
+## Phase 19: Two ways in, CSS or Blazor
+
+Goal: a visitor sees at once that Stil is two things, picks the one they came
+for, and from then on reads only what applies to them. There are two paths,
+not three: Stil for Blazor includes the CSS, so "both" is the Blazor path.
+
+Today the docs site leans on Blazor. The home page has one "Get started"
+button; the choice between CSS and Blazor sits in two cards below it, next to
+four stat cards and a list. Every example shows its Razor code only, so a CSS
+user sees a button but gets no HTML to copy. The utilities, the grid,
+`stil.js` and the Bootstrap migration guide are documented only in the
+`stil-css` README on GitHub.
+
+The rule for every part: less on the page, not more. Something is added only
+if it replaces something or saves a visitor a click.
+
+**Done when (all parts):** the home page offers the two paths before anything
+else; each path has its own installation; a CSS user can switch every example
+to HTML once and copy it; every component page says whether it works with CSS
+alone; and the CSS reference is on the site.
+
+### Phase 19.1: The home page and installation
+
+- [ ] The hero offers two choices, side by side, before anything else:
+  "Stil CSS: for HTML and any framework" and "Stil for Blazor: components
+  that include the CSS". Each has one line on what it is, its install command
+  (`npm install stil-css` or `dotnet add package Stil`) and a link to its
+  installation. They replace today's buttons and the two cards below.
+- [ ] The rest of the home page shrinks: the stat cards and the "What you get"
+  list become one short row or go away. "Build a theme" stays as a link.
+- [ ] Installation is split into two pages in "Get started": "Blazor" keeps
+  `get-started`, its snippets and their names (`Stil.Mcp`'s
+  `add_to_existing_app` reads them), and "CSS" is a new page with npm, a CDN
+  link, the release files, `stil-scope` and the cascade layers. Each links to
+  the other in one line.
+- [ ] The links to the Installation page (READMEs, the docs, the template
+  READMEs) point at the right one of the two.
+
+### Phase 19.2: Examples as Razor or HTML
+
+- [ ] An example's code panel has a "Razor | HTML" switch. The choice applies
+  to every example on the site and is remembered in the browser, so a CSS
+  user switches once.
+- [ ] The HTML is made from the example's rendered markup, so it cannot drift
+  from the example. Blazor's `HtmlRenderer`, part of the framework, renders
+  it; no new package. It is indented and cleaned up, and an id the component
+  made up is kept short and stable.
+- [ ] An example whose HTML needs `stil.js` (dropdowns, tabs, dismissible
+  alerts) says so in one line under the code. An example that has no CSS
+  equivalent (it keeps state, or uses a service such as toasts) has no HTML
+  tab; the example says so with a parameter.
+- [ ] Some of the HTML is checked against `samples/Stil.Html`, which already
+  uses the CSS on its own.
+- [ ] The Markdown copies for AI assistants keep the Razor code; whether the
+  HTML goes into them too is decided by the size of `llms-full.txt` (435 kB
+  today).
+
+### Phase 19.3: Which page is for whom, and the CSS reference
+
+- [ ] Every component page says under its title whether it works with CSS
+  alone or needs Blazor ("CSS and Blazor", "Blazor only"), for example the
+  data grid and the planner. One short label, from a parameter of
+  `DocsHeader`, not a new section.
+- [ ] A "Stil CSS" section in the sidebar with what is today only in the
+  `stil-css` README: utilities, the layout grid, `stil.js` and its
+  `data-stil-*` attributes, and the Bootstrap migration guide. The README then
+  links to these pages instead of repeating them.
+- [ ] The search, the sidebar and the previous/next links include the new
+  pages.
+
+### Phase 19.4: Docs and checks
+
+- [ ] The pages are checked in the docs dev server, on a phone width and in
+  dark mode, and the Playwright docs test covers the switch in 19.2 (one
+  test; it runs in CI).
+- [ ] README, the `stil-css` README, CHANGELOG and "Where we are".
+- [ ] No package changes, so no release is needed: the docs site updates
+  from `main`. `Stil.Mcp` reads the docs pages, so its next release has the
+  new pages too.
 
 ---
 
