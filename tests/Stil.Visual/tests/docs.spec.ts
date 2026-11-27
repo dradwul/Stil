@@ -38,3 +38,34 @@ for (const route of docsRoutes()) {
         });
     }
 }
+
+// The Razor or HTML switch of the examples (ExampleHtml, DocsCodeChoice): the HTML is rendered from
+// the example, the choice applies to every example and is remembered, and the switched page passes axe.
+test('axe: docs example code as HTML', { tag: '@a11y' }, async ({ page }) => {
+    await page.goto(`${DOCS_URL}/components/buttons`);
+    await expect(page.locator('main h1').first()).toBeVisible();
+    const examples = page.locator('.docs-example');
+    await examples.locator('details').evaluateAll(details => details.forEach(d => { (d as HTMLDetailsElement).open = true; }));
+
+    // WebAssembly starts on the first pointer move or key, so the switch answers once it runs.
+    const first = examples.first();
+    const html = first.getByRole('button', { name: 'HTML', exact: true });
+    await page.mouse.move(10, 10);
+    await expect(async () => {
+        await html.click();
+        await expect(html).toHaveAttribute('aria-pressed', 'true', { timeout: 1_000 });
+    }).toPass({ timeout: 120_000 });
+
+    await expect(first.locator('.docs-code-language')).toHaveText('html');
+    await expect(first.locator('pre code')).toContainText('<button type="button" class="stil-btn stil-btn-primary">Primary</button>');
+    await expect(examples.nth(1).locator('.docs-code-language')).toHaveText('html');
+
+    const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).include('main').analyze();
+    expect(results.violations.map(violation => violation.id), 'axe violations with the code as HTML').toEqual([]);
+
+    // The choice is remembered on the next page.
+    await page.goto(`${DOCS_URL}/components/cards`);
+    await page.locator('details.docs-example-source').first().evaluate(d => { (d as HTMLDetailsElement).open = true; });
+    await page.mouse.move(20, 20);
+    await expect(page.locator('.docs-example').first().locator('.docs-code-language')).toHaveText('html', { timeout: 120_000 });
+});
