@@ -18,7 +18,7 @@ Every class starts with `stil-` and every token with `--stil-`, so Stil can
 run next to Bootstrap, Tailwind or your own CSS without clashing. If you are
 coming from Bootstrap, see the [migration guide](MIGRATING-FROM-BOOTSTRAP.md).
 
-> **Status:** stable (`1.2`). Class names, token names and the `stil.js`
+> **Status:** stable (`1.3`). Class names, token names and the `stil.js`
 > exports listed below change only in a major version
 > ([Semantic Versioning](https://semver.org/)). See the
 > [roadmap](../../ROADMAP.md).
@@ -34,7 +34,7 @@ Use one of these options:
 - **CDN:** jsDelivr serves the files from a release tag:
 
   ```html
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/dradwul/Stil@v1.2.0/src/Stil.Css/dist/stil.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/dradwul/Stil@v1.3.0/src/Stil.Css/dist/stil.min.css" />
   ```
 
 - **npm:** `npm install stil-css`, then import `stil-css` (the stylesheet),

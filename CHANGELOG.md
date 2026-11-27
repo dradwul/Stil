@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to the Stil packages are listed here: `stil-css` (npm),
-`Stil`, `Stil.Charts`, `Stil.Markdown`, `Stil.RichText` and
+`Stil`, `Stil.Charts`, `Stil.Markdown`, `Stil.RichText`, `Stil.Mcp` and
 `Stil.Templates` (NuGet). They share one version number.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
@@ -10,6 +10,14 @@ on, breaking changes come only in a major version. Before `1.0`, a minor
 version could contain breaking changes; they are marked **Breaking**.
 
 ## [Unreleased]
+
+## [1.3.0] - 2026-11-27
+
+AI assistants: Stil is new, so assistants guess its parameters and classes, or
+fall back to Bootstrap. The docs site is now also Markdown with `llms.txt`,
+and the new package `Stil.Mcp` is an MCP server that gives an assistant Stil's
+real components, parameters, classes, tokens and examples. Nothing is renamed
+or removed: `1.2` apps update without changes.
 
 ### Added
 
@@ -649,7 +657,8 @@ Tagged but not published: the release failed. These changes ship in
 - A documentation site with live examples, API tables and a theme builder.
 - A guide for migrating from Bootstrap.
 
-[Unreleased]: https://github.com/dradwul/Stil/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/dradwul/Stil/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/dradwul/Stil/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/dradwul/Stil/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/dradwul/Stil/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/dradwul/Stil/compare/v0.1.0-preview.4...v1.0.0

@@ -11,7 +11,7 @@ the bars), donut, scatter, bubble and sparkline charts, heat maps and gauges.
 - Every chart has an accessible name, a generated description of the data and
   a data table, so screen reader users get the same information.
 
-> **Status:** stable (`1.2`). Requires .NET 10 and the `Stil` package. The
+> **Status:** stable (`1.3`). Requires .NET 10 and the `Stil` package. The
 > API changes only in a major version ([Semantic Versioning](https://semver.org/)).
 
 ## Get started

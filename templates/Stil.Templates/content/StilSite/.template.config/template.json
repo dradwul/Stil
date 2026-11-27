@@ -371,7 +371,7 @@
       "type": "parameter",
       "description": "The version of the Stil NuGet package to reference.",
       "datatype": "text",
-      "defaultValue": "1.2.0",
+      "defaultValue": "1.3.0",
       "replaces": "STIL_PACKAGE_VERSION"
     },
     "skipRestore": {
