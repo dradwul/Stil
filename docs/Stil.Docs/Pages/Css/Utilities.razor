@@ -1,0 +1,63 @@
+@page "/css/utilities"
+
+<DocsHeader Title="Utilities" Eyebrow="Stil CSS"
+            Description="The layout classes and about 900 utilities: Bootstrap's names with a stil- prefix, mobile first, in their own cascade layer." />
+
+<h2 id="breakpoints">Breakpoints</h2>
+<p>
+    The breakpoints are <code>sm</code> (576px), <code>md</code> (768px), <code>lg</code> (992px) and <code>xl</code>
+    (1200px). They are mobile first: each applies from that width up. A responsive utility puts the breakpoint after
+    the property name, as <code>stil-{name}-{bp}-{value}</code>: <code>stil-d-none stil-d-md-block</code> hides an
+    element below <code>md</code>.
+</p>
+
+<h2 id="layout">Layout</h2>
+<p>The <a href="components/layout">Layout</a> page has examples of each.</p>
+<div class="stil-table-responsive">
+    <table class="stil-table stil-table-compact">
+        <thead>
+            <tr><th scope="col">Class</th><th scope="col">What it does</th></tr>
+        </thead>
+        <tbody>
+            <tr><th scope="row"><code>stil-container</code></th><td>A centered column, <code>--stil-container-max</code> wide (1200px). Add <code>stil-container-fluid</code> for the full width.</td></tr>
+            <tr><th scope="row"><code>stil-grid</code></th><td>A 12-column CSS grid with a gap. Children span the full row by default.</td></tr>
+            <tr><th scope="row"><code>stil-col-{1-12}</code>, <code>stil-col-{bp}-{1-12}</code></th><td>A column span. The <code>{bp}</code> form applies from that breakpoint up.</td></tr>
+            <tr><th scope="row"><code>stil-stack</code></th><td>Children in a column with even gaps.</td></tr>
+            <tr><th scope="row"><code>stil-cluster</code></th><td>Children in a wrapping row, centered vertically.</td></tr>
+            <tr><th scope="row"><code>stil-with-sidebar</code></th><td>A sidebar (<code>--stil-sidebar-width</code>) beside the content from <code>lg</code>, stacked below it.</td></tr>
+        </tbody>
+    </table>
+</div>
+<p>
+    Children of <code>stil-stack</code>, <code>stil-cluster</code>, <code>stil-grid</code> and
+    <code>stil-with-sidebar</code> get their spacing from the gap, so their own block margins are removed. A spacing
+    utility on a child still wins.
+</p>
+
+<h2 id="utilities">Utilities</h2>
+<div class="stil-table-responsive">
+    <table class="stil-table stil-table-compact">
+        <thead>
+            <tr><th scope="col">Group</th><th scope="col">Classes</th><th scope="col">Responsive</th></tr>
+        </thead>
+        <tbody>
+            <tr><th scope="row">Display</th><td><code>stil-d-{none,block,inline,inline-block,flex,inline-flex,grid}</code></td><td>Yes</td></tr>
+            <tr><th scope="row">Flex</th><td><code>stil-flex-{row,column,row-reverse,column-reverse,wrap,nowrap}</code>, <code>stil-flex-{fill,1,none}</code>, <code>stil-flex-grow-*</code>, <code>stil-flex-shrink-*</code></td><td>Direction and wrap</td></tr>
+            <tr><th scope="row">Alignment</th><td><code>stil-justify-content-{start,end,center,between,around,evenly}</code>, <code>stil-align-items-*</code>, <code>stil-align-self-*</code></td><td>Justify and align-items</td></tr>
+            <tr><th scope="row">Gap</th><td><code>stil-gap-{0-7}</code></td><td>Yes</td></tr>
+            <tr><th scope="row">Spacing</th><td><code>stil-{m,p}{,t,b,s,e,x,y}-{0-7}</code> and <code>stil-m*-auto</code>. <code>s</code> and <code>e</code> are the logical start and end.</td><td>Yes</td></tr>
+            <tr><th scope="row">Sizing</th><td><code>stil-w-{25,50,75,100,auto}</code>, <code>stil-h-*</code>, <code>stil-mw-{100,text,form,card,page,none}</code>, <code>stil-min-vh-100</code>. <code>stil-mw-text</code> keeps a line readable (65ch), <code>-form</code> and <code>-card</code> are <code>--stil-width-form</code> and <code>-card</code>, and <code>-page</code> is the container's width.</td><td>No</td></tr>
+            <tr><th scope="row">Text</th><td><code>stil-text-{start,center,end}</code>, <code>stil-text-{nowrap,wrap,truncate}</code>, <code>stil-text-{uppercase,lowercase,capitalize}</code>, <code>stil-text-{body,muted,inherit}</code>, <code>stil-fs-{xs,sm,md,lg,xl,2xl}</code>, <code>stil-fw-{normal,bold}</code>, <code>stil-font-mono</code>, <code>stil-align-{baseline,top,middle,bottom,text-top,text-bottom}</code></td><td>Text alignment</td></tr>
+            <tr><th scope="row">Color</th><td><code>stil-bg-{variant}</code> (with readable text), <code>stil-text-{variant}</code>, <code>stil-border-{variant}</code>, <code>stil-bg-{body,surface,muted,transparent}</code></td><td>No</td></tr>
+            <tr><th scope="row">Borders</th><td><code>stil-border</code>, <code>stil-border-{top,bottom,start,end,0}</code>, <code>stil-rounded</code>, <code>stil-rounded-{0,sm,lg,pill,circle}</code>, <code>stil-shadow</code>, <code>stil-shadow-{sm,lg,none}</code></td><td>No</td></tr>
+            <tr><th scope="row">Position</th><td><code>stil-position-*</code>, <code>stil-{top,bottom,start,end}-{0,50,100}</code>, <code>stil-translate-middle</code>, <code>stil-sticky-top</code>, <code>stil-overflow-*</code>. <code>stil-sticky-top</code> stops <code>--stil-sticky-offset</code> below the top (0 by default): set it to a sticky navbar's height, so sticky elements stay below it.</td><td>No</td></tr>
+            <tr><th scope="row">Lists</th><td><code>stil-list-unstyled</code></td><td>No</td></tr>
+            <tr><th scope="row">Visibility</th><td><code>stil-visually-hidden</code>, <code>stil-visually-hidden-focusable</code>, <code>stil-visible</code>, <code>stil-invisible</code></td><td>No</td></tr>
+        </tbody>
+    </table>
+</div>
+<p>
+    The spacing scale runs from 0 to 7: 0, 0.25rem, 0.5rem, 0.75rem, 1rem, 1.5rem, 2rem and 3rem. These are the
+    <code>--stil-space-*</code> <a href="theming#tokens">tokens</a>. A variant is <code>primary</code>,
+    <code>secondary</code>, <code>success</code>, <code>danger</code>, <code>warning</code> or <code>info</code>.
+</p>

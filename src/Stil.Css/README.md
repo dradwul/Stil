@@ -16,10 +16,11 @@ works with plain HTML, Razor, React, Vue, or any other front end.
 
 Every class starts with `stil-` and every token with `--stil-`, so Stil can
 run next to Bootstrap, Tailwind or your own CSS without clashing. If you are
-coming from Bootstrap, see the [migration guide](MIGRATING-FROM-BOOTSTRAP.md).
+coming from Bootstrap, see the [migration guide](MIGRATING-FROM-BOOTSTRAP.md)
+(also on the [docs site](https://dradwul.github.io/Stil/css/from-bootstrap)).
 
 > **Status:** stable (`1.3`). Class names, token names and the `stil.js`
-> exports listed below change only in a major version
+> API ([listed on the docs site](https://dradwul.github.io/Stil/css/javascript)) change only in a major version
 > ([Semantic Versioning](https://semver.org/)). See the
 > [roadmap](../../ROADMAP.md).
 
@@ -83,17 +84,11 @@ of pages that use Stil components.
 
 ## Layout
 
-| Class | What it does |
-| --- | --- |
-| `stil-container` | Centered column, `--stil-container-max` wide (1200px). Add `stil-container-fluid` for full width. |
-| `stil-grid` | 12-column CSS grid with a gap. Children span the full row by default. |
-| `stil-col-{1-12}`, `stil-col-{bp}-{1-12}` | Column span. The `{bp}` form applies from that breakpoint up. |
-| `stil-stack` | Children in a column with even gaps. |
-| `stil-cluster` | Children in a wrapping row, vertically centered. |
-| `stil-with-sidebar` | Sidebar (`--stil-sidebar-width`) beside the content from `lg`, stacked below it. |
-
-The breakpoints `{bp}` are `sm` (576px), `md` (768px), `lg` (992px) and
-`xl` (1200px). They are mobile first: each applies from that width up.
+`stil-container`, a 12-column `stil-grid` with `stil-col-{bp}-{1-12}`,
+`stil-stack`, `stil-cluster` and `stil-with-sidebar`. The breakpoints are
+`sm` (576px), `md` (768px), `lg` (992px) and `xl` (1200px), mobile first.
+The classes are listed under [Utilities](https://dradwul.github.io/Stil/css/utilities#layout) on
+the docs site, with examples on the [Layout](https://dradwul.github.io/Stil/components/layout) page.
 
 ```html
 <div class="stil-grid">
@@ -205,100 +200,19 @@ built only from these, open
 
 ## Optional JavaScript
 
-Stil works without JavaScript. The optional `dist/stil.js` module, 78 kB (22 kB gzipped) with
-no dependencies, adds a few behaviours:
+Stil works without JavaScript. The optional `dist/stil.js` module (22 kB
+gzipped, no dependencies) closes dropdowns, opens dialogs, dismisses alerts,
+formats masked inputs, runs carousels and splitters, and more, from
+`data-stil-*` attributes in your HTML. Stil for Blazor loads it
+automatically.
 
 ```html
 <script type="module" src="stil.js"></script>
 ```
 
-- Dropdowns close on an outside click, on Escape and after you choose an
-  item. Opening one closes the others. In a collapsed navbar (on a phone), a
-  dropdown opens in place inside the menu (`data-stil-inline`) instead of
-  floating over the page.
-- `data-stil-dismiss` on a button removes the closest alert or toast, or the
-  element that matches the attribute's value (a CSS selector).
-- `data-stil-dialog-open="id"` opens that `<dialog>` (dialog or drawer) as a
-  modal. `data-stil-dialog-close` closes the dialog the button is in.
-- `data-stil-toggle` on a button flips its `aria-expanded`, for example to
-  open a collapsed navbar. Escape collapses it again.
-- The arrow keys, Home and End move between dropdown items. ArrowDown on
-  the toggle opens the menu.
-- In a calendar month (`table.stil-calendar-grid` with `role="grid"`), the
-  arrow keys move between the days, Home and End go to the start and end of
-  the week, and Enter or Space clicks the day. Moving past the first or last
-  day fires a bubbling `stilcalendaredge` event (`detail.key`, `detail.cell`),
-  so your script can show the previous or next month. In a right-to-left page
-  the left and right arrows follow the reading direction, and `detail.key` is
-  the logical key (`ArrowRight` means the next day).
-- In a week grid with `data-stil-editable` (`div.stil-week`), the user can drag
-  an event to another time or day, drag its `stil-event-resize` handle to
-  change its end, and drag on empty time to mark a new event. Times snap to
-  15 minutes and Escape cancels. On release a bubbling `stilweekedit` event
-  fires with `detail.action` (`"move"`, `"resize"` or `"create"`),
-  `detail.item` (the event element, or null), `detail.day` (the index of the
-  day column) and `detail.start` and `detail.end` (minutes from midnight).
-  The grid puts the event back; save the change and redraw.
-- Keys that a widget's own script handles do not also scroll the page,
-  submit a form or close a dialog: the arrow keys on `role="treeitem"`,
-  `role="tab"` and `role="combobox"`, and Enter and Escape in an open
-  combobox.
-- Popovers (`.stil-popover` with `popover`) are placed next to their
-  `popovertarget` button, below it or above it (`data-stil-placement="top"`),
-  and follow it on scroll and resize.
-- Open dropdown menus and combobox lists (a `stil-combobox-popup` without
-  `hidden`) move to the top layer and are placed next to their toggle or field,
-  so a parent with `overflow` (a scrolling card, a table, a dialog) never cuts
-  them off. Without stil.js they open in place, as before.
-- `startScanner`, `stopScanner`, `setTorch` and `hasTorch` read barcodes and QR
-  codes from the camera with the browser's `BarcodeDetector`, or a decoder of
-  your own passed to `registerScanDecoder` (a function that takes the `<video>`
-  and returns `[{ rawValue, format }]`). `initScanInput` tells a handheld
-  scanner's fast keystrokes from typing.
-- `bindCommandKey` calls a .NET method on Ctrl+K or Cmd+K; `readStorage` and
-  `writeStorage` keep small values in local storage.
-- Kanban boards: dragging a `.stil-kanban-card` fires a bubbling `stilcardmove`
-  event (`item`, `column`, `index`); the arrow keys move focus between cards,
-  and `focusCard` focuses one.
-- A `<textarea data-stil-send="enter">` submits its form on Enter (Shift+Enter
-  breaks the line); `data-stil-send="ctrl-enter"` on Ctrl+Enter or Cmd+Enter.
-- `initSignaturePad`, `drawSignature` and `signaturePng` draw a signature on a
-  canvas with pointer events (as wide as the pen presses) and save it as a PNG.
-- A `contenteditable` with `data-stil-richtext` gets the rich text toolbar
-  (`data-stil-richtext-command`), Ctrl+B, Ctrl+I and Ctrl+K, and pastes from
-  Word, Google Docs and web pages cleaned to an allow-list of tags;
-  `initRichText` reports its HTML to .NET and `cleanRichText` cleans HTML.
-- `data-stil-mask="000 00"` on an input formats it while typing: `0` is a digit,
-  `A` a letter, `*` any character, and the rest are literals that are filled in.
-- A splitter's `stil-splitter-handle` (`role="separator"`) resizes the first
-  pane by dragging, with the arrow keys (5% a step), Home, End and Enter
-  (collapse and restore), within its `aria-valuemin` and `aria-valuemax`. It
-  sets `--stil-splitter-size` and fires a bubbling `stilsplit` event
-  (`detail.size`).
-- A `stil-table-responsive` or `stil-splitter-pane` that scrolls, with
-  nothing focusable inside, gets `tabindex="0"` while it scrolls, so it also
-  scrolls with the keyboard.
-- A carousel's `stil-carousel-prev`, `stil-carousel-next` and dot buttons move
-  between the slides, and the dot of the shown slide gets `aria-current`; a
-  bubbling `stilslide` event (`detail.index`) reports it.
-  `data-stil-autoplay="6000"` moves on every 6 seconds, except while the
-  pointer or focus is in the carousel, while its `stil-carousel-pause` button is
-  pressed and under reduced motion.
-- Exports for scripts: `initCropper`, `setCropperZoom`, `rotateCropper` and
-  `cropImage` (an image cropper), `startCamera`, `captureCamera` and
-  `stopCamera` (a photo from the camera), and `printFrame` (print an iframe).
-- A language link, `<a href="?culture=sv" data-stil-culture="sv">`, stores the
-  language in the ASP.NET Core culture cookie (`.AspNetCore.Culture`) and in
-  local storage (`stil-culture`), then reloads the page.
-
-Stil for Blazor loads it automatically.
-
-The exports named above, the `data-stil-*` attributes and the `stil*` events
-are stil.js's public API, and follow Semantic Versioning. Its other exports
-(`init`, `applyMask`, `insertMarkdown`, `markdownCommand`, `videoSize`,
-`downloadFile`, `pdfViewerEnabled`, `freezeColumns`, `showDialog`,
-`closeDialog`, `focusEditor` and `focusRow`) are how Stil for Blazor calls it,
-and may change in any version.
+Every attribute, event and function it offers is on the docs site's
+[stil.js](https://dradwul.github.io/Stil/css/javascript) page. Those are its public API and follow
+Semantic Versioning; its other exports are how Stil for Blazor calls it.
 
 ## Right to left
 
@@ -311,31 +225,12 @@ your own that points along the reading direction.
 
 ## Utilities
 
-Utilities use Bootstrap's names with the `stil-` prefix. Responsive versions
-put the breakpoint after the property name, as `stil-{name}-{bp}-{value}`.
-For example, `stil-d-none stil-d-md-block` hides an element below `md`.
-
-| Group | Classes | Responsive |
-| --- | --- | --- |
-| Display | `stil-d-{none,block,inline,inline-block,flex,inline-flex,grid}` | yes |
-| Flex | `stil-flex-{row,column,row-reverse,column-reverse,wrap,nowrap}`, `stil-flex-{fill,1,none}`, `stil-flex-grow-*`, `stil-flex-shrink-*` | direction, wrap |
-| Alignment | `stil-justify-content-{start,end,center,between,around,evenly}`, `stil-align-items-*`, `stil-align-self-*` | justify, align-items |
-| Gap | `stil-gap-{0-7}` | yes |
-| Spacing | `stil-{m,p}{,t,b,s,e,x,y}-{0-7}` and `stil-m*-auto`. `s` and `e` are the logical start and end. | yes |
-| Sizing | `stil-w-{25,50,75,100,auto}`, `stil-h-*`, `stil-mw-{100,text,form,card,page,none}`, `stil-min-vh-100` | `stil-mw-text` keeps a line readable (65ch), `-form` and `-card` are `--stil-width-form` and `-card`, and `-page` the container's width. |
-| Text | `stil-text-{start,center,end}`, `stil-text-{nowrap,wrap,truncate}`, `stil-text-{uppercase,lowercase,capitalize}`, `stil-text-{body,muted,inherit}`, `stil-fs-{xs,sm,md,lg,xl,2xl}`, `stil-fw-{normal,bold}`, `stil-font-mono`, `stil-align-{baseline,top,middle,bottom,text-top,text-bottom}` | text-align |
-| Color | `stil-bg-{variant}` (with readable text), `stil-text-{variant}`, `stil-border-{variant}`, `stil-bg-{body,surface,muted,transparent}` | |
-| Borders | `stil-border`, `stil-border-{top,bottom,start,end,0}`, `stil-rounded`, `stil-rounded-{0,sm,lg,pill,circle}`, `stil-shadow`, `stil-shadow-{sm,lg,none}` | |
-| Position | `stil-position-*`, `stil-{top,bottom,start,end}-{0,50,100}`, `stil-translate-middle`, `stil-sticky-top`, `stil-overflow-*` | `stil-sticky-top` stops `--stil-sticky-offset` below the top (0 by default): set it to a sticky navbar's height, so sticky elements stay below it. The navbar itself stays at the top. |
-| Lists | `stil-list-unstyled` | |
-| Visibility | `stil-visually-hidden`, `stil-visually-hidden-focusable`, `stil-visible`, `stil-invisible` | |
-
-Children of `stil-stack`, `stil-cluster`, `stil-grid` and `stil-with-sidebar`
-get their spacing from the gap, so their own block margins are removed.
-A spacing utility on a child still wins.
-
-The spacing scale runs from 0 to 7: 0, 0.25rem, 0.5rem, 0.75rem, 1rem,
-1.5rem, 2rem and 3rem. These are the `--stil-space-*` tokens.
+Utilities use Bootstrap's names with the `stil-` prefix, and responsive
+ones put the breakpoint after the property name: `stil-d-none stil-d-md-block`
+hides an element below `md`. There are about 900, for display, flex,
+alignment, gap, spacing (`stil-{m,p}{,t,b,s,e,x,y}-{0-7}`), sizing, text,
+color, borders, position and visibility. The docs site lists them all under
+[Utilities](https://dradwul.github.io/Stil/css/utilities).
 
 ## Theming
 

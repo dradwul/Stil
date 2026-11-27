@@ -1,0 +1,21 @@
+@page "/css/from-bootstrap"
+
+<DocsHeader Title="From Bootstrap" Eyebrow="Stil CSS"
+            Description="Stil follows Bootstrap's names where it can, with a stil- prefix: what maps one to one, what differs, and what is not in Stil." />
+
+@* The guide is src/Stil.Css/MIGRATING-FROM-BOOTSTRAP.md, embedded, so GitHub and this page show the same text. *@
+<StilMarkdown Value="@Guide" />
+
+@code {
+    private static readonly string Guide = Load();
+
+    private static string Load()
+    {
+        using var stream = typeof(FromBootstrap).Assembly.GetManifestResourceStream("MIGRATING-FROM-BOOTSTRAP.md")!;
+        var text = new StreamReader(stream).ReadToEnd().ReplaceLineEndings("\n");
+        // The page has its own title, and the guide's links are relative to the repository.
+        return text[(text.IndexOf('\n') + 1)..]
+            .Replace("(README.md#tokens)", "(theming#tokens)")
+            .Replace("(../../ROADMAP.md)", "(https://github.com/dradwul/Stil/blob/main/ROADMAP.md)");
+    }
+}

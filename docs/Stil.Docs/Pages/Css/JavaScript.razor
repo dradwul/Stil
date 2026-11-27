@@ -1,0 +1,64 @@
+@page "/css/javascript"
+
+<DocsHeader Title="stil.js" Eyebrow="Stil CSS"
+            Description="Stil works without JavaScript. The optional stil.js adds the behaviours that need a script, from attributes in your HTML." />
+
+<p>
+    <code>stil.js</code> is a module of about 22 kB gzipped with no dependencies. Load it once; it acts on the
+    attributes and classes below. Stil for Blazor loads it by itself.
+</p>
+<CodeBlock Language="html" Code="@Script" />
+
+<h2 id="menus">Menus and dialogs</h2>
+<ul>
+    <li><strong>Dropdowns</strong> (<code>details.stil-dropdown</code>) close on an outside click, on Escape and after you choose an item, and opening one closes the others. The arrow keys, Home and End move between the items, and ArrowDown on the toggle opens the menu. In a collapsed navbar a dropdown opens in place (<code>data-stil-inline</code>) instead of floating.</li>
+    <li><strong>Menus and combobox lists</strong> that are open move to the top layer, next to their toggle or field, so a parent with <code>overflow</code> never cuts them off.</li>
+    <li><strong>Dialogs:</strong> <code>data-stil-dialog-open="id"</code> opens that <code>&lt;dialog&gt;</code> (a dialog or drawer) as a modal, and <code>data-stil-dialog-close</code> closes the dialog it is in.</li>
+    <li><strong>Dismiss:</strong> <code>data-stil-dismiss</code> on a button removes the closest alert or toast, or the element that matches its value (a CSS selector).</li>
+    <li><strong>Toggle:</strong> <code>data-stil-toggle</code> on a button flips its <code>aria-expanded</code>, for example to open a collapsed navbar. Escape collapses it again.</li>
+    <li><strong>Popovers</strong> (<code>.stil-popover</code> with <code>popover</code>) are placed next to their <code>popovertarget</code> button, below it or above it (<code>data-stil-placement="top"</code>), and follow it on scroll and resize.</li>
+</ul>
+
+<h2 id="keyboard">Keyboard</h2>
+<ul>
+    <li>Keys that a widget's own script handles do not also scroll the page, submit a form or close a dialog: the arrow keys on <code>role="treeitem"</code>, <code>role="tab"</code> and <code>role="combobox"</code>, and Enter and Escape in an open combobox.</li>
+    <li>In a calendar month (<code>table.stil-calendar-grid</code> with <code>role="grid"</code>), the arrow keys move between the days, Home and End go to the start and end of the week, and Enter or Space clicks the day. Moving past the first or last day fires a bubbling <code>stilcalendaredge</code> event (<code>detail.key</code>, <code>detail.cell</code>), so your script can show the previous or next month. In a right-to-left page the left and right arrows follow the reading direction.</li>
+    <li>A <code>stil-table-responsive</code> or <code>stil-splitter-pane</code> that scrolls, with nothing focusable inside, gets <code>tabindex="0"</code> while it scrolls, so it also scrolls with the keyboard.</li>
+</ul>
+
+<h2 id="inputs">Inputs</h2>
+<ul>
+    <li><code>data-stil-mask="000 00"</code> on an input formats it while typing: <code>0</code> is a digit, <code>A</code> a letter, <code>*</code> any character, and the rest are literals that are filled in.</li>
+    <li>A <code>&lt;textarea data-stil-send="enter"&gt;</code> submits its form on Enter (Shift+Enter breaks the line); <code>data-stil-send="ctrl-enter"</code> on Ctrl+Enter or Cmd+Enter.</li>
+    <li>A <code>contenteditable</code> with <code>data-stil-richtext</code> gets the rich text toolbar (<code>data-stil-richtext-command</code>), Ctrl+B, Ctrl+I and Ctrl+K, and pastes from Word, Google Docs and web pages cleaned to an allow-list of tags.</li>
+    <li>A language link, <code>&lt;a href="?culture=sv" data-stil-culture="sv"&gt;</code>, stores the language in the ASP.NET Core culture cookie and in local storage, then reloads the page.</li>
+</ul>
+
+<h2 id="layout">Layout and media</h2>
+<ul>
+    <li>A splitter's <code>stil-splitter-handle</code> (<code>role="separator"</code>) resizes the first pane by dragging, with the arrow keys (5% a step), Home, End and Enter (collapse and restore), within its <code>aria-valuemin</code> and <code>aria-valuemax</code>. It sets <code>--stil-splitter-size</code> and fires a bubbling <code>stilsplit</code> event (<code>detail.size</code>).</li>
+    <li>A carousel's <code>stil-carousel-prev</code>, <code>stil-carousel-next</code> and dot buttons move between the slides, and a bubbling <code>stilslide</code> event (<code>detail.index</code>) reports the slide. <code>data-stil-autoplay="6000"</code> moves on every 6 seconds, except while the pointer or focus is in the carousel, while its <code>stil-carousel-pause</code> button is pressed and under reduced motion.</li>
+    <li>In a week grid with <code>data-stil-editable</code> (<code>div.stil-week</code>), the user can drag an event to another time or day, resize it with its <code>stil-event-resize</code> handle, and drag on empty time to mark a new one. Times snap to 15 minutes and Escape cancels. On release a bubbling <code>stilweekedit</code> event fires with <code>detail.action</code> (<code>move</code>, <code>resize</code> or <code>create</code>), <code>detail.item</code>, <code>detail.day</code>, <code>detail.start</code> and <code>detail.end</code> (minutes from midnight). The grid puts the event back; save the change and redraw.</li>
+    <li>Kanban boards: dragging a <code>.stil-kanban-card</code> fires a bubbling <code>stilcardmove</code> event (<code>item</code>, <code>column</code>, <code>index</code>), and the arrow keys move focus between cards.</li>
+</ul>
+
+<h2 id="exports">Functions for your own script</h2>
+<ul>
+    <li><code>startScanner</code>, <code>stopScanner</code>, <code>setTorch</code> and <code>hasTorch</code> read barcodes and QR codes from the camera with the browser's <code>BarcodeDetector</code>, or a decoder of your own passed to <code>registerScanDecoder</code>. <code>initScanInput</code> tells a handheld scanner's fast keystrokes from typing.</li>
+    <li><code>initSignaturePad</code>, <code>drawSignature</code> and <code>signaturePng</code> draw a signature on a canvas and save it as a PNG.</li>
+    <li><code>initCropper</code>, <code>setCropperZoom</code>, <code>rotateCropper</code> and <code>cropImage</code> (an image cropper), <code>startCamera</code>, <code>captureCamera</code> and <code>stopCamera</code> (a photo from the camera), <code>printFrame</code> (print an iframe), <code>focusCard</code> (a kanban card), and <code>initRichText</code> and <code>cleanRichText</code> (rich text).</li>
+    <li><code>bindCommandKey</code> calls a .NET method on Ctrl+K or Cmd+K; <code>readStorage</code> and <code>writeStorage</code> keep small values in local storage.</li>
+</ul>
+
+<h2 id="versions">Versions</h2>
+<p>
+    The functions named on this page, the <code>data-stil-*</code> attributes and the <code>stil*</code> events are
+    stil.js's public API and follow Semantic Versioning. Its other exports are how Stil for Blazor calls it, and may
+    change in any version.
+</p>
+
+@code {
+    private const string Script = """
+        <script type="module" src="https://cdn.jsdelivr.net/npm/stil-css@1/dist/stil.js"></script>
+        """;
+}

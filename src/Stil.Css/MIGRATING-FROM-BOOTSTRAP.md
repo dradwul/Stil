@@ -12,8 +12,8 @@ The main differences:
   `disabled` or `aria-disabled="true"` instead of `.disabled`. That makes the
   markup accessible by default.
 - **No JavaScript bundle.** Dialogs use the native `<dialog>` element,
-  dropdowns use `<details>`, and tooltips are pure CSS. The optional 3 kB
-  `stil.js` closes dropdowns on an outside click and handles
+  dropdowns use `<details>`, and tooltips are pure CSS. The optional
+  `stil.js` (22 kB gzipped) closes dropdowns on an outside click and handles
   `data-stil-dismiss` and `data-stil-dialog-open`. Tabs need a few lines of
   your own script, or the Stil Blazor components.
 - **Base styles are opt-in.** Bootstrap's Reboot styles every page. Stil
@@ -141,7 +141,7 @@ Utilities keep Bootstrap's names, with responsive infixes in the same place:
 
 ## Not in Stil (yet)
 
-Carousel, a generic collapse, placeholders, ratio helpers,
-floating labels, popovers and scrollspy. Stil has about 25 built-in icons
+A generic collapse, placeholders, ratio helpers, floating labels and
+scrollspy. Stil has about 35 built-in icons
 (`stil-icon-*`); Bootstrap Icons can be used alongside them. Some of these are planned for the Blazor components. See the
 [roadmap](../../ROADMAP.md).
