@@ -28,7 +28,7 @@ something usable.
 | V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | V2.1 and V2.2 done, in `1.1.0`; V2.3 and V2.4 are the hosted product, outside this repository |
 | 17 | Reach and polish: a docs site that search engines can read, and the CSS backlog | ✅ Done (released in `1.2.0`) |
 | 18 | AI assistants: `llms.txt` on the docs site and `Stil.Mcp`, an MCP server that knows Stil's components, classes and tokens | In progress (18.1, 18.2 and the docs of 18.3 done, released in `1.3.0`; the templates and the trial are on hold) |
-| 19 | Two ways in: a home page and docs that separate Stil CSS from Stil for Blazor, with every example as Razor or HTML | In progress (19.1 and 19.2 done) |
+| 19 | Two ways in: a home page and docs that separate Stil CSS from Stil for Blazor, with every example as Razor or HTML | In progress (19.1–19.3 done) |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -1935,18 +1935,36 @@ alone; and the CSS reference is on the site.
   today). The HTML is not added: it is rendered only in the browser, so the
   pages the export saves, and their Markdown, are as before.
 
-### Phase 19.3: Which page is for whom, and the CSS reference
+### Phase 19.3: Which page is for whom, and the CSS reference ✅ Done
 
-- [ ] Every component page says under its title whether it works with CSS
+- [x] Every component page says under its title whether it works with CSS
   alone or needs Blazor ("CSS and Blazor", "Blazor only"), for example the
   data grid and the planner. One short label, from a parameter of
-  `DocsHeader`, not a new section.
-- [ ] A "Stil CSS" section in the sidebar with what is today only in the
+  `DocsHeader`, not a new section. The label is a badge ("Stil CSS and
+  Blazor", "Blazor only"), and `DocsHeader` reads it from the page's entry in
+  `DocsPages` (`DocsAudience`) rather than a parameter, so the 39 component
+  and block pages are labeled in one list. 19 are CSS and Blazor and 20
+  Blazor only. "Works with CSS alone" means without a script of your own,
+  with `stil.js` where it says so: dialogs and drawers do (`<dialog>` and
+  `data-stil-dialog-open`), so their page is CSS and Blazor and has a short
+  "With Stil CSS alone" part with the HTML, since its examples are Blazor
+  only. The examples of the Blazor-only block pages (pages as data, the
+  block editor, themes and languages) joined `ExampleHtml`'s list.
+- [x] A "Stil CSS" section in the sidebar with what is today only in the
   `stil-css` README: utilities, the layout grid, `stil.js` and its
   `data-stil-*` attributes, and the Bootstrap migration guide. The README then
-  links to these pages instead of repeating them.
-- [ ] The search, the sidebar and the previous/next links include the new
-  pages.
+  links to these pages instead of repeating them. The section, after "Get
+  started", has three pages: "Utilities" (the breakpoints, the layout classes
+  and the utilities), "stil.js" (every attribute, event and function, and
+  what follows Semantic Versioning) and "From Bootstrap". The grid's
+  examples stay on the Layout page. "From Bootstrap" shows
+  `MIGRATING-FROM-BOOTSTRAP.md` itself, embedded and rendered with
+  `StilMarkdown`, so the guide has one source; two facts in it were out of
+  date (stil.js is 22 kB gzipped, not 3 kB, and Stil now has a carousel and
+  popovers). The `stil-css` README went from 472 to 367 lines.
+- [x] The search, the sidebar and the previous/next links include the new
+  pages. The site has no search; the sidebar, the previous and next links,
+  the sitemap, `llms.txt` and `Stil.Mcp` all read `DocsPages` or the pages.
 
 ### Phase 19.4: Docs and checks
 

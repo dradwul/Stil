@@ -18,6 +18,13 @@ version could contain breaking changes; they are marked **Breaking**.
   The HTML is rendered from the example itself, indented and with short ids,
   and says when it needs `stil.js`. Examples that need Stil for Blazor, such
   as the data grid and dialogs, keep their Razor and say so.
+- **Docs**: a "Stil CSS" section with three pages: "Utilities" (the
+  breakpoints, layout classes and utilities), "stil.js" (its attributes,
+  events and functions) and "From Bootstrap" (the migration guide). The
+  `stil-css` README links to them instead of repeating them.
+- **Docs**: every component page says under its title whether it works with
+  Stil CSS alone or needs Blazor. The dialogs page shows a dialog in HTML,
+  opened with `stil.js`.
 
 ### Changed
 
@@ -28,6 +35,11 @@ version could contain breaking changes; they are marked **Breaking**.
 - **Docs**: Installation is two pages: "Install CSS" (`get-started/css`, new)
   and "Install for Blazor" (`get-started`, as before). The navbar's "Docs"
   link goes to the home page.
+
+### Fixed
+
+- **Stil CSS**: the Bootstrap migration guide said `stil.js` is 3 kB (it is
+  22 kB gzipped) and that Stil has no carousel or popovers (it has both).
 
 ## [1.3.0] - 2026-11-27
 
