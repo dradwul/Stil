@@ -28,7 +28,7 @@ something usable.
 | V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | V2.1 and V2.2 done, in `1.1.0`; V2.3 and V2.4 are the hosted product, outside this repository |
 | 17 | Reach and polish: a docs site that search engines can read, and the CSS backlog | ✅ Done (released in `1.2.0`) |
 | 18 | AI assistants: `llms.txt` on the docs site and `Stil.Mcp`, an MCP server that knows Stil's components, classes and tokens | In progress (18.1, 18.2 and the docs of 18.3 done, released in `1.3.0`; the templates and the trial are on hold) |
-| 19 | Two ways in: a home page and docs that separate Stil CSS from Stil for Blazor, with every example as Razor or HTML | In progress (19.1 done) |
+| 19 | Two ways in: a home page and docs that separate Stil CSS from Stil for Blazor, with every example as Razor or HTML | In progress (19.1 and 19.2 done) |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -1900,24 +1900,40 @@ alone; and the CSS reference is on the site.
   `add_to_existing_app` name the Blazor page. The template READMEs did not
   link to it.
 
-### Phase 19.2: Examples as Razor or HTML
+### Phase 19.2: Examples as Razor or HTML ✅ Done
 
-- [ ] An example's code panel has a "Razor | HTML" switch. The choice applies
+- [x] An example's code panel has a "Razor | HTML" switch. The choice applies
   to every example on the site and is remembered in the browser, so a CSS
-  user switches once.
-- [ ] The HTML is made from the example's rendered markup, so it cannot drift
+  user switches once. `DocsCodeChoice`, a scoped service, holds it and keeps
+  it in local storage; every `DocExample` follows it at once.
+- [x] The HTML is made from the example's rendered markup, so it cannot drift
   from the example. Blazor's `HtmlRenderer`, part of the framework, renders
   it; no new package. It is indented and cleaned up, and an id the component
-  made up is kept short and stable.
-- [ ] An example whose HTML needs `stil.js` (dropdowns, tabs, dismissible
+  made up is kept short and stable. `ExampleHtml` renders it in the browser
+  when HTML is chosen. A line that fits stays one line, a paragraph stays
+  one line, and a block of elements gets a line for each. Ids from `StilIds`
+  are numbered from 1 per example (`stil-tabs-1-tab-0`), and what only Blazor
+  needs is left out: its internal event attributes, EditForm's `valid` and
+  `modified` classes, the `action` it gives a form, a select's `value` and
+  empty `class` attributes.
+- [x] An example whose HTML needs `stil.js` (dropdowns, tabs, dismissible
   alerts) says so in one line under the code. An example that has no CSS
   equivalent (it keeps state, or uses a service such as toasts) has no HTML
-  tab; the example says so with a parameter.
-- [ ] Some of the HTML is checked against `samples/Stil.Html`, which already
-  uses the CSS on its own.
-- [ ] The Markdown copies for AI assistants keep the Razor code; whether the
+  tab; the example says so with a parameter. The check reads the attributes
+  and classes that `stil.js` acts on. The examples without HTML are one list
+  in `ExampleHtml`, not a parameter on each example, so one file shows them
+  all: whole folders (the data grid, calendar, charts, dialogs and toasts,
+  pickers, and other components that are Blazor only) and some examples
+  (tabs, whose hidden panels are empty until chosen, the time picker, the
+  avatar cropper, the wizard and the live log). For those, the switch shows
+  the Razor with "This example needs Stil for Blazor".
+- [x] Some of the HTML is checked against `samples/Stil.Html`, which already
+  uses the CSS on its own. The navbar, dropdowns and alerts match. 40
+  examples on eight pages rendered without an error.
+- [x] The Markdown copies for AI assistants keep the Razor code; whether the
   HTML goes into them too is decided by the size of `llms-full.txt` (435 kB
-  today).
+  today). The HTML is not added: it is rendered only in the browser, so the
+  pages the export saves, and their Markdown, are as before.
 
 ### Phase 19.3: Which page is for whom, and the CSS reference
 

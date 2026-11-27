@@ -11,6 +11,14 @@ version could contain breaking changes; they are marked **Breaking**.
 
 ## [Unreleased]
 
+### Added
+
+- **Docs**: every example's code can be shown as Razor or as HTML, for Stil
+  CSS without Blazor. The choice applies to every example and is remembered.
+  The HTML is rendered from the example itself, indented and with short ids,
+  and says when it needs `stil.js`. Examples that need Stil for Blazor, such
+  as the data grid and dialogs, keep their Razor and say so.
+
 ### Changed
 
 - **Docs**: the home page offers two ways in, side by side: Stil CSS, for
