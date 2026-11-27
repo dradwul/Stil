@@ -9,58 +9,33 @@
     <p class="docs-eyebrow">Stil 1.3</p>
     <h1 tabindex="-1">A themeable CSS library, and Blazor components built on it</h1>
     <p class="docs-lead">
-        Stil CSS works with plain HTML and any framework. Stil for Blazor is a complete component
-        library that renders that same CSS. Change a few tokens
-        and both follow your brand, in light and dark mode, with WCAG AA contrast.
+        Change a few tokens and both follow your brand, in light and dark mode, with WCAG AA contrast.
+        Pick the one you build with.
     </p>
-    <div class="stil-cluster stil-gap-3">
-        <StilButton Href="get-started" Size="StilSize.Large">Get started</StilButton>
-        <StilButton Href="theme-builder" Size="StilSize.Large" Appearance="StilButtonAppearance.Outline">Build a theme</StilButton>
-    </div>
 </section>
 
-<div class="docs-features">
-    <StilCard Title="Stil CSS" HeadingLevel="2">
-        <p>About 24 kB gzipped: a reset scoped to your content, a 12-column grid, components and
-        about 900 utilities. Every class starts with <code>stil-</code>, so it lives next to other CSS.</p>
-        <CodeBlock Language="html" Code="@CssSnippet" />
+<div class="docs-paths">
+    <StilCard Title="Stil CSS" Subtitle="For HTML and any framework" HeadingLevel="2">
+        <ChildContent>
+            <p>About 24 kB gzipped: components, a 12-column grid and about 900 utilities. Every class starts with <code>stil-</code>, so it lives next to other CSS.</p>
+            <CodeBlock Language="shell" Code="npm install stil-css" />
+        </ChildContent>
+        <Footer>
+            <StilButton Href="get-started/css">Install Stil CSS</StilButton>
+        </Footer>
     </StilCard>
-    <StilCard Title="Stil for Blazor" HeadingLevel="2">
-        <p>About 95 components: forms with validation, a data grid, pickers, tree view, dialogs and
-        toasts. They work in every render mode where they can.</p>
-        <CodeBlock Language="shell" Code="dotnet add package Stil" />
+    <StilCard Title="Stil for Blazor" Subtitle="Components that include the CSS" HeadingLevel="2">
+        <ChildContent>
+            <p>About 95 components: forms with validation, a data grid, pickers, dialogs and toasts. You don't need Stil CSS as well.</p>
+            <CodeBlock Language="shell" Code="dotnet add package Stil" />
+        </ChildContent>
+        <Footer>
+            <StilButton Href="get-started">Install for Blazor</StilButton>
+        </Footer>
     </StilCard>
 </div>
 
-<div class="stil-grid stil-mb-5">
-    <StilStatCard Label="Components" Value="95+" Icon="@StilIcons.Menu" Description="with bUnit tests" class="stil-col-sm-6 stil-col-lg-3" />
-    <StilStatCard Label="Utilities" Value="900+" Icon="@StilIcons.Filter" Description="stil-mt-4, stil-d-flex, …" class="stil-col-sm-6 stil-col-lg-3" />
-    <StilStatCard Label="Contrast checks" Value="163" Icon="@StilIcons.Success" Description="WCAG AA, in CI" class="stil-col-sm-6 stil-col-lg-3" />
-    <StilStatCard Label="Dependencies" Value="0" Icon="@StilIcons.Check" Description="no JavaScript needed" class="stil-col-sm-6 stil-col-lg-3" />
-</div>
-
-<h2>What you get</h2>
-<StilList>
-    <StilListItem Title="Theming with tokens" Description="Brand colors, fonts, radius and spacing are --stil-* custom properties. Text on colors is picked automatically." Href="theming">
-        <Start><StilIcon Name="@StilIcons.Sun" Size="1.5rem" /></Start>
-    </StilListItem>
-    <StilListItem Title="Light, dark and auto" Description="Set data-stil-theme on any element, or use StilThemeProvider." Href="theming">
-        <Start><StilIcon Name="@StilIcons.Moon" Size="1.5rem" /></Start>
-    </StilListItem>
-    <StilListItem Title="Data components" Description="A data grid with sorting, filters, paging, selection, virtualization and server-side data." Href="components/data-grid">
-        <Start><StilIcon Name="@StilIcons.Folder" Size="1.5rem" /></Start>
-    </StilListItem>
-    <StilListItem Title="Accessible by default" Description="WAI-ARIA patterns for tabs, trees, comboboxes and dialogs, labels and validation wired up." Href="components/forms">
-        <Start><StilIcon Name="@StilIcons.Info" Size="1.5rem" /></Start>
-    </StilListItem>
-</StilList>
-
-@code {
-    private const string CssSnippet = """
-        <link rel="stylesheet" href="stil.css">
-
-        <body class="stil-scope" data-stil-theme="auto">
-          <button class="stil-btn stil-btn-primary">Save</button>
-        </body>
-        """;
-}
+<p class="docs-facts">
+    No dependencies · 163 contrast checks in CI · Free and open source (MIT) ·
+    <a href="theme-builder">Build a theme</a>
+</p>

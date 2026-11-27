@@ -189,11 +189,18 @@
 
 .docs-hero h1 { font-size: clamp(2rem, 6vw, 3.25rem); line-height: 1.15; }
 
-.docs-features {
+.docs-paths {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
     gap: var(--stil-space-4);
-    margin-block: var(--stil-space-5);
+    margin-block-end: var(--stil-space-4);
+}
+
+.docs-paths .stil-card { height: 100%; }
+
+.docs-facts {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
 }
 
 /* Theme builder */
