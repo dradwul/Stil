@@ -16,7 +16,8 @@ public static class DocsPages
         new("Get started", StilIcons.Home,
         [
             new("Introduction", ""),
-            new("Installation", "get-started"),
+            new("Install CSS", "get-started/css"),
+            new("Install for Blazor", "get-started"),
             new("New app", "new-app"),
             new("Theming", "theming"),
             new("Localization", "localization"),

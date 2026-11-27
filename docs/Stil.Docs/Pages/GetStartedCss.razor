@@ -1,0 +1,43 @@
+@page "/get-started/css"
+
+<DocsHeader Title="Install Stil CSS" Eyebrow="Get started"
+            Description="Use Stil's CSS with plain HTML or any framework. There is no build step and no dependency." />
+
+<p>Building with Blazor? <a href="get-started">Install Stil for Blazor</a> instead. It includes this CSS.</p>
+
+<h2 id="npm">With npm</h2>
+<CodeBlock Language="shell" Code="npm install stil-css" />
+<CodeBlock Language="html" Code="@NpmSnippet" />
+
+<h2 id="cdn">Without npm</h2>
+<p>
+    Link the files from jsDelivr, or download <code>stil.css</code>, <code>stil.min.css</code> and
+    <code>stil.js</code> from a <a href="https://github.com/dradwul/Stil/releases">GitHub release</a>.
+</p>
+<CodeBlock Language="html" Code="@CdnSnippet" />
+
+<h2 id="how-it-fits">How it fits in</h2>
+<ul>
+    <li><strong>Scope:</strong> the base styles (headings, links, forms) apply inside <code>.stil-scope</code>. The <code>stil-*</code> classes work anywhere, so Stil can live next to other CSS.</li>
+    <li><strong>Cascade layers:</strong> everything is in layers, so your own CSS wins without fighting specificity.</li>
+    <li><strong>JavaScript is optional:</strong> <code>stil.js</code> adds the few behaviours that need a script, such as closing dropdowns, dismissing alerts and opening dialogs.</li>
+    <li><strong>Theme:</strong> <code>data-stil-theme</code> picks light, dark or auto, and a few <code>--stil-*</code> tokens set your brand. See <a href="theming">Theming</a>, or make one in the <a href="theme-builder">theme builder</a>.</li>
+</ul>
+
+@code {
+    private const string NpmSnippet = """
+        <link rel="stylesheet" href="node_modules/stil-css/dist/stil.css">
+        <script type="module" src="node_modules/stil-css/dist/stil.js"></script>
+
+        <body class="stil-scope" data-stil-theme="auto">
+          <div class="stil-container">
+            <button class="stil-btn stil-btn-primary">Save</button>
+          </div>
+        </body>
+        """;
+
+    private const string CdnSnippet = """
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/stil-css@1/dist/stil.min.css">
+        <script type="module" src="https://cdn.jsdelivr.net/npm/stil-css@1/dist/stil.js"></script>
+        """;
+}

@@ -1,14 +1,16 @@
 @page "/get-started"
 
-<DocsHeader Title="Installation" Eyebrow="Get started"
-            Description="Add Stil for Blazor to a Blazor app, or use Stil CSS on its own." />
+<DocsHeader Title="Install Stil for Blazor" Eyebrow="Get started"
+            Description="Add Stil for Blazor to a Blazor app. It includes Stil CSS, so there is nothing else to install." />
+
+<p>Not using Blazor? <a href="get-started/css">Install Stil CSS</a> on its own.</p>
 
 <StilAlert Variant="StilVariant.Info" Subtle Title="Coming from a 0.1 preview?">
     A few names changed on the way to 1.0. The
     <a href="https://github.com/dradwul/Stil/blob/main/MIGRATING-TO-1.0.md">migration notes</a> list them all.
 </StilAlert>
 
-<h2 id="blazor">Stil for Blazor</h2>
+<h2 id="blazor">Add it to an app</h2>
 
 <p>1. Add the package:</p>
 <CodeBlock Language="shell" Code="dotnet add package Stil" />
@@ -38,19 +40,6 @@
     clicks, typing or keys needs an interactive render mode (Server, WebAssembly or Auto). The
     optional <code>stil.js</code>, loaded automatically, adds the small behaviours that static pages need,
     such as closing dropdowns and dismissing alerts.
-</p>
-
-<h2 id="css">Stil CSS on its own</h2>
-<CodeBlock Language="shell" Code="npm install stil-css" />
-<CodeBlock Language="html" Code="@CssSnippet" />
-<p>
-    Without npm, link the files of a release from jsDelivr, for example
-    <code>https://cdn.jsdelivr.net/npm/stil-css@@1/dist/stil.min.css</code>, or download them from the
-    <a href="https://github.com/dradwul/Stil/releases">GitHub releases</a>.
-</p>
-<p>
-    Stil's base styles (headings, links, forms) apply inside <code>.stil-scope</code>; the <code>stil-*</code>
-    classes work anywhere. Everything is in cascade layers, so your own CSS wins without fighting specificity.
 </p>
 
 @code {
@@ -89,16 +78,5 @@
     private const string TemplateSnippet = """
         dotnet new install Stil.Templates
         dotnet new stil-app -o MyApp --Primary "#6741d9"
-        """;
-
-    private const string CssSnippet = """
-        <link rel="stylesheet" href="node_modules/stil-css/dist/stil.css">
-        <script type="module" src="node_modules/stil-css/dist/stil.js"></script>
-
-        <body class="stil-scope" data-stil-theme="auto">
-          <div class="stil-container">
-            <button class="stil-btn stil-btn-primary">Save</button>
-          </div>
-        </body>
         """;
 }
