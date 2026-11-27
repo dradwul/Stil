@@ -22,6 +22,8 @@ project template that can add features such as charts, editors and planners
 blocks ([`templates/Stil.Templates`](templates/Stil.Templates/README.md));
 and a documentation site with live examples, a theme builder and a project wizard
 (<https://dradwul.github.io/Stil/>, source in [`docs/Stil.Docs`](docs/Stil.Docs), served by [`docs/Stil.Docs.Host`](docs/Stil.Docs.Host)).
+Its home page asks whether you build with plain HTML or with Blazor, every example shows its code as Razor or as
+HTML, and each component page says whether it works with Stil CSS alone.
 For AI assistants, the docs are also Markdown: [`llms.txt`](https://dradwul.github.io/Stil/llms.txt)
 lists every page, and [`llms-full.txt`](https://dradwul.github.io/Stil/llms-full.txt) holds them all
 in one file. `Stil.Mcp` is an MCP server that gives assistants Stil's components, parameters, classes, tokens and
@@ -105,7 +107,8 @@ Text on colored surfaces, links and focus rings adapt automatically and stay
 WCAG AA readable. Both showcases include a theme picker, so you can try it.
 
 Coming from Bootstrap? See the
-[migration guide](src/Stil.Css/MIGRATING-FROM-BOOTSTRAP.md).
+[migration guide](src/Stil.Css/MIGRATING-FROM-BOOTSTRAP.md), also on the docs site as
+[From Bootstrap](https://dradwul.github.io/Stil/css/from-bootstrap).
 
 ## Repository layout
 

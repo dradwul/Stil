@@ -14,6 +14,11 @@ Bootstrap replacement with dark mode and WCAG AA colors built in. It is a
 single stylesheet, about 23 kB minified and gzipped, with no JavaScript. It
 works with plain HTML, Razor, React, Vue, or any other front end.
 
+The [docs site](https://dradwul.github.io/Stil/get-started/css) has live
+examples of every component. Pick HTML in an example's code to see its markup;
+the choice is remembered, and each component page says whether it works with
+the CSS alone.
+
 Every class starts with `stil-` and every token with `--stil-`, so Stil can
 run next to Bootstrap, Tailwind or your own CSS without clashing. If you are
 coming from Bootstrap, see the [migration guide](MIGRATING-FROM-BOOTSTRAP.md)

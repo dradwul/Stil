@@ -28,13 +28,13 @@ something usable.
 | V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | V2.1 and V2.2 done, in `1.1.0`; V2.3 and V2.4 are the hosted product, outside this repository |
 | 17 | Reach and polish: a docs site that search engines can read, and the CSS backlog | ✅ Done (released in `1.2.0`) |
 | 18 | AI assistants: `llms.txt` on the docs site and `Stil.Mcp`, an MCP server that knows Stil's components, classes and tokens | In progress (18.1, 18.2 and the docs of 18.3 done, released in `1.3.0`; the templates and the trial are on hold) |
-| 19 | Two ways in: a home page and docs that separate Stil CSS from Stil for Blazor, with every example as Razor or HTML | In progress (19.1–19.3 done) |
+| 19 | Two ways in: a home page and docs that separate Stil CSS from Stil for Blazor, with every example as Razor or HTML | ✅ Done (on the docs site from `main`; the READMEs reach npm and nuget.org with the next release) |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
 end, so they never keep a phase open.
 
-## Where we are (1.3.0, Phases 0–17, V2.1 and V2.2 done, 18 in part)
+## Where we are (1.3.0, Phases 0–17 and 19, V2.1 and V2.2 done, 18 in part)
 
 Every package is published: `Stil`, `Stil.Charts`, `Stil.Markdown`,
 `Stil.RichText`, `Stil.Mcp` and `Stil.Templates` on nuget.org, and
@@ -42,7 +42,11 @@ Every package is published: `Stil`, `Stil.Charts`, `Stil.Markdown`,
 <https://dradwul.github.io/Stil/> as static pages rendered by
 `docs/Stil.Docs.Host`, with a sitemap, and as Markdown for AI assistants
 (`llms.txt`). Its "AI assistants" page shows how to use that and `Stil.Mcp`,
-the MCP server for AI assistants.
+the MCP server for AI assistants. Its home page offers two ways in, Stil CSS or
+Stil for Blazor, each with its own installation page; every example shows its
+code as Razor or as HTML; each component page says whether it works with CSS
+alone; and a "Stil CSS" section has the utilities, `stil.js` and the Bootstrap
+migration guide.
 
 - **Stil CSS:** an npm package (`stil-css`). It is built with Lightning CSS
   from partials into `dist/stil.css` and `stil.min.css` (about 24 kB
@@ -1851,7 +1855,7 @@ Both wait for a computer where that is allowed.
 
 ---
 
-## Phase 19: Two ways in, CSS or Blazor
+## Phase 19: Two ways in, CSS or Blazor ✅ Done
 
 Goal: a visitor sees at once that Stil is two things, picks the one they came
 for, and from then on reads only what applies to them. There are two paths,
@@ -1966,15 +1970,22 @@ alone; and the CSS reference is on the site.
   pages. The site has no search; the sidebar, the previous and next links,
   the sitemap, `llms.txt` and `Stil.Mcp` all read `DocsPages` or the pages.
 
-### Phase 19.4: Docs and checks
+### Phase 19.4: Docs and checks ✅ Done
 
-- [ ] The pages are checked in the docs dev server, on a phone width and in
+- [x] The pages are checked in the docs dev server, on a phone width and in
   dark mode, and the Playwright docs test covers the switch in 19.2 (one
-  test; it runs in CI).
-- [ ] README, the `stil-css` README, CHANGELOG and "Where we are".
-- [ ] No package changes, so no release is needed: the docs site updates
+  test; it runs in CI). The test, "axe: docs example code as HTML", switches
+  the first example on the Buttons page to HTML, checks its markup, that the
+  next example follows, that axe finds nothing on the switched page, and that
+  the Cards page opens with HTML. It is tagged `@a11y`, so CI's axe run
+  includes it. It was not run on the owner's work computer; its steps were
+  checked by hand in the dev server.
+- [x] README, the `stil-css` README, CHANGELOG and "Where we are".
+- [x] No package changes, so no release is needed: the docs site updates
   from `main`. `Stil.Mcp` reads the docs pages, so its next release has the
-  new pages too.
+  new pages too. The `stil-css` README (shown on npm) and `Stil.Mcp`'s
+  description of `add_to_existing_app` changed too, and reach npm and
+  nuget.org with the next release.
 
 ---
 
