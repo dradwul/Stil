@@ -19,7 +19,7 @@ public static partial class ExampleHtml
     [
         "Calendar", "Charts", "Chat", "Codes", "CommandPalette", "DataGrid", "Dialogs", "Gantt", "Kanban",
         "Localization", "Markdown", "Notifications", "Pickers", "RichText", "Signature", "TreeGrid", "TreeView",
-        "ActivityLog/LiveLog", "Inputs/Times", "Inputs/Wizard", "Media/Avatar", "Menus/PillTabs", "Menus/Tabs", "Theming/Provider",
+        "ActivityLog/LiveLog", "Blocks/BlockEditing", "Blocks/PageFromJson", "Blocks/SiteFromJson", "Inputs/Times", "Inputs/Wizard", "Media/Avatar", "Menus/PillTabs", "Menus/Tabs", "Theming/Provider",
     ];
 
     private static readonly HashSet<string> Void =

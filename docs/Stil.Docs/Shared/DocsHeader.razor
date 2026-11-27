@@ -1,5 +1,8 @@
+@inject NavigationManager Navigation
+
 @* The title, lead and head of a docs page: StilSeo writes its browser title, description and
-   canonical address, so search engines and link previews get them. *@
+   canonical address, so search engines and link previews get them. A component page also says
+   whether it works with Stil CSS alone (DocsPages). *@
 <StilSeo Title="@Title" SiteName="Stil" Description="@Description" NoIndex="@NoIndex">@Head</StilSeo>
 <header class="docs-header">
     @if (!string.IsNullOrWhiteSpace(Eyebrow))
@@ -7,6 +10,14 @@
         <p class="docs-eyebrow">@Eyebrow</p>
     }
     <h1 tabindex="-1">@Title</h1>
+    @if (Audience == DocsAudience.CssAndBlazor)
+    {
+        <p class="docs-audience"><StilBadge Variant="StilVariant.Success" Subtle>Stil CSS and Blazor</StilBadge></p>
+    }
+    else if (Audience == DocsAudience.BlazorOnly)
+    {
+        <p class="docs-audience"><StilBadge Variant="StilVariant.Info" Subtle>Blazor only</StilBadge></p>
+    }
     @if (Lead is not null)
     {
         <p class="docs-lead">@Lead</p>
@@ -40,4 +51,7 @@
     /// <summary>Keeps the page out of search results, such as the not-found page.</summary>
     [Parameter]
     public bool NoIndex { get; set; }
+
+    private DocsAudience? Audience =>
+        DocsPages.Find(Navigation.ToBaseRelativePath(Navigation.Uri).Split('?', '#')[0].TrimEnd('/'))?.Audience;
 }

@@ -68,6 +68,16 @@
     </p>
 </DocExample>
 
+<h2 id="css">With Stil CSS alone</h2>
+<p>
+    The examples above use Stil for Blazor. Without it, a dialog is the same <code>&lt;dialog&gt;</code>: with
+    <a href="css/javascript">stil.js</a>, a button with <code>data-stil-dialog-open</code> opens it as a modal and
+    <code>data-stil-dialog-close</code> closes it. <code>stil-drawer</code> (and <code>stil-drawer-end</code>) makes it a
+    drawer. A toast is a <code>stil-toast</code> in a <code>stil-toast-container</code>, and a
+    <code>stil-close</code> with <code>data-stil-dismiss</code> removes it.
+</p>
+<CodeBlock Language="html" Code="@CssDialog" />
+
 <h2 id="setup">Setup</h2>
 <p>Add the hosts once, for example at the end of <code>MainLayout.razor</code>:</p>
 <CodeBlock Code="@Hosts" />
@@ -81,5 +91,23 @@
     private const string Hosts = """
         <StilDialogHost />
         <StilToastHost />
+        """;
+
+    private const string CssDialog = """
+        <button type="button" class="stil-btn" data-stil-dialog-open="invite">Invite a member</button>
+
+        <dialog class="stil-dialog" id="invite" aria-labelledby="invite-title">
+          <div class="stil-dialog-header">
+            <h2 class="stil-dialog-title" id="invite-title">Invite a member</h2>
+            <button type="button" class="stil-close" aria-label="Close" data-stil-dialog-close></button>
+          </div>
+          <div class="stil-dialog-body">
+            <p>They get an email with a link to join the team.</p>
+          </div>
+          <div class="stil-dialog-footer">
+            <button type="button" class="stil-btn stil-btn-secondary stil-btn-ghost" data-stil-dialog-close>Cancel</button>
+            <button type="button" class="stil-btn">Send invite</button>
+          </div>
+        </dialog>
         """;
 }
