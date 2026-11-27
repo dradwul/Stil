@@ -21,6 +21,7 @@ public static class DocsPages
             new("Theming", "theming"),
             new("Localization", "localization"),
             new("Theme builder", "theme-builder"),
+            new("AI assistants", "ai-assistants"),
         ]),
         new("Components", StilIcons.Menu,
         [

@@ -1,0 +1,126 @@
+@page "/ai-assistants"
+
+<DocsHeader Title="AI assistants" Eyebrow="Get started"
+            Description="Let Claude Code, GitHub Copilot, Cursor and other assistants write code with Stil's real components, parameters and classes, through the Stil MCP server or the docs as Markdown." />
+
+<p>
+    An assistant that has never seen Stil guesses: it writes Bootstrap classes, or parameters a component does not
+    have. There are two ways to give it the real thing. The <a href="ai-assistants#mcp">MCP server</a> answers its
+    questions about Stil while it works, and the <a href="ai-assistants#markdown">docs as Markdown</a> work with any
+    assistant that can read a web page.
+</p>
+
+<h2 id="mcp">The MCP server</h2>
+<p>
+    <code>Stil.Mcp</code> is a <a href="https://modelcontextprotocol.io/">Model Context Protocol</a> server, new in
+    Stil 1.3. Assistants that support MCP ask it which components there are, what parameters they take and which
+    classes and tokens exist, and look up the examples on this site. Its answers come from the same sources as these
+    docs: the libraries, their XML documentation, the docs pages and examples, and the built CSS, so they match the
+    version you run.
+</p>
+<p>
+    The server runs locally and talks to the assistant over stdio. It reads nothing from your project, sends nothing
+    anywhere and changes no files. There is nothing to install but the .NET 10 SDK: the assistant starts it with
+    <code>dnx</code>, which fetches the package from nuget.org the first time. Write <code>Stil.Mcp@@1.3.0</code>
+    instead of <code>Stil.Mcp</code> to pin a version.
+</p>
+<StilAlert Variant="StilVariant.Info" Subtle Title="On a work computer">
+    The assistant starts the server as a new program on your computer. Security software on a managed computer may
+    not allow that, so check with your IT department first. The <a href="ai-assistants#markdown">docs as Markdown</a>
+    need nothing to run.
+</StilAlert>
+
+<h3 id="claude-code">Claude Code</h3>
+<CodeBlock Language="shell" Code="claude mcp add stil -- dnx Stil.Mcp --yes" />
+
+<h3 id="vs-code">VS Code</h3>
+<p>For GitHub Copilot, add the server to <code>.vscode/mcp.json</code> in your project:</p>
+<CodeBlock Language="json" Code="@VsCodeSnippet" />
+
+<h3 id="visual-studio">Visual Studio</h3>
+<p>Put the same content in <code>.mcp.json</code> next to the solution.</p>
+
+<h3 id="cursor">Cursor</h3>
+<p>Add the server to <code>.cursor/mcp.json</code>:</p>
+<CodeBlock Language="json" Code="@CursorSnippet" />
+
+<h3 id="tools">What it can answer</h3>
+<p>
+    Every tool only reads. When an assistant connects, the server also asks it to use Stil components and
+    <code>stil-*</code> classes, and to look a component up before it uses one.
+</p>
+<div class="stil-table-responsive">
+    <table class="stil-table stil-table-compact">
+        <thead>
+            <tr><th scope="col">Tool</th><th scope="col">What it answers</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var (tool, answer) in Tools)
+            {
+                <tr><th scope="row"><code class="docs-type">@tool</code></th><td>@answer</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<h2 id="markdown">The docs as Markdown</h2>
+<p>
+    Every page on this site also has a Markdown copy without the menus and previews, at its address with
+    <code>.md</code> added (<code>components/buttons.md</code>, and <code>index.html.md</code> for the home page).
+    Two files list them, following the <a href="https://llmstxt.org/">llms.txt</a> convention:
+</p>
+<ul>
+    <li><code>llms.txt</code>: a short introduction and a link to every page, with what it covers. Give an assistant this one, and it can read the pages it needs.</li>
+    <li><code>llms-full.txt</code>: every page in one file, for an assistant that should have all of it at once.</li>
+</ul>
+<CodeBlock Language="text" Code="@MarkdownSnippet" />
+
+<h2 id="tips">Tips</h2>
+<ul>
+    <li><strong>Say which library to use.</strong> "Build the orders page with Stil components" works better than "build the orders page", even with the server connected.</li>
+    <li><strong>Start a new app from the template.</strong> The server's <code>new_project</code> tool gives the same <code>dotnet new</code> command as the <a href="new-app">New app</a> page, so the assistant starts from a project that is already set up.</li>
+    <li><strong>Check what it built.</strong> The build tells you about a parameter that does not exist; a CSS class that does not exist only shows on the page.</li>
+</ul>
+
+@code {
+    private static readonly (string Tool, string Answer)[] Tools =
+    [
+        ("list_components", "Every component, grouped by docs page, optionally for one package."),
+        ("get_component", "A component's package, namespace, parameters, enum values, docs page and examples."),
+        ("get_type", "An enum's values, or the members of an option, model or service."),
+        ("search", "Components, types, docs pages, CSS classes and tokens that match a word."),
+        ("list_css_classes", "The class families, or every class with a prefix such as stil-btn."),
+        ("list_tokens", "The --stil-* tokens and their defaults."),
+        ("get_example", "An example's Razor source from this site, or the examples of a component."),
+        ("new_project", "The dotnet new stil-app or stil-site command for a starter and features."),
+        ("add_to_existing_app", "The package, Program.cs, App.razor and layout setup of an existing app."),
+    ];
+
+    private const string VsCodeSnippet = """
+        {
+          "servers": {
+            "stil": {
+              "type": "stdio",
+              "command": "dnx",
+              "args": ["Stil.Mcp", "--yes"]
+            }
+          }
+        }
+        """;
+
+    private const string CursorSnippet = """
+        {
+          "mcpServers": {
+            "stil": {
+              "command": "dnx",
+              "args": ["Stil.Mcp", "--yes"]
+            }
+          }
+        }
+        """;
+
+    private const string MarkdownSnippet = """
+        https://dradwul.github.io/Stil/llms.txt
+        https://dradwul.github.io/Stil/llms-full.txt
+        """;
+}
