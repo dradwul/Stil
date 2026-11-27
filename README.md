@@ -46,12 +46,12 @@ library.
 | You want | Do this |
 | --- | --- |
 | A new Blazor app with Stil set up | `dotnet new install Stil.Templates`, then `dotnet new stil-app -n MyApp` ([templates](templates/Stil.Templates/README.md)) |
-| Stil in an existing Blazor app | `dotnet add package Stil`, then follow [Get started](src/Stil.Blazor/README.md#get-started) |
+| Stil in an existing Blazor app | `dotnet add package Stil`, then follow [Install Stil for Blazor](https://dradwul.github.io/Stil/get-started) |
 | Charts | `dotnet add package Stil.Charts` ([charts](src/Stil.Charts/README.md)) |
 | Markdown | `dotnet add package Stil.Markdown` ([Markdown](src/Stil.Markdown/README.md)) |
 | Rich text | `dotnet add package Stil.RichText` ([rich text](src/Stil.RichText/README.md)) |
 | An AI assistant that writes correct Stil code | `claude mcp add stil -- dnx Stil.Mcp --yes`, or the same server in VS Code, Visual Studio or Cursor ([MCP server](src/Stil.Mcp/README.md), [AI assistants](https://dradwul.github.io/Stil/ai-assistants)) |
-| Only the CSS | Download `stil.min.css` from a [release](https://github.com/dradwul/Stil/releases), or link it from jsDelivr ([Stil CSS](src/Stil.Css/README.md#install)) |
+| Only the CSS | `npm install stil-css`, download `stil.min.css` from a [release](https://github.com/dradwul/Stil/releases), or link it from jsDelivr ([Install Stil CSS](https://dradwul.github.io/Stil/get-started/css), [Stil CSS](src/Stil.Css/README.md#install)) |
 
 All packages require .NET 10. The latest version is on
 [nuget.org](https://www.nuget.org/packages/Stil).

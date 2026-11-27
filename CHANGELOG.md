@@ -11,6 +11,16 @@ version could contain breaking changes; they are marked **Breaking**.
 
 ## [Unreleased]
 
+### Changed
+
+- **Docs**: the home page offers two ways in, side by side: Stil CSS, for
+  HTML and any framework, and Stil for Blazor, which includes the CSS. Each
+  has its install command and a link to its own installation page. The stat
+  cards and the feature list made way for one short line.
+- **Docs**: Installation is two pages: "Install CSS" (`get-started/css`, new)
+  and "Install for Blazor" (`get-started`, as before). The navbar's "Docs"
+  link goes to the home page.
+
 ## [1.3.0] - 2026-11-27
 
 AI assistants: Stil is new, so assistants guess its parameters and classes, or

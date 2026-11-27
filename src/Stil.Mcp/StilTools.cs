@@ -463,7 +463,7 @@ internal static partial class StilTools
     }
 
     [McpServerTool(Name = "add_to_existing_app", ReadOnly = true, Idempotent = true)]
-    [Description("Shows how to add Stil to an existing Blazor app: the package, Program.cs, App.razor and the layout, as on the docs site's Installation page. It changes nothing itself.")]
+    [Description("Shows how to add Stil to an existing Blazor app: the package, Program.cs, App.razor and the layout, as on the docs site's page Install Stil for Blazor. It changes nothing itself.")]
     public static string AddToExistingApp()
     {
         var page = StilKnowledge.Instance.Pages.First(p => p.Route == "get-started");

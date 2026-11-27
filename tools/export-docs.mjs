@@ -204,8 +204,8 @@ function writeLlmsFiles(routes, htmls) {
         'Use Stil components (`StilButton`, `StilDataGrid<TItem>`, `StilTextBox` and so on) and `stil-*` CSS classes,',
         'not Bootstrap classes or inline styles. Colors are `StilVariant` values (Primary, Secondary, Success, Danger,',
         'Warning, Info), and a theme is a set of `--stil-*` CSS tokens. Start a new app with',
-        '`dotnet new install Stil.Templates` and `dotnet new stil-app`, or add `Stil` to an existing app as the',
-        'Installation page shows.',
+        '`dotnet new install Stil.Templates` and `dotnet new stil-app`, or add `Stil` to an existing app as the page',
+        'Install Stil for Blazor shows. Without Blazor, use the CSS on its own (`npm install stil-css`).',
     ].join('\n');
 
     const index = [

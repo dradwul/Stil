@@ -28,7 +28,7 @@ something usable.
 | V2 | Version 2, Stil Sites: section blocks and page model (open source), a visual page builder and content tools (a hosted product) | V2.1 and V2.2 done, in `1.1.0`; V2.3 and V2.4 are the hosted product, outside this repository |
 | 17 | Reach and polish: a docs site that search engines can read, and the CSS backlog | ✅ Done (released in `1.2.0`) |
 | 18 | AI assistants: `llms.txt` on the docs site and `Stil.Mcp`, an MCP server that knows Stil's components, classes and tokens | In progress (18.1, 18.2 and the docs of 18.3 done, released in `1.3.0`; the templates and the trial are on hold) |
-| 19 | Two ways in: a home page and docs that separate Stil CSS from Stil for Blazor, with every example as Razor or HTML | Planned |
+| 19 | Two ways in: a home page and docs that separate Stil CSS from Stil for Blazor, with every example as Razor or HTML | In progress (19.1 done) |
 
 A phase is done when every item in it is checked. Items that need the
 repository owner, and polish with no date yet, are listed separately at the
@@ -1872,22 +1872,33 @@ else; each path has its own installation; a CSS user can switch every example
 to HTML once and copy it; every component page says whether it works with CSS
 alone; and the CSS reference is on the site.
 
-### Phase 19.1: The home page and installation
+### Phase 19.1: The home page and installation ✅ Done
 
-- [ ] The hero offers two choices, side by side, before anything else:
+- [x] The hero offers two choices, side by side, before anything else:
   "Stil CSS: for HTML and any framework" and "Stil for Blazor: components
   that include the CSS". Each has one line on what it is, its install command
   (`npm install stil-css` or `dotnet add package Stil`) and a link to its
   installation. They replace today's buttons and the two cards below.
-- [ ] The rest of the home page shrinks: the stat cards and the "What you get"
+  The choices are two cards right under a shorter lead, each with a button
+  ("Install Stil CSS", "Install for Blazor"); they stack on a phone.
+- [x] The rest of the home page shrinks: the stat cards and the "What you get"
   list become one short row or go away. "Build a theme" stays as a link.
-- [ ] Installation is split into two pages in "Get started": "Blazor" keeps
+  Both went; one muted line is left: no dependencies, the contrast checks,
+  MIT, and "Build a theme".
+- [x] Installation is split into two pages in "Get started": "Blazor" keeps
   `get-started`, its snippets and their names (`Stil.Mcp`'s
   `add_to_existing_app` reads them), and "CSS" is a new page with npm, a CDN
   link, the release files, `stil-scope` and the cascade layers. Each links to
-  the other in one line.
-- [ ] The links to the Installation page (READMEs, the docs, the template
-  READMEs) point at the right one of the two.
+  the other in one line. The sidebar says "Install CSS"
+  (`get-started/css`, first, since Blazor is built on it) and "Install for
+  Blazor", right before "New app". The CSS page adds `stil.js` and theming in
+  a short list.
+- [x] The links to the Installation page (READMEs, the docs, the template
+  READMEs) point at the right one of the two. The README's install table
+  links to both pages, the navbar's "Docs" goes to the home page instead of
+  the Blazor installation, and `llms.txt` and `Stil.Mcp`'s
+  `add_to_existing_app` name the Blazor page. The template READMEs did not
+  link to it.
 
 ### Phase 19.2: Examples as Razor or HTML
 
