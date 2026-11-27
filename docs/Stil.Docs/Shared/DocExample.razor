@@ -1,5 +1,11 @@
+@implements IDisposable
+@inject DocsCodeChoice Choice
+@inject IServiceProvider Services
+@inject Microsoft.Extensions.Logging.ILoggerFactory LoggerFactory
+
 @* A live example and its source. The example is a component in the Examples folder; its .razor
-   file is also embedded, so the code shown is exactly the code that runs. *@
+   file is also embedded, so the code shown is exactly the code that runs. Its HTML, for Stil CSS
+   without Blazor, is rendered from the example itself (ExampleHtml). *@
 <section class="docs-example" aria-label="@(Title ?? "Example")">
     @if (Title is not null)
     {
@@ -14,11 +20,35 @@
     </div>
     <details class="docs-example-source" open="@ShowCode">
         <summary>Code</summary>
-        <CodeBlock Code="@ExampleSource.Get(Type)" Language="razor" />
+        <div class="docs-code-switch">
+            <StilButtonGroup Label="Show the code as">
+                <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Outline" Variant="StilVariant.Secondary"
+                            Pressed="!Choice.Html" OnClick="() => Choice.SetAsync(false)">Razor</StilButton>
+                <StilButton Size="StilSize.Small" Appearance="StilButtonAppearance.Outline" Variant="StilVariant.Secondary"
+                            Pressed="Choice.Html" OnClick="() => Choice.SetAsync(true)">HTML</StilButton>
+            </StilButtonGroup>
+            @if (Choice.Html)
+            {
+                <span class="docs-code-note">@Note</span>
+            }
+        </div>
+        @if (Choice.Html && _html is not null)
+        {
+            <CodeBlock Code="@_html" Language="html" />
+        }
+        else
+        {
+            <CodeBlock Code="@ExampleSource.Get(Type)" Language="razor" />
+        }
     </details>
 </section>
 
 @code {
+    private Type? _type;
+    private bool _hasHtml;
+    private string? _html;
+    private bool _failed;
+
     /// <summary>The example component, for example <c>typeof(Examples.Buttons.Variants)</c>.</summary>
     [Parameter, EditorRequired]
     public Type Type { get; set; } = default!;
@@ -33,4 +63,52 @@
     /// <summary>A description above the example.</summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
+
+    private string? Note => !_hasHtml || _failed
+        ? "This example needs Stil for Blazor, so here is its Razor."
+        : _html is null
+            ? "Rendering the HTML…"
+            : ExampleHtml.NeedsScript(_html) ? "Some of this needs stil.js." : null;
+
+    protected override void OnInitialized() => Choice.Changed += OnChoiceChanged;
+
+    protected override void OnParametersSet()
+    {
+        if (Type == _type)
+        {
+            return;
+        }
+
+        _type = Type;
+        _hasHtml = ExampleHtml.Has(Type);
+        _html = null;
+        _failed = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Choice.LoadAsync();
+        }
+
+        if (Choice.Html && _hasHtml && _html is null && !_failed)
+        {
+            try
+            {
+                _html = await ExampleHtml.RenderAsync(Type, Services, LoggerFactory);
+            }
+            catch (Exception)
+            {
+                // A component that cannot render outside the page shows its Razor instead.
+                _failed = true;
+            }
+
+            StateHasChanged();
+        }
+    }
+
+    private void OnChoiceChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Choice.Changed -= OnChoiceChanged;
 }

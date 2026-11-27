@@ -112,6 +112,19 @@
     cursor: pointer;
 }
 
+.docs-code-switch {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--stil-space-2) var(--stil-space-3);
+    padding: 0 var(--stil-space-4) var(--stil-space-3);
+}
+
+.docs-code-note {
+    color: var(--stil-color-text-muted);
+    font-size: var(--stil-font-size-sm);
+}
+
 .docs-example-source > .docs-code { margin: 0; border: 0; border-top: 1px solid var(--stil-color-border); border-radius: 0 0 var(--stil-radius-lg) var(--stil-radius-lg); }
 
 /* Code */

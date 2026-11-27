@@ -7,7 +7,7 @@ const VOID = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input'
 const RAW = new Set(['script', 'style', 'textarea']);
 const SKIP = new Set(['script', 'style', 'svg', 'template', 'button', 'nav', 'aside', 'summary', 'input', 'select', 'textarea', 'img', 'canvas', 'video', 'iframe', 'noscript']);
 const SKIP_CLASSES = [
-    'docs-example-preview', 'docs-code-bar', 'docs-pager', 'docs-eyebrow', 'stil-visually-hidden',
+    'docs-example-preview', 'docs-code-bar', 'docs-code-switch', 'docs-pager', 'docs-eyebrow', 'stil-visually-hidden',
     // The theme builder's controls and preview: the page's text and its code are what matter.
     'docs-theme-controls', 'docs-preview-frame',
 ];

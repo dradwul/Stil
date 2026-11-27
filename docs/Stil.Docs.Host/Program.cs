@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Every page is rendered here first, then runs in the browser with WebAssembly (Stil.Docs).
 builder.Services.AddRazorComponents().AddInteractiveWebAssemblyComponents();
 builder.Services.AddStil();
+builder.Services.AddScoped<Stil.Docs.DocsCodeChoice>();
 
 var app = builder.Build();
 

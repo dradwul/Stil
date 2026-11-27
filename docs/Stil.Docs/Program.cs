@@ -5,6 +5,7 @@ using Stil.Blazor;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.Services.AddStil();
+builder.Services.AddScoped<Stil.Docs.DocsCodeChoice>();
 
 var host = builder.Build();
 // The language picked in the navbar's StilLanguageSelector.
